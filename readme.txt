@@ -15,6 +15,12 @@ This plugin is aimed at theme developers. It gives you the core-functionality ne
 
 After installations the functionality can easily be extend using other framework (eg. the [Pods Framework](http://pods.io/)).
 
+__Compatibility__
+
+Theatre works seamlessly with:
+
+* [Pods Framework](http://pods.io/)
+
 __What's next?__
 
 * Shortcodes for displaying event listings.
