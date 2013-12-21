@@ -17,6 +17,7 @@ class WP_Theatre {
 
 		add_action( 'admin_init', function() {
 			wp_enqueue_script( 'wp_theatre_js', plugins_url( 'main.js', __FILE__ ), array('jquery') );
+			wp_enqueue_style( 'wp_theatre_css', plugins_url( 'style.css', __FILE__ ) );
 		});
 	}
 	
@@ -118,7 +119,7 @@ class WP_Theatre_Production extends WP_Theatre {
 			// no posts found
 		}
 		
-		echo '<p><a href="'.get_bloginfo('url').'/wp-admin/post-new.php?post_type=event" class="button button-primary">'.$wp_theatre_event->post_type_object->labels->new_item.'</a></p>';
+		echo '<p><a href="'.get_bloginfo('url').'/wp-admin/post-new.php?post_type=event&production='.$production->ID.'" class="button button-primary">'.$wp_theatre_event->post_type_object->labels->new_item.'</a></p>';
 
 		
 		/* Restore original Post Data */
@@ -133,7 +134,8 @@ class WP_Theatre_Event extends WP_Theatre {
 		add_action( 'add_meta_boxes', array($this, 'add_meta_boxes'));
 		add_action( 'save_post', array( $this, 'save' ) );
 		add_action( 'admin_init', function() {
-			wp_enqueue_script( 'jquery-ui-datepicker' );
+			wp_enqueue_script( 'jquery-ui-timepicker', plugins_url( 'js/jquery-ui-timepicker-addon.js', __FILE__ ), array('jquery-ui-datepicker','jquery-ui-slider')  );
+			wp_enqueue_style('jquery-style', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css');
 		});
 	}
 	
@@ -160,52 +162,126 @@ class WP_Theatre_Event extends WP_Theatre {
 	function add_meta_boxes() {
 		global $wp_theatre_production;
 		add_meta_box(
-            'wp_theatre_productions',
+            'wp_theatre_event_data',
             __('Event data','wp_theatre'),
-            array($this,'render_meta_box'),
+            array($this,'render_meta_box_event_data'),
+            'event',
+            'normal'
+        ); 		
+		add_meta_box(
+            'wp_theatre_tickets',
+            __('Tickets','wp_theatre'),
+            array($this,'render_meta_box_tickets'),
             'event',
             'normal'
         ); 		
 	}
 	
-	function render_meta_box($event) {
+	function render_meta_box_event_data($event) {
 		global $wp_theatre_production;
 		
+		wp_nonce_field( 'wp_theatre_event', 'wp_theatre_event_nonce' );
+
+		echo '<table class="form-table">';
+		echo '<tbody>';
+
+		echo '<tr class="form-field">';		
+		echo '<th>';
+		echo '<label>';
+		echo $wp_theatre_production->post_type_object->labels->singular_name;
+		echo '</label> ';
+		echo '</th>';
+		
+		echo '<td>';
+
+		if (isset($_GET['production'])) {
+			$current_production = (int) $_GET['production'];
+		} else {
+			$current_production = get_post_meta($event->ID,'productie',true);
+		}
+
 		$args = array(
 			'post_type'=>'production',
 		);
-
-		wp_nonce_field( 'wp_theatre_event', 'wp_theatre_event_nonce' );
-
-		echo '<label>';
-		echo $wp_theatre_production->post_type_object->labels->singular_name;
-		
-		$the_query = new WP_Query($args);
-		if ( $the_query->have_posts() ) {
-			echo '<select name="productie">';
-			while ( $the_query->have_posts() ) {
+		if (is_numeric($current_production)) {
+			$args['p'] = $current_production;
+			$the_query = new WP_Query($args);
+			if ( $the_query->have_posts() ) {
 				$the_query->the_post();
-				echo '<option value="'.get_the_ID().'"';
-				if (get_post_meta($event->ID,'productie',true)==get_the_ID()) {
-					echo ' selected="selected"';
-				}
-				echo '>';
+				echo '<input type="hidden" name="production" value="'.$current_production.'" />';
+				echo '<a href="'.get_bloginfo('url').'/wp-admin/post.php?post='.$current_production.'&action=edit">';
 				the_title();
-				echo '</option>';
+				echo '</a>';
 			}
-			echo '</select>';
-		}
-		echo '</label> ';
+		} else {
+			$the_query = new WP_Query($args);
+			if ( $the_query->have_posts() ) {
+				echo '<select name="production">';
+				while ( $the_query->have_posts() ) {
+					$the_query->the_post();
+					echo '<option value="'.get_the_ID().'"';
+					if ($current_production==get_the_ID()) {
+						echo ' selected="selected"';
+					}
+					echo '>';
+					the_title();
+					echo '</option>';
+				}
+				echo '</select>';
+			}
+			
+		}	
 		
+		echo '</td>';
+		echo '</tr>';
 		wp_reset_postdata();	
 		
-		echo '<label>';
-		echo __('Event date','wp_theatre');
-		echo '<input type="text" class="wp_theatre_datepicker" name="speeldatum"';
-        echo ' value="' . get_post_meta($event->ID,'speeldatum',true) . '" size="25" />';
-        echo '</label>';			
+		echo '<tr class="form-field">';
+		echo '<th><label>'.__('Event date','wp_theatre').'</label></th>';	
+		echo '<td>';
+		echo '<input type="text" class="wp_theatre_datepicker" name="event_date"';
+        echo ' value="' . get_post_meta($event->ID,'speeldatum',true) . '" />';
+ 		echo '</td>';
+		echo '</tr>';
+       
+		echo '<tr class="form-field">';
+		echo '<th><label>'.__('Venue','wp_theatre').'</label></th>';	
+		echo '<td>';
+		echo '<input type="text" name="venue"';
+        echo ' value="' . get_post_meta($event->ID,'locatie',true) . '" />';
+ 		echo '</td>';
+		echo '</tr>';
+       
+		echo '<tr class="form-field">';
+		echo '<th><label>'.__('City','wp_theatre').'</label></th>';	
+		echo '<td>';
+		echo '<input type="text" name="city"';
+        echo ' value="' . get_post_meta($event->ID,'plaatsnaam',true) . '" />';
+ 		echo '</td>';
+		echo '</tr>';
+       
+        echo '</tbody>';
+        echo '</table>';		
 	}
-
+	
+	function render_meta_box_tickets($event) {
+		global $wp_theatre_production;
+		
+		echo '<table class="form-table">';
+		echo '<tbody>';
+		
+		echo '<tr class="form-field">';
+		echo '<th><label>'.__('Tickets URL','wp_theatre').'</label></th>';	
+		echo '<td>';
+		echo '<input type="url" name="tickets_url"';
+        echo ' value="' . get_post_meta($event->ID,'url-kaartverkoop',true) . '" />';
+ 		echo '</td>';
+		echo '</tr>';
+       
+        echo '</tbody>';
+        echo '</table>';		
+	}
+	
 	public function save( $post_id ) {
 	
 		/*
@@ -236,10 +312,18 @@ class WP_Theatre_Event extends WP_Theatre {
 		/* OK, its safe for us to save the data now. */
 
 		// Sanitize the user input.
-		$production = sanitize_text_field( $_POST['productie'] );
+		$production = sanitize_text_field( $_POST['production'] );
+		$event_date = sanitize_text_field( $_POST['event_date'] );
+		$venue = sanitize_text_field( $_POST['venue'] );
+		$city = sanitize_text_field( $_POST['city'] );
+		$tickets_url = sanitize_text_field( $_POST['tickets_url'] );
 
 		// Update the meta field.
 		update_post_meta( $post_id, 'productie', $production );
+		update_post_meta( $post_id, 'speeldatum', $event_date );
+		update_post_meta( $post_id, 'locatie', $venue );
+		update_post_meta( $post_id, 'plaatsnaam', $city );
+		update_post_meta( $post_id, 'url-kaartverkoop', $tickets_url );
 	}
 }
 
