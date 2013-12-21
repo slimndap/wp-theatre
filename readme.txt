@@ -17,7 +17,7 @@ After installations the functionality can easily be extend using other framework
 
 __Compatibility__
 
-Theatre works seamlessly with:
+Theatre integrates seamlessly with:
 
 * [Pods Framework](http://pods.io/)
 
