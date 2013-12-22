@@ -79,51 +79,59 @@ class WP_Theatre_Production extends WP_Theatre {
 	
 	function render_meta_box_events($production) {
 		global $wp_theatre_event;
-		$args = array(
-			'post_type'=>'event',
-			'meta_key' => 'speeldatum',
-			'order_by' => 'meta_value_num',
-			'order' => 'DESC',
-			'meta_query' => array(
-				array(
-					'key' => 'productie',
-					'value' => $production->ID,
-					'compare' => '=',
-				),
-				array(
-					'key' => 'speeldatum', // Check the start date field
-					'value' => date("Y-m-d"), // Set today's date (note the similar format)
-					'compare' => '>=', // Return the ones greater than today's date
-					'type' => 'NUMERIC,' // Let WordPress know we're working with numbers
-				)
-			),
-		);
-
-		$the_query = new WP_Query($args);
-		if ( $the_query->have_posts() ) {
-			echo '<ul>';
-			while ( $the_query->have_posts() ) {
-				$the_query->the_post();
-				echo '<li>';
-				edit_post_link( 
-					strftime('%x %X',strtotime(get_post_meta(get_the_ID(),'speeldatum',true))), 
-					'','',
-					get_the_ID()
-				);
-				echo '<br />';
-				echo get_post_meta(get_the_ID(),'locatie',true).', '.get_post_meta(get_the_ID(),'plaatsnaam',true);
-				echo '</li>';
-			}
-			echo '</ul>';
+		
+		if (get_post_status(get_the_ID()) == 'auto-draft') {
+			echo __('You need to save this production before you can add events.');
 		} else {
-			// no posts found
+			
+			$args = array(
+				'post_type'=>'event',
+				'meta_key' => 'speeldatum',
+				'order_by' => 'meta_value_num',
+				'order' => 'DESC',
+				'meta_query' => array(
+					array(
+						'key' => 'productie',
+						'value' => $production->ID,
+						'compare' => '=',
+					),
+					array(
+						'key' => 'speeldatum', // Check the start date field
+						'value' => date("Y-m-d"), // Set today's date (note the similar format)
+						'compare' => '>=', // Return the ones greater than today's date
+						'type' => 'NUMERIC,' // Let WordPress know we're working with numbers
+					)
+				),
+			);
+	
+			$the_query = new WP_Query($args);
+			if ( $the_query->have_posts() ) {
+				echo '<ul>';
+				while ( $the_query->have_posts() ) {
+					$the_query->the_post();
+					echo '<li>';
+					edit_post_link( 
+						strftime('%x %X',strtotime(get_post_meta(get_the_ID(),'speeldatum',true))), 
+						'','',
+						get_the_ID()
+					);
+					echo '<br />';
+					echo get_post_meta(get_the_ID(),'locatie',true).', '.get_post_meta(get_the_ID(),'plaatsnaam',true);
+					echo '</li>';
+				}
+				echo '</ul>';
+			} else {
+				// no posts found
+			}
+			
+			echo '<p><a href="'.get_bloginfo('url').'/wp-admin/post-new.php?post_type=event&production='.$production->ID.'" class="button button-primary">'.$wp_theatre_event->post_type_object->labels->new_item.'</a></p>';
+	
+			
+			/* Restore original Post Data */
+			wp_reset_postdata();
 		}
 		
-		echo '<p><a href="'.get_bloginfo('url').'/wp-admin/post-new.php?post_type=event&production='.$production->ID.'" class="button button-primary">'.$wp_theatre_event->post_type_object->labels->new_item.'</a></p>';
-
 		
-		/* Restore original Post Data */
-		wp_reset_postdata();		
 	}
 }
 
