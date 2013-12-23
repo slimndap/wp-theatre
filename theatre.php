@@ -359,6 +359,10 @@ class WP_Theatre_Season {
 		$this->post_type = get_post_type( 'event' );
 	}
 	
+	function get_productions() {
+		
+	}
+	
 }
 
 $wp_theatre = new WP_Theatre();
