@@ -17,9 +17,21 @@ After installations the functionality can easily be extend using other framework
 
 __Compatibility__
 
-Theatre integrates seamlessly with:
+The Theatre plugin is kept as simple as possible so it can be used for a wide variety of event websites. 
 
-* [Pods Framework](http://pods.io/)
+__What is included__
+
+* Admin screens for seasons, productions and events.
+* Default templates for productions (wip).
+* Short codes for listings of productions and events (wip).
+
+__What is not included__
+
+A lot! But most really cool things can easily be achieved by combining the Theatre plugin with other popular plugins:
+
+* Caching - use [W3 Total Cache](http://wordpress.org/plugins/w3-total-cache/) (wip)
+* Fancy admin screens with extra fields - use [Pods Framework](http://pods.io/)
+* Simple templating - use [Timber](http://jarednova.github.io/timber/)
 
 __What's next?__
 
