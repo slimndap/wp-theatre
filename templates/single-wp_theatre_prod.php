@@ -6,7 +6,8 @@
 			the_post(); 
 ?>
 			<div id="post-<?php the_ID(); ?>" <?php post_class(); ?>>	
-				<h2><?php the_title(); ?></h2>
+				<h2><?php the_title();?></h2>
+				<?php echo get_the_post_thumbnail($post->ID, 'medium');?>
 				<?php the_content();?>
 			</div>
 <?php
