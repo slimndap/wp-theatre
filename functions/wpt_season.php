@@ -6,14 +6,15 @@ class WPT_Season extends WP_Theatre {
 		if ($ID===false) {
 			$ID = get_the_ID();
 		}
-		parent::__construct($ID, $PostClass);
+		$this->ID = $ID;
+		$this->PostClass = $PostClass;
 	}
 	
 	function post_type() {
 		return get_post_type_object(self::post_type_name);
 	}
 
-	function get_productions() {
+	function get_productions($PostClass = false) {
 		if (!isset($this->productions)) {
 			$args = array(
 				'post_type'=>WPT_Production::post_type_name,
@@ -26,16 +27,21 @@ class WPT_Season extends WP_Theatre {
 					)
 				),
 			);
-			$posts = $this->get_posts($args);
+
+			if ($PostClass===false) {
+				$PostClass = $this->PostClass;
+			}
+			
+			$posts = parent::get_posts($args, $PostClass);		
 			
 			$productions = array();
 			for ($i=0;$i<count($posts);$i++) {
-				$posts[$i]->wpt = new WPT_Production($posts[$i]->ID);
-				$productions[] = $posts[$i];
+				$production = new WPT_Production($posts[$i]->ID);
+				$production->post = $posts[$i];
+				$productions[] = $production;
 			}
 			$this->productions = $productions;
 		}
-
 
 		return $this->productions;
 	}

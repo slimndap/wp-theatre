@@ -3,11 +3,12 @@ class WPT_Event extends WP_Theatre {
 
 	const post_type_name = 'wp_theatre_event';
 	
-	function __construct($ID=false) {
+	function __construct($ID=false, $PostClass=false) {
 		if ($ID===false) {
 			$ID = get_the_ID();
 		}
-		parent::__construct($ID);
+		$this->ID = $ID;
+		$this->PostClass = $PostClass;
 	}
 	
 	function post_type() {
@@ -16,7 +17,7 @@ class WPT_Event extends WP_Theatre {
 	
 	function get_production() {
 		if (!isset($this->production)) {
-			$this->production = get_post(get_post_meta($this->ID,'wp_theatre_prod', TRUE));
+			$this->production = new WPT_Production(get_post_meta($this->ID,WPT_Production::post_type_name, TRUE), $this->PostClass);
 		}
 		return $this->production;		
 	}

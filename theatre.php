@@ -21,34 +21,27 @@ $wp_theatre = new WP_Theatre();
 	
 class WP_Theatre {
 	function __construct($ID=false, $PostClass=false) {
-		if ($ID!==false) {
-			$this->ID = $ID;
-		}	
+		$this->ID = $ID;
 		$this->PostClass = $PostClass;
 	}
 	
-	function get_post($ID='', $PostClass = false) {
-		if (($PostClass===false) && isset($this->PostClass) && ($this->PostClass!==false)) {
-			$PostClass = $this->PostClass;
-		}
-
+	function get_post($ID=false, $PostClass = false) {
 		if ($PostClass!==false) {
-			$post = new $PostClass($ID);
+			$post = $PostClass::get_post($ID);
 		} else {
 			$post = get_post($ID);
 		}
-		
-		$called_class = get_called_class();
-		$post->wpt = new $called_class($ID);
-		
 		return $post;
 	}
 	
 	function get_posts($args = array(), $PostClass = false) {
-		if (($PostClass===false) && isset($this->PostClass) && ($this->PostClass!==false)) {
-			$PostClass = $this->PostClass;
+		if (isset($this) && get_class($this) == __CLASS__) {
+			// in object context
+			if ($PostClass===false) {
+				$PostClass = $this->PostClass;
+			}
 		}
-
+		
 		if ($PostClass!==false) {
 			$posts = $PostClass::get_posts($args);
 		} else {
@@ -74,8 +67,8 @@ class WP_Theatre {
 		for ($i=0;$i<count($posts);$i++) {
 			$production = new WPT_Production($posts[$i]->ID);
 			if ($production->is_upcoming()) {
-				$posts[$i]->wpt = $production;
-				$productions[] = $posts[$i];
+				$production->post = $posts[$i];
+				$productions[] = $production;
 			}
 		}
 		return $productions;
@@ -100,18 +93,38 @@ class WP_Theatre {
 				)
 			),
 		);
-		if ($PostClass===false) {
-			$PostClass = 'WPT_Event';
-		}
 		
 		$posts = static::get_posts($args, $PostClass);		
+
 		$events = array();
 		for ($i=0;$i<count($posts);$i++) {
-			$posts[$i]->wpt = new WPT_Event($posts[$i]->ID);
-			$events[] = $posts[$i];
+			$event = new WPT_Event($posts[$i]->ID, $PostClass);
+			$event->post = $posts[$i];
+			$events[] = $event;
 		}
-		return $events;
 		
+		return $events;
+	}
+
+	function render_events() {
+		$html = '';
+		$html.= '<h3>'.WPT_Event::post_type()->labels->name.'</h3>';
+		$html.= '<ul>';
+		foreach ($this->get_events() as $event) {
+			$production = new WPT_Production(get_post_meta($event->ID,WPT_Production::post_type_name,true));
+			$html.= '<li>';
+			$html.= '<h3><a href="'.get_permalink($production->post()->ID).'">'.$production->post()->post_title.'</a></h3>';
+			$html.= get_post_meta($event->ID,'event_date',true); 
+			$html.= '<br />';
+			$html.= get_post_meta($event->ID,'venue',true).', '.get_post_meta($event->ID,'city',true);
+			$html.= '<br />';
+			$html.= '<a href="'.get_post_meta($event->ID,'tickets_url',true).'">';
+			$html.= __('Tickets');			
+			$html.= '</a>';
+			$html.= '</li>';
+		}
+		$html.= '</ul>';
+		return $html;
 	}
 
 	function get_seasons($PostClass=false) {
@@ -125,11 +138,11 @@ class WP_Theatre {
 			
 		$seasons = array();
 		for ($i=0;$i<count($posts);$i++) {
-			$posts[$i]->wpt = new WPT_Season($posts[$i]->ID, $PostClass);
-			$seasons[] = $posts[$i];
+			$season = new WPT_Season($posts[$i]->ID, $PostClass);
+			$season->post = $posts[$i];
+			$seasons[] = $season;
 		}
 		return $seasons;
-		
 		
 	}
 

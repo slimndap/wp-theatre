@@ -53,13 +53,13 @@ class WPT_Admin {
 		} else {
 			
 			$args = array(
-				'post_type'=>'wp_theatre_event',
+				'post_type'=>WPT_Event::post_type_name,
 				'meta_key' => 'event_date',
 				'order_by' => 'meta_value_num',
 				'order' => 'ASC',
 				'meta_query' => array(
 					array(
-						'key' => WPT_Production::post_type()->name,
+						'key' => WPT_Production::post_type_name,
 						'value' => get_the_ID(),
 						'compare' => '=',
 					),
@@ -80,7 +80,7 @@ class WPT_Admin {
 					edit_post_link( 
 						strftime('%x %X',strtotime(get_post_meta($event->ID,'event_date',true))), 
 						'','',
-						get_the_ID()
+						$event->ID
 					);
 					echo '<br />';
 					echo get_post_meta($event->ID,'venue',true).', '.get_post_meta($event->ID,'city',true);

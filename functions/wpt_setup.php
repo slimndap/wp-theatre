@@ -3,9 +3,10 @@
 class WPT_Setup {
 	function __construct() {
 		add_action( 'init', array($this,'init'));
-		add_filter('template_include', array($this, 'template_include')); 
 		add_action('the_content', array($this, 'the_content'));
 		add_action('wp', array($this, 'wp'));
+		
+		add_shortcode('wp_theatre_events', array($this,'shortcode_events'));
 	}
 
 	function init() {
@@ -53,25 +54,16 @@ class WPT_Setup {
 		$this->production = new WPT_Production();			
 	}
 	
-	function template_include($template){	
-		if ( is_singular(WPT_Production::post_type_name) ) {
-			$template_name = 'single-'.WPT_Production::post_type()->name.'.php';
-			$theme_template = locate_template(array($template_name), true);
-			
-			if(empty($theme_template)) {
-				return plugin_dir_path(__FILE__).'../templates/'.$template_name;
-			} else {
-				return '';
-			}
-		}
-		return $template;
-	}
-	
 	function the_content($content) {
 		if (is_singular(WPT_Production::post_type_name)) {
 			$content .= $this->production->render_events();
 		}
 		return $content;
+	}
+	
+	function shortcode_events() {
+		global $wp_theatre;
+		return $wp_theatre->render_events();
 	}
 
 }

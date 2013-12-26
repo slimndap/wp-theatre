@@ -3,11 +3,36 @@ class WPT_Production extends WP_Theatre {
 
 	const post_type_name = 'wp_theatre_prod';
 	
-	function __construct($ID=false) {
+	function __construct($ID=false, $PostClass = false) {
 		if ($ID===false) {
 			$ID = get_the_ID();
 		}
-		parent::__construct($ID);
+
+		$this->ID = (int) $ID;
+		$this->PostClass = $PostClass;
+	}
+	
+	function get_post($ID=false, $PostClass = false) {
+		$static = !(isset($this) && get_class($this) == __CLASS__);
+		
+		if ($static) {
+			return new WPT_Production($ID, $PostClass);
+		} else {
+			if (!isset($this->post)) {
+				if ($ID===false) {
+					$ID = $this->ID;
+				}
+				if ($PostClass===false) {
+					$PostClass = $this->PostClass;
+				}
+				$this->post = parent::get_post($ID,$PostClass);							
+			}
+			return $this->post;
+		}
+	}
+	
+	function post() {
+		return $this->get_post();
 	}
 	
 	function post_type() {
