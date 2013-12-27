@@ -9,8 +9,9 @@ class WPT_Admin {
 		});
 		add_action( 'admin_menu', array($this, 'admin_menu' ));
 		add_action( 'add_meta_boxes', array($this, 'add_meta_boxes'));
-		add_action( 'save_post', array( $this, 'save_event' ) );
-		add_action( 'save_post', array( $this, 'save_production' ) );
+		add_action( 'edit_post', array( $this, 'edit_post' ));
+		add_action( 'delete_post',array( $this, 'delete_post' ));
+		add_action( 'save_post', array( $this, 'save_post' ) );
 	}	
 
 	function admin_menu() {
@@ -237,7 +238,15 @@ class WPT_Admin {
 	
 	}
 	
-	public function save_event( $post_id ) {
+	function edit_post( $post_id ) {
+		$this->flush_cache();
+	}
+	
+	function delete_post( $post_id ) {
+		$this->flush_cache();	
+	}
+	
+	function save_post( $post_id ) {
 		global $wp_theatre;
 	
 		/*
@@ -280,9 +289,7 @@ class WPT_Admin {
 		update_post_meta( $post_id, 'venue', $venue );
 		update_post_meta( $post_id, 'city', $city );
 		update_post_meta( $post_id, 'tickets_url', $tickets_url );
-	}	
-	public function save_production( $post_id ) {
-		global $wp_theatre;
+
 	
 		/*
 		 * We need to verify this came from the our screen and with proper authorization,
@@ -316,6 +323,21 @@ class WPT_Admin {
 
 		// Update the meta field.
 		update_post_meta( $post_id, WPT_Season::post_type_name, $season );
+		
+		$this->flush_cache();
+	}
+	
+	function flush_cache() {
+		if(!class_exists('W3_Plugin_TotalCacheAdmin'))		
+			return;	
+		if (
+			!in_array(
+				get_post_type($post_id),
+				array(WPT_Production::post_type_name,WPT_Event::post_type_name,WPT_Season::post_type_name)
+			)
+		) return;   
+			
+		if (function_exists('w3tc_pgcache_flush')) { w3tc_pgcache_flush(); }		
 	}
 }
 
