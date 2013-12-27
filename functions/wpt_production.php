@@ -40,7 +40,7 @@ class WPT_Production extends WP_Theatre {
 	}
 
 	function is_upcoming() {		
-		$events = $this->get_events();
+		$events = $this->upcoming_events();
 		return (is_array($events) && (count($events)>0));
 	}
 	
@@ -48,29 +48,24 @@ class WPT_Production extends WP_Theatre {
 		$dates_short = '';
 		$first_datetimestamp = $last_datetimestamp = '';
 		
-		$events = $this->get_events();
-		
+		$events = $this->upcoming_events();
 		if (is_array($events) && (count($events)>0)) {
-		
-			foreach ($this->get_events() as $event) {
+			foreach ($events as $event) {
 				if ($first_datetimestamp == '') {
 					$first_datetimestamp = strtotime($event->event_date);
 				}
-				
 			}
 			$last_datetimestamp = strtotime($event->event_date);
-			$datetimestamp_now = strtotime('now');
 
-		
-			if ($datetimestamp_now < $first_datetimestamp) {
+			if (time() < $first_datetimestamp) {
 				$dates_short.= strftime('%e %b.', $first_datetimestamp);
 				if ($last_datetimestamp != $first_datetimestamp) {
-					$dates_short.= ' t/m '.strftime('%e %b.', $last_datetimestamp);
+					$dates_short.= ' '.__('until').' '.strftime('%e %b.', $last_datetimestamp);
 				}
 			}
 			else {
 				if ($last_datetimestamp != $first_datetimestamp) {
-					$dates_short.= 'nog t/m '.strftime('%e %b.', $last_datetimestamp);
+					$dates_short.= __('until').' '.strftime('%e %b.', $last_datetimestamp);
 				}
 			}
 		}
@@ -82,20 +77,15 @@ class WPT_Production extends WP_Theatre {
 			$args = array(
 				'post_type'=>WPT_Event::post_type_name,
 				'meta_key' => 'event_date',
-				'order_by' => 'meta_value_num',
+				'order_by' => 'meta_value',
 				'order' => 'ASC',
+				'posts_per_page' => -1,
 				'meta_query' => array(
 					array(
 						'key' => self::post_type_name,
 						'value' => $this->ID,
 						'compare' => '=',
 					),
-					array(
-						'key' => 'event_date', // Check the start date field
-						'value' => date("Y-m-d"), // Set today's date (note the similar format)
-						'compare' => '>=', // Return the ones greater than today's date
-						'type' => 'NUMERIC,' // Let WordPress know we're working with numbers
-					)
 				),
 			);
 			$this->events = get_posts($args);
@@ -105,6 +95,32 @@ class WPT_Production extends WP_Theatre {
 	
 	function events() {
 		return $this->get_events();
+	}
+	
+	function upcoming_events() {
+		$events = $this->get_events();
+	
+		$upcoming_events = array();
+		$now = time();
+		foreach ($events as $event)	{
+			if (strtotime($event->event_date) >= $now) {
+				$upcoming_events[] = $event;
+			}
+		}
+		return $upcoming_events;
+	}
+	
+	function past_events() {
+		$events = $this->get_events();
+		
+		$past_events = array();
+		$now = time();
+		foreach ($events as $event)	{
+			if (strtotime($event->event_date) < $now) {
+				$past_events[] = $event;
+			}
+		}
+		return $past_events;		
 	}
 
 	function render_events() {

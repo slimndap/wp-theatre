@@ -1,21 +1,46 @@
 <?php
 class WPT_Admin {
 	function __construct() {
-		add_action( 'admin_init', function() {
-			wp_enqueue_script( 'wp_theatre_js', plugins_url( '../main.js', __FILE__ ), array('jquery') );
-			wp_enqueue_style( 'wp_theatre_css', plugins_url( '../style.css', __FILE__ ) );
-			wp_enqueue_script( 'jquery-ui-timepicker', plugins_url( '../js/jquery-ui-timepicker-addon.js', __FILE__ ), array('jquery-ui-datepicker','jquery-ui-slider')  );
-			wp_enqueue_style('jquery-style', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css');
-		});
+		add_action( 'admin_init', array($this,'admin_init'));
 		add_action( 'admin_menu', array($this, 'admin_menu' ));
 		add_action( 'add_meta_boxes', array($this, 'add_meta_boxes'));
 		add_action( 'edit_post', array( $this, 'edit_post' ));
 		add_action( 'delete_post',array( $this, 'delete_post' ));
 		add_action( 'save_post', array( $this, 'save_post' ) );
+
+		$this->options = get_option( 'wp_theatre' );
 	}	
+
+	function admin_init() {
+		wp_enqueue_script( 'wp_theatre_js', plugins_url( '../main.js', __FILE__ ), array('jquery') );
+		wp_enqueue_style( 'wp_theatre_css', plugins_url( '../style.css', __FILE__ ) );
+		wp_enqueue_script( 'jquery-ui-timepicker', plugins_url( '../js/jquery-ui-timepicker-addon.js', __FILE__ ), array('jquery-ui-datepicker','jquery-ui-slider')  );
+		wp_enqueue_style('jquery-style', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css');
+
+        register_setting(
+            'wp_theatre_group', // Option group
+            'wp_theatre' // Option name
+        );
+
+        add_settings_section(
+            'display_section_id', // ID
+            __('Display'), // Title
+            '', // Callback
+            'theatre-admin' // Page
+        );  
+
+        add_settings_field(
+            'settings_field_show_events', // ID
+            __('Show events on production page.'), // Title 
+            array( $this, 'settings_field_show_events' ), // Callback
+            'theatre-admin', // Page
+            'display_section_id' // Section           
+        );      
+	}
 
 	function admin_menu() {
 		add_menu_page( __('Theatre'), __('Theatre'), 'edit_posts', 'theatre', array($this, 'hallo'), '', 30);
+		add_submenu_page( 'theatre', 'Theatre '.__('Settings'), __('Settings'), 'manage_options', 'theatre-admin', array( $this, 'admin_page' ));
 	}
 	
 	function hallo() {
@@ -54,35 +79,12 @@ class WPT_Admin {
 	}
 	
 	function meta_box_events($production) {
+		$production = new WPT_Production(get_the_id());
 		
-
-		$production = get_the_id();
-		
-		if (get_post_status($production) == 'auto-draft') {
+		if (get_post_status($production->ID) == 'auto-draft') {
 			echo __('You need to save this production before you can add events.');
 		} else {
-			
-			$args = array(
-				'post_type'=>WPT_Event::post_type_name,
-				'meta_key' => 'event_date',
-				'order_by' => 'meta_value_num',
-				'order' => 'ASC',
-				'meta_query' => array(
-					array(
-						'key' => WPT_Production::post_type_name,
-						'value' => get_the_ID(),
-						'compare' => '=',
-					),
-					array(
-						'key' => 'event_date', // Check the start date field
-						'value' => date("Y-m-d"), // Set today's date (note the similar format)
-						'compare' => '>=', // Return the ones greater than today's date
-						'type' => 'NUMERIC,' // Let WordPress know we're working with numbers
-					)
-				),
-			);
-	
-			$events = get_posts($args);
+			$events = $production->upcoming_events();
 			if (count($events)>0) {
 				echo '<ul>';
 				foreach ($events as $event) {
@@ -97,11 +99,27 @@ class WPT_Admin {
 					echo '</li>';
 					
 				}
-				echo '</ul>';
-				
-			}
-			
-			echo '<p><a href="'.get_bloginfo('url').'/wp-admin/post-new.php?post_type='.WPT_Event::post_type_name.'&'.WPT_Production::post_type_name.'='.$production.'" class="button button-primary">'.WPT_Event::post_type()->labels->new_item.'</a></p>';	
+				echo '</ul>';	
+			}	
+			$events = $production->past_events();
+			if (count($events)>0) {
+				echo '<h4>'.__('Past events').'</h4>';
+				echo '<ul>';
+				foreach ($events as $event) {
+					echo '<li>';
+					edit_post_link( 
+						strftime('%x %X',strtotime(get_post_meta($event->ID,'event_date',true))), 
+						'','',
+						$event->ID
+					);
+					echo '<br />';
+					echo get_post_meta($event->ID,'venue',true).', '.get_post_meta($event->ID,'city',true);
+					echo '</li>';
+					
+				}
+				echo '</ul>';	
+			}	
+			echo '<p><a href="'.get_bloginfo('url').'/wp-admin/post-new.php?post_type='.WPT_Event::post_type_name.'&'.WPT_Production::post_type_name.'='.$production->ID.'" class="button button-primary">'.WPT_Event::post_type()->labels->new_item.'</a></p>';	
 		}		
 	}
 
@@ -339,6 +357,33 @@ class WPT_Admin {
 			
 		if (function_exists('w3tc_pgcache_flush')) { w3tc_pgcache_flush(); }		
 	}
+
+    public function settings_field_show_events() {
+        printf(
+            '<input type="checkbox" id="show_events" name="wp_theatre[show_events]" value="yes" %s />',
+    		(isset( $this->options['show_events'] ) && (esc_attr( $this->options['show_events'])=='yes')) ? 'checked="checked"' : ''
+        );
+    }
+
+    public function admin_page()
+    {
+        // Set class property
+        ?>
+        <div class="wrap">
+            <?php screen_icon(); ?>
+            <h2>Theatre <?php echo __('Settings');?></h2>           
+            <form method="post" action="options.php">
+            <?php
+                // This prints out all hidden setting fields
+                settings_fields( 'wp_theatre_group' );   
+                do_settings_sections( 'theatre-admin' );
+                submit_button(); 
+            ?>
+            </form>
+        </div>
+        <?php
+    }
+
 }
 
 if (is_admin()) {
