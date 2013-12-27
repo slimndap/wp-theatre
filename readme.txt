@@ -39,6 +39,7 @@ __What's next?__
 * Documentation
 * More shortcodes
 * Widgets
+* Settings
 
 __Contributors Welcome__
 
@@ -57,6 +58,10 @@ This section describes how to install the plugin and get it working.
 
 
 == Changelog ==
+
+=0.2.1=
+* Theatre now has it's own admin menu
+* New settings page
 
 = 0.2 =
 * Several smart functions which can be used inside templates.

@@ -7,10 +7,19 @@ class WPT_Admin {
 			wp_enqueue_script( 'jquery-ui-timepicker', plugins_url( '../js/jquery-ui-timepicker-addon.js', __FILE__ ), array('jquery-ui-datepicker','jquery-ui-slider')  );
 			wp_enqueue_style('jquery-style', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css');
 		});
+		add_action( 'admin_menu', array($this, 'admin_menu' ));
 		add_action( 'add_meta_boxes', array($this, 'add_meta_boxes'));
 		add_action( 'save_post', array( $this, 'save_event' ) );
 		add_action( 'save_post', array( $this, 'save_production' ) );
 	}	
+
+	function admin_menu() {
+		add_menu_page( __('Theatre'), __('Theatre'), 'edit_posts', 'theatre', array($this, 'hallo'), '', 30);
+	}
+	
+	function hallo() {
+		echo 'hallo';
+	}
 
 	function add_meta_boxes() {
 		add_meta_box(

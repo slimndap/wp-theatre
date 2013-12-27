@@ -2,6 +2,8 @@
 
 class WPT_Setup {
 	function __construct() {
+		$this->options = get_option( 'wp_theatre' );
+
 		add_action( 'init', array($this,'init'));
 		add_action('the_content', array($this, 'the_content'));
 		add_action('wp', array($this, 'wp'));
@@ -18,7 +20,8 @@ class WPT_Setup {
 				),
 			'public' => true,
 			'has_archive' => true,
-			'supports' => array('title', 'editor', 'excerpt', 'thumbnail')
+			'show_in_menu'  => 'theatre',
+  			'supports' => array('title', 'editor', 'excerpt', 'thumbnail')
 			)
 		);
 		register_post_type( 'wp_theatre_event',
@@ -34,7 +37,8 @@ class WPT_Setup {
 			'public' => true,
 			'has_archive' => true,
 			'show_in_menu' => false,
-			'supports' => array('')
+			'supports' => array(''),
+			'show_in_nav_menus'=> false
 			)
 		);
 		register_post_type( 'wp_theatre_season',
@@ -45,7 +49,8 @@ class WPT_Setup {
 				),
 			'public' => true,
 			'has_archive' => true,
-			'supports' => array('title')
+			'supports' => array('title'),
+			'show_in_menu'  => 'theatre',
 			)
 		);
 	}	
@@ -56,7 +61,9 @@ class WPT_Setup {
 	
 	function the_content($content) {
 		if (is_singular(WPT_Production::post_type_name)) {
-			$content .= $this->production->render_events();
+			if (isset( $this->options['show_events'] ) && (esc_attr( $this->options['show_events'])=='yes')) {
+				$content .= $this->production->render_events();
+			}
 		}
 		return $content;
 	}
