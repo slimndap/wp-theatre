@@ -9,6 +9,8 @@ class WPT_Setup {
 		add_action('wp', array($this, 'wp'));
 		
 		add_shortcode('wp_theatre_events', array($this,'shortcode_events'));
+
+		register_activation_hook( __FILE__, array($this, 'activate' ));		
 	}
 
 	function init() {
@@ -18,10 +20,14 @@ class WPT_Setup {
 					'name' => __( 'Productions' ),
 					'singular_name' => __( 'Production' )
 				),
-			'public' => true,
-			'has_archive' => true,
-			'show_in_menu'  => 'theatre',
-  			'supports' => array('title', 'editor', 'excerpt', 'thumbnail')
+				'public' => true,
+				'has_archive' => true,
+				'show_in_menu'  => 'theatre',
+	  			'supports' => array('title', 'editor', 'excerpt', 'thumbnail'),
+	  			'rewrite' => array(
+	  				'slug' => 'production'
+	  			)
+	  			
 			)
 		);
 		register_post_type( 'wp_theatre_event',
@@ -73,8 +79,14 @@ class WPT_Setup {
 		return $wp_theatre->render_events();
 	}
 
+	function activate() {
+		$this->init();
+		flush_rewrite_rules();
+	}
+
 }
 
-new WPT_Setup();
+$WPT_Setup = new WPT_Setup();
+
 
 ?>
