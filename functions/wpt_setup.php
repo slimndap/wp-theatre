@@ -23,6 +23,7 @@ class WPT_Setup {
 				'public' => true,
 				'has_archive' => true,
 				'show_in_menu'  => 'theatre',
+				'show_in_admin_bar' => true,
 	  			'supports' => array('title', 'editor', 'excerpt', 'thumbnail'),
 	  			'rewrite' => array(
 	  				'slug' => 'production'
@@ -40,7 +41,7 @@ class WPT_Setup {
 					'edit_item' => __('Edit event')
 
 				),
-			'public' => true,
+			'public' => false,
 			'has_archive' => true,
 			'show_in_menu' => false,
 			'supports' => array(''),

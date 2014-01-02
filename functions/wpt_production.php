@@ -6,7 +6,10 @@ class WPT_Production extends WP_Theatre {
 	function __construct($ID=false, $PostClass=false) {
 		parent::__construct($ID, $PostClass);
 		if (!$this->ID) {
-			$this->ID = get_the_ID();
+			$post = get_post();
+			if ($post) {
+				$this->ID = $post->ID;				
+			}
 		}		
 	}
 	

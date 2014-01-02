@@ -24,7 +24,7 @@ class WP_Theatre {
 	
 		$this->PostClass = $PostClass;
 
-		if (is_a($ID, 'WP_Post', true)) {
+		if ($ID instanceof WP_Post) {
 			// $ID is a WP_Post object
 			if (!$PostClass) {
 				$this->post = $ID;
