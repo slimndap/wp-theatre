@@ -22,33 +22,82 @@ class WPT_Production extends WP_Theatre {
 		return (is_array($events) && (count($events)>0));
 	}
 	
-	function dates_short() {
-		$dates_short = '';
-		$first_datetimestamp = $last_datetimestamp = '';
-		
-		$events = $this->upcoming_events();
-		if (is_array($events) && (count($events)>0)) {
-			foreach ($events as $event) {
-				if ($first_datetimestamp == '') {
-					$first_datetimestamp = strtotime($event->event_date);
-				}
-			}
-			$last_datetimestamp = strtotime($event->event_date);
+	function dates() {
+		if (!isset($this->dates)) {			
+			$dates = '';
+			$dates_short = '';
+			$first_datetimestamp = $last_datetimestamp = '';
+			
+			$events = $this->events();
+			if (is_array($events) && (count($events)>0)) {
 
-			if (time() < $first_datetimestamp) {
-				$dates_short.= strftime('%e %b.', $first_datetimestamp);
-				if ($last_datetimestamp != $first_datetimestamp) {
-					$dates_short.= ' '.__('until').' '.strftime('%e %b.', $last_datetimestamp);
-				}
+				$first = $events[0];
+				$last = $events[count($events)-1];
+
+				if (time() < $first->datetime()) {
+					$dates.= $first->date();
+					if ($last->datetime() != $first->datetime()) {
+						$dates.= ' '.__('to').' '.$last->date();
+					}
+				} else {
+					if ($last->datetime() != $first->datetime()) {
+						$dates.= __('until').' '.$last->date();
+					}					
+				}			
 			}
-			else {
-				if ($last_datetimestamp != $first_datetimestamp) {
-					$dates_short.= __('until').' '.strftime('%e %b.', $last_datetimestamp);
-				}
-			}
+			$this->dates = $dates;
 		}
-		return $dates_short;
+		return $this->dates;
 	}
+
+	function cities() {
+		if (!isset($this->cities)) {
+			$cities = array();
+			
+			$events = $this->upcoming_events();
+			if (is_array($events) && (count($events)>0)) {
+				foreach ($events as $event) {
+					$city = trim(ucwords(get_post_meta($event->ID,'city',true)));
+					if (!in_array($city, $cities)) {
+						$cities[] = $city;
+					}
+				}
+			}
+			
+			$cities_text = '';
+			
+			switch (count(array_slice($cities,0,3))) {
+				case 1:
+					$cities_text.= $cities[0];
+					break;
+				case 2:
+					$cities_text.= $cities[0].' '.__('and').' '.$cities[1];
+					break;
+				case 3:
+					$cities_text.= $cities[0].', '.$cities[1].' '.__('and').' '.$cities[2];
+					break;
+			}
+			
+			
+			if (count($cities)>3) {
+				$cities_text = __('ao').' '.$cities_text;
+			}
+			$this->cities = $cities_text;
+		}
+		return $this->cities;
+	}
+	
+	function summary() {
+		if (!isset($this->summary)) {
+			$this->summary = array(
+				'dates' => $this->dates(),
+				'cities' => $this->cities(),
+				'full' => $this->dates().' '.__('in').' '.$this->cities().'.'
+			);
+		}		
+		return $this->summary;
+	}
+
 
 	function get_events() {
 		if (!isset($this->events)) {
@@ -66,7 +115,17 @@ class WPT_Production extends WP_Theatre {
 					),
 				),
 			);
-			$this->events = get_posts($args);
+			$posts = get_posts($args);
+	
+			$events = array();
+			for ($i=0;$i<count($posts);$i++) {
+				$datetime = strtotime(get_post_meta($posts[$i]->ID,'event_date',true));
+				$events[$datetime] = new WPT_Event($posts[$i], $this->PostClass);
+			}
+			
+			ksort($events);
+			$this->events = array_values($events);
+
 		}
 		return $this->events;
 	}
@@ -81,7 +140,7 @@ class WPT_Production extends WP_Theatre {
 		$upcoming_events = array();
 		$now = time();
 		foreach ($events as $event)	{
-			if (strtotime($event->event_date) >= $now) {
+			if (strtotime($event->post()->event_date) >= $now) {
 				$upcoming_events[] = $event;
 			}
 		}
@@ -94,7 +153,7 @@ class WPT_Production extends WP_Theatre {
 		$past_events = array();
 		$now = time();
 		foreach ($events as $event)	{
-			if (strtotime($event->event_date) < $now) {
+			if (strtotime($event->post()->event_date) < $now) {
 				$past_events[] = $event;
 			}
 		}
@@ -105,11 +164,30 @@ class WPT_Production extends WP_Theatre {
 		$html = '';
 		$html.= '<h3>'.WPT_Event::post_type()->labels->name.'</h3>';
 		$html.= '<ul>';
-		foreach ($this->get_events() as $event) {
-			$html.= '<li>';
-			$html.=strftime('%x %X',strtotime(get_post_meta($event->ID,'event_date',true))); 
+		foreach ($this->upcoming_events() as $event) {
+			$html.= '<li itemscope itemtype="http://data-vocabulary.org/Event">';
+
+			$html.= '<meta itemprop="summary" content="'.$event->production()->post()->post_title.'" />';
+			$html.= '<meta itemprop="url" content="'.get_permalink($event->production()->ID).'" />';
+
+			$html.= '<span itemprop="startDate" datetime="'.date('c',$event->datetime()).'">';
+			$html.= $event->date(); 
+			$html.= '</span>';
+
 			$html.= '<br />';
-			$html.= get_post_meta($event->ID,'venue',true).', '.get_post_meta($event->ID,'city',true);
+
+			$html.= '<span itemprop="location" itemscope itemtype="http://data-vocabulary.org/?Organization">';
+
+			$html.= '<span itemprop="name">';
+			$html.= get_post_meta($event->ID,'venue',true);
+			$html.= '</span>';
+
+			$html.= ', <span itemprop="address" itemscope itemtype="http://data-vocabulary.org/Address">';
+			$html.= '<span itemprop="locality">'.get_post_meta($event->ID,'city',true).'</span>';
+			$html.= '</span>';
+			
+			$html.= '</span>';
+
 			$html.= '<br />';
 			$html.= '<a href="'.get_post_meta($event->ID,'tickets_url',true).'">';
 			$html.= __('Tickets');			

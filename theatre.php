@@ -78,10 +78,13 @@ class WP_Theatre {
 		for ($i=0;$i<count($posts);$i++) {
 			$production = new WPT_Production($posts[$i], $PostClass);
 			if ($production->is_upcoming()) {
-				$productions[] = $production;
+				$events = $production->events();
+				$productions[$events[0]->datetime()] = $production;
 			}
 		}
-		return $productions;
+		
+		ksort($productions);
+		return array_values($productions);
 	}
 	
 	function get_events($PostClass = false) {
@@ -106,12 +109,13 @@ class WP_Theatre {
 		
 		$posts = get_posts($args);
 
-		$events = array();
 		for ($i=0;$i<count($posts);$i++) {
-			$events[] = new WPT_Event($posts[$i], $PostClass);
+			$datetime = strtotime(get_post_meta($posts[$i]->ID,'event_date',true));
+			$events[$datetime] = new WPT_Event($posts[$i], $PostClass);
 		}
 		
-		return $events;
+		ksort($events);
+		return array_values($events);
 	}
 
 	function render_events() {
@@ -119,11 +123,26 @@ class WP_Theatre {
 		$html.= '<h3>'.WPT_Event::post_type()->labels->name.'</h3>';
 		$html.= '<ul>';
 		foreach ($this->get_events() as $event) {
-			$html.= '<li>';
-			$html.= '<h3><a href="'.get_permalink($event->production->post()->ID).'">'.$event->production->post()->post_title.'</a></h3>';
-			$html.= get_post_meta($event->ID,'event_date',true); 
+			$html.= '<li itemscope itemtype="http://data-vocabulary.org/Event">';
+			$html.= '<h3 itemprop="summary"><a href="'.get_permalink($event->production()->post()->ID).'" itemprop="url">'.$event->production->post()->post_title.'</a></h3>';
+			$html.= '<span itemprop="startDate" datetime="'.date('c',$event->datetime()).'">';
+			$html.= $event->date(); 
+			$html.= '</span>';
+
 			$html.= '<br />';
-			$html.= get_post_meta($event->ID,'venue',true).', '.get_post_meta($event->ID,'city',true);
+
+			$html.= '<span itemprop="location" itemscope itemtype="http://data-vocabulary.org/?Organization">';
+
+			$html.= '<span itemprop="name">';
+			$html.= get_post_meta($event->ID,'venue',true);
+			$html.= '</span>';
+
+			$html.= ', <span itemprop="address" itemscope itemtype="http://data-vocabulary.org/Address">';
+			$html.= '<span itemprop="locality">'.get_post_meta($event->ID,'city',true).'</span>';
+			$html.= '</span>';
+			
+			$html.= '</span>';
+
 			$html.= '<br />';
 			$html.= '<a href="'.get_post_meta($event->ID,'tickets_url',true).'">';
 			$html.= __('Tickets');			

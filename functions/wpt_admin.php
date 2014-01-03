@@ -88,9 +88,10 @@ class WPT_Admin {
 			if (count($events)>0) {
 				echo '<ul>';
 				foreach ($events as $event) {
+					$date = $event->date();
 					echo '<li>';
 					edit_post_link( 
-						strftime('%x %X',strtotime(get_post_meta($event->ID,'event_date',true))), 
+						$date['text'], 
 						'','',
 						$event->ID
 					);
@@ -106,9 +107,10 @@ class WPT_Admin {
 				echo '<h4>'.__('Past events').'</h4>';
 				echo '<ul>';
 				foreach ($events as $event) {
+					$date = $event->date();
 					echo '<li>';
 					edit_post_link( 
-						strftime('%x %X',strtotime(get_post_meta($event->ID,'event_date',true))), 
+						$date['text'], 
 						'','',
 						$event->ID
 					);

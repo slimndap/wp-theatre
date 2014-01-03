@@ -41,7 +41,7 @@ class WPT_Setup {
 					'edit_item' => __('Edit event')
 
 				),
-			'public' => false,
+			'public' => true,
 			'has_archive' => true,
 			'show_in_menu' => false,
 			'supports' => array(''),

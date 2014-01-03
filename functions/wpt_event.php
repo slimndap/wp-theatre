@@ -17,6 +17,27 @@ class WPT_Event extends WP_Theatre {
 	function production() {
 		return $this->get_production();
 	}
+	
+	function datetime() {
+		if (!isset($this->datetime)) {
+			$this->datetime = strtotime($this->post()->event_date);
+		}	
+		return $this->datetime;	
+	}
+
+	function date() {
+		if (!isset($this->date)) {
+			$this->date = date(get_option('date_format'),$this->datetime());
+		}	
+		return $this->date;	
+	}
+
+	function time() {
+		if (!isset($this->time)) {
+			$this->time = date(get_option('time_format'),$this->datetime());
+		}	
+		return $this->time;
+	}
 }
 
 ?>
