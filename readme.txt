@@ -13,7 +13,7 @@ Turn your Wordpress website into an event/show/concert-driven website.
 
 This plugin is aimed at theme developers. It gives you the core-functionality needed for websites of theatres, stages or performers. 
 
-After installations the functionality can easily be extend using other framework (eg. the [Pods Framework](http://pods.io/)).
+After installations the functionality can easily be extend using other frameworks (eg. the [Pods Framework](http://pods.io/)).
 
 __Compatibility__
 
@@ -58,6 +58,9 @@ This section describes how to install the plugin and get it working.
 
 
 == Changelog ==
+
+= 0.2.2 =
+* Support for Dutch language.
 
 =0.2.1=
 * Theatre now has it's own admin menu
