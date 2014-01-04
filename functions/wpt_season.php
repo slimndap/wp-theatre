@@ -18,6 +18,8 @@ class WPT_Season extends WP_Theatre {
 			$args = array(
 				'post_type'=>WPT_Production::post_type_name,
 				'posts_per_page' => -1,
+				'order' => 'ASC',
+				'orderby' => 'title',
 				'meta_query' => array(
 					array(
 						'key' => self::post_type_name,

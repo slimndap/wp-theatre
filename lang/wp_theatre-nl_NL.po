@@ -1,0 +1,190 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Theatre v0.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2014-01-04 22:06:54+0000\n"
+"Last-Translator: slimndap <jeroen@slimndap.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: CSL v1.x\n"
+"X-Poedit-Language: Dutch\n"
+"X-Poedit-Country: NETHERLANDS\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;_n_noop:1,2;_c,_nc:4c,1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;\n"
+"X-Poedit-Basepath: ../\n"
+"X-Poedit-Bookmarks: \n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Textdomain-Support: yes"
+
+#: functions/wpt_admin.php:27
+#@ wp_theatre
+msgid "Display"
+msgstr "Weergave"
+
+#: functions/wpt_admin.php:34
+#@ wp_theatre
+msgid "Show events on production page."
+msgstr "Geef voorstellingen weer op productiepagina."
+
+#. translators: plugin header field 'Name'
+#: functions/wpt_admin.php:42
+#: theatre.php:0
+#@ default
+#@ wp_theatre
+msgid "Theatre"
+msgstr "Theater"
+
+#: functions/wpt_admin.php:43
+#: functions/wpt_admin.php:374
+#@ default
+msgid "Settings"
+msgstr "Instellingen"
+
+#: functions/wpt_admin.php:60
+#@ wp_theatre
+msgid "Event data"
+msgstr "Voorstellingsgegevens"
+
+#: functions/wpt_admin.php:67
+#: functions/wpt_production.php:197
+#: theatre.php:149
+#@ wp_theatre
+#@ default
+msgid "Tickets"
+msgstr "Tickets"
+
+#: functions/wpt_admin.php:85
+#@ wp_theatre
+msgid "You need to save this production before you can add events."
+msgstr "Je moet deze productie opslaan voordat je voorstellingen kan toevoegen."
+
+#: functions/wpt_admin.php:106
+#@ wp_theatre
+msgid "Past events"
+msgstr "Oudere voorstellingen"
+
+#: functions/wpt_admin.php:187
+#@ wp_theatre
+msgid "Event date"
+msgstr "Speeldatum"
+
+#: functions/wpt_admin.php:195
+#@ wp_theatre
+msgid "Venue"
+msgstr "Locatie"
+
+#: functions/wpt_admin.php:203
+#@ wp_theatre
+msgid "City"
+msgstr "Stad"
+
+#: functions/wpt_admin.php:219
+#@ wp_theatre
+msgid "Tickets URL"
+msgstr "Tickets URL"
+
+#: functions/wpt_production.php:45
+#@ wp_theatre
+msgid "to"
+msgstr "t/m"
+
+#: functions/wpt_production.php:48
+#@ wp_theatre
+msgid "until"
+msgstr "t/m"
+
+#: functions/wpt_production.php:78
+#: functions/wpt_production.php:81
+#@ wp_theatre
+msgid "and"
+msgstr "en"
+
+#: functions/wpt_production.php:87
+#@ wp_theatre
+msgid "ao"
+msgstr "o.a."
+
+#: functions/wpt_production.php:99
+#@ wp_theatre
+msgid "in"
+msgstr "in"
+
+#: functions/wpt_setup.php:22
+#@ wp_theatre
+msgid "Productions"
+msgstr "Producties"
+
+#: functions/wpt_setup.php:23
+#@ wp_theatre
+msgid "Production"
+msgstr "Productie"
+
+#: functions/wpt_setup.php:39
+#@ wp_theatre
+msgid "Events"
+msgstr "Voorstellingen"
+
+#: functions/wpt_setup.php:40
+#@ wp_theatre
+msgid "Event"
+msgstr "Voorstelling"
+
+#: functions/wpt_setup.php:41
+#@ wp_theatre
+msgid "New event"
+msgstr "Nieuwe voorstelling"
+
+#: functions/wpt_setup.php:42
+#@ wp_theatre
+msgid "Add new event"
+msgstr "Nieuwe voorstelling toevoegen"
+
+#: functions/wpt_setup.php:43
+#@ wp_theatre
+msgid "Edit event"
+msgstr "Voorstelling bewerken"
+
+#: functions/wpt_setup.php:56
+#@ wp_theatre
+msgid "Seasons"
+msgstr "Seizoenen"
+
+#: functions/wpt_setup.php:57
+#@ wp_theatre
+msgid "Season"
+msgstr "Seizoen"
+
+#. translators: plugin header field 'PluginURI'
+#: theatre.php:0
+#@ wp_theatre
+msgid "http://wordpress.org/plugins/theatre/"
+msgstr ""
+
+#. translators: plugin header field 'Description'
+#: theatre.php:0
+#@ wp_theatre
+msgid "Turn your Wordpress website into a theatre website."
+msgstr "Maak een theaterwebsite met Wordpress."
+
+#. translators: plugin header field 'Author'
+#: theatre.php:0
+#@ wp_theatre
+msgid "Jeroen Schmit, Slim & Dapper"
+msgstr ""
+
+#. translators: plugin header field 'AuthorURI'
+#: theatre.php:0
+#@ wp_theatre
+msgid "http://slimndap.com/"
+msgstr ""
+
+#. translators: plugin header field 'Version'
+#: theatre.php:0
+#@ wp_theatre
+msgid "0.2.1"
+msgstr ""
+

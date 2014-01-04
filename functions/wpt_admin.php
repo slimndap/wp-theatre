@@ -24,14 +24,14 @@ class WPT_Admin {
 
         add_settings_section(
             'display_section_id', // ID
-            __('Display'), // Title
+            __('Display','wp_theatre'), // Title
             '', // Callback
             'theatre-admin' // Page
         );  
 
         add_settings_field(
             'settings_field_show_events', // ID
-            __('Show events on production page.'), // Title 
+            __('Show events on production page.','wp_theatre'), // Title 
             array( $this, 'settings_field_show_events' ), // Callback
             'theatre-admin', // Page
             'display_section_id' // Section           
@@ -82,16 +82,15 @@ class WPT_Admin {
 		$production = new WPT_Production(get_the_id());
 		
 		if (get_post_status($production->ID) == 'auto-draft') {
-			echo __('You need to save this production before you can add events.');
+			echo __('You need to save this production before you can add events.','wp_theatre');
 		} else {
 			$events = $production->upcoming_events();
 			if (count($events)>0) {
 				echo '<ul>';
 				foreach ($events as $event) {
-					$date = $event->date();
 					echo '<li>';
 					edit_post_link( 
-						$date['text'], 
+						$event->date().' '.$event->time(), 
 						'','',
 						$event->ID
 					);
@@ -104,13 +103,12 @@ class WPT_Admin {
 			}	
 			$events = $production->past_events();
 			if (count($events)>0) {
-				echo '<h4>'.__('Past events').'</h4>';
+				echo '<h4>'.__('Past events','wp_theatre').'</h4>';
 				echo '<ul>';
 				foreach ($events as $event) {
-					$date = $event->date();
 					echo '<li>';
 					edit_post_link( 
-						$date['text'], 
+						$event->date().' '.$event->time(), 
 						'','',
 						$event->ID
 					);

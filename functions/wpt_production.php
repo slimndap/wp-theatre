@@ -29,21 +29,25 @@ class WPT_Production extends WP_Theatre {
 			$first_datetimestamp = $last_datetimestamp = '';
 			
 			$events = $this->events();
-			if (is_array($events) && (count($events)>0)) {
+			$upcoming = $this->upcoming_events();
+			if (is_array($upcoming) && (count($upcoming)>0)) {
 
 				$first = $events[0];
+				$next = $upcoming[0];
 				$last = $events[count($events)-1];
 
-				if (time() < $first->datetime()) {
-					$dates.= $first->date();
-					if ($last->datetime() != $first->datetime()) {
-						$dates.= ' '.__('to').' '.$last->date();
-					}
+				if ($next->date()==$last->date()) {
+					// one or more events on the same day
+					$dates.= $next->date();
 				} else {
-					if ($last->datetime() != $first->datetime()) {
-						$dates.= __('until').' '.$last->date();
-					}					
-				}			
+					if (time() < $first->datetime()) {
+						// serie starts in the future
+						$dates.= $first->date().' '.__('to','wp_theatre').' '.$last->date();
+					} else {
+						// serie is already running
+						$dates.= __('until','wp_theatre').' '.$last->date();
+					}
+				}
 			}
 			$this->dates = $dates;
 		}
@@ -71,16 +75,16 @@ class WPT_Production extends WP_Theatre {
 					$cities_text.= $cities[0];
 					break;
 				case 2:
-					$cities_text.= $cities[0].' '.__('and').' '.$cities[1];
+					$cities_text.= $cities[0].' '.__('and','wp_theatre').' '.$cities[1];
 					break;
 				case 3:
-					$cities_text.= $cities[0].', '.$cities[1].' '.__('and').' '.$cities[2];
+					$cities_text.= $cities[0].', '.$cities[1].' '.__('and','wp_theatre').' '.$cities[2];
 					break;
 			}
 			
 			
 			if (count($cities)>3) {
-				$cities_text = __('ao').' '.$cities_text;
+				$cities_text = __('ao','wp_theatre').' '.$cities_text;
 			}
 			$this->cities = $cities_text;
 		}
@@ -92,7 +96,7 @@ class WPT_Production extends WP_Theatre {
 			$this->summary = array(
 				'dates' => $this->dates(),
 				'cities' => $this->cities(),
-				'full' => $this->dates().' '.__('in').' '.$this->cities().'.'
+				'full' => $this->dates().' '.__('in','wp_theatre').' '.$this->cities().'.'
 			);
 		}		
 		return $this->summary;
@@ -171,7 +175,7 @@ class WPT_Production extends WP_Theatre {
 			$html.= '<meta itemprop="url" content="'.get_permalink($event->production()->ID).'" />';
 
 			$html.= '<span itemprop="startDate" datetime="'.date('c',$event->datetime()).'">';
-			$html.= $event->date(); 
+			$html.= $event->date().' '.$event->time(); 
 			$html.= '</span>';
 
 			$html.= '<br />';
@@ -190,7 +194,7 @@ class WPT_Production extends WP_Theatre {
 
 			$html.= '<br />';
 			$html.= '<a href="'.get_post_meta($event->ID,'tickets_url',true).'">';
-			$html.= __('Tickets');			
+			$html.= __('Tickets','wp_theatre');			
 			$html.= '</a>';
 			$html.= '</li>';
 		}

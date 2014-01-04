@@ -7,6 +7,7 @@ Author: Jeroen Schmit, Slim & Dapper
 Version: 0.2.1
 Author URI: http://slimndap.com/
 Text Domain: wp_theatre
+Domain Path: /lang
 */
 
 global $wp_theatre;
@@ -126,7 +127,7 @@ class WP_Theatre {
 			$html.= '<li itemscope itemtype="http://data-vocabulary.org/Event">';
 			$html.= '<h3 itemprop="summary"><a href="'.get_permalink($event->production()->post()->ID).'" itemprop="url">'.$event->production->post()->post_title.'</a></h3>';
 			$html.= '<span itemprop="startDate" datetime="'.date('c',$event->datetime()).'">';
-			$html.= $event->date(); 
+			$html.= $event->date().' '.$event->time(); 
 			$html.= '</span>';
 
 			$html.= '<br />';
