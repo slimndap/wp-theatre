@@ -38,6 +38,9 @@ class WPT_Event extends WP_Theatre {
 		}	
 		return $this->time;
 	}
+	
+	function post_class() {
+	}
 }
 
 ?>

@@ -193,9 +193,24 @@ class WPT_Production extends WP_Theatre {
 			$html.= '</span>';
 
 			$html.= '<br />';
-			$html.= '<a href="'.get_post_meta($event->ID,'tickets_url',true).'">';
-			$html.= __('Tickets','wp_theatre');			
-			$html.= '</a>';
+			
+			if (get_post_meta($event->ID,'tickets_status',true) == 'soldout') {
+				$html.= __('Sold out', 'wp_theatre');
+			} else {
+				$url = get_post_meta($event->ID,'tickets_url',true);
+				if ($url!='') {
+					$html.= '<a href="'.get_post_meta($event->ID,'tickets_url',true).'">';
+					$button_text = get_post_meta($event->ID,'tickets_button',true);
+					if ($button_text!='') {
+						$html.= $button_text;
+					} else {
+						$html.= __('Tickets','wp_theatre');			
+					}
+					$html.= '</a>';
+					
+				}
+			}
+			
 			$html.= '</li>';
 		}
 		$html.= '</ul>';

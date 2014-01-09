@@ -39,14 +39,10 @@ class WPT_Admin {
 	}
 
 	function admin_menu() {
-		add_menu_page( __('Theatre'), __('Theatre'), 'edit_posts', 'theatre', array($this, 'hallo'), '', 30);
+		add_menu_page( __('Theatre'), __('Theatre'), 'edit_posts', 'theatre', array(), 'dashicons-calendar', 30);
 		add_submenu_page( 'theatre', 'Theatre '.__('Settings'), __('Settings'), 'manage_options', 'theatre-admin', array( $this, 'admin_page' ));
 	}
 	
-	function hallo() {
-		echo 'hallo';
-	}
-
 	function add_meta_boxes() {
 		add_meta_box(
             'wp_theatre_events',
@@ -223,6 +219,42 @@ class WPT_Admin {
  		echo '</td>';
 		echo '</tr>';
        
+  		echo '<tr>';
+		echo '<th><label>'.__('Status','wp_theatre').'</label></th>';	
+		echo '<td>';
+				
+		$status = get_post_meta($event->ID,'tickets_status',true);
+		
+		echo '<label>';
+		echo '<input type="radio" name="tickets_status" value=""';
+		if ($status=='') {
+			echo ' checked="checked"';
+		}
+		echo '> ';
+		echo '<span>'.__('on sale','wp_theatre').'</span>';
+		echo '</label><br />';
+		
+		echo '<label>';
+		echo '<input type="radio" name="tickets_status" value="soldout"';
+		if ($status=='soldout') {
+			echo ' checked="checked"';
+		}
+		echo '> ';
+		echo '<span>'.__('sold out','wp_theatre').'</span>';
+		echo '</label><br />';
+		
+ 		echo '</td>';
+		echo '</tr>';
+		
+  		echo '<tr>';
+		echo '<th><label>'.__('Text on button','wp_theatre').'</label></th>';	
+		echo '<td>';
+						
+		echo '<input type="text" name="tickets_button"';
+        echo ' value="' . get_post_meta($event->ID,'tickets_button',true) . '" />';
+ 		echo '</td>';
+		echo '</tr>';
+       
         echo '</tbody>';
         echo '</table>';		
 	}
@@ -300,14 +332,17 @@ class WPT_Admin {
 		$venue = sanitize_text_field( $_POST['venue'] );
 		$city = sanitize_text_field( $_POST['city'] );
 		$tickets_url = sanitize_text_field( $_POST['tickets_url'] );
-
+		$tickets_button = sanitize_text_field( $_POST['tickets_button'] );
+		$tickets_status = $_POST['tickets_status'];
+		
 		// Update the meta field.
 		update_post_meta( $post_id, WPT_Production::post_type_name, $production );
 		update_post_meta( $post_id, 'event_date', $event_date );
 		update_post_meta( $post_id, 'venue', $venue );
 		update_post_meta( $post_id, 'city', $city );
 		update_post_meta( $post_id, 'tickets_url', $tickets_url );
-
+		update_post_meta( $post_id, 'tickets_status', $tickets_status );
+		update_post_meta( $post_id, 'tickets_button', $tickets_button );
 	
 		/*
 		 * We need to verify this came from the our screen and with proper authorization,
