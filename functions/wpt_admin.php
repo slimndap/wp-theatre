@@ -231,7 +231,7 @@ class WPT_Admin {
 			echo ' checked="checked"';
 		}
 		echo '> ';
-		echo '<span>'.__('on sale','wp_theatre').'</span>';
+		echo '<span>'.__('On sale','wp_theatre').'</span>';
 		echo '</label><br />';
 		
 		echo '<label>';
@@ -240,7 +240,7 @@ class WPT_Admin {
 			echo ' checked="checked"';
 		}
 		echo '> ';
-		echo '<span>'.__('sold out','wp_theatre').'</span>';
+		echo '<span>'.__('Sold out','wp_theatre').'</span>';
 		echo '</label><br />';
 		
  		echo '</td>';

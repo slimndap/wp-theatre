@@ -59,6 +59,10 @@ This section describes how to install the plugin and get it working.
 
 == Changelog ==
 
+= 0.2.3 =
+* Support for sold out events
+* Custom text on ticket-buttons
+
 = 0.2.2 =
 * Support for Dutch language.
 
