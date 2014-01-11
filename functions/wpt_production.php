@@ -174,28 +174,37 @@ class WPT_Production extends WP_Theatre {
 			$html.= '<meta itemprop="summary" content="'.$event->production()->post()->post_title.'" />';
 			$html.= '<meta itemprop="url" content="'.get_permalink($event->production()->ID).'" />';
 
-			$html.= '<span itemprop="startDate" datetime="'.date('c',$event->datetime()).'">';
+			$html.= '<div itemprop="startDate" datetime="'.date('c',$event->datetime()).'">';
 			$html.= $event->date().' '.$event->time(); 
-			$html.= '</span>';
+			$html.= '</div>';
 
-			$html.= '<br />';
-
-			$html.= '<span itemprop="location" itemscope itemtype="http://data-vocabulary.org/?Organization">';
-
-			$html.= '<span itemprop="name">';
-			$html.= get_post_meta($event->ID,'venue',true);
-			$html.= '</span>';
-
-			$html.= ', <span itemprop="address" itemscope itemtype="http://data-vocabulary.org/Address">';
-			$html.= '<span itemprop="locality">'.get_post_meta($event->ID,'city',true).'</span>';
-			$html.= '</span>';
+			$remark = get_post_meta($event->ID,'remark',true);
+			if ($remark!='') {
+				$html.= '<div class="remark">'.$remark.'</div>';
+			}
 			
-			$html.= '</span>';
 
-			$html.= '<br />';
+			$html.= '<div itemprop="location" itemscope itemtype="http://data-vocabulary.org/Organization">';
+
+			$venue = get_post_meta($event->ID,'venue',true);
+			$city = get_post_meta($event->ID,'city',true);
+			if ($venue!='') {
+				$html.= '<span itemprop="name">'.$venue.'</span>';
+			}
+			if ($venue!='' && $city!='') {
+				$html.= ', ';
+			}
+			if ($city!='') {
+				$html.= '<span itemprop="address" itemscope itemtype="http://data-vocabulary.org/Address">';
+				$html.= '<span itemprop="locality">'.$city.'</span>';
+				$html.= '</span>';
+			}
 			
+			$html.= '</div>'; // .location
+
+			$html.= '<div class="tickets">';			
 			if (get_post_meta($event->ID,'tickets_status',true) == 'soldout') {
-				$html.= __('Sold out', 'wp_theatre');
+				$html.= '<span class="soldout">'.__('Sold out', 'wp_theatre').'</span>';
 			} else {
 				$url = get_post_meta($event->ID,'tickets_url',true);
 				if ($url!='') {
@@ -210,6 +219,7 @@ class WPT_Production extends WP_Theatre {
 					
 				}
 			}
+			$html.= '</div>'; // .tickets
 			
 			$html.= '</li>';
 		}

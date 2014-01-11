@@ -179,6 +179,14 @@ class WPT_Admin {
  		echo '</td>';
 		echo '</tr>';
        
+		echo '<tr class="form-field">';
+		echo '<th><label>'.__('Remark','wp_theatre').'</label></th>';	
+		echo '<td>';
+		echo '<input type="text" name="remark"';
+        echo ' value="' . get_post_meta($event->ID,'remark',true) . '" />';
+ 		echo '</td>';
+		echo '</tr>';
+       
         echo '</tbody>';
         echo '</table>';		
 	}
@@ -307,6 +315,7 @@ class WPT_Admin {
 		$event_date = sanitize_text_field( $_POST['event_date'] );
 		$venue = sanitize_text_field( $_POST['venue'] );
 		$city = sanitize_text_field( $_POST['city'] );
+		$remark = sanitize_text_field( $_POST['remark'] );
 		$tickets_url = sanitize_text_field( $_POST['tickets_url'] );
 		$tickets_button = sanitize_text_field( $_POST['tickets_button'] );
 		$tickets_status = $_POST['tickets_status'];
@@ -316,6 +325,7 @@ class WPT_Admin {
 		update_post_meta( $post_id, 'event_date', $event_date );
 		update_post_meta( $post_id, 'venue', $venue );
 		update_post_meta( $post_id, 'city', $city );
+		update_post_meta( $post_id, 'remark', $remark );
 		update_post_meta( $post_id, 'tickets_url', $tickets_url );
 		update_post_meta( $post_id, 'tickets_status', $tickets_status );
 		update_post_meta( $post_id, 'tickets_button', $tickets_button );
@@ -441,6 +451,12 @@ class WPT_Admin {
 		
 		$html.= '<div class="content">';
 		$html.= '<div class="title">'.$event->production()->post()->post_title.'</div>';
+		
+		$remark = get_post_meta($event->ID,'remark',true);
+		if ($remark!='') {
+			$html.= '<div class="remark">'.$remark.'</div>';
+		}
+		
 		$html.= get_post_meta($event->ID,'venue',true);
 		$html.= ', ';
 		$html.= get_post_meta($event->ID,'city',true);

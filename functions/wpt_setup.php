@@ -12,6 +12,10 @@ class WPT_Setup {
 
 		register_activation_hook( __FILE__, array($this, 'activate' ));		
 
+		add_action( 'widgets_init', function(){
+		     register_widget( 'WPT_Events_Widget' );
+		});
+		
 		add_action( 'plugins_loaded', array($this,'plugins_loaded'));
 	}
 
@@ -37,7 +41,7 @@ class WPT_Setup {
 	  			
 			)
 		);
-		register_post_type( 'wp_theatre_event',
+		register_post_type( WPT_Event::post_type_name,
 			array(
 				'labels' => array(
 					'name' => __( 'Events','wp_theatre'),

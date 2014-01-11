@@ -61,6 +61,8 @@ This section describes how to install the plugin and get it working.
 
 = 0.2.4 =
 * Added a dashboard widget.
+* Events can have a remark (eg. try-out, premiere, special guests).
+* Added a sidebar widget that lists all upcoming events.
 
 = 0.2.3 =
 * Support for sold out events

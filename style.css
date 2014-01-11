@@ -68,6 +68,9 @@
 #dashboard_wp_theatre .wp_theatre_event > div.content .title {
   font-weight: bold;
 }
+#dashboard_wp_theatre .wp_theatre_event > div.content .remark {
+  font-style: italic;
+}
 #dashboard_wp_theatre .wp_theatre_event > div.tickets {
   width: 20%;
 }
