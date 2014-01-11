@@ -8,6 +8,8 @@ class WPT_Admin {
 		add_action( 'delete_post',array( $this, 'delete_post' ));
 		add_action( 'save_post', array( $this, 'save_post' ) );
 
+		add_action( 'wp_dashboard_setup', array($this,'wp_dashboard_setup' ));
+
 		$this->options = get_option( 'wp_theatre' );
 	}	
 
@@ -417,6 +419,50 @@ class WPT_Admin {
             </form>
         </div>
         <?php
+    }
+    
+    function wp_dashboard_setup() {
+		wp_add_dashboard_widget(
+                 'dashboard_wp_theatre',         // Widget slug.
+                 __('Theatre','wp-theatre'),         // Title.
+                 array($this,'wp_add_dashboard_widget') // Display function.
+        );		    
+    }
+    
+    function wp_add_dashboard_widget() {
+    	global $wp_theatre;
+		$html = '';
+		$html.= '<h4>'.WPT_Event::post_type()->labels->name.'</h4>';
+		$html.= '<ul class="events">';
+		foreach ($wp_theatre->get_events() as $event) {
+			$html.= '<li>';
+
+			$html.= '<div class="date">';
+			$html.= '<a href="'.get_edit_post_link($event->ID).'">';
+			$html.= $event->date().' '.$event->time(); 
+			$html.= '</a>';
+			$html.= '</div>';
+			
+			$html.= '<div class="content">';
+			$html.= '<a href="'.get_edit_post_link($event->production()->post()->ID).'">';
+			$html.= $event->production->post()->post_title;
+			$html.= '</a>';
+			$html.= '<br />';
+			$html.= get_post_meta($event->ID,'venue',true);
+			$html.= ', ';
+			$html.= get_post_meta($event->ID,'city',true);
+			$html.= '</div>';
+
+			$html.= '<div class="tickets">';
+			$html.= '<a href="'.get_post_meta($event->ID,'tickets_url',true).'">';
+			$html.= __('Tickets');			
+			$html.= '</a>';
+			$html.= '</div>';
+
+			$html.= '</li>';
+		}
+		$html.= '</ul>';
+		echo $html;
     }
 
 }

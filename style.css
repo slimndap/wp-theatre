@@ -22,3 +22,30 @@
   margin: 0;
   padding: 0;
 }
+#dashboard_wp_theatre .events li {
+  overflow: auto;
+}
+#dashboard_wp_theatre .events li > div {
+  float: left;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+#dashboard_wp_theatre .events li > div.date {
+  width: 20%;
+  color: #777777;
+  padding-right: 8px;
+}
+#dashboard_wp_theatre .events li > div.content {
+  width: 60%;
+  padding-right: 8px;
+}
+#dashboard_wp_theatre .events li > div.tickets {
+  width: 20%;
+}
+#dashboard_wp_theatre .events li span {
+  float: left;
+  color: #777777;
+  width: 150px;
+  margin-right: 8px;
+}
