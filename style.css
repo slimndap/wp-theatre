@@ -22,30 +22,76 @@
   margin: 0;
   padding: 0;
 }
-#dashboard_wp_theatre .events li {
+#dashboard_wp_theatre .wp_theatre_event {
   overflow: auto;
 }
-#dashboard_wp_theatre .events li > div {
+#dashboard_wp_theatre .wp_theatre_event > div {
   float: left;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-#dashboard_wp_theatre .events li > div.date {
+#dashboard_wp_theatre .wp_theatre_event > div.date {
   width: 20%;
-  color: #777777;
   padding-right: 8px;
 }
-#dashboard_wp_theatre .events li > div.content {
+#dashboard_wp_theatre .wp_theatre_event > div.content {
   width: 60%;
   padding-right: 8px;
 }
-#dashboard_wp_theatre .events li > div.tickets {
+#dashboard_wp_theatre .wp_theatre_event > div.content .title {
+  font-weight: bold;
+}
+#dashboard_wp_theatre .wp_theatre_event > div.tickets {
   width: 20%;
 }
-#dashboard_wp_theatre .events li span {
+#side-sortables .wp_theatre_event > div.content .title {
+  display: none;
+}
+#dashboard_wp_theatre .wp_theatre_event {
+  overflow: auto;
+}
+#dashboard_wp_theatre .wp_theatre_event > div {
   float: left;
-  color: #777777;
-  width: 150px;
-  margin-right: 8px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+#dashboard_wp_theatre .wp_theatre_event > div.date {
+  width: 20%;
+  padding-right: 8px;
+}
+#dashboard_wp_theatre .wp_theatre_event > div.content {
+  width: 60%;
+  padding-right: 8px;
+}
+#dashboard_wp_theatre .wp_theatre_event > div.content .title {
+  font-weight: bold;
+}
+#dashboard_wp_theatre .wp_theatre_event > div.tickets {
+  width: 20%;
+}
+#side-sortables .wp_theatre_event > div.content .title {
+  display: none;
+}
+.wp_theatre_prod {
+  overflow: auto;
+}
+.wp_theatre_prod > div {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  float: left;
+}
+.wp_theatre_prod > div.thumbnail {
+  width: 20%;
+  padding-right: 8px;
+}
+.wp_theatre_prod > div.thumbnail img {
+  width: 100%;
+  max-width: 100px;
+  height: auto;
+}
+.wp_theatre_prod > div.content {
+  width: 80%;
 }

@@ -41,7 +41,7 @@ class WPT_Admin {
 	}
 
 	function admin_menu() {
-		add_menu_page( __('Theatre'), __('Theatre'), 'edit_posts', 'theatre', array(), 'dashicons-calendar', 30);
+		add_menu_page( __('Theatre','wp_theatre'), __('Theatre','wp_theatre'), 'edit_posts', 'theatre', array(), 'dashicons-calendar', 30);
 		add_submenu_page( 'theatre', 'Theatre '.__('Settings'), __('Settings'), 'manage_options', 'theatre-admin', array( $this, 'admin_page' ));
 	}
 	
@@ -87,13 +87,7 @@ class WPT_Admin {
 				echo '<ul>';
 				foreach ($events as $event) {
 					echo '<li>';
-					edit_post_link( 
-						$event->date().' '.$event->time(), 
-						'','',
-						$event->ID
-					);
-					echo '<br />';
-					echo get_post_meta($event->ID,'venue',true).', '.get_post_meta($event->ID,'city',true);
+					echo $this->render_event($event);
 					echo '</li>';
 					
 				}
@@ -105,13 +99,7 @@ class WPT_Admin {
 				echo '<ul>';
 				foreach ($events as $event) {
 					echo '<li>';
-					edit_post_link( 
-						$event->date().' '.$event->time(), 
-						'','',
-						$event->ID
-					);
-					echo '<br />';
-					echo get_post_meta($event->ID,'venue',true).', '.get_post_meta($event->ID,'city',true);
+					echo $this->render_event($event);
 					echo '</li>';
 					
 				}
@@ -144,39 +132,25 @@ class WPT_Admin {
 			$current_production = get_post_meta($event->ID,WPT_Production::post_type_name,true);
 		}
 
-		$args = array(
-			'post_type'=>WPT_Production::post_type_name,
-			'posts_per_page' => -1
-		);
 		if (is_numeric($current_production)) {
-			$args['p'] = $current_production;
-			$the_query = new WP_Query($args);
-			if ( $the_query->have_posts() ) {
-				$the_query->the_post();
-				echo '<input type="hidden" name="'.WPT_Production::post_type_name.'" value="'.$current_production.'" />';
-				echo '<a href="'.get_bloginfo('url').'/wp-admin/post.php?post='.$current_production.'&action=edit">';
-				the_title();
-				echo '</a>';
-			}
+			$production = new WPT_Production($current_production);
+			echo '<input type="hidden" name="'.WPT_Production::post_type_name.'" value="'.$current_production.'" />';
+			echo $this->render_production($production);
 		} else {
-			$the_query = new WP_Query($args);
-			if ( $the_query->have_posts() ) {
-				echo '<select name="'.WPT_Production::post_type_name.'">';
-				while ( $the_query->have_posts() ) {
-					$the_query->the_post();
-					echo '<option value="'.get_the_ID().'"';
-					if ($current_production==get_the_ID()) {
-						echo ' selected="selected"';
-					}
-					echo '>';
-					the_title();
-					echo '</option>';
-				}
-				echo '</select>';
+			echo '<select name="'.WPT_Production::post_type_name.'">';
+			$args = array(
+				'post_type'=>WPT_Production::post_type_name,
+				'posts_per_page' => -1
+			);
+			$productions = get_posts($args);
+			foreach ($productions as $production) {
+				echo '<option value="'.$production->ID.'">';
+				echo get_the_title($production->ID);
+				echo '</option>';
 			}
+			echo '</select>';
 			
 		}	
-		wp_reset_postdata();	
 		
 		echo '</td>';
 		echo '</tr>';
@@ -424,7 +398,7 @@ class WPT_Admin {
     function wp_dashboard_setup() {
 		wp_add_dashboard_widget(
                  'dashboard_wp_theatre',         // Widget slug.
-                 __('Theatre','wp-theatre'),         // Title.
+                 __('Theatre','wp_theatre'),         // Title.
                  array($this,'wp_add_dashboard_widget') // Display function.
         );		    
     }
@@ -432,38 +406,95 @@ class WPT_Admin {
     function wp_add_dashboard_widget() {
     	global $wp_theatre;
 		$html = '';
-		$html.= '<h4>'.WPT_Event::post_type()->labels->name.'</h4>';
+		$html.= '<h4>'.__('Upcoming events','wp_theatre').'</h4>';
 		$html.= '<ul class="events">';
 		foreach ($wp_theatre->get_events() as $event) {
 			$html.= '<li>';
+			$html.= $this->render_event($event);
 
-			$html.= '<div class="date">';
-			$html.= '<a href="'.get_edit_post_link($event->ID).'">';
-			$html.= $event->date().' '.$event->time(); 
-			$html.= '</a>';
-			$html.= '</div>';
-			
-			$html.= '<div class="content">';
-			$html.= '<a href="'.get_edit_post_link($event->production()->post()->ID).'">';
-			$html.= $event->production->post()->post_title;
-			$html.= '</a>';
-			$html.= '<br />';
-			$html.= get_post_meta($event->ID,'venue',true);
-			$html.= ', ';
-			$html.= get_post_meta($event->ID,'city',true);
-			$html.= '</div>';
+			$html.= '</li>';
+		}
+		$html.= '</ul>';
 
-			$html.= '<div class="tickets">';
-			$html.= '<a href="'.get_post_meta($event->ID,'tickets_url',true).'">';
-			$html.= __('Tickets');			
-			$html.= '</a>';
-			$html.= '</div>';
+		$html.= '<h4>'.__('Current productions','wp_theatre').'</h4>';
+		$html.= '<ul class="productions">';
+		foreach ($wp_theatre->get_productions() as $production) {
+			$html.= '<li>';
+			$html.= $this->render_production($production);
 
 			$html.= '</li>';
 		}
 		$html.= '</ul>';
 		echo $html;
     }
+
+	function render_event($event) {
+		$html = '';
+		
+		$html.= '<div class="'.WPT_Event::post_type_name.'">';
+			
+		$html.= '<div class="date">';
+		$html.= '<a href="'.get_edit_post_link($event->ID).'">';
+		$html.= $event->date().' '.$event->time(); 
+		$html.= '</a>';
+		$html.= '</div>'; // .date
+		
+		$html.= '<div class="content">';
+		$html.= '<div class="title">'.$event->production()->post()->post_title.'</div>';
+		$html.= get_post_meta($event->ID,'venue',true);
+		$html.= ', ';
+		$html.= get_post_meta($event->ID,'city',true);
+		$html.= '</div>'; //.content
+
+		$html.= '<div class="tickets">';
+		if (get_post_meta($event->ID,'tickets_status',true) == 'soldout') {
+			$html.= __('Sold out', 'wp_theatre');
+		} else {
+			$url = get_post_meta($event->ID,'tickets_url',true);
+			if ($url!='') {
+				$html.= '<a href="'.get_post_meta($event->ID,'tickets_url',true).'" class="button">';
+				$button_text = get_post_meta($event->ID,'tickets_button',true);
+				if ($button_text!='') {
+					$html.= $button_text;
+				} else {
+					$html.= __('Tickets','wp_theatre');			
+				}
+				$html.= '</a>';
+				
+			}
+		}
+		$html.= '</div>'; //.tickets
+
+		$html.='</div>'; // .event
+		
+		return $html;	
+	}
+
+	function render_production($production) {
+		$html = '';
+		
+		$html.= '<div class="'.WPT_Production::post_type_name.'">';
+			
+		$html.= '<div class="thumbnail">';
+		$html.= get_the_post_thumbnail($production->ID, 'thumbnail'); 
+		$html.= '</div>'; // .thumbnail
+		
+		$html.= '<div class="content">';
+		$html.= '<a href="'.get_edit_post_link($production->ID).'">';
+		$html.= $production->post()->post_title;
+		$html.= '</a>';
+		$html.= '<br />';
+		$html.= $production->dates();
+		$html.= '<br />';
+		$html.= $production->cities();
+		
+		$html.= '</div>'; //.content
+
+
+		$html.='</div>'; // .production
+		
+		return $html;	
+	}
 
 }
 
