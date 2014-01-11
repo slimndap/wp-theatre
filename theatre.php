@@ -137,7 +137,7 @@ class WP_Theatre {
 				$html.= '<div class="remark">'.$remark.'</div>';
 			}
 			
-			$html.= '<div itemprop="location" itemscope itemtype="http://data-vocabulary.org/?Organization">';
+			$html.= '<div itemprop="location" itemscope itemtype="http://data-vocabulary.org/Organization">';
 
 			$venue = get_post_meta($event->ID,'venue',true);
 			$city = get_post_meta($event->ID,'city',true);

@@ -1,0 +1,12 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg">
+<metadata>Copyright (C) 2014 by original authors @ fontello.com</metadata>
+<defs>
+<font id="theatre-webfont" horiz-adv-x="1000" >
+<font-face font-family="theatre-webfont" font-weight="400" font-stretch="normal" units-per-em="1000" ascent="850" descent="-150" />
+<missing-glyph horiz-adv-x="1000" />
+<glyph glyph-name="theatre" unicode="&#xe808;" d="m50 800c-24 0-50-25-50-50l0-350c0-111 50-250 250-250c18 0 34 1 50 3l0 147l-200 0s25 100 150 100c25 0 35-4 50-9l0 109c0 46 18 84 50 100c50 25 70 15 100 0c50-25 50-25 50-25l0 175c0 25-26 50-50 50c-50 0-100-50-200-50c-100 0-150 50-200 50z m88-175c34 0 62-28 62-62c0-35-28-63-62-63c-35 0-63 28-63 63c0 34 28 62 63 62z m262-75c-24 0-50-25-50-50l0-350c0-111 50-250 250-250c200 0 250 139 250 250l0 350c0 25-26 50-50 50c-50 0-100-50-200-50c-100 0-150 50-200 50z m88-175c34 0 62-28 62-62c0-35-28-63-62-63c-35 0-63 28-63 63c0 34 28 62 63 62z m225 0c34 0 62-28 62-62c0-35-28-63-62-63c-35 0-63 28-63 63c0 34 28 62 63 62z m-263-275l300 0s-25-100-150-100s-150 100-150 100z" horiz-adv-x="850" />
+</font>
+</defs>
+</svg>

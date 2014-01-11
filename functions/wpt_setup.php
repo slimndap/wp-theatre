@@ -26,7 +26,7 @@ class WPT_Setup {
 					'name' => __( 'Productions','wp_theatre'),
 					'singular_name' => __( 'Production','wp_theatre'),
 					'add_new' =>  _x('Add New', 'production','wp_theatre'),
-					'new_item' => __('New'),' '.__('production','wp_theatre'),
+					'new_item' => __('New production','wp_theatre'),
 					'add_new_item' => __('Add new').' '.__('production','wp_theatre'),
 					'edit_item' => __('Edit production','wp_theatre')
 				),

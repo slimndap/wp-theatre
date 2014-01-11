@@ -41,7 +41,7 @@ class WPT_Admin {
 	}
 
 	function admin_menu() {
-		add_menu_page( __('Theatre','wp_theatre'), __('Theatre','wp_theatre'), 'edit_posts', 'theatre', array(), 'dashicons-calendar', 30);
+		add_menu_page( __('Theatre','wp_theatre'), __('Theatre','wp_theatre'), 'edit_posts', 'theatre', array(), 'none', 30);
 		add_submenu_page( 'theatre', 'Theatre '.__('Settings'), __('Settings'), 'manage_options', 'theatre-admin', array( $this, 'admin_page' ));
 	}
 	
@@ -425,6 +425,7 @@ class WPT_Admin {
 			$html.= '</li>';
 		}
 		$html.= '</ul>';
+		$html.= '<p><a href="'.get_bloginfo('url').'/wp-admin/post-new.php?post_type='.WPT_Event::post_type_name.'" class="button button-primary">'.WPT_Event::post_type()->labels->new_item.'</a></p>';	
 
 		$html.= '<h4>'.__('Current productions','wp_theatre').'</h4>';
 		$html.= '<ul class="productions">';
@@ -435,6 +436,7 @@ class WPT_Admin {
 			$html.= '</li>';
 		}
 		$html.= '</ul>';
+		$html.= '<p><a href="'.get_bloginfo('url').'/wp-admin/post-new.php?post_type='.WPT_Production::post_type_name.'" class="button button-primary">'.WPT_Production::post_type()->labels->new_item.'</a></p>';	
 		echo $html;
     }
 
@@ -457,9 +459,20 @@ class WPT_Admin {
 			$html.= '<div class="remark">'.$remark.'</div>';
 		}
 		
-		$html.= get_post_meta($event->ID,'venue',true);
-		$html.= ', ';
-		$html.= get_post_meta($event->ID,'city',true);
+		$venue = get_post_meta($event->ID,'venue',true);
+		$city = get_post_meta($event->ID,'city',true);
+		if ($venue!='') {
+			$html.= '<span itemprop="name">'.$venue.'</span>';
+		}
+		if ($venue!='' && $city!='') {
+			$html.= ', ';
+		}
+		if ($city!='') {
+			$html.= '<span itemprop="address" itemscope itemtype="http://data-vocabulary.org/Address">';
+			$html.= '<span itemprop="locality">'.$city.'</span>';
+			$html.= '</span>';
+		}
+
 		$html.= '</div>'; //.content
 
 		$html.= '<div class="tickets">';

@@ -7,15 +7,16 @@ Stable tag: trunk
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Turn your Wordpress website into an event/show/concert-driven website.
+Add event listings to your Wordpress website. Perfect for theaters, music venues, museums, conference centers and performing artists.
 
 == Description ==
+This plugin gives you the ability to manage seasons, productions and event in Wordpress and comes with all necessary shortcodes and widgets to show your events on your website.
 
-This plugin is aimed at theme developers. It gives you the core-functionality needed for websites of theatres, stages or performers. 
+Theme developers get three new PHP objects (Season, Production and Event) which they can use to further integrate Theatre into their theme. Each PHP object comes with a wide variety of smart methods and can be extended with your own methods. 
 
-After installations the functionality can easily be extend using other frameworks (eg. the [Pods Framework](http://pods.io/)).
+It is also possible to extend the functionality with other popular plug-ins.
 
-__Compatibility__
+__Scope__
 
 The Theatre plugin is kept as simple as possible so it can be used for a wide variety of event websites. 
 
@@ -23,8 +24,8 @@ __What is included__
 
 * Admin screens for seasons, productions and events.
 * Default templates for productions.
-* Short codes for listings of productions and events (wip).
-* Widgets (wip)
+* Short codes for listings of productions and events.
+* Widgets for listings of productions and events.
 
 __What is not included__
 
@@ -38,7 +39,7 @@ __What's next?__
 
 * [Documentation](https://github.com/slimndap/wp-theatre/wiki)
 * More shortcodes
-* Widgets
+* More Widgets
 * Settings
 
 __Contributors Welcome__
@@ -71,7 +72,7 @@ This section describes how to install the plugin and get it working.
 = 0.2.2 =
 * Support for Dutch language.
 
-=0.2.1=
+= 0.2.1 =
 * Theatre now has it's own admin menu
 * New settings page
 

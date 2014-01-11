@@ -4,7 +4,7 @@
 			parent::__construct(
 				'wpt_events_widget',
 				__('Events','wp_theatre'), // Name
-				array( 'description' => __( 'Sign-up form', 'text_domain' ), ) // Args
+				array( 'description' => __( 'Sign-up form', 'wp_theatre' ), ) // Args
 			);
 		}
 	
