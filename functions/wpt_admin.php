@@ -15,7 +15,7 @@ class WPT_Admin {
 
 	function admin_init() {
 		wp_enqueue_script( 'wp_theatre_js', plugins_url( '../main.js', __FILE__ ), array('jquery') );
-		wp_enqueue_style( 'wp_theatre_css', plugins_url( '../style.css', __FILE__ ) );
+		wp_enqueue_style( 'wp_theatre_admin_css', plugins_url( '../css/admin.css', __FILE__ ) );
 		wp_enqueue_script( 'jquery-ui-timepicker', plugins_url( '../js/jquery-ui-timepicker-addon.js', __FILE__ ), array('jquery-ui-datepicker','jquery-ui-slider')  );
 		wp_enqueue_style('jquery-style', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css');
 
@@ -182,8 +182,7 @@ class WPT_Admin {
 		echo '<tr class="form-field">';
 		echo '<th><label>'.__('Remark','wp_theatre').'</label></th>';	
 		echo '<td>';
-		echo '<input type="text" name="remark"';
-        echo ' value="' . get_post_meta($event->ID,'remark',true) . '" />';
+		echo '<input type="text" name="remark" value="' . get_post_meta($event->ID,'remark',true) . '" placeholder="'.__('e.g. Premiere or Try-out','wp_theatre').'" />';
  		echo '</td>';
 		echo '</tr>';
        

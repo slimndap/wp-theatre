@@ -1,0 +1,43 @@
+.wp_theatre_event {
+  overflow: auto;
+}
+.wp_theatre_event > div {
+  float: left;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.wp_theatre_event > div.date {
+  width: 20%;
+  padding-right: 0.5em;
+}
+.wp_theatre_event > div.content {
+  width: 60%;
+  padding-right: 0.5em;
+}
+.wp_theatre_event > div.content .remark {
+  font-style: italic;
+}
+.wp_theatre_event > div.tickets {
+  width: 20%;
+}
+ul.wp_theatre_events {
+  list-style-type: none;
+  margin: 0 0 1em;
+  padding: 0;
+}
+ul.wp_theatre_events li {
+  border-top: 1px solid lightgrey;
+  padding-top: 0.5em;
+  margin-top: 0.5em;
+}
+ul.wp_theatre_events li:first-child {
+  border-top: none;
+}
+body.single-wp_theatre_prod .wp_theatre_event > div.content .title {
+  display: none;
+}
+.wpt_events_widget .wp_theatre_event > div {
+  float: none;
+  width: auto;
+}

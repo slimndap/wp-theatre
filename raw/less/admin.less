@@ -1,0 +1,17 @@
+@import "lesshat";
+@import "admin/datetimepicker.less";
+@import "admin/event.less";
+@import "admin/production.less";
+
+@font-face {
+	.font-face('theatre-webfont', ~'../font/theatre',normal, normal);
+}
+
+#toplevel_page_theatre {
+	.wp-menu-image {
+		&:before {
+			font-family: 'theatre-webfont' !important;
+			content: '\e808';
+		}
+	}
+}

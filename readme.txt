@@ -60,6 +60,9 @@ This section describes how to install the plugin and get it working.
 
 == Changelog ==
 
+= 0.2.5 =
+* Added CSS for shortcodes and widgets.
+
 = 0.2.4 =
 * Added a dashboard widget.
 * Events can have a remark (eg. try-out, premiere, special guests).

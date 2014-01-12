@@ -10,7 +10,9 @@
 	
 		public function widget( $args, $instance ) {
 			global $wp_theatre;
+			echo '<div class="wpt_events_widget">';
 			echo $wp_theatre->render_events();
+			echo '</div>';
 		}
 	
 	}

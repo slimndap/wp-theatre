@@ -17,6 +17,7 @@ class WPT_Setup {
 		});
 		
 		add_action( 'plugins_loaded', array($this,'plugins_loaded'));
+
 	}
 
 	function init() {
@@ -70,6 +71,7 @@ class WPT_Setup {
 			'show_in_menu'  => 'theatre',
 			)
 		);
+		wp_enqueue_style( 'wp_theatre_css', plugins_url( '../css/style.css', __FILE__ ) );
 	}	
 
 	function plugins_loaded(){
@@ -89,9 +91,17 @@ class WPT_Setup {
 		return $content;
 	}
 	
-	function shortcode_events() {
+	function shortcode_events($atts, $content="") {
 		global $wp_theatre;
-		return $wp_theatre->render_events();
+		
+		$html = '';
+		
+		if ($content!='') {
+			$html.= '<h3>'.$content.'</h3>';
+		}
+		
+		$html.= $wp_theatre->render_events();
+		return $html;
 	}
 
 	function activate() {

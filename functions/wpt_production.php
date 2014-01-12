@@ -167,60 +167,10 @@ class WPT_Production extends WP_Theatre {
 	function render_events() {
 		$html = '';
 		$html.= '<h3>'.WPT_Event::post_type()->labels->name.'</h3>';
-		$html.= '<ul>';
+		$html.= '<ul class="wp_theatre_events">';
 		foreach ($this->upcoming_events() as $event) {
-			$html.= '<li itemscope itemtype="http://data-vocabulary.org/Event">';
-
-			$html.= '<meta itemprop="summary" content="'.$event->production()->post()->post_title.'" />';
-			$html.= '<meta itemprop="url" content="'.get_permalink($event->production()->ID).'" />';
-
-			$html.= '<div itemprop="startDate" datetime="'.date('c',$event->datetime()).'">';
-			$html.= $event->date().' '.$event->time(); 
-			$html.= '</div>';
-
-			$remark = get_post_meta($event->ID,'remark',true);
-			if ($remark!='') {
-				$html.= '<div class="remark">'.$remark.'</div>';
-			}
-			
-
-			$html.= '<div itemprop="location" itemscope itemtype="http://data-vocabulary.org/Organization">';
-
-			$venue = get_post_meta($event->ID,'venue',true);
-			$city = get_post_meta($event->ID,'city',true);
-			if ($venue!='') {
-				$html.= '<span itemprop="name">'.$venue.'</span>';
-			}
-			if ($venue!='' && $city!='') {
-				$html.= ', ';
-			}
-			if ($city!='') {
-				$html.= '<span itemprop="address" itemscope itemtype="http://data-vocabulary.org/Address">';
-				$html.= '<span itemprop="locality">'.$city.'</span>';
-				$html.= '</span>';
-			}
-			
-			$html.= '</div>'; // .location
-
-			$html.= '<div class="tickets">';			
-			if (get_post_meta($event->ID,'tickets_status',true) == 'soldout') {
-				$html.= '<span class="soldout">'.__('Sold out', 'wp_theatre').'</span>';
-			} else {
-				$url = get_post_meta($event->ID,'tickets_url',true);
-				if ($url!='') {
-					$html.= '<a href="'.get_post_meta($event->ID,'tickets_url',true).'">';
-					$button_text = get_post_meta($event->ID,'tickets_button',true);
-					if ($button_text!='') {
-						$html.= $button_text;
-					} else {
-						$html.= __('Tickets','wp_theatre');			
-					}
-					$html.= '</a>';
-					
-				}
-			}
-			$html.= '</div>'; // .tickets
-			
+			$html.= '<li>';
+			$html.= $event->render();			
 			$html.= '</li>';
 		}
 		$html.= '</ul>';

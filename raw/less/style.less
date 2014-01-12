@@ -1,17 +1,60 @@
 @import "lesshat";
-@import "datetimepicker.less";
-@import "event.less";
-@import "production.less";
 
-@font-face {
-	.font-face('theatre-webfont', ~'font/theatre',normal, normal);
+
+.wp_theatre_event {
+	overflow: auto;
+	> div {
+		float: left;
+		.box-sizing(border-box);
+		&.date {
+			width: 20%;
+			padding-right: 0.5em;
+		}
+		&.content {
+			width: 60%;
+			padding-right: 0.5em;
+			.remark {
+				font-style: italic;
+			}
+			
+		}
+		&.tickets {
+			width: 20%;
+		}
+	}
 }
 
-#toplevel_page_theatre {
-	.wp-menu-image {
-		&:before {
-			font-family: 'theatre-webfont' !important;
-			content: '\e808';
+ul.wp_theatre_events {
+	list-style-type: none;
+	margin: 0 0 1em;
+	padding: 0;	
+	li {
+		border-top: 1px solid lightgrey;
+		padding-top: 0.5em;
+		margin-top: 0.5em;
+		&:first-child {
+			border-top: none;
+		}
+	}
+}
+
+body.single-wp_theatre_prod {
+	.wp_theatre_event {
+		> div {
+			&.content {
+				.title {
+					display: none;
+				}
+			}
+		}
+	}
+}
+
+.wpt_events_widget {
+	.wp_theatre_event {
+		> div {
+			float: none;
+			width: auto;
 		}
 	}
 }
