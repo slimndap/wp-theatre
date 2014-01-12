@@ -280,8 +280,14 @@ class WPT_Admin {
 	}
 	
 	function save_post( $post_id ) {
-		global $wp_theatre;
+		$this->save_event( $post_id );
+		$this->save_production( $post_id );
 	
+		$this->flush_cache();
+	
+	}
+	
+	function save_event( $post_id ) {
 		/*
 		 * We need to verify this came from the our screen and with proper authorization,
 		 * because save_post can be triggered at other times.
@@ -328,7 +334,10 @@ class WPT_Admin {
 		update_post_meta( $post_id, 'tickets_url', $tickets_url );
 		update_post_meta( $post_id, 'tickets_status', $tickets_status );
 		update_post_meta( $post_id, 'tickets_button', $tickets_button );
+		
+	}
 	
+	function save_production( $post_id ) {
 		/*
 		 * We need to verify this came from the our screen and with proper authorization,
 		 * because save_post can be triggered at other times.
@@ -362,7 +371,7 @@ class WPT_Admin {
 		// Update the meta field.
 		update_post_meta( $post_id, WPT_Season::post_type_name, $season );
 		
-		$this->flush_cache();
+		
 	}
 	
 	function flush_cache() {

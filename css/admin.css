@@ -45,6 +45,10 @@
 #dashboard_wp_theatre .wp_theatre_event > div.tickets {
   width: 20%;
 }
+#poststuff .wp_theatre_event > div {
+  float: none;
+  width: auto;
+}
 #poststuff .wp_theatre_event > div.content .title {
   display: none;
 }
