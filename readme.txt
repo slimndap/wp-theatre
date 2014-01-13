@@ -16,6 +16,9 @@ Theme developers get three new PHP objects (Season, Production and Event) which 
 
 It is also possible to extend the functionality with other popular plug-ins.
 
+__International__
+Available in English, French and Dutch.
+
 __Scope__
 
 The Theatre plugin is kept as simple as possible so it can be used for a wide variety of event websites. 

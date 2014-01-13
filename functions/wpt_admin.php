@@ -400,7 +400,7 @@ class WPT_Admin {
         ?>
         <div class="wrap">
             <?php screen_icon(); ?>
-            <h2>Theatre <?php echo __('Settings');?></h2>           
+            <h2><?php echo __('Theatre','wp_theatre').' '.__('Settings');?></h2>           
             <form method="post" action="options.php">
             <?php
                 // This prints out all hidden setting fields
@@ -424,8 +424,11 @@ class WPT_Admin {
     function wp_add_dashboard_widget() {
     	global $wp_theatre;
 		$html = '';
+		
+		$html.= '<div class="events">';
+		
 		$html.= '<h4>'.__('Upcoming events','wp_theatre').'</h4>';
-		$html.= '<ul class="events">';
+		$html.= '<ul>';
 		foreach ($wp_theatre->get_events() as $event) {
 			$html.= '<li>';
 			$html.= $this->render_event($event);
@@ -435,16 +438,20 @@ class WPT_Admin {
 		$html.= '</ul>';
 		$html.= '<p><a href="'.get_bloginfo('url').'/wp-admin/post-new.php?post_type='.WPT_Event::post_type_name.'" class="button button-primary">'.WPT_Event::post_type()->labels->new_item.'</a></p>';	
 
+		$html.= '</div>'; //.events
+
+		$html.= '<div class="productions">';
 		$html.= '<h4>'.__('Current productions','wp_theatre').'</h4>';
-		$html.= '<ul class="productions">';
+		$html.= '<ul>';
 		foreach ($wp_theatre->get_productions() as $production) {
 			$html.= '<li>';
 			$html.= $this->render_production($production);
-
 			$html.= '</li>';
 		}
 		$html.= '</ul>';
 		$html.= '<p><a href="'.get_bloginfo('url').'/wp-admin/post-new.php?post_type='.WPT_Production::post_type_name.'" class="button button-primary">'.WPT_Production::post_type()->labels->new_item.'</a></p>';	
+
+		$html.= '</div>'; //.productions
 		echo $html;
     }
 
@@ -501,7 +508,7 @@ class WPT_Admin {
 			}
 		}
 		$html.= '</div>'; //.tickets
-
+		
 		$html.='</div>'; // .event
 		
 		return $html;	

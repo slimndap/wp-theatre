@@ -95,3 +95,15 @@
   font-family: 'theatre-webfont' !important;
   content: '\e808';
 }
+#dashboard_wp_theatre .inside {
+  padding: 0;
+  margin: 0;
+}
+#dashboard_wp_theatre .inside .events,
+#dashboard_wp_theatre .inside .productions {
+  padding: 8px 12px 4px;
+}
+#dashboard_wp_theatre .inside .productions {
+  border-top: 1px solid #ececec;
+  background-color: #fafafa;
+}
