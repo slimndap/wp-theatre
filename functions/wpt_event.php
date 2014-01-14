@@ -27,14 +27,14 @@ class WPT_Event extends WP_Theatre {
 
 	function date() {
 		if (!isset($this->date)) {
-			$this->date = date(get_option('date_format'),$this->datetime());
+			$this->date = date_i18n(get_option('date_format'),$this->datetime());
 		}	
 		return $this->date;	
 	}
 
 	function time() {
 		if (!isset($this->time)) {
-			$this->time = date(get_option('time_format'),$this->datetime());
+			$this->time = date_i18n(get_option('time_format'),$this->datetime());
 		}	
 		return $this->time;
 	}
