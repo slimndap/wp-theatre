@@ -93,6 +93,7 @@ You can also add header above the listing:
 
 = 0.2.6 =
 * Support for sticky productions.
+* Support for French language.
 
 = 0.2.5 =
 * Added CSS for shortcodes and widgets.
