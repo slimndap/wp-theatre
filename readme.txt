@@ -91,6 +91,9 @@ You can also add header above the listing:
  
 == Changelog ==
 
+= 0.2.6 =
+* Support for sticky productions.
+
 = 0.2.5 =
 * Added CSS for shortcodes and widgets.
 
