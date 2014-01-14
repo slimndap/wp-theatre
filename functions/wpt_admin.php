@@ -441,9 +441,9 @@ class WPT_Admin {
     
     function wp_dashboard_setup() {
 		wp_add_dashboard_widget(
-             'dashboard_wp_theatre',         // Widget slug.
-             __('Theatre','wp_theatre'),         // Title.
-             array($this,'wp_add_dashboard_widget') // Display function.
+                 'dashboard_wp_theatre',         // Widget slug.
+                 __('Theatre','wp_theatre'),         // Title.
+                 array($this,'wp_add_dashboard_widget') // Display function.
         );		    
     }
     
@@ -458,11 +458,6 @@ class WPT_Admin {
 		foreach ($wp_theatre->get_events() as $event) {
 			$html.= '<li>';
 			$html.= $this->render_event($event);
-			
-			$html.= '<div class="row-actions">';
-			$html.= '<span><a href="'.get_edit_post_link($event->ID).'">'.__('Edit').'</a></span>';;
-			$html.= '<span> | <a href="'.get_delete_post_link($event->ID).'">'.__('Trash').'</a></span>';;
-			$html.= '</div>'; //.row-actions
 
 			$html.= '</li>';
 		}
@@ -477,13 +472,6 @@ class WPT_Admin {
 		foreach ($wp_theatre->get_productions() as $production) {
 			$html.= '<li>';
 			$html.= $this->render_production($production);
-
-			$html.= '<div class="row-actions">';
-			$html.= '<span><a href="'.get_edit_post_link($production->ID).'">'.__('Edit').'</a></span>';;
-			$html.= '<span> | <a href="'.get_delete_post_link($production->ID).'">'.__('Trash').'</a></span>';;
-			$html.= '<span> | <a href="'.get_permalink($production->ID).'">'.__('View').'</a></span>';;
-			$html.= '</div>'; //.row-actions
-
 			$html.= '</li>';
 		}
 		$html.= '</ul>';
