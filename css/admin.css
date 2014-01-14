@@ -24,9 +24,6 @@
 }
 #dashboard_wp_theatre .wp_theatre_event {
   overflow: auto;
-  border-bottom: 1px solid #ececec;
-  padding: 0 0 8px;
-  margin: 0 0 8px;
 }
 #dashboard_wp_theatre .wp_theatre_event > div {
   float: left;
@@ -79,11 +76,6 @@
 .wp_theatre_prod > div.content {
   width: 80%;
 }
-#dashboard_wp_theatre .wp_theatre_prod {
-  border-bottom: 1px solid #ececec;
-  padding: 0 0 8px;
-  margin: 0 0 8px;
-}
 @font-face {
   font-family: "theatre-webfont";
   src: url("../font/theatre-webfont.eot");
@@ -102,6 +94,24 @@
 #dashboard_wp_theatre .inside .events,
 #dashboard_wp_theatre .inside .productions {
   padding: 8px 12px 4px;
+}
+#dashboard_wp_theatre .inside .events > ul > li,
+#dashboard_wp_theatre .inside .productions > ul > li {
+  border-bottom: 1px solid #ececec;
+  padding: 0 0 8px;
+  margin: 0 0 8px;
+}
+#dashboard_wp_theatre .inside .events > ul > li .row-actions,
+#dashboard_wp_theatre .inside .productions > ul > li .row-actions {
+  padding-left: 20%;
+}
+#dashboard_wp_theatre .inside .events > ul > li .row-actions:hover,
+#dashboard_wp_theatre .inside .productions > ul > li .row-actions:hover {
+  visibility: visible;
+}
+#dashboard_wp_theatre .inside .events > ul > li:hover .row-actions,
+#dashboard_wp_theatre .inside .productions > ul > li:hover .row-actions {
+  visibility: visible;
 }
 #dashboard_wp_theatre .inside .productions {
   border-top: 1px solid #ececec;
