@@ -91,6 +91,10 @@ You can also add header above the listing:
  
 == Changelog ==
 
+= 0.2.7 =
+* 2 extra columns (dates and cities) to productions admin page.
+* Grouped and paged event listings.
+
 = 0.2.6 =
 * Support for sticky productions.
 * Support for French language.
