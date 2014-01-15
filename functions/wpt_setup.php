@@ -91,17 +91,16 @@ class WPT_Setup {
 		return $content;
 	}
 	
-	function shortcode_events($atts, $content="") {
+	function shortcode_events($atts, $content=null) {
 		global $wp_theatre;
 		
-		$html = '';
-		
-		if ($content!='') {
-			$html.= '<h3>'.$content.'</h3>';
-		}
-		
-		$html.= $wp_theatre->render_events();
-		return $html;
+		$atts = shortcode_atts( array(
+			'paged' => 0,
+			'grouped' => 0,
+		), $atts );
+		extract($atts);
+				
+		return $wp_theatre->render_events($atts);
 	}
 
 	function activate() {

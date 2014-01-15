@@ -1,0 +1,119 @@
+/* css for timepicker */
+.ui-timepicker-div .ui-widget-header {
+  margin-bottom: 8px;
+}
+.ui-timepicker-div dl {
+  text-align: left;
+}
+.ui-timepicker-div dl dt {
+  float: left;
+  clear: left;
+  padding: 0 0 0 5px;
+}
+.ui-timepicker-div dl dd {
+  margin: 0 10px 10px 45%;
+}
+.ui-timepicker-div td {
+  font-size: 90%;
+}
+.ui-tpicker-grid-label {
+  background: none;
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+#dashboard_wp_theatre .wp_theatre_event {
+  overflow: auto;
+}
+#dashboard_wp_theatre .wp_theatre_event > div {
+  float: left;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+#dashboard_wp_theatre .wp_theatre_event > div.date {
+  width: 20%;
+  padding-right: 8px;
+}
+#dashboard_wp_theatre .wp_theatre_event > div.content {
+  width: 60%;
+  padding-right: 8px;
+}
+#dashboard_wp_theatre .wp_theatre_event > div.tickets {
+  width: 20%;
+}
+#poststuff .wp_theatre_event > div {
+  float: none;
+  width: auto;
+}
+#poststuff .wp_theatre_event > div.content .title {
+  display: none;
+}
+.wp_theatre_event > div.content .title {
+  font-weight: bold;
+}
+.wp_theatre_event > div.content .remark {
+  font-style: italic;
+}
+.wp_theatre_prod {
+  overflow: auto;
+}
+.wp_theatre_prod > div {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  float: left;
+}
+.wp_theatre_prod > div.thumbnail {
+  width: 20%;
+  padding-right: 8px;
+}
+.wp_theatre_prod > div.thumbnail img {
+  width: 100%;
+  max-width: 100px;
+  height: auto;
+}
+.wp_theatre_prod > div.content {
+  width: 80%;
+}
+@font-face {
+  font-family: "theatre-webfont";
+  src: url("../font/theatre-webfont.eot");
+  src: url("../font/theatre-webfont.eot?#iefix") format("embedded-opentype"), url("../font/theatre-webfont.woff") format("woff"), url("../font/theatre-webfont.ttf") format("truetype"), url("../font/theatre-webfont.svg#theatre-webfont") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+#toplevel_page_theatre .wp-menu-image:before {
+  font-family: 'theatre-webfont' !important;
+  content: '\e808';
+}
+#dashboard_wp_theatre .inside {
+  padding: 0;
+  margin: 0;
+}
+#dashboard_wp_theatre .inside .events,
+#dashboard_wp_theatre .inside .productions {
+  padding: 8px 12px 4px;
+}
+#dashboard_wp_theatre .inside .events > ul > li,
+#dashboard_wp_theatre .inside .productions > ul > li {
+  border-bottom: 1px solid #ececec;
+  padding: 0 0 8px;
+  margin: 0 0 8px;
+}
+#dashboard_wp_theatre .inside .events > ul > li .row-actions,
+#dashboard_wp_theatre .inside .productions > ul > li .row-actions {
+  padding-left: 20%;
+}
+#dashboard_wp_theatre .inside .events > ul > li .row-actions:hover,
+#dashboard_wp_theatre .inside .productions > ul > li .row-actions:hover {
+  visibility: visible;
+}
+#dashboard_wp_theatre .inside .events > ul > li:hover .row-actions,
+#dashboard_wp_theatre .inside .productions > ul > li:hover .row-actions {
+  visibility: visible;
+}
+#dashboard_wp_theatre .inside .productions {
+  border-top: 1px solid #ececec;
+  background-color: #fafafa;
+}
