@@ -52,11 +52,11 @@ class WPT_Setup {
 					'edit_item' => __('Edit event','wp_theatre')
 
 				),
-			'public' => true,
-			'has_archive' => true,
-			'show_in_menu' => false,
-			'supports' => array(''),
-			'show_in_nav_menus'=> false
+				'public' => true,
+				'has_archive' => true,
+				'show_in_menu'  => false,
+				'supports' => array(''),
+				'show_in_nav_menus'=> false
 			)
 		);
 		register_post_type( 'wp_theatre_season',
