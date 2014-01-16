@@ -4,7 +4,7 @@ Plugin Name: Theatre
 Plugin URI: http://wordpress.org/plugins/theatre/
 Description: Turn your Wordpress website into a theatre website.
 Author: Jeroen Schmit, Slim & Dapper
-Version: 0.2.6
+Version: 0.2.7
 Author URI: http://slimndap.com/
 Text Domain: wp_theatre
 Domain Path: /lang
@@ -127,15 +127,68 @@ class WP_Theatre {
 		return array_values($events);
 	}
 
-	function render_events() {
+	function render_events($args=array()) {
+		$defaults = array(
+			'paged' => false,
+			'grouped' => false,
+		);
+		$args = wp_parse_args( $args, $defaults );
+		extract($args);
+		
+		$events = $this->get_events();
+		$months = array();
+		
+		foreach($events as $event) {
+			$month = date_i18n('M Y',$event->datetime());
+			$months[$month][] = $event;
+		}			
+
 		$html = '';
-		$html.= '<ul class="wp_theatre_events">';
-		foreach ($this->get_events() as $event) {
-			$html.= '<li>';
-			$html.= $event->render();			
-			$html.= '</li>';
+		$html.= '<div class="wp_theatre_events">';
+
+		if ($paged && count($months)) {
+			if (empty($_GET['month'])) {
+				reset($months);
+				$current_month = sanitize_title(key($months));
+			} else {
+				$current_month = $_GET['month'];
+			}
+			
+			$html.= '<nav>';
+			foreach($months as $month=>$events) {
+				$url = remove_query_arg('month');
+				$url = add_query_arg( 'month', sanitize_title($month) , $url);
+				$html.= '<span>';
+				if (sanitize_title($month) != $current_month) {
+					$html.= '<a href="'.$url.'">'.$month.'</a>';
+				} else {
+					$html.= $month;
+					
+				}
+				$html.= '</span>';
+			}
+			$html.= '</nav>';
 		}
-		$html.= '</ul>';
+
+		foreach($months as $month=>$events) {
+			if ($paged) {
+				if (sanitize_title($month) != $current_month) {
+					continue;
+				}
+			}
+			if ($grouped) {
+				$html.= '<h4>'.$month.'</h4>';				
+			}
+			$html.= '<ul>';
+			foreach ($events as $event) {
+				$html.= '<li>';
+				$html.= $event->render();			
+				$html.= '</li>';
+			}
+			$html.= '</ul>';			
+		}
+	
+		$html.= '</div>'; //.wp-theatre_events
 		return $html;
 	}
 

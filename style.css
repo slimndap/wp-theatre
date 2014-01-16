@@ -21,24 +21,17 @@
 .wp_theatre_event > div.tickets {
   width: 20%;
 }
-.wp_theatre_events nav {
-  border-bottom: 1px solid lightgrey;
-  padding-bottom: 0.5em;
-}
-.wp_theatre_events nav span {
-  padding-right: 0.5em;
-}
 .wp_theatre_events ul {
   list-style-type: none;
   margin: 0 0 1em;
   padding: 0;
 }
-.wp_theatre_events ul li {
+.wp_theatre_events li {
   border-top: 1px solid lightgrey;
   padding-top: 0.5em;
   margin-top: 0.5em;
 }
-.wp_theatre_events ul li:first-child {
+.wp_theatre_events li:first-child {
   border-top: none;
 }
 body.single-wp_theatre_prod .wp_theatre_event > div.content .title {
