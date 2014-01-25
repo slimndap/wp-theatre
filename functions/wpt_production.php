@@ -93,9 +93,12 @@ class WPT_Production extends WP_Theatre {
 	
 	function summary() {
 		if (!isset($this->summary)) {
-			$full = $this->dates();
-			if ($this->cities!='') {
-				$full .= ' '.__('in','wp_theatre').' '.$this->cities().'.';
+			if ($this->dates()!='') {
+				$full = $this->dates();
+				if ($this->cities()!='') {
+					$full .= ' '.__('in','wp_theatre').' '.$this->cities();
+				}
+				$full .= '.';				
 			}
 			$this->summary = array(
 				'dates' => $this->dates(),

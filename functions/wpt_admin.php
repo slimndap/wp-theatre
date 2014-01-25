@@ -16,6 +16,9 @@ class WPT_Admin {
 		add_action( 'wp_dashboard_setup', array($this,'wp_dashboard_setup' ));
 
 		$this->options = get_option( 'wp_theatre' );
+		
+		$this->tabs = array('wp_theatre'=>__('General'));
+		$this->tab = isset( $_GET['tab'] ) ? $_GET['tab'] : 'wp_theatre';
 	}	
 
 	function admin_init() {
@@ -24,25 +27,27 @@ class WPT_Admin {
 		wp_enqueue_script( 'jquery-ui-timepicker', plugins_url( '../js/jquery-ui-timepicker-addon.js', __FILE__ ), array('jquery-ui-datepicker','jquery-ui-slider')  );
 		wp_enqueue_style('jquery-style', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css');
 
-        register_setting(
-            'wp_theatre_group', // Option group
-            'wp_theatre' // Option name
-        );
+		if ($this->tab=='wp_theatre') {
+	        register_setting(
+	            'wp_theatre', // Option group
+	            'wp_theatre' // Option name
+	        );
 
-        add_settings_section(
-            'display_section_id', // ID
-            __('Display','wp_theatre'), // Title
-            '', // Callback
-            'theatre-admin' // Page
-        );  
-
-        add_settings_field(
-            'settings_field_show_events', // ID
-            __('Show events on production page.','wp_theatre'), // Title 
-            array( $this, 'settings_field_show_events' ), // Callback
-            'theatre-admin', // Page
-            'display_section_id' // Section           
-        );      
+	        add_settings_section(
+	            'display_section_id', // ID
+	            __('Display','wp_theatre'), // Title
+	            '', // Callback
+	            'theatre-admin' // Page
+	        );  
+	
+	        add_settings_field(
+	            'settings_field_show_events', // ID
+	            __('Show events on production page.','wp_theatre'), // Title 
+	            array( $this, 'settings_field_show_events' ), // Callback
+	            'theatre-admin', // Page
+	            'display_section_id' // Section           
+	        );      
+		}
 	}
 
 	function admin_menu() {
@@ -427,15 +432,21 @@ class WPT_Admin {
 
     public function admin_page()
     {
-        // Set class property
         ?>
         <div class="wrap">
             <?php screen_icon(); ?>
-            <h2><?php echo __('Theatre','wp_theatre').' '.__('Settings');?></h2>           
+       		<h2><?php echo __('Theatre','wp_theatre').' '.__('Settings');?></h2>
+            <h2 class="nav-tab-wrapper">
+            <?php foreach ($this->tabs as $key=>$val) { ?>
+            	<a class="nav-tab" href="?page=theatre-admin&tab=<?php echo $key;?>">
+            		<?php echo $val;?>
+            	</a>
+            <?php } ?>
+            </h2>
             <form method="post" action="options.php">
             <?php
                 // This prints out all hidden setting fields
-                settings_fields( 'wp_theatre_group' );   
+                settings_fields( 'wp_theatre' );   
                 do_settings_sections( 'theatre-admin' );
                 submit_button(); 
             ?>
