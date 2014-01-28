@@ -27,32 +27,32 @@ class WPT_Admin {
 		wp_enqueue_script( 'jquery-ui-timepicker', plugins_url( '../js/jquery-ui-timepicker-addon.js', __FILE__ ), array('jquery-ui-datepicker','jquery-ui-slider')  );
 		wp_enqueue_style('jquery-style', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css');
 
+        register_setting(
+            'wp_theatre', // Option group
+            'wp_theatre' // Option name
+        );
 		if ($this->tab=='wp_theatre') {
-	        register_setting(
-	            'wp_theatre', // Option group
-	            'wp_theatre' // Option name
-	        );
 
 	        add_settings_section(
 	            'display_section_id', // ID
 	            __('Display','wp_theatre'), // Title
 	            '', // Callback
-	            'theatre-admin' // Page
+	            'wp_theatre' // Page
 	        );  
 	
 	        add_settings_field(
 	            'settings_field_show_events', // ID
 	            __('Show events on production page.','wp_theatre'), // Title 
 	            array( $this, 'settings_field_show_events' ), // Callback
-	            'theatre-admin', // Page
+	            'wp_theatre', // Page
 	            'display_section_id' // Section           
-	        );      
+	        );
 		}
 	}
 
 	function admin_menu() {
 		add_menu_page( __('Theatre','wp_theatre'), __('Theatre','wp_theatre'), 'edit_posts', 'theatre', array(), 'none', 30);
-		add_submenu_page( 'theatre', 'Theatre '.__('Settings'), __('Settings'), 'manage_options', 'theatre-admin', array( $this, 'admin_page' ));
+		add_submenu_page( 'theatre', 'Theatre '.__('Settings'), __('Settings'), 'manage_options', 'wpt_admin', array( $this, 'admin_page' ));
 	}
 	
 	function add_meta_boxes() {
@@ -430,15 +430,14 @@ class WPT_Admin {
         );
     }
 
-    public function admin_page()
-    {
+    public function admin_page() {
         ?>
         <div class="wrap">
             <?php screen_icon(); ?>
        		<h2><?php echo __('Theatre','wp_theatre').' '.__('Settings');?></h2>
             <h2 class="nav-tab-wrapper">
             <?php foreach ($this->tabs as $key=>$val) { ?>
-            	<a class="nav-tab" href="?page=theatre-admin&tab=<?php echo $key;?>">
+            	<a class="nav-tab <?php echo $key==$this->tab?'nav-tab-active':'';?>" href="?page=wpt_admin&tab=<?php echo $key;?>">
             		<?php echo $val;?>
             	</a>
             <?php } ?>
@@ -446,8 +445,8 @@ class WPT_Admin {
             <form method="post" action="options.php">
             <?php
                 // This prints out all hidden setting fields
-                settings_fields( 'wp_theatre' );   
-                do_settings_sections( 'theatre-admin' );
+                settings_fields( $this->tab );   
+                do_settings_sections( $this->tab );
                 submit_button(); 
             ?>
             </form>
@@ -645,7 +644,7 @@ class WPT_Admin {
 }
 
 if (is_admin()) {
-	new WPT_Admin();
+	$wpt_admin = new WPT_Admin();
 }
 
 ?>
