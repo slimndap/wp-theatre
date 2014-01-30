@@ -91,6 +91,10 @@ You can also add header above the listing:
  
 == Changelog ==
 
+= 0.3 =
+* bugfix: events with the same date and time were causing conflicts.
+* support for my upcoming Ticketmatic extension.
+
 = 0.2.7 =
 * 2 extra columns (dates and cities) to productions admin page.
 * Grouped and paged event listings.
