@@ -120,7 +120,7 @@ class WP_Theatre {
 
 		for ($i=0;$i<count($posts);$i++) {
 			$datetime = strtotime(get_post_meta($posts[$i]->ID,'event_date',true));
-			$events[$datetime] = new WPT_Event($posts[$i], $PostClass);
+			$events[$datetime.$posts[$i]->ID] = new WPT_Event($posts[$i], $PostClass);
 		}
 		
 		ksort($events);
