@@ -91,6 +91,11 @@ You can also add header above the listing:
  
 == Changelog ==
 
+= 0.3.1 =
+* bugfixes and technical improvements
+* better support for bulk-editing productions
+* better support for quick-editing productions
+
 = 0.3 =
 * bugfix: events with the same date and time were causing conflicts.
 * support for my upcoming Ticketmatic extension.

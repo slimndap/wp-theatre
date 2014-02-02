@@ -174,13 +174,15 @@ class WPT_Production extends WP_Theatre {
 	function render_events() {
 		$html = '';
 		$html.= '<h3>'.WPT_Event::post_type()->labels->name.'</h3>';
-		$html.= '<ul class="wp_theatre_events">';
+		$html.= '<div class="wp_theatre_events">';
+		$html.= '<ul>';
 		foreach ($this->upcoming_events() as $event) {
 			$html.= '<li>';
 			$html.= $event->render();			
 			$html.= '</li>';
 		}
 		$html.= '</ul>';
+		$html.= '</div>';
 		return $html;
 	}
 

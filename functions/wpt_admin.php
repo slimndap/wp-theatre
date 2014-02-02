@@ -6,7 +6,12 @@ class WPT_Admin {
 		add_action( 'add_meta_boxes', array($this, 'add_meta_boxes'));
 		add_action( 'edit_post', array( $this, 'edit_post' ));
 		add_action( 'delete_post',array( $this, 'delete_post' ));
-		add_action( 'save_post', array( $this, 'save_post' ) );
+
+		add_action( 'save_post_'.WPT_Production::post_type_name, array( $this, 'save_production' ) );
+		add_action( 'save_post_'.WPT_Event::post_type_name, array( $this, 'save_event' ) );
+
+		add_action( 'quick_edit_custom_box', array($this,'quick_edit_custom_box'), 10, 2 );
+		add_action( 'bulk_edit_custom_box', array($this,'bulk_edit_custom_box'), 10, 2 );
 
 		add_filter('manage_wp_theatre_prod_posts_columns', array($this,'manage_wp_theatre_prod_posts_columns'), 10, 2);
 		add_filter('manage_wp_theatre_event_posts_columns', array($this,'manage_wp_theatre_event_posts_columns'), 10, 2);
@@ -106,13 +111,42 @@ class WPT_Admin {
 		echo '</label>';
 	}
 
+	function get_events($production_id) {
+		$args = array(
+			'post_type'=>WPT_Event::post_type_name,
+			'meta_key' => 'event_date',
+			'order_by' => 'meta_value',
+			'order' => 'ASC',
+			'posts_per_page' => -1,
+			'post_status'=>'all',
+			'meta_query' => array(
+				array(
+					'key' => WPT_Production::post_type_name,
+					'value' => $production_id,
+					'compare' => '=',
+				),
+			),
+		);
+		$posts = get_posts($args);
+
+		$events = array();
+		for ($i=0;$i<count($posts);$i++) {
+			$datetime = strtotime(get_post_meta($posts[$i]->ID,'event_date',true));
+			$events[$datetime.$posts[$i]->ID] = new WPT_Event($posts[$i], $PostClass);
+		}
+		
+		ksort($events);
+		return array_values($events);
+
+	}
+
 	function meta_box_events($production) {
 		$production = new WPT_Production(get_the_id());
 		
 		if (get_post_status($production->ID) == 'auto-draft') {
 			echo __('You need to save this production before you can add events.','wp_theatre');
 		} else {
-			$events = $production->upcoming_events();
+			$events = $this->get_events($production->ID);
 			if (count($events)>0) {
 				echo '<ul>';
 				foreach ($events as $event) {
@@ -310,11 +344,9 @@ class WPT_Admin {
 	}
 	
 	function save_post( $post_id ) {
-		$this->save_event( $post_id );
 		$this->save_production( $post_id );
-	
+		$this->save_event( $post_id );
 		$this->flush_cache();
-	
 	}
 	
 	function save_event( $post_id ) {
@@ -407,6 +439,18 @@ class WPT_Admin {
 		update_post_meta( $post_id, WPT_Season::post_type_name, $season );
 		update_post_meta( $post_id, 'sticky', $sticky );
 		
+		// Update status of connected Events
+		remove_action( 'save_post', array( $this, 'save_post' ) );
+		$events = $this->get_events($post_id);
+		foreach($events as $event) {
+			$post = array(
+				'ID'=>$event->ID,
+				'post_status'=>get_post_status($post_id)
+			);
+			wp_update_post($post);
+		}
+		add_action( 'save_post', array( $this, 'save_post' ) );
+	
 		
 	}
 	
@@ -464,13 +508,17 @@ class WPT_Admin {
     
     function wp_add_dashboard_widget() {
     	global $wp_theatre;
+    	
+    	$events = $wp_theatre->get_events();
+    	$productions = $wp_theatre->get_productions();
+
 		$html = '';
 		
 		$html.= '<div class="events">';
 		
 		$html.= '<h4>'.__('Upcoming events','wp_theatre').'</h4>';
 		$html.= '<ul>';
-		foreach ($wp_theatre->get_events() as $event) {
+		foreach ($events as $event) {
 			$html.= '<li>';
 			$html.= $this->render_event($event);
 			
@@ -489,7 +537,7 @@ class WPT_Admin {
 		$html.= '<div class="productions">';
 		$html.= '<h4>'.__('Current productions','wp_theatre').'</h4>';
 		$html.= '<ul>';
-		foreach ($wp_theatre->get_productions() as $production) {
+		foreach ($productions as $production) {
 			$html.= '<li>';
 			$html.= $this->render_production($production);
 
@@ -560,6 +608,12 @@ class WPT_Admin {
 				
 			}
 		}
+
+		$summary = $event->summary();
+		if ($summary['prices']!='') {
+			$html.= '<div class="prices">'.$summary['prices'].'</div>';
+		}
+		
 		$html.= '</div>'; //.tickets
 		
 		$html.='</div>'; // .event
@@ -602,6 +656,7 @@ class WPT_Admin {
 				$new_columns['cities'] = __('Cities','wp_theatre');
 			}
 		}
+
 		return $new_columns;
 	}
 	
@@ -641,7 +696,48 @@ class WPT_Admin {
 		}
 		
 	}
+
+	function quick_edit_custom_box($column_name, $post_type) {
+	    static $printNonce = TRUE;
+	    if ( $printNonce ) {
+	        $printNonce = FALSE;
+			wp_nonce_field($post_type, $post_type.'_nonce' );
+	    }		
+	}
+
+	function bulk_edit_custom_box($column_name, $post_type) {
+		wp_nonce_field($post_type, $post_type.'_nonce' );
+	}
+	
 }
+
+add_action( 'wp_ajax_save_bulk_edit_'.WPT_Production::post_type_name, 'wp_ajax_save_bulk_edit_production' );
+function wp_ajax_save_bulk_edit_production() {
+	$wpt_admin = new WPT_Admin();
+
+	// TODO perform nonce checking
+	remove_action( 'save_post', array( $this, 'save_post' ) );
+
+	$post_ids = ( ! empty( $_POST[ 'post_ids' ] ) ) ? $_POST[ 'post_ids' ] : array();
+	if ( ! empty( $post_ids ) && is_array( $post_ids ) ) {
+		foreach( $post_ids as $post_id ) {
+			// Update status of connected Events
+			$events = $wpt_admin->get_events($post_id);
+			foreach($events as $event) {
+				$post = array(
+					'ID'=>$event->ID,
+					'post_status'=>$_POST[ 'post_status' ]
+				);
+				wp_update_post($post);
+			}
+		}
+	}
+
+	add_action( 'save_post', array( $this, 'save_post' ) );
+
+	die();					
+}
+
 
 if (is_admin()) {
 	$wpt_admin = new WPT_Admin();
