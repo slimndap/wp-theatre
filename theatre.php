@@ -4,7 +4,7 @@ Plugin Name: Theatre
 Plugin URI: http://wordpress.org/plugins/theatre/
 Description: Turn your Wordpress website into a theatre website.
 Author: Jeroen Schmit, Slim & Dapper
-Version: 0.3.2
+Version: 0.3.3
 Author URI: http://slimndap.com/
 Text Domain: wp_theatre
 Domain Path: /lang
@@ -92,7 +92,6 @@ class WP_Theatre {
 			GROUP BY productions.ID
 			ORDER BY sticky.meta_value DESC , event_date.meta_value ASC				
 		";
-		
 		$posts = $wpdb->get_results($querystr, OBJECT);
 		
 		$productions = array();
