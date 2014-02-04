@@ -98,7 +98,6 @@ class WPT_Production extends WP_Theatre {
 				if ($this->cities()!='') {
 					$full .= ' '.__('in','wp_theatre').' '.$this->cities();
 				}
-				$full .= '.';				
 			}
 			$this->summary = array(
 				'dates' => $this->dates(),
@@ -171,6 +170,43 @@ class WPT_Production extends WP_Theatre {
 		return $past_events;		
 	}
 
+	function render() {
+		$summary = $this->summary();
+		
+		$html = '';
+		
+		$html.= '<div class='.self::post_type_name.'>';
+
+		$thumbnail = get_the_post_thumbnail($this->ID,'thumbnail');
+		if (!empty($thumbnail)) {
+			$html.= '<figure>';
+			$html.= $thumbnail;
+			$html.= '</figure>';
+		}
+
+		$html.= '<div class="main">';
+
+		$html.= '<div class="summary">';
+		$html.= $summary['full']; 
+		$html.= '</div>';
+
+		$html.= '<div class="content">';
+		
+		$html.= '<div class="title">';
+		$html.= '<a itemprop="url" href="'.get_permalink($this->ID).'">';
+		$html.= $this->post()->post_title;
+		$html.= '</a>';
+		$html.= '</div>'; //.title
+		
+		$html.= '</div>'; // .content
+
+
+		$html.= '</div>'; // .main
+
+		$html.= '</div>';
+		return $html;
+	}
+	
 	function render_events() {
 		$html = '';
 		$html.= '<h3>'.WPT_Event::post_type()->labels->name.'</h3>';

@@ -91,6 +91,8 @@ class WPT_Event extends WP_Theatre {
 			$html.= '</figure>';
 		}
 
+		$html.= '<div class="main">';
+
 		$html.= '<div class="date" itemprop="startDate" datetime="'.date('c',$this->datetime()).'">';
 		$html.= $this->date().' '.$this->time(); 
 		$html.= '</div>';
@@ -151,6 +153,8 @@ class WPT_Event extends WP_Theatre {
 		}
 		
 		$html.= '</div>'; // .tickets
+
+		$html.= '</div>'; // .main
 
 		$html.= '</div>';
 		return $html;

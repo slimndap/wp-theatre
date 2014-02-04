@@ -1,6 +1,45 @@
 @import "lesshat";
 
 
+.wp_theatre_prod {
+	overflow: auto;
+	line-height: inherit;
+	figure {
+		float: left;
+		width: 15%;
+		padding-right: 0.5em;
+		.box-sizing(border-box);
+	}
+	.main {
+		float: left;
+		width: 85%;
+		.box-sizing(border-box);
+		>div {
+			float: left;
+			.box-sizing(border-box);			
+			&.date {
+				width: 35%;
+				padding-right: 0.5em;
+			}
+			&.content {
+				width: 50%;
+				padding-right: 0.5em;
+				.remark {
+					font-style: italic;
+				}
+				
+			}
+			&.tickets {
+				width: 15%;
+				.prices {
+					font-size: 0.875em;
+				}
+			}
+		}
+	}
+
+}
+
 .wp_theatre_event {
 	overflow: auto;
 	line-height: inherit;
@@ -10,25 +49,30 @@
 		padding-right: 0.5em;
 		.box-sizing(border-box);
 	}
-	> div {
+	.main {
 		float: left;
+		width: 85%;
 		.box-sizing(border-box);
-		&.date {
-			width: 25%;
-			padding-right: 0.5em;
-		}
-		&.content {
-			width: 45%;
-			padding-right: 0.5em;
-			.remark {
-				font-style: italic;
+		>div {
+			float: left;
+			.box-sizing(border-box);			
+			&.date {
+				width: 35%;
+				padding-right: 0.5em;
 			}
-			
-		}
-		&.tickets {
-			width: 15%;
-			.prices {
-				font-size: 0.875em;
+			&.content {
+				width: 50%;
+				padding-right: 0.5em;
+				.remark {
+					font-style: italic;
+				}
+				
+			}
+			&.tickets {
+				width: 15%;
+				.prices {
+					font-size: 0.875em;
+				}
 			}
 		}
 	}
@@ -38,6 +82,32 @@
 	nav {
 		span {
 			padding-right: 0.5em;
+			font-size: 0.875em;
+		}
+		border-bottom: 1px solid lightgrey;
+		padding-bottom: 0.5em;
+	}
+	ul {
+		list-style-type: none;
+		margin: 0 0 1em;
+		padding: 0;	
+		li {
+			border-top: 1px solid lightgrey;
+			padding-top: 0.5em;
+			margin-top: 0.5em;
+			&:first-child {
+				border-top: none;
+			}
+		}
+		
+	}
+}
+
+.wp_theatre_productions {
+	nav {
+		span {
+			padding-right: 0.5em;
+			font-size: 0.875em;
 		}
 		border-bottom: 1px solid lightgrey;
 		padding-bottom: 0.5em;
@@ -70,11 +140,38 @@ body.single-wp_theatre_prod {
 	}
 }
 
-.wpt_events_widget {
+.widget_wpt_events_widget {
 	.wp_theatre_event {
-		> div {
-			float: none;
-			width: auto;
+		figure {
+			width: 30%;
+		}
+		.main {
+			float: left;
+			width: 70%;
+			> div {
+				float: none;
+				width: auto;
+			}
 		}
 	}
+}
+
+.widget_wpt_productions_widget {
+	.wp_theatre_prod {
+		figure {
+			width: 30%;
+		}
+		.main {
+			float: left;
+			width: 70%;
+			> div {
+				float: none;
+				width: auto;
+			}
+		}
+	}
+}
+
+.widget_wpt_events_widget {
+	
 }

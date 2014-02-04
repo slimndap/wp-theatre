@@ -14,6 +14,7 @@ class WPT_Setup {
 
 		add_action( 'widgets_init', function(){
 		     register_widget( 'WPT_Events_Widget' );
+		     register_widget( 'WPT_Productions_Widget' );
 		});
 		
 		add_action( 'plugins_loaded', array($this,'plugins_loaded'));
