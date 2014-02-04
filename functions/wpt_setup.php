@@ -18,6 +18,7 @@ class WPT_Setup {
 		});
 		
 		add_action( 'plugins_loaded', array($this,'plugins_loaded'));
+		add_action('wp_head', array($this,'wp_head'));
 
 	}
 
@@ -107,6 +108,10 @@ class WPT_Setup {
 	function activate() {
 		$this->init();
 		flush_rewrite_rules();
+	}
+
+	function wp_head() {
+		echo '<meta name="generator" content="Theatre" />'."\n";
 	}
 
 }

@@ -34,7 +34,6 @@ class WP_Theatre {
 			$ID = $ID->ID;
 		}
 		$this->ID = $ID;
-		add_action('wp_head', array($this,'wp_head'));
 	}
 	
 	function get_post() {
@@ -241,9 +240,6 @@ class WP_Theatre {
 		
 	}
 
-	function wp_head() {
-		echo '<meta name="generator" content="Theatre" />'."\n";
-	}
 
 }
 

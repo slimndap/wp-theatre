@@ -84,7 +84,10 @@ class WPT_Event extends WP_Theatre {
 		
 		$html.= '<div class='.self::post_type_name.' itemscope itemtype="http://data-vocabulary.org/Event">';
 
-		$thumbnail = get_the_post_thumbnail($this->production()->ID,'thumbnail');
+		$attr = array(
+			'itemprop'=>'image'
+		);
+		$thumbnail = get_the_post_thumbnail($this->production()->ID,'thumbnail',$attr);
 		if (!empty($thumbnail)) {
 			$html.= '<figure>';
 			$html.= $thumbnail;
@@ -93,15 +96,17 @@ class WPT_Event extends WP_Theatre {
 
 		$html.= '<div class="main">';
 
-		$html.= '<div class="date" itemprop="startDate" datetime="'.date('c',$this->datetime()).'">';
+		$html.= '<div class="date">';
+		$html.= '<time itemprop="startDate" datetime="'.date('c',$this->datetime()).'">';
 		$html.= $this->date().' '.$this->time(); 
+		$html.= '</time>';
 		$html.= '</div>';
 
 		$html.= '<div class="content">';
 		
 		$html.= '<div class="title">';
 		$html.= '<a itemprop="url" href="'.get_permalink($this->production()->ID).'">';
-		$html.= $this->production()->post()->post_title;
+		$html.= '<span itemprop="summary">'.$this->production()->post()->post_title.'</span>';
 		$html.= '</a>';
 		$html.= '</div>'; //.title
 
