@@ -69,29 +69,36 @@ class WP_Theatre {
 	}
 	
 	function get_productions($PostClass = false) {
-		$args = array(
-			'post_type'=>WPT_Production::post_type_name,
-			'posts_per_page' => -1
-		);
-		$posts = get_posts($args);
 		
-		$upcoming = array();
-		$stickies = array();
+		global $wpdb;
+		
+		$querystr = "
+			SELECT productions . ID
+			FROM $wpdb->posts AS
+			events
+			JOIN $wpdb->postmeta AS event_date ON events.ID = event_date.post_ID
+			JOIN $wpdb->postmeta AS wp_theatre_prod ON events.ID = wp_theatre_prod.post_ID
+			JOIN $wpdb->posts AS productions ON wp_theatre_prod.meta_value = productions.ID
+			JOIN wp_postmeta AS sticky ON productions.ID = sticky.post_ID
+			WHERE events.post_type = 'wp_theatre_event'
+			AND events.post_status = 'publish'
+			AND event_date.meta_key = 'event_date'
+			AND wp_theatre_prod.meta_key = 'wp_theatre_prod'
+			AND sticky.meta_key = 'sticky'
+			AND (
+			event_date.meta_value > NOW( )
+			OR sticky.meta_value = 'on'
+			)
+			GROUP BY productions.ID
+			ORDER BY sticky.meta_value DESC , event_date.meta_value ASC				
+		";
+		
+		$posts = $wpdb->get_results($querystr, OBJECT);
+		
+		$productions = array();
 		for ($i=0;$i<count($posts);$i++) {
-			$production = new WPT_Production($posts[$i], $PostClass);
-			if ($production->is_upcoming()) {
-				$events = $production->events();
-				$upcoming[$events[0]->datetime()] = $production;				
-			} elseif (is_sticky($production->ID)) {
-				$stickies[] = $production;
-			}
+			$productions[] = new WPT_Production($posts[$i]->ID, $PostClass);
 		}
-		
-		ksort($upcoming);
-		$upcoming = array_values($upcoming);
-		
-		$productions = array_merge($upcoming,$stickies);
-		
 		return $productions;
 	}
 	

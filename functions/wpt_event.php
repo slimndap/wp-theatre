@@ -149,7 +149,7 @@ class WPT_Event extends WP_Theatre {
 				}
 				$html_tickets_button.= $text;
 				$html_tickets_button.= '</a>';
-				$html.= apply_filters('wpt_event_tickets_button',$html_tickets_button,$url,$text);
+				$html.= apply_filters('wpt_event_tickets_button',$html_tickets_button,$this);
 			}
 		}
 
