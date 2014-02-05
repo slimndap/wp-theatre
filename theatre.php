@@ -79,7 +79,7 @@ class WP_Theatre {
 			JOIN $wpdb->postmeta AS event_date ON events.ID = event_date.post_ID
 			JOIN $wpdb->postmeta AS wp_theatre_prod ON events.ID = wp_theatre_prod.post_ID
 			JOIN $wpdb->posts AS productions ON wp_theatre_prod.meta_value = productions.ID
-			JOIN wp_postmeta AS sticky ON productions.ID = sticky.post_ID
+			JOIN $wpdb->postmeta AS sticky ON productions.ID = sticky.post_ID
 			WHERE events.post_type = 'wp_theatre_event'
 			AND events.post_status = 'publish'
 			AND event_date.meta_key = 'event_date'

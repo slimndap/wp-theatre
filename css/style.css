@@ -52,6 +52,13 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
+.wp_theatre_event figure img {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  max-width: 100%;
+  height: auto;
+}
 .wp_theatre_event .main {
   float: left;
   width: 85%;
