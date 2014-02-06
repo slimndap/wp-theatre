@@ -80,13 +80,16 @@ class WP_Theatre {
 			JOIN $wpdb->postmeta AS wp_theatre_prod ON events.ID = wp_theatre_prod.post_ID
 			JOIN $wpdb->posts AS productions ON wp_theatre_prod.meta_value = productions.ID
 			JOIN $wpdb->postmeta AS sticky ON productions.ID = sticky.post_ID
-			WHERE events.post_type = 'wp_theatre_event'
-			AND events.post_status = 'publish'
-			AND event_date.meta_key = 'event_date'
-			AND wp_theatre_prod.meta_key = 'wp_theatre_prod'
-			AND sticky.meta_key = 'sticky'
-			AND (
-			event_date.meta_value > NOW( )
+			WHERE 
+			(
+				events.post_type = 'wp_theatre_event'
+				AND events.post_status = 'publish'
+				AND event_date.meta_key = 'event_date'
+				AND wp_theatre_prod.meta_key = 'wp_theatre_prod'
+				AND sticky.meta_key = 'sticky'
+				AND (
+				event_date.meta_value > NOW( )
+			) 
 			OR sticky.meta_value = 'on'
 			)
 			GROUP BY productions.ID
