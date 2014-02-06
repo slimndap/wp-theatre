@@ -87,11 +87,9 @@ class WP_Theatre {
 				AND event_date.meta_key = 'event_date'
 				AND wp_theatre_prod.meta_key = 'wp_theatre_prod'
 				AND sticky.meta_key = 'sticky'
-				AND (
-				event_date.meta_value > NOW( )
+				AND event_date.meta_value > NOW( )
 			) 
 			OR sticky.meta_value = 'on'
-			)
 			GROUP BY productions.ID
 			ORDER BY sticky.meta_value DESC , event_date.meta_value ASC				
 		";
