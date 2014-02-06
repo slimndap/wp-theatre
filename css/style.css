@@ -48,6 +48,7 @@
   float: left;
   width: 15%;
   padding-right: 0.5em;
+  margin: 0;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
