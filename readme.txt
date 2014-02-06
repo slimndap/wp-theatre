@@ -90,6 +90,9 @@ You can also add header above the listing:
 
  
 == Changelog ==
+= 0.3.4 =
+* Better in avoiding CSS conflict with themes
+
 = 0.3.3 =
 * Microdata for events
 * Speed improvements

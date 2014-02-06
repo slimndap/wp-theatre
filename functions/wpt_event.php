@@ -94,28 +94,34 @@ class WPT_Event extends WP_Theatre {
 			$html.= '</figure>';
 		}
 
-		$html.= '<div class="main">';
+		$html.= '<div class="'.self::post_type_name.'_main">';
 
-		$html.= '<div class="date">';
+		$html.= '<div class="'.self::post_type_name.'_date">';
 		$html.= '<time itemprop="startDate" datetime="'.date('c',$this->datetime()).'">';
 		$html.= $this->date().' '.$this->time(); 
 		$html.= '</time>';
 		$html.= '</div>';
 
-		$html.= '<div class="content">';
-		
-		$html.= '<div class="title">';
-		$html.= '<a itemprop="url" href="'.get_permalink($this->production()->ID).'">';
-		$html.= '<span itemprop="summary">'.$this->production()->post()->post_title.'</span>';
-		$html.= '</a>';
-		$html.= '</div>'; //.title
+		$html.= '<div class="'.self::post_type_name.'_content">';
 
-		$remark = get_post_meta($this->ID,'remark',true);
-		if ($remark!='') {
-			$html.= '<div class="remark">'.$remark.'</div>';
+		if (is_singular(WPT_Production::post_type_name)) {
+			$html.= '<meta itemprop="summary" content="'.$this->production()->post()->post_title.'" />';
+			$html.= '<meta itemprop="url" content="'.get_permalink($this->production()->ID).'" />';
+			
+		} else {
+			$html.= '<div class="'.self::post_type_name.'_title">';
+			$html.= '<a itemprop="url" href="'.get_permalink($this->production()->ID).'">';
+			$html.= '<span itemprop="summary">'.$this->production()->post()->post_title.'</span>';
+			$html.= '</a>';
+			$html.= '</div>'; //.title			
 		}
 		
-		$html.= '<div class="location" itemprop="location" itemscope itemtype="http://data-vocabulary.org/Organization">';
+		$remark = get_post_meta($this->ID,'remark',true);
+		if ($remark!='') {
+			$html.= '<div class="'.self::post_type_name.'_remark">'.$remark.'</div>';
+		}
+		
+		$html.= '<div class="'.self::post_type_name.'_location" itemprop="location" itemscope itemtype="http://data-vocabulary.org/Organization">';
 
 		$venue = get_post_meta($this->ID,'venue',true);
 		$city = get_post_meta($this->ID,'city',true);
@@ -135,9 +141,9 @@ class WPT_Event extends WP_Theatre {
 		
 		$html.= '</div>'; // .content
 
-		$html.= '<div class="tickets">';			
+		$html.= '<div class="'.self::post_type_name.'_tickets">';			
 		if (get_post_meta($this->ID,'tickets_status',true) == 'soldout') {
-			$html.= '<span class="soldout">'.__('Sold out', 'wp_theatre').'</span>';
+			$html.= '<span class="'.self::post_type_name.'_soldout">'.__('Sold out', 'wp_theatre').'</span>';
 		} else {
 			$url = get_post_meta($this->ID,'tickets_url',true);
 			if ($url!='') {
@@ -154,7 +160,7 @@ class WPT_Event extends WP_Theatre {
 		}
 
 		if ($summary['prices']!='') {
-			$html.= '<div class="prices">'.$summary['prices'].'</div>';
+			$html.= '<div class="'.self::post_type_name.'_prices">'.$summary['prices'].'</div>';
 		}
 		
 		$html.= '</div>'; // .tickets
