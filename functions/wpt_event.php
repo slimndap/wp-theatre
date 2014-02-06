@@ -52,7 +52,7 @@ class WPT_Event extends WP_Theatre {
 			$prices_summary = '';
 			if (count($prices)>0) {
 				if (count($prices)==1) {
-					$prices_summary = $prices[0]->price;
+					$prices_summary = ' &euro;&nbsp;'.$prices[0]->price;
 				} else {
 					$prices_lowest = $prices[0]->price;
 					for($p=1;$p<count($prices);$p++) {
