@@ -124,9 +124,6 @@
 				echo $args['before_widget'];
 				if ( ! empty( $title ) )
 					echo $args['before_title'] . $title . $args['after_title'];
-				$args = array(
-					'limit'=>$instance['limit']
-				);
 				echo $WPT_Cart->render();
 				echo $args['after_widget'];
 			}
@@ -139,22 +136,12 @@
 				$title = $instance[ 'title' ];
 			}
 			else {
-				$title = __( 'Upcoming productions', 'wp_theatre' );
-			}
-			if ( isset( $instance[ 'limit' ] ) ) {
-				$limit = $instance[ 'limit' ];
-			}
-			else {
-				$limit = 5;
+				$title = __( 'Cart', 'wp_theatre' );
 			}
 			?>
 			<p>
 			<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label> 
 			<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>">
-			</p>
-			<p>
-			<label for="<?php echo $this->get_field_id( 'limit' ); ?>"><?php _e( 'Number of productions to show:', 'wp_theatre' ); ?></label> 
-			<input id="<?php echo $this->get_field_id( 'limit' ); ?>" name="<?php echo $this->get_field_name( 'limit' ); ?>" size="3" type="text" value="<?php echo esc_attr( $limit ); ?>">
 			</p>
 			<?php 
 		}

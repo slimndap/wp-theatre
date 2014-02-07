@@ -35,6 +35,7 @@ class WP_Theatre {
 			$ID = $ID->ID;
 		}
 		$this->ID = $ID;
+		$this->options = get_option( 'wp_theatre' );
 	}
 	
 	function get_post() {

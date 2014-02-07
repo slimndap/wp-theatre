@@ -27,7 +27,7 @@ class WPT_Admin {
 	}	
 
 	function admin_init() {
-		wp_enqueue_script( 'wp_theatre_js', plugins_url( '../main.js', __FILE__ ), array('jquery') );
+		wp_enqueue_script( 'wp_theatre_admin_js', plugins_url( '../js/admin.js', __FILE__ ), array('jquery') );
 		wp_enqueue_style( 'wp_theatre_admin_css', plugins_url( '../css/admin.css', __FILE__ ) );
 		wp_enqueue_script( 'jquery-ui-timepicker', plugins_url( '../js/jquery-ui-timepicker-addon.js', __FILE__ ), array('jquery-ui-datepicker','jquery-ui-slider')  );
 		wp_enqueue_style('jquery-style', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css');
@@ -52,6 +52,29 @@ class WPT_Admin {
 	            'wp_theatre', // Page
 	            'display_section_id' // Section           
 	        );
+
+	        add_settings_section(
+	            'tickets_integration', // ID
+	            __('Tickets integration','wp_theatre'), // Title
+	            '', // Callback
+	            'wp_theatre' // Page
+	        );  
+	
+	        add_settings_field(
+	            'integrationtype', // ID
+	            __('Integration type','wp_theater'), // Title 
+	            array( $this, 'settings_field_integrationtype' ), // Callback
+	            'wp_theatre', // Page
+	            'tickets_integration' // Section           
+	        );      
+	        
+	        add_settings_field(
+	            'iframepage', // ID
+	            __('Iframe page','wp_theatre'), // Title 
+	            array( $this, 'settings_field_iframepage' ), // Callback
+	            'wp_theatre', // Page
+	            'tickets_integration' // Section           
+	        );      
 		}
 	}
 
@@ -475,7 +498,42 @@ class WPT_Admin {
         );
     }
 
-    public function admin_page() {
+	function settings_field_integrationtype() {
+		$options = array('link','iframe','new_window','lightbox');
+		
+		foreach($options as $option) {
+			echo '<label>';
+			echo '<input type="radio" name="wp_theatre[integrationtype]" value="'.$option.'"';
+			if ($option==$this->options['integrationtype']) {
+				echo ' checked="checked"';
+			}
+			echo '>'.__($option,'wp_theatre').'</option>';
+			echo '</label>';
+			echo '<br />';
+		}
+		
+	}
+
+	function settings_field_iframepage() {
+		$pages = get_pages();
+
+		echo '<select id="iframepage" name="wp_theatre[iframepage]">';
+		echo '<option></option>';
+		foreach($pages as $page) {
+			echo '<option value="'.$page->ID.'"';
+			if ($page->ID==$this->options['iframepage']) {
+				echo ' selected="selected"';
+			}
+			echo '>'.$page->post_title.'</option>';
+		}
+		echo '</select>';
+		echo '<p class="description">'.__('Select the page that embeds all Ticketmatic iframes.','wp_theatre').'</p>';
+		echo '<p class="description">'.__('The page must contain the following shortcode:','wp_theatre');
+		echo '<pre>[wp_theatre_iframe]</pre>';
+		echo '</p>';
+	}
+
+	public function admin_page() {
         ?>
         <div class="wrap">
             <?php screen_icon(); ?>

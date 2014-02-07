@@ -145,17 +145,35 @@ class WPT_Event extends WP_Theatre {
 		if (get_post_meta($this->ID,'tickets_status',true) == 'soldout') {
 			$html.= '<span class="'.self::post_type_name.'_soldout">'.__('Sold out', 'wp_theatre').'</span>';
 		} else {
-			$url = get_post_meta($this->ID,'tickets_url',true);
+			if ($this->options['integrationtype']=='iframe') {
+				$url = get_permalink($this->options['iframepage']);
+				$args = array(
+					__('Event','wp_theatre') => $this->ID
+				);
+				$url= add_query_arg( $args , $url);
+			} else {
+				$url = get_post_meta($this->ID,'tickets_url',true);
+			}
+			
+			$url = apply_filters('wpt_event_tickets_url',$url,$this);
 			if ($url!='') {
 				$html_tickets_button = '';
-				$html_tickets_button.= '<a href="'.get_post_meta($this->ID,'tickets_url',true).'">';
+				$html_tickets_button.= '<a href="'.$url.'"';
+
+				if (!empty($this->options['integrationtype'])) {
+					$html_tickets_button.= ' class="wpt_tickets_url wp_theatre_integrationtype_'.$this->options['integrationtype'].'"';
+				}
+
+				$html_tickets_button.= '>';
+
 				$text = get_post_meta($this->ID,'tickets_button',true);
 				if ($text=='') {
 					$text = __('Tickets','wp_theatre');			
 				}
 				$html_tickets_button.= $text;
 				$html_tickets_button.= '</a>';
-				$html.= apply_filters('wpt_event_tickets_button',$html_tickets_button,$this);
+				
+				$html.= $html_tickets_button;
 			}
 		}
 

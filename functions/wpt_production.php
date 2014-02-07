@@ -217,8 +217,7 @@ class WPT_Production extends WP_Theatre {
 			}
 			$html.= '</ul>';
 			$html.= '</div>';
-			return $html;
-			
+			return $html;		
 		}
 	}
 

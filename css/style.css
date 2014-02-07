@@ -125,3 +125,21 @@
   float: none;
   width: auto;
 }
+.widget_wpt_cart_widget .wpt_cart_item {
+  overflow: auto;
+}
+.widget_wpt_cart_widget .wpt_cart_item .wpt_cart_item_amount {
+  float: left;
+  width: 15%;
+}
+.widget_wpt_cart_widget .wpt_cart_item .wpt_cart_item_amount:after {
+  content: ' \d7';
+}
+.widget_wpt_cart_widget .wpt_cart_item .wp_theatre_prod {
+  float: left;
+  width: 85%;
+}
+iframe.wp_theatre_iframe {
+  width: 800px;
+  height: 500px;
+}

@@ -9,6 +9,7 @@ class WPT_Setup {
 		add_action('wp', array($this, 'wp'));
 		
 		add_shortcode('wp_theatre_events', array($this,'shortcode_events'));
+		add_shortcode('wp_theatre_iframe', array($this,'wp_theatre_iframe'));
 
 		register_activation_hook( __FILE__, array($this, 'activate' ));		
 
@@ -26,6 +27,13 @@ class WPT_Setup {
 	}
 
 	function init() {
+		wp_enqueue_script( 'wp_theatre_js', plugins_url( '../js/main.js', __FILE__ ), array('jquery') );
+
+		if (!is_admin() && $this->options['integrationtype']=='lightbox') {
+			wp_enqueue_script('thickbox');
+			wp_enqueue_style('thickbox.css', includes_url('/js/thickbox/thickbox.css'), null, '1.0');			
+		}
+
 		register_post_type( WPT_Production::post_type_name,
 			array(
 				'labels' => array(
@@ -107,6 +115,18 @@ class WPT_Setup {
 		extract($atts);
 				
 		return $wp_theatre->render_events($atts);
+	}
+
+	function wp_theatre_iframe($atts, $content=null) {
+		$html = '';
+		if (isset($_GET[__('Event','wp_theatre')])) {
+			$tickets_url = get_post_meta($_GET[__('Event','wp_theatre')],'tickets_url',true);
+			if ($tickets_url!='') {
+				$html = '<iframe src="'.$tickets_url.'" class="wp_theatre_iframe"></iframe>';
+			}
+		}
+		do_action('wp_theatre_iframe', $atts, $content=null);
+		return $html;
 	}
 
 	function activate() {
