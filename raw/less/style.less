@@ -1,6 +1,5 @@
 @import "lesshat";
 
-
 .wp_theatre_prod {
 	overflow: auto;
 	line-height: inherit;
@@ -10,34 +9,6 @@
 		padding-right: 0.5em;
 		.box-sizing(border-box);
 	}
-	.wp_theatre_prod_mainn {
-		float: left;
-		width: 85%;
-		.box-sizing(border-box);
-		>div {
-			float: left;
-			.box-sizing(border-box);			
-			&.wp_theatre_prod_date {
-				width: 35%;
-				padding-right: 0.5em;
-			}
-			&.wp_theatre_prod_content {
-				width: 50%;
-				padding-right: 0.5em;
-				.remark {
-					font-style: italic;
-				}
-				
-			}
-			&.wp_theatre_prod_tickets {
-				width: 15%;
-				.wp_theatre_prod_prices {
-					font-size: 0.875em;
-				}
-			}
-		}
-	}
-
 }
 
 .wp_theatre_event {
@@ -98,6 +69,7 @@
 		margin: 0 0 1em;
 		padding: 0;	
 		li {
+			list-style-type: none;
 			border-top: 1px solid lightgrey;
 			padding-top: 0.5em;
 			margin-top: 0.5em;
@@ -164,8 +136,4 @@
 			}
 		}
 	}
-}
-
-.widget_wpt_events_widget {
-	
 }

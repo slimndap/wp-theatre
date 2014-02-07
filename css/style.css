@@ -10,36 +10,6 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.wp_theatre_prod .wp_theatre_prod_mainn {
-  float: left;
-  width: 85%;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
-.wp_theatre_prod .wp_theatre_prod_mainn > div {
-  float: left;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
-.wp_theatre_prod .wp_theatre_prod_mainn > div.wp_theatre_prod_date {
-  width: 35%;
-  padding-right: 0.5em;
-}
-.wp_theatre_prod .wp_theatre_prod_mainn > div.wp_theatre_prod_content {
-  width: 50%;
-  padding-right: 0.5em;
-}
-.wp_theatre_prod .wp_theatre_prod_mainn > div.wp_theatre_prod_content .remark {
-  font-style: italic;
-}
-.wp_theatre_prod .wp_theatre_prod_mainn > div.wp_theatre_prod_tickets {
-  width: 15%;
-}
-.wp_theatre_prod .wp_theatre_prod_mainn > div.wp_theatre_prod_tickets .wp_theatre_prod_prices {
-  font-size: 0.875em;
-}
 .wp_theatre_event {
   overflow: auto;
   line-height: inherit;
@@ -104,6 +74,7 @@
   padding: 0;
 }
 .wp_theatre_events ul li {
+  list-style-type: none;
   border-top: 1px solid lightgrey;
   padding-top: 0.5em;
   margin-top: 0.5em;

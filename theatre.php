@@ -18,6 +18,7 @@ require_once(__DIR__ . '/functions/wpt_event.php');
 require_once(__DIR__ . '/functions/wpt_setup.php');
 require_once(__DIR__ . '/functions/wpt_admin.php');
 require_once(__DIR__ . '/functions/wpt_widget.php');
+require_once(__DIR__ . '/functions/wpt_cart.php');
 
 $wp_theatre = new WP_Theatre();
 	

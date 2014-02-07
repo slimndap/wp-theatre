@@ -15,10 +15,13 @@ class WPT_Setup {
 		add_action( 'widgets_init', function(){
 		     register_widget( 'WPT_Events_Widget' );
 		     register_widget( 'WPT_Productions_Widget' );
+		     register_widget( 'WPT_Cart_Widget' );
 		});
 		
 		add_action( 'plugins_loaded', array($this,'plugins_loaded'));
 		add_action('wp_head', array($this,'wp_head'));
+
+		add_filter( 'pre_get_posts', array($this,'pre_get_posts') );
 
 	}
 
@@ -37,7 +40,8 @@ class WPT_Setup {
 				'has_archive' => true,
 				'show_in_menu'  => 'theatre',
 				'show_in_admin_bar' => true,
-	  			'supports' => array('title', 'editor', 'excerpt', 'thumbnail'),
+	  			'supports' => array('title', 'editor', 'excerpt', 'thumbnail','comments'),
+	  			'taxonomies' => array('category','post_tag'),
 	  			'rewrite' => array(
 	  				'slug' => 'production'
 	  			)
@@ -112,6 +116,21 @@ class WPT_Setup {
 
 	function wp_head() {
 		echo '<meta name="generator" content="Theatre" />'."\n";
+	}
+	
+	function pre_get_posts($query) {
+		// add productions to tag and category archives
+		if( is_category() || is_tag() && empty( $query->query_vars['suppress_filters'] ) ) {
+			$post_types = $query->get( 'post_type');
+			if (empty($post_types)) {
+				$post_types = array('post');
+			}
+			if (is_array($post_types)) {
+				$post_types[] = WPT_Production::post_type_name;
+			}
+			$query->set('post_type',$post_types);
+		}
+		return $query;
 	}
 
 }

@@ -62,18 +62,12 @@ class WPT_Admin {
 	
 	function add_meta_boxes() {
 		add_meta_box(
-            'wp_theatre_sticky',
-            __('Display','wp_theatre'),
-            array($this,'meta_box_sticky'),
-            WPT_Production::post_type()->name,
-            'side'
-        ); 		
-		add_meta_box(
             'wp_theatre_events',
             WPT_Event::post_type()->labels->name,
             array($this,'meta_box_events'),
             WPT_Production::post_type()->name,
-            'side'
+            'side',
+            'core'
         ); 		
 		add_meta_box(
             'wp_theatre_event_data',
@@ -96,6 +90,13 @@ class WPT_Admin {
             WPT_Production::post_type()->name,
             'side'
         ); 	
+		add_meta_box(
+            'wp_theatre_sticky',
+            __('Display','wp_theatre'),
+            array($this,'meta_box_sticky'),
+            WPT_Production::post_type()->name,
+            'side'
+        ); 		
 	}
 	
 	function meta_box_sticky($production) {
