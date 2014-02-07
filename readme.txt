@@ -90,6 +90,13 @@ You can also add header above the listing:
 
  
 == Changelog ==
+
+= 0.3.5 =
+* Updated Dutch language files
+* Improved layout of production listings
+* Show tickets pages in an iframe, new window of lightbox/thickbox
+* Shopping cart (requires help from a developer)
+
 = 0.3.4 =
 * Better in avoiding CSS conflict with themes
 

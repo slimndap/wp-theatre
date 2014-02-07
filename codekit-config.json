@@ -181,7 +181,7 @@
       "outputPathIsSetByUser" : 0,
       "inputAbbreviatedPath" : "\/raw\/coffee\/main.coffee",
       "checkOutputStyle" : 0,
-      "minifyOutput" : 0,
+      "minifyOutput" : 1,
       "outputAbbreviatedPath" : "\/js\/main.js",
       "outputStyle" : 0,
       "fileType" : 32
@@ -431,7 +431,7 @@
   },
   "projectAttributes" : {
     "bourbonEnabled" : 0,
-    "displayValue" : "wp-theatre",
+    "displayValue" : "theatre",
     "displayValueWasSetByUser" : 0,
     "compassEnabled" : 0
   }

@@ -177,12 +177,6 @@ class WPT_Production extends WP_Theatre {
 		
 		$html.= '<div class='.self::post_type_name.'>';
 
-		$html.= '<div class="'.self::post_type_name.'_title">';
-		$html.= '<a itemprop="url" href="'.get_permalink($this->ID).'">';
-		$html.= $this->post()->post_title;
-		$html.= '</a>';
-		$html.= '</div>'; //.title
-
 		$thumbnail = get_the_post_thumbnail($this->ID,'thumbnail');
 		if (!empty($thumbnail)) {
 			$html.= '<figure>';
@@ -192,10 +186,15 @@ class WPT_Production extends WP_Theatre {
 
 		$html.= '<div class="'.self::post_type_name.'_main">';
 
+		$html.= '<div class="'.self::post_type_name.'_title">';
+		$html.= '<a itemprop="url" href="'.get_permalink($this->ID).'">';
+		$html.= $this->post()->post_title;
+		$html.= '</a>';
+		$html.= '</div>'; //.title
+
 		$html.= '<div class="'.self::post_type_name.'_summary">';
 		$html.= $summary['full']; 
 		$html.= '</div>';
-
 
 		$html.= '</div>'; // .main
 

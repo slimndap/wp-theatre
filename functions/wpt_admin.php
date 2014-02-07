@@ -62,7 +62,7 @@ class WPT_Admin {
 	
 	        add_settings_field(
 	            'integrationtype', // ID
-	            __('Integration type','wp_theater'), // Title 
+	            __('Integration type','wp_theatre'), // Title 
 	            array( $this, 'settings_field_integrationtype' ), // Callback
 	            'wp_theatre', // Page
 	            'tickets_integration' // Section           

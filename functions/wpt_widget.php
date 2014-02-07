@@ -73,10 +73,7 @@
 			echo $args['before_widget'];
 			if ( ! empty( $title ) )
 				echo $args['before_title'] . $title . $args['after_title'];
-			$args = array(
-				'limit'=>$instance['limit']
-			);
-			echo $wp_theatre->render_productions($args);
+			echo $wp_theatre->render_productions(array('limit'=>$instance['limit']));
 			echo $args['after_widget'];
 
 		}
