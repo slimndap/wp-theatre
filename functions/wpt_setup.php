@@ -1,16 +1,10 @@
 <?php
-
 class WPT_Setup {
 	function __construct() {
 		$this->options = get_option( 'wp_theatre' );
 
 		add_action( 'init', array($this,'init'));
-		add_action('the_content', array($this, 'the_content'));
-		add_action('wp', array($this, 'wp'));
 		
-		add_shortcode('wp_theatre_events', array($this,'shortcode_events'));
-		add_shortcode('wp_theatre_iframe', array($this,'wp_theatre_iframe'));
-
 		register_activation_hook( __FILE__, array($this, 'activate' ));		
 
 		add_action( 'widgets_init', function(){
@@ -20,20 +14,9 @@ class WPT_Setup {
 		});
 		
 		add_action( 'plugins_loaded', array($this,'plugins_loaded'));
-		add_action('wp_head', array($this,'wp_head'));
-
-		add_filter( 'pre_get_posts', array($this,'pre_get_posts') );
-
 	}
 
 	function init() {
-		wp_enqueue_script( 'wp_theatre_js', plugins_url( '../js/main.js', __FILE__ ), array('jquery') );
-
-		if (!is_admin() && $this->options['integrationtype']=='lightbox') {
-			wp_enqueue_script('thickbox');
-			wp_enqueue_style('thickbox.css', includes_url('/js/thickbox/thickbox.css'), null, '1.0');			
-		}
-
 		register_post_type( WPT_Production::post_type_name,
 			array(
 				'labels' => array(
@@ -92,66 +75,11 @@ class WPT_Setup {
 		load_plugin_textdomain('wp_theatre', false, dirname( plugin_basename( __FILE__ ) ) . '/../lang/' );
 	}
 	
-	function wp() {
-		$this->production = new WPT_Production();			
-	}
-	
-	function the_content($content) {
-		if (is_singular(WPT_Production::post_type_name)) {
-			if (isset( $this->options['show_events'] ) && (esc_attr( $this->options['show_events'])=='yes')) {
-				$content .= $this->production->render_events();
-			}
-		}
-		return $content;
-	}
-	
-	function shortcode_events($atts, $content=null) {
-		global $wp_theatre;
-		
-		$atts = shortcode_atts( array(
-			'paged' => 0,
-			'grouped' => 0,
-		), $atts );
-		extract($atts);
-				
-		return $wp_theatre->render_events($atts);
-	}
-
-	function wp_theatre_iframe($atts, $content=null) {
-		$html = '';
-		if (isset($_GET[__('Event','wp_theatre')])) {
-			$tickets_url = get_post_meta($_GET[__('Event','wp_theatre')],'tickets_url',true);
-			if ($tickets_url!='') {
-				$html = '<iframe src="'.$tickets_url.'" class="wp_theatre_iframe"></iframe>';
-			}
-		}
-		do_action('wp_theatre_iframe', $atts, $content=null);
-		return $html;
-	}
-
 	function activate() {
 		$this->init();
 		flush_rewrite_rules();
 	}
 
-	function wp_head() {
-		echo '<meta name="generator" content="Theatre" />'."\n";
-	}
-	
-	function pre_get_posts($query) {
-		// add productions to tag and category archives
-		if( is_category() || is_tag() && empty( $query->query_vars['suppress_filters'] ) ) {
-			$post_types = $query->get( 'post_type');
-			if (empty($post_types)) {
-				$post_types = array('post');
-			}
-			if (is_array($post_types)) {
-				$post_types[] = WPT_Production::post_type_name;
-			}
-			$query->set('post_type',$post_types);
-		}
-		return $query;
-	}
 
 }
 

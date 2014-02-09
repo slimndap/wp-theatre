@@ -1,4 +1,23 @@
 <?php
+
+/** Usage:
+ *
+ *  $event = new WPT_Event(); 
+ *  $event = new WPT_Event($post_id); 
+ *  $event = new WPT_Event($post); 
+ *
+ *	$event->render(); // output the details of an event as HTML
+ *	echo $event->compile(); // or like this
+ *
+ *	$summary = $event->summary();
+ *	echo $summary['prices'] // a summary of all available ticketprices.
+ *
+ *	echo $event->datetime // timestamp of the event
+ *	echo $event->date // localized and formatted date of the event
+ *	echo $event->time // localized and formatted time of the event
+ *
+ */
+
 class WPT_Event extends WP_Theatre {
 
 	const post_type_name = 'wp_theatre_event';
@@ -60,7 +79,7 @@ class WPT_Event extends WP_Theatre {
 							$prices_lowest = $prices[$p]->price;
 						}
 					}
-					$prices_summary = __('from','wp_theatre').' &euro;&nbsp;'.$prices[0]->price;
+					$prices_summary = __('from','wp_theatre').' '.$this->options['currencysymbol'].'&nbsp;'.$prices[0]->price;
 				}
 			}
 			$this->summary = array(
@@ -77,7 +96,7 @@ class WPT_Event extends WP_Theatre {
 		return implode(' ',$classes);
 	}
 	
-	function render() {
+	function compile() {
 		$summary = $this->summary();
 		
 		$html = '';
@@ -186,7 +205,13 @@ class WPT_Event extends WP_Theatre {
 		$html.= '</div>'; // .main
 
 		$html.= '</div>';
-		return $html;
+		return $html;	
+	}
+	
+	function render() {
+		do_action('wpt_before_event',$this);
+		echo $this->compile();		
+		do_action('wpt_after_event',$this);
 	}
 }
 

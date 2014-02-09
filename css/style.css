@@ -9,6 +9,11 @@
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+  margin: 0;
+}
+.wp_theatre_prod figure img {
+  max-width: 100%;
+  height: auto;
 }
 .wp_theatre_prod .wp_theatre_prod_main {
   float: left;
@@ -123,6 +128,7 @@
 }
 .widget_wpt_cart_widget .wpt_cart_item {
   overflow: auto;
+  margin-bottom: 1em;
 }
 .widget_wpt_cart_widget .wpt_cart_item .wpt_cart_item_amount {
   float: left;

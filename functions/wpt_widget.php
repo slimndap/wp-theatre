@@ -9,7 +9,6 @@
 		}
 	
 		public function widget( $args, $instance ) {
-			global $wp_theatre;
 			$title = apply_filters( 'widget_title', $instance['title'] );
 			
 			echo $args['before_widget'];
@@ -18,7 +17,7 @@
 			$args = array(
 				'limit'=>$instance['limit']
 			);
-			echo $wp_theatre->render_events($args);
+			WP_Theatre::render_events($args);
 			echo $args['after_widget'];
 
 		}
@@ -67,13 +66,12 @@
 		}
 	
 		public function widget( $args, $instance ) {
-			global $wp_theatre;
 			$title = apply_filters( 'widget_title', $instance['title'] );
 			
 			echo $args['before_widget'];
 			if ( ! empty( $title ) )
 				echo $args['before_title'] . $title . $args['after_title'];
-			echo $wp_theatre->render_productions(array('limit'=>$instance['limit']));
+			echo WP_Theatre::render_productions(array('limit'=>$instance['limit']));
 			echo $args['after_widget'];
 
 		}

@@ -10,18 +10,28 @@ Text Domain: wp_theatre
 Domain Path: /lang
 */
 
-global $wp_theatre;
-
 require_once(__DIR__ . '/functions/wpt_season.php');
 require_once(__DIR__ . '/functions/wpt_production.php');
 require_once(__DIR__ . '/functions/wpt_event.php');
 require_once(__DIR__ . '/functions/wpt_setup.php');
 require_once(__DIR__ . '/functions/wpt_admin.php');
 require_once(__DIR__ . '/functions/wpt_widget.php');
+require_once(__DIR__ . '/functions/wpt_frontend.php');
 require_once(__DIR__ . '/functions/wpt_cart.php');
-
-$wp_theatre = new WP_Theatre();
 	
+/** Usage:
+ *
+ *  $events = WP_Theatre::get_events();
+ *  $productions = WP_Theatre::get_productions();
+ *  $seasons = WP_Theatre::get_seasons();
+ *
+ *	$args = array('limit'=>5);
+ *	WP_Theatre::render_productions($args); // a list of 5 production with upcoming events
+ *
+ *	$args = array('paged'=>true);
+ *	WP_Theatre::render_events($args); // a list of all upcoming events, paginated by month
+ */
+
 class WP_Theatre {
 	function __construct($ID=false, $PostClass=false) {
 	
@@ -35,7 +45,6 @@ class WP_Theatre {
 			$ID = $ID->ID;
 		}
 		$this->ID = $ID;
-		$this->options = get_option( 'wp_theatre' );
 	}
 	
 	function get_post() {
@@ -144,7 +153,7 @@ class WP_Theatre {
 		$args = wp_parse_args( $args, $defaults );
 		extract($args);
 		
-		$events = $this->get_events();
+		$events = self::get_events();
 		
 		if ($limit) {
 			$events = array_slice($events, 0, $limit);
@@ -157,30 +166,30 @@ class WP_Theatre {
 		}			
 
 		$html = '';
-		$html.= '<div class="wp_theatre_events">';
+		echo '<div class="wp_theatre_events">';
 
 		if ($paged && count($months)) {
 			if (empty($_GET['month'])) {
 				reset($months);
 				$current_month = sanitize_title(key($months));
 			} else {
-				$current_month = $_GET['month'];
+				$current_month = $_GET[__('month','wp_theatre')];
 			}
 			
-			$html.= '<nav>';
+			echo '<nav>';
 			foreach($months as $month=>$events) {
-				$url = remove_query_arg('month');
-				$url = add_query_arg( 'month', sanitize_title($month) , $url);
-				$html.= '<span>';
+				$url = remove_query_arg(__('month','wp_theatre'));
+				$url = add_query_arg( __('month','wp_theatre'), sanitize_title($month) , $url);
+				echo '<span>';
 				if (sanitize_title($month) != $current_month) {
-					$html.= '<a href="'.$url.'">'.$month.'</a>';
+					echo '<a href="'.$url.'">'.$month.'</a>';
 				} else {
-					$html.= $month;
+					echo $month;
 					
 				}
-				$html.= '</span>';
+				echo '</span>';
 			}
-			$html.= '</nav>';
+			echo '</nav>';
 		}
 
 		foreach($months as $month=>$events) {
@@ -190,19 +199,18 @@ class WP_Theatre {
 				}
 			}
 			if ($grouped) {
-				$html.= '<h4>'.$month.'</h4>';				
+				echo '<h4>'.$month.'</h4>';				
 			}
-			$html.= '<ul>';
+			echo '<ul>';
 			foreach ($events as $event) {
-				$html.= '<li>';
-				$html.= $event->render();			
-				$html.= '</li>';
+				echo '<li>';
+				$event->render();			
+				echo '</li>';
 			}
-			$html.= '</ul>';			
+			echo '</ul>';			
 		}
 	
-		$html.= '</div>'; //.wp-theatre_events
-		return $html;
+		echo '</div>'; //.wp-theatre_events
 	}
 
 	function render_productions($args=array()) {
@@ -212,7 +220,7 @@ class WP_Theatre {
 		$args = wp_parse_args( $args, $defaults );
 		extract($args);
 		
-		$productions = $this->get_productions();
+		$productions = self::get_productions();
 		
 		if ($limit) {
 			$productions = array_slice($productions, 0, $limit);
@@ -248,8 +256,6 @@ class WP_Theatre {
 		return $seasons;
 		
 	}
-
-
 }
 
 ?>

@@ -202,16 +202,15 @@ class WPT_Production extends WP_Theatre {
 		return $html;
 	}
 	
-	function render_events() {
+	function compile_events() {
 		$events = $this->upcoming_events();
 		if (!empty($events)) {
 			$html = '';
-			$html.= '<h3>'.WPT_Event::post_type()->labels->name.'</h3>';
 			$html.= '<div class="wp_theatre_events">';
 			$html.= '<ul>';
 			foreach ($events as $event) {
 				$html.= '<li>';
-				$html.= $event->render();			
+				$html.= $event->compile();			
 				$html.= '</li>';
 			}
 			$html.= '</ul>';
@@ -220,6 +219,9 @@ class WPT_Production extends WP_Theatre {
 		}
 	}
 
+	function render_events() {
+		echo $this->compile_events();
+	}
 
 }
 

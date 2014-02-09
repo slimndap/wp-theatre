@@ -6,6 +6,7 @@ class WPT_Admin {
 		add_action( 'add_meta_boxes', array($this, 'add_meta_boxes'));
 		add_action( 'edit_post', array( $this, 'edit_post' ));
 		add_action( 'delete_post',array( $this, 'delete_post' ));
+		add_action( 'wpt_after_event', array($this,'wpt_after_event'));
 
 		add_action( 'save_post_'.WPT_Production::post_type_name, array( $this, 'save_production' ) );
 		add_action( 'save_post_'.WPT_Event::post_type_name, array( $this, 'save_event' ) );
@@ -59,6 +60,14 @@ class WPT_Admin {
 	            '', // Callback
 	            'wp_theatre' // Page
 	        );  
+
+	        add_settings_field(
+	            'currenysymbol', // ID
+	            __('Currency symbol','wp_theatre'), // Title 
+	            array( $this, 'settings_field_currencysymbol' ), // Callback
+	            'wp_theatre', // Page
+	            'tickets_integration' // Section           
+	        );      
 	
 	        add_settings_field(
 	            'integrationtype', // ID
@@ -198,8 +207,6 @@ class WPT_Admin {
 	}
 
 	function meta_box_event_data($event) {
-		global $wp_theatre;
-		
 		wp_nonce_field(WPT_Event::post_type()->name, WPT_Event::post_type()->name.'_nonce' );
 
 		echo '<table class="form-table">';
@@ -331,8 +338,6 @@ class WPT_Admin {
 	}
 
 	function meta_box_seasons($production) {
-		global $wp_theatre;
-		
 		wp_nonce_field(WPT_Production::post_type_name, WPT_Production::post_type_name.'_nonce' );
 
 		$args = array(
@@ -533,6 +538,11 @@ class WPT_Admin {
 		echo '</p>';
 	}
 
+	function settings_field_currencysymbol() {
+		echo '<input type="text" id="currencysymbol" name="wp_theatre[currencysymbol]" value="'.$this->options['currencysymbol'].'" />';
+
+	}
+
 	public function admin_page() {
         ?>
         <div class="wrap">
@@ -566,53 +576,10 @@ class WPT_Admin {
     }
     
     function wp_add_dashboard_widget() {
-    	global $wp_theatre;
-    	
-    	$events = $wp_theatre->get_events();
-    	$productions = $wp_theatre->get_productions();
-
-		$html = '';
-		
-		$html.= '<div class="events">';
-		
-		$html.= '<h4>'.__('Upcoming events','wp_theatre').'</h4>';
-		$html.= '<ul>';
-		foreach ($events as $event) {
-			$html.= '<li>';
-			$html.= $this->render_event($event);
-			
-			$html.= '<div class="row-actions">';
-			$html.= '<span><a href="'.get_edit_post_link($event->ID).'">'.__('Edit').'</a></span>';;
-			$html.= '<span> | <a href="'.get_delete_post_link($event->ID).'">'.__('Trash').'</a></span>';;
-			$html.= '</div>'; //.row-actions
-
-			$html.= '</li>';
-		}
-		$html.= '</ul>';
-		$html.= '<p><a href="'.get_bloginfo('url').'/wp-admin/post-new.php?post_type='.WPT_Event::post_type_name.'" class="button button-primary">'.WPT_Event::post_type()->labels->new_item.'</a></p>';	
-
-		$html.= '</div>'; //.events
-
-		$html.= '<div class="productions">';
-		$html.= '<h4>'.__('Current productions','wp_theatre').'</h4>';
-		$html.= '<ul>';
-		foreach ($productions as $production) {
-			$html.= '<li>';
-			$html.= $this->render_production($production);
-
-			$html.= '<div class="row-actions">';
-			$html.= '<span><a href="'.get_edit_post_link($production->ID).'">'.__('Edit').'</a></span>';;
-			$html.= '<span> | <a href="'.get_delete_post_link($production->ID).'">'.__('Trash').'</a></span>';;
-			$html.= '<span> | <a href="'.get_permalink($production->ID).'">'.__('View').'</a></span>';;
-			$html.= '</div>'; //.row-actions
-
-			$html.= '</li>';
-		}
-		$html.= '</ul>';
-		$html.= '<p><a href="'.get_bloginfo('url').'/wp-admin/post-new.php?post_type='.WPT_Production::post_type_name.'" class="button button-primary">'.WPT_Production::post_type()->labels->new_item.'</a></p>';	
-
-		$html.= '</div>'; //.productions
-		echo $html;
+    	$args = array(
+    		'paged' => 'true'
+    	);
+    	echo WP_Theatre::render_events($args);
     }
 
 	function render_event($event) {
@@ -766,6 +733,13 @@ class WPT_Admin {
 
 	function bulk_edit_custom_box($column_name, $post_type) {
 		wp_nonce_field($post_type, $post_type.'_nonce' );
+	}
+	
+	function wpt_after_event($event) {
+		echo '<div class="row-actions">';
+		echo '<span><a href="'.get_edit_post_link($event->production->ID).'">'.__('Edit').'</a></span>';;
+		echo '<span> | <a href="'.get_delete_post_link($event->production->ID).'">'.__('Trash').'</a></span>';;
+		echo '</div>'; //.row-actions
 	}
 	
 }
