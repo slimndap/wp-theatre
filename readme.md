@@ -39,6 +39,7 @@ You have two options:
 
 * Check 'Show events on production page' on the Theatre settings page in the Wordpress admin. The listing is added to the bottom of the content of the production.
 * Add the `[wpt_production_events]` shortcode to the content of the production.
+
 # Theme developers
 
 ## Event listings
