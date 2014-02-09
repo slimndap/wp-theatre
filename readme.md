@@ -51,7 +51,7 @@ Theatre comes with two types of event listings:
 
 #### A list of all upcoming events
 
-You can use a [shortcode](Wordpress-users) to show an event listing in a post or a page.
+You can use a [shortcode](#upcoming-events) to show an event listing in a post or a page.
 
 You can also use the [WP_Theatre](theatre.php) class to add an event listing to your template:
 
@@ -67,7 +67,7 @@ Or generate your own listing:
 
 #### A list of upcoming events for a particular production.
 
-The Wordpress admin already has [some options](Wordpress-users#wiki-production-pages) to add events listings to production pages.
+The Wordpress admin already has [some options](#production-pages) to add events listings to production pages.
 
 You can also use the [WPT_Production](functions/wpt_production.php) class to add an event listing to your singe production template:
 
