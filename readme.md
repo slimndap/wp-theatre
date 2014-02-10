@@ -77,7 +77,7 @@ You have two options:
 
 ## Theme developers
 
-Check out the [documentation](wiki).
+Check out the [documentation](/wiki).
 
 ## Ticketing
 
