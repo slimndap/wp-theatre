@@ -21,9 +21,9 @@ require_once(__DIR__ . '/functions/wpt_cart.php');
 	
 /** Usage:
  *
- *  $events = WP_Theatre::get_events();
- *  $productions = WP_Theatre::get_productions();
- *  $seasons = WP_Theatre::get_seasons();
+ *  $events = WP_Theatre::events();
+ *  $productions = WP_Theatre::productions();
+ *  $seasons = WP_Theatre::seasons();
  *
  *	$args = array('limit'=>5);
  *	WP_Theatre::render_productions($args); // a list of 5 production with upcoming events
@@ -33,6 +33,7 @@ require_once(__DIR__ . '/functions/wpt_cart.php');
  */
 
 class WP_Theatre {
+
 	function __construct($ID=false, $PostClass=false) {
 	
 		$this->PostClass = $PostClass;
@@ -47,103 +48,91 @@ class WP_Theatre {
 		$this->ID = $ID;
 	}
 	
-	function get_post() {
-		if (!isset($this->post)) {
-			if ($this->PostClass) {
-				$this->post = new $this->PostClass($this->ID);				
-			} else {
-				$this->post = get_post($this->ID);
-			}
-		}
-		return $this->post;
+	/**
+	 * All upcoming events.
+	 *
+	 * Returns an array of all pubished events attached to a production and with a startdate in the future.
+	 * 
+	 * Example:
+	 *
+	 * $events = WP_Theatre::events();
+	 *
+	 * @since 0.3.6
+	 *
+	 * @see WP_Theatre::get_events()
+	 *
+	 * @param  string $PostClass Optional. 
+	 * @return mixed An array of WPT_Event objects.
+	 */
+ 	public function events($PostClass = false) {
+		return self::get_events($PostClass);
 	}
 	
-	function post() {
+	/**
+	 * All upcoming productions.
+	 *
+	 * Returns an array of all productions that have pubished events with a startdate in the future.
+	 * 
+	 * Example:
+	 *
+	 * $productions = WP_Theatre::productions();
+	 *
+	 * @since 0.3.6
+	 *
+	 * @see WP_Theatre::get_productions()
+	 *
+	 * @param  string $PostClass Optional. 
+	 * @return mixed An array of WPT_Production objects.
+	 */
+	public function productions($PostClass = false) {
+		return self::get_productions($PostClass);
+	}
+
+	public function seasons($PostClass = false) {
+		return self::get_seasons($PostClass);
+	}
+	
+	/**
+	 * The custom post as a WP_Post object.
+	 *
+	 * This function is inherited by the WPT_Production, WPT_Event and WPT_Seasons object.
+	 * It can be used to access all properties and methods of the corresponding WP_Post object.
+	 * 
+	 * Example:
+	 *
+	 * $event = new WPT_Event();
+	 * echo WPT_Event->post()->post_title();
+	 *
+	 * @since 0.3.5
+	 *
+	 * @return mixed A WP_Post object.
+	 */
+	public function post() {
 		return $this->get_post();
 	}
 	
-	function get_posts($args = array(), $PostClass = false) {
-		if (isset($this) && get_class($this) == __CLASS__) {
-			// in object context
-			if ($PostClass===false) {
-				$PostClass = $this->PostClass;
-			}
-		}
-		
-		if ($PostClass!==false) {
-			$posts = $PostClass::get_posts($args);
-		} else {
-			$posts = get_posts($args);
-		}
-		
-		return $posts;
-	}
-	
-	function get_productions($PostClass = false) {
-		
-		global $wpdb;
-		
-		$querystr = "
-			SELECT productions . ID
-			FROM $wpdb->posts AS
-			events
-			JOIN $wpdb->postmeta AS event_date ON events.ID = event_date.post_ID
-			JOIN $wpdb->postmeta AS wp_theatre_prod ON events.ID = wp_theatre_prod.post_ID
-			JOIN $wpdb->posts AS productions ON wp_theatre_prod.meta_value = productions.ID
-			JOIN $wpdb->postmeta AS sticky ON productions.ID = sticky.post_ID
-			WHERE 
-			(
-				events.post_type = 'wp_theatre_event'
-				AND events.post_status = 'publish'
-				AND event_date.meta_key = 'event_date'
-				AND wp_theatre_prod.meta_key = 'wp_theatre_prod'
-				AND sticky.meta_key = 'sticky'
-				AND event_date.meta_value > NOW( )
-			) 
-			OR sticky.meta_value = 'on'
-			GROUP BY productions.ID
-			ORDER BY sticky.meta_value DESC , event_date.meta_value ASC				
-		";
-		$posts = $wpdb->get_results($querystr, OBJECT);
-		
-		$productions = array();
-		for ($i=0;$i<count($posts);$i++) {
-			$productions[] = new WPT_Production($posts[$i]->ID, $PostClass);
-		}
-		return $productions;
-	}
-	
-	function get_events($PostClass = false) {
-		$args = array(
-			'post_type'=>WPT_Event::post_type_name,
-			'posts_per_page' => -1,
-			'meta_key'=>'event_date',
-			'orderby' => 'meta_value_num',
-			'order' => 'ASC',
-			'meta_query' => array( // WordPress has all the results, now, return only the events after today's date
-				array(
-					'key' => 'event_date', // Check the start date field
-					'value' => date("Y-m-d"), // Set today's date (note the similar format)
-					'compare' => '>=', // Return the ones greater than today's date
-				),
-				array(
-					'key' => WPT_Production::post_type_name, // Check if events is attached to production
-					'compare' => 'EXISTS'
-				)
-			),
-		);
-		$posts = get_posts($args);
-
-		$events = array();
-		for ($i=0;$i<count($posts);$i++) {
-			$datetime = strtotime(get_post_meta($posts[$i]->ID,'event_date',true));
-			$events[$datetime.$posts[$i]->ID] = new WPT_Event($posts[$i], $PostClass);
-		}
-		
-		ksort($events);
-		return array_values($events);
-	}
-
+	/**
+	 * A list of upcoming events in HTML.
+	 *
+	 * Compiles a list of all upcoming events and outputs the result to the browser.
+	 * 
+	 * Example:
+	 *
+	 * $args = array('paged'=>true);
+	 * WP_Theatre::render_events($args); // a list of all upcoming events, paginated by month
+	 *
+	 * @since 0.3.5
+	 *
+	 * @param array $args {
+	 *     An array of arguments. Optional.
+	 *
+	 *     @type bool $paged Paginate the list by month. Default <false>.
+	 *     @type bool $grouped Group the list by month. Default <false>.
+	 *     @type int $limit Limit the list to $limit events. Use <false> for an unlimited list. Default <false>.
+	 * }
+	 * @see WP_Theatre::get_events()
+ 	 * @return string HTML.
+	 */
 	function render_events($args=array()) {
 		$defaults = array(
 			'paged' => false,
@@ -240,7 +229,88 @@ class WP_Theatre {
 		return $html;
 	}
 
-	function get_seasons($PostClass=false) {
+	/*
+	 * Private functions.
+	 */
+	 
+	private function get_post() {
+		if (!isset($this->post)) {
+			if ($this->PostClass) {
+				$this->post = new $this->PostClass($this->ID);				
+			} else {
+				$this->post = get_post($this->ID);
+			}
+		}
+		return $this->post;
+	}
+	
+	private function get_productions($PostClass = false) {
+		
+		global $wpdb;
+		
+		$querystr = "
+			SELECT productions . ID
+			FROM $wpdb->posts AS
+			events
+			JOIN $wpdb->postmeta AS event_date ON events.ID = event_date.post_ID
+			JOIN $wpdb->postmeta AS wp_theatre_prod ON events.ID = wp_theatre_prod.post_ID
+			JOIN $wpdb->posts AS productions ON wp_theatre_prod.meta_value = productions.ID
+			JOIN $wpdb->postmeta AS sticky ON productions.ID = sticky.post_ID
+			WHERE 
+			(
+				events.post_type = 'wp_theatre_event'
+				AND events.post_status = 'publish'
+				AND event_date.meta_key = 'event_date'
+				AND wp_theatre_prod.meta_key = 'wp_theatre_prod'
+				AND sticky.meta_key = 'sticky'
+				AND event_date.meta_value > NOW( )
+			) 
+			OR sticky.meta_value = 'on'
+			GROUP BY productions.ID
+			ORDER BY sticky.meta_value DESC , event_date.meta_value ASC				
+		";
+		$posts = $wpdb->get_results($querystr, OBJECT);
+		
+		$productions = array();
+		for ($i=0;$i<count($posts);$i++) {
+			$productions[] = new WPT_Production($posts[$i]->ID, $PostClass);
+		}
+		return $productions;
+	}
+	
+	private function get_events($PostClass = false) {
+		$args = array(
+			'post_type'=>WPT_Event::post_type_name,
+			'posts_per_page' => -1,
+			'meta_key'=>'event_date',
+			'orderby' => 'meta_value_num',
+			'order' => 'ASC',
+			'meta_query' => array( // WordPress has all the results, now, return only the events after today's date
+				array(
+					'key' => 'event_date', // Check the start date field
+					'value' => date("Y-m-d"), // Set today's date (note the similar format)
+					'compare' => '>=', // Return the ones greater than today's date
+				),
+				array(
+					'key' => WPT_Production::post_type_name, // Check if events is attached to production
+					'compare' => 'EXISTS'
+				)
+			),
+		);
+		$posts = get_posts($args);
+
+		$events = array();
+		for ($i=0;$i<count($posts);$i++) {
+			$datetime = strtotime(get_post_meta($posts[$i]->ID,'event_date',true));
+			$events[$datetime.$posts[$i]->ID] = new WPT_Event($posts[$i], $PostClass);
+		}
+		
+		ksort($events);
+		return array_values($events);
+	}
+
+
+	private function get_seasons($PostClass=false) {
 		$args = array(
 			'post_type'=>WPT_Season::post_type_name,
 			'posts_per_page' => -1,
