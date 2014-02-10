@@ -101,12 +101,12 @@
       "fileType" : 1,
       "debugStyle" : 0
     },
-    "\/functions\/wpt_frontend.php" : {
+    "\/functions\/wpt_event.php" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/functions\/wpt_frontend.php",
+      "inputAbbreviatedPath" : "\/functions\/wpt_event.php",
       "outputAbbreviatedPath" : "No Output Path",
       "fileType" : 2048
     },
@@ -148,12 +148,12 @@
       "outputAbbreviatedPath" : "No Output Path",
       "fileType" : 2048
     },
-    "\/functions\/wpt_event.php" : {
+    "\/functions\/wpt_frontend.php" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/functions\/wpt_event.php",
+      "inputAbbreviatedPath" : "\/functions\/wpt_frontend.php",
       "outputAbbreviatedPath" : "No Output Path",
       "fileType" : 2048
     },

@@ -77,58 +77,9 @@ You have two options:
 
 ## Theme developers
 
-### Event listings
+Check out the [documentation](wiki).
 
-Theatre comes with two types of event listings:
-
-* A list of all upcoming events.
-* A list of upcoming events for a particular production.
-
-#### A list of all upcoming events
-
-You can use a [shortcode](#upcoming-events) to show an event listing in a post or a page.
-
-You can also use the [WP_Theatre](theatre.php) class to add an event listing to your template:
-
-```PHP
-WP_Theatre::render_events();
-```
-
-Or generate your own listing:
-
-```PHP
-$events = WP_Theatre::get_events();
-foreach ($events as $event) {
-    echo $event->post()->post_title;
-    // do other stuff with your event        
-}
-```
-
-#### A list of upcoming events for a particular production.
-
-The Wordpress admin already has [some options](#production-pages) to add events listings to production pages.
-
-You can also use the [WPT_Production](functions/wpt_production.php) class to add an event listing to your production template:
-
-```PHP
-$production = new WPT_Production();
-$production->render_events();
-```
-
-Or generate your own listing:
-
-```PHP
-$production = new WPT_Production();
-foreach ($productions->get_events as $event) {
-    echo $event->post()->post_title;
-    // do other stuff with your event
-}
-```
-
-
-## Integrations
-
-### Ticketing
+## Ticketing
 
 Theatre integrates nicely with existing Ticketing solutions. Available integrations:
 
