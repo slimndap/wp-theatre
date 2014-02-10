@@ -34,7 +34,7 @@ class WPT_Setup {
 	  			'supports' => array('title', 'editor', 'excerpt', 'thumbnail','comments'),
 	  			'taxonomies' => array('category','post_tag'),
 	  			'rewrite' => array(
-	  				'slug' => 'production'
+	  				'slug' => sanitize_title(__('production','wp_theatre'))
 	  			)
 	  			
 			)

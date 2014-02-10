@@ -66,15 +66,6 @@
       "outputAbbreviatedPath" : "No Output Path",
       "fileType" : 2048
     },
-    "\/functions\/wpt_setup.php" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/functions\/wpt_setup.php",
-      "outputAbbreviatedPath" : "No Output Path",
-      "fileType" : 2048
-    },
     "\/css\/admin.css" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 1,
@@ -83,6 +74,15 @@
       "inputAbbreviatedPath" : "\/css\/admin.css",
       "outputAbbreviatedPath" : "\/No Output Path",
       "fileType" : 16
+    },
+    "\/functions\/wpt_setup.php" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/functions\/wpt_setup.php",
+      "outputAbbreviatedPath" : "No Output Path",
+      "fileType" : 2048
     },
     "\/raw\/less\/admin\/production.less" : {
       "ieCompatibility" : 1,
@@ -190,7 +190,7 @@
       "outputPathIsSetByUser" : 0,
       "inputAbbreviatedPath" : "\/raw\/coffee\/main.coffee",
       "checkOutputStyle" : 0,
-      "minifyOutput" : 1,
+      "minifyOutput" : 0,
       "outputAbbreviatedPath" : "\/js\/main.js",
       "outputStyle" : 0,
       "fileType" : 32
@@ -440,7 +440,7 @@
   },
   "projectAttributes" : {
     "bourbonEnabled" : 0,
-    "displayValue" : "theatre",
+    "displayValue" : "wp-theatre",
     "displayValueWasSetByUser" : 0,
     "compassEnabled" : 0
   }
