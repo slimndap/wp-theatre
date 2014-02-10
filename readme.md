@@ -77,7 +77,7 @@ You have two options:
 
 ## Theme developers
 
-Check out the [documentation](/wiki).
+Check out the [documentation](https://github.com/slimndap/wp-theatre/wiki).
 
 ## Ticketing
 
