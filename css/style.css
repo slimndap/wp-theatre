@@ -72,6 +72,18 @@
 .wp_theatre_event .wp_theatre_event_main > div.wp_theatre_event_tickets .wp_theatre_event_prices {
   font-size: 0.875em;
 }
+@media (max-width: 768px) {
+  .wp_theatre_event figure {
+    width: 30%;
+  }
+  .wp_theatre_event .wp_theatre_event_main {
+    width: 70%;
+  }
+  .wp_theatre_event .wp_theatre_event_main > div {
+    float: none;
+    width: auto !important;
+  }
+}
 .wp_theatre_events nav {
   border-bottom: 1px solid lightgrey;
   padding-bottom: 0.5em;
