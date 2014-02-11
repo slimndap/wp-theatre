@@ -93,12 +93,12 @@
       "outputAbbreviatedPath" : "No Output Path",
       "fileType" : 2048
     },
-    "\/functions\/wpt_frontend.php" : {
+    "\/functions\/wpt_event.php" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/functions\/wpt_frontend.php",
+      "inputAbbreviatedPath" : "\/functions\/wpt_event.php",
       "outputAbbreviatedPath" : "No Output Path",
       "fileType" : 2048
     },
@@ -120,6 +120,15 @@
       "outputAbbreviatedPath" : "No Output Path",
       "fileType" : 16
     },
+    "\/functions\/wpt_frontend.php" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/functions\/wpt_frontend.php",
+      "outputAbbreviatedPath" : "No Output Path",
+      "fileType" : 2048
+    },
     "\/js\/jquery-ui-timepicker-addon.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -130,15 +139,6 @@
       "syntaxCheckerStyle" : 1,
       "outputAbbreviatedPath" : "\/js\/jquery-ui-timepicker-addon-ck.js",
       "fileType" : 64
-    },
-    "\/functions\/wpt_event.php" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/functions\/wpt_event.php",
-      "outputAbbreviatedPath" : "No Output Path",
-      "fileType" : 2048
     },
     "\/raw\/less\/admin\/production.less" : {
       "ieCompatibility" : 1,
@@ -174,6 +174,15 @@
       "fileType" : 1,
       "debugStyle" : 0
     },
+    "\/admin.css" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 1,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/admin.css",
+      "outputAbbreviatedPath" : "No Output Path",
+      "fileType" : 16
+    },
     "\/raw\/coffee\/main.coffee" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -185,15 +194,6 @@
       "outputAbbreviatedPath" : "\/js\/main.js",
       "outputStyle" : 0,
       "fileType" : 32
-    },
-    "\/admin.css" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 1,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/admin.css",
-      "outputAbbreviatedPath" : "No Output Path",
-      "fileType" : 16
     },
     "\/raw\/less\/admin\/datetimepicker.less" : {
       "ieCompatibility" : 1,

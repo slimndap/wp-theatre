@@ -412,7 +412,7 @@ class WPT_Admin {
 		$venue = sanitize_text_field( $_POST['venue'] );
 		$city = sanitize_text_field( $_POST['city'] );
 		$remark = sanitize_text_field( $_POST['remark'] );
-		$tickets_url = sanitize_text_field( $_POST['tickets_url'] );
+		$tickets_url = esc_url( $_POST['tickets_url'] );
 		$tickets_button = sanitize_text_field( $_POST['tickets_button'] );
 		$tickets_status = $_POST['tickets_status'];
 		
