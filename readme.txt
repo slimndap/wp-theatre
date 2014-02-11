@@ -7,43 +7,15 @@ Stable tag: trunk
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Add event listings to your Wordpress website. Perfect for theaters, music venues, museums, conference centers and performing artists.
+Add event listings to your Wordpress website. Build a website for your theater, music venue, museum, conference center or you rockband!
 
 == Description ==
 This plugin gives you the ability to manage seasons, productions and events in Wordpress and comes with all necessary shortcodes and widgets to show your events on your website.
 
-Theme developers get three new PHP objects (Season, Production and Event) which they can use to further integrate Theatre into their theme. Each PHP object comes with a wide variety of smart methods and can be extended with your own methods. 
 
-It is also possible to extend the functionality with other popular plug-ins.
+__Available add-ons__
 
-__International__
-Available in English, French and Dutch.
-
-__Scope__
-
-The Theatre plugin is kept as simple as possible so it can be used for a wide variety of event websites. 
-
-___What is included___
-
-* Admin screens for seasons, productions and events.
-* Default templates for productions.
-* Short codes for listings of productions and events.
-* Widgets for listings of productions and events.
-
-___What is not included___
-
-A lot! But most really cool things can easily be achieved by combining the Theatre plugin with other popular plugins:
-
-* Caching - use [W3 Total Cache](http://wordpress.org/plugins/w3-total-cache/)
-* Fancy admin screens with extra fields - use [Pods Framework](http://pods.io/) and [Tabify Edit Screen](http://wordpress.org/plugins/tabify-edit-screen/)
-* Simple templating - use [Timber](http://jarednova.github.io/timber/)
-
-__What's next?__
-
-* [Documentation](https://github.com/slimndap/wp-theatre/wiki)
-* More shortcodes
-* More Widgets
-* Settings
+* [Ticketmatic](http://slimndap.com/product/ticketmatic-voor-wordpress/)
 
 __Contributors Welcome__
 
