@@ -140,7 +140,7 @@ class WPT_Production {
 			$events = array();
 			for ($i=0;$i<count($posts);$i++) {
 				$datetime = strtotime(get_post_meta($posts[$i]->ID,'event_date',true));
-				$events[$datetime.$posts[$i]->ID] = new WPT_Event($posts[$i], $PostClass);
+				$events[$datetime.$posts[$i]->ID] = new WPT_Event($posts[$i]);
 			}
 			
 			ksort($events);
@@ -185,9 +185,17 @@ class WPT_Production {
 		
 		$html = '';
 		
-		$html.= '<div class='.self::post_type_name.'>';
+		$html.= '<div class='.self::post_type_name.' itemscope itemtype="http://schema.org/Event">';
 
-		$thumbnail = get_the_post_thumbnail($this->ID,'thumbnail');
+		$img_id = self::post_type_name.'_thumbnail_'.$this->ID;
+		$url_id = self::post_type_name.'_url_'.$this->ID;
+		$name_id = self::post_type_name.'_name_'.$this->ID;
+
+		$attr = array(
+			'id'=>$img_id,
+			'itemprop'=>'image'
+		);
+		$thumbnail = get_the_post_thumbnail($this->ID,'thumbnail',$attr);
 		if (!empty($thumbnail)) {
 			$html.= '<figure>';
 			$html.= $thumbnail;
@@ -197,8 +205,8 @@ class WPT_Production {
 		$html.= '<div class="'.self::post_type_name.'_main">';
 
 		$html.= '<div class="'.self::post_type_name.'_title">';
-		$html.= '<a itemprop="url" href="'.get_permalink($this->ID).'">';
-		$html.= $this->post()->post_title;
+		$html.= '<a itemprop="url" href="'.get_permalink($this->ID).'" id="'.$url_id.'">';
+		$html.= '<span itemprop="name" id="'.$name_id.'">'.$this->post()->post_title.'</span>';
 		$html.= '</a>';
 		$html.= '</div>'; //.title
 
@@ -207,6 +215,38 @@ class WPT_Production {
 		$html.= '</div>';
 
 		$html.= '</div>'; // .main
+
+		/**
+		 * Microdata for events.
+		 */
+		$events = $this->upcoming_events();
+		for($i=0;$i<count($events);$i++) {
+		
+			if ($i>0) {
+				$html.= '<span itemscope itemtype="http://schema.org/Event" itemref="'.$img_id.' '.$url_id.' '.$name_id.'">';
+			}
+		
+			$html.= '<meta itemprop="startDate" content="'.date('c',$events[$i]->datetime()).'" />';
+			$html.= '<span class="'.self::post_type_name.'_location" itemprop="location" itemscope itemtype="http://data-vocabulary.org/Organization">';
+			$venue = get_post_meta($events[$i]->ID,'venue',true);
+			$city = get_post_meta($events[$i]->ID,'city',true);
+			if ($venue!='') {
+				$html.= '<meta itemprop="name" content="'.$venue.'" />';
+			}
+			if ($venue!='' && $city!='') {
+				$html.= ', ';
+			}
+			if ($city!='') {
+				$html.= '<span itemprop="address" itemscope itemtype="http://data-vocabulary.org/Address">';
+				$html.= '<meta itemprop="locality" content="'.$city.'" />';
+				$html.= '</span>';
+			}
+			$html.= '</span>'; // .location
+			if ($i>0) {
+				$html.= '</span>';
+			}
+		
+		}
 
 		$html.= '</div>';
 		return $html;

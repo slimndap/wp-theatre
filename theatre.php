@@ -35,8 +35,8 @@ class WP_Theatre {
 	
 		// Setup
 		$this->setup = new WPT_Setup();
+		$this->admin = new WPT_Admin();
 		if (is_admin()) {
-			$this->admin = new WPT_Admin();
 		} else {
 			$this->frontend = new WPT_Frontend();
 			$this->cart = new WPT_Cart();
@@ -59,13 +59,13 @@ class WP_Theatre {
 	 * @return void
 	 */
 	function includes() {
-		require_once(__DIR__ . '/functions/wpt_setup.php');
-		require_once(__DIR__ . '/functions/wpt_season.php');
 		require_once(__DIR__ . '/functions/wpt_production.php');
 		require_once(__DIR__ . '/functions/wpt_event.php');
+		require_once(__DIR__ . '/functions/wpt_setup.php');
+		require_once(__DIR__ . '/functions/wpt_season.php');
 		require_once(__DIR__ . '/functions/wpt_widget.php');
+		require_once(__DIR__ . '/functions/wpt_admin.php');
 		if (is_admin()) {
-			require_once(__DIR__ . '/functions/wpt_admin.php');
 		} else {
 			require_once(__DIR__ . '/functions/wpt_frontend.php');
 			require_once(__DIR__ . '/functions/wpt_cart.php');	
@@ -321,5 +321,6 @@ class WP_Theatre {
  * Init WP_Theatre class
  */
 $wp_theatre = new WP_Theatre();
+
 
 ?>

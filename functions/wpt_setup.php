@@ -101,6 +101,33 @@ class WPT_Setup {
 
 }
 
+add_action( 'wp_ajax_save_bulk_edit_'.WPT_Production::post_type_name, 'wp_ajax_save_bulk_edit_production' );
+function wp_ajax_save_bulk_edit_production() {
+	$wpt_admin = new WPT_Admin();
+
+	// TODO perform nonce checking
+	remove_action( 'save_post', array( $this, 'save_post' ) );
+
+	$post_ids = ( ! empty( $_POST[ 'post_ids' ] ) ) ? $_POST[ 'post_ids' ] : array();
+	if ( ! empty( $post_ids ) && is_array( $post_ids ) ) {
+		foreach( $post_ids as $post_id ) {
+			// Update status of connected Events
+			$events = $wpt_admin->get_events($post_id);
+			foreach($events as $event) {
+				$post = array(
+					'ID'=>$event->ID,
+					'post_status'=>$_POST[ 'post_status' ]
+				);
+				wp_update_post($post);
+			}
+		}
+	}
+
+	add_action( 'save_post', array( $this, 'save_post' ) );
+
+	die();					
+}
+
 $WPT_Setup = new WPT_Setup();
 
 

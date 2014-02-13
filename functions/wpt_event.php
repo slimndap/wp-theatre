@@ -79,12 +79,13 @@ class WPT_Event {
 	}
 	
 	function summary() {
+		global $wp_theatre;
 		if (!isset($this->summary)) {
 			$prices = $this->prices();
 			$prices_summary = '';
 			if (count($prices)>0) {
 				if (count($prices)==1) {
-					$prices_summary = $this->options['currencysymbol'].'&nbsp;'.$prices[0]->price;
+					$prices_summary = $wp_theatre->options['currencysymbol'].'&nbsp;'.$prices[0]->price;
 				} else {
 					$prices_lowest = $prices[0]->price;
 					for($p=1;$p<count($prices);$p++) {
@@ -92,7 +93,7 @@ class WPT_Event {
 							$prices_lowest = $prices[$p]->price;
 						}
 					}
-					$prices_summary = __('from','wp_theatre').' '.$this->options['currencysymbol'].'&nbsp;'.$prices[0]->price;
+					$prices_summary = __('from','wp_theatre').' '.$wp_theatre->options['currencysymbol'].'&nbsp;'.$prices[0]->price;
 				}
 			}
 			$this->summary = array(
