@@ -61,7 +61,4 @@ class WPT_Cart {
 
 }
 
-if (!is_admin()) {
-	$WPT_Cart = new WPT_Cart();
-}
 ?>

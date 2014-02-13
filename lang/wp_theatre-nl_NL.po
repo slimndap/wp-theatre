@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Theatre v0.3.4.1\n"
+"Project-Id-Version: Theatre v0.3.6\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2014-02-07 19:23:26+0000\n"
+"PO-Revision-Date: 2014-02-11 21:06:54+0000\n"
 "Last-Translator: slimndap <jeroen@slimndap.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -20,70 +20,70 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Textdomain-Support: yes"
 
-#: functions/wpt_admin.php:43
-#: functions/wpt_admin.php:118
+#: functions/wpt_admin.php:44
+#: functions/wpt_admin.php:127
 #@ wp_theatre
 msgid "Display"
 msgstr "Weergave"
 
-#: functions/wpt_admin.php:50
+#: functions/wpt_admin.php:51
 #@ wp_theatre
 msgid "Show events on production page."
 msgstr "Geef voorstellingen weer op productiepagina."
 
 #. translators: plugin header field 'Name'
-#: functions/wpt_admin.php:82
-#: functions/wpt_admin.php:540
-#: functions/wpt_admin.php:563
+#: functions/wpt_admin.php:91
+#: functions/wpt_admin.php:550
+#: functions/wpt_admin.php:573
 #: theatre.php:0
 #@ wp_theatre
 msgid "Theatre"
 msgstr "Theater"
 
-#: functions/wpt_admin.php:83
-#: functions/wpt_admin.php:540
+#: functions/wpt_admin.php:92
+#: functions/wpt_admin.php:550
 #@ default
 msgid "Settings"
 msgstr "Instellingen"
 
-#: functions/wpt_admin.php:97
+#: functions/wpt_admin.php:106
 #@ wp_theatre
 msgid "Event data"
 msgstr "Voorstellingsgegevens"
 
-#: functions/wpt_admin.php:104
-#: functions/wpt_admin.php:664
-#: functions/wpt_event.php:171
+#: functions/wpt_admin.php:113
+#: functions/wpt_admin.php:631
+#: functions/wpt_event.php:190
 #@ wp_theatre
 msgid "Tickets"
 msgstr "Tickets"
 
-#: functions/wpt_admin.php:171
+#: functions/wpt_admin.php:180
 #@ wp_theatre
 msgid "You need to save this production before you can add events."
 msgstr "Je moet deze productie opslaan voordat je voorstellingen kan toevoegen."
 
-#: functions/wpt_admin.php:186
+#: functions/wpt_admin.php:195
 #@ wp_theatre
 msgid "Past events"
 msgstr "Oudere voorstellingen"
 
-#: functions/wpt_admin.php:247
+#: functions/wpt_admin.php:254
 #@ wp_theatre
 msgid "Event date"
 msgstr "Speeldatum"
 
-#: functions/wpt_admin.php:255
+#: functions/wpt_admin.php:262
 #@ wp_theatre
 msgid "Venue"
 msgstr "Locatie"
 
-#: functions/wpt_admin.php:263
+#: functions/wpt_admin.php:270
 #@ wp_theatre
 msgid "City"
 msgstr "Stad"
 
-#: functions/wpt_admin.php:286
+#: functions/wpt_admin.php:293
 #@ wp_theatre
 msgid "Tickets URL"
 msgstr "Tickets URL"
@@ -114,51 +114,51 @@ msgstr "o.a."
 msgid "in"
 msgstr "in"
 
-#: functions/wpt_setup.php:40
+#: functions/wpt_setup.php:23
 #@ wp_theatre
 msgid "Productions"
 msgstr "Producties"
 
-#: functions/wpt_setup.php:41
+#: functions/wpt_setup.php:24
 #@ wp_theatre
 msgid "Production"
 msgstr "Productie"
 
-#: functions/wpt_setup.php:62
+#: functions/wpt_setup.php:45
 #@ wp_theatre
 msgid "Events"
 msgstr "Voorstellingen"
 
-#: functions/wpt_admin.php:728
-#: functions/wpt_event.php:151
-#: functions/wpt_setup.php:63
-#: functions/wpt_setup.php:122
-#: functions/wpt_setup.php:123
+#: functions/wpt_admin.php:695
+#: functions/wpt_event.php:170
+#: functions/wpt_frontend.php:67
+#: functions/wpt_frontend.php:68
+#: functions/wpt_setup.php:46
 #@ wp_theatre
 msgid "Event"
 msgstr "Voorstelling"
 
-#: functions/wpt_setup.php:64
+#: functions/wpt_setup.php:47
 #@ wp_theatre
 msgid "New event"
 msgstr "Nieuwe voorstelling"
 
-#: functions/wpt_setup.php:65
+#: functions/wpt_setup.php:48
 #@ wp_theatre
 msgid "Add new event"
 msgstr "Nieuwe voorstelling toevoegen"
 
-#: functions/wpt_setup.php:66
+#: functions/wpt_setup.php:49
 #@ wp_theatre
 msgid "Edit event"
 msgstr "Voorstelling bewerken"
 
-#: functions/wpt_setup.php:79
+#: functions/wpt_setup.php:62
 #@ wp_theatre
 msgid "Seasons"
 msgstr "Seizoenen"
 
-#: functions/wpt_setup.php:80
+#: functions/wpt_setup.php:63
 #@ wp_theatre
 msgid "Season"
 msgstr "Seizoen"
@@ -187,113 +187,101 @@ msgstr ""
 msgid "http://slimndap.com/"
 msgstr ""
 
-#: functions/wpt_admin.php:294
+#: functions/wpt_admin.php:301
 #@ wp_theatre
 msgid "Status"
 msgstr "Status"
 
-#: functions/wpt_admin.php:321
+#: functions/wpt_admin.php:328
 #@ wp_theatre
 msgid "Text on button"
 msgstr "Knoptekst"
 
-#: functions/wpt_admin.php:314
-#: functions/wpt_admin.php:655
-#: functions/wpt_event.php:146
+#: functions/wpt_admin.php:321
+#: functions/wpt_admin.php:622
+#: functions/wpt_event.php:165
 #@ wp_theatre
 msgid "Sold out"
 msgstr "Uitverkocht"
 
-#: functions/wpt_setup.php:44
+#: functions/wpt_setup.php:27
+#: functions/wpt_setup.php:37
 #@ wp_theatre
 msgid "production"
 msgstr "Productie"
 
-#: functions/wpt_setup.php:44
+#: functions/wpt_setup.php:27
 #@ default
 msgid "Add new"
 msgstr ""
 
-#: functions/wpt_setup.php:45
+#: functions/wpt_setup.php:28
 #@ wp_theatre
 msgid "Edit production"
 msgstr "Productie bewerken"
 
-#: functions/wpt_admin.php:305
+#: functions/wpt_admin.php:312
 #@ wp_theatre
 msgid "On sale"
 msgstr "In de verkoop"
 
-#: functions/wpt_setup.php:42
+#: functions/wpt_setup.php:25
 #@ wp_theatre
 msgctxt "production"
 msgid "Add New"
 msgstr "Toevoegen"
 
-#: functions/wpt_admin.php:578
-#: functions/wpt_widget.php:31
+#: functions/wpt_widget.php:30
 #@ wp_theatre
 msgid "Upcoming events"
 msgstr "Komende voorstellingen"
 
-#: functions/wpt_admin.php:597
-#@ wp_theatre
-msgid "Current productions"
-msgstr "Lopende producties"
-
-#: functions/wpt_admin.php:271
+#: functions/wpt_admin.php:278
 #@ wp_theatre
 msgid "Remark"
 msgstr "Opmerking"
 
-#: functions/wpt_setup.php:43
+#: functions/wpt_setup.php:26
 #@ wp_theatre
 msgid "New production"
 msgstr "Nieuwe productie"
 
-#: functions/wpt_admin.php:273
+#: functions/wpt_admin.php:280
 #@ wp_theatre
 msgid "e.g. Premiere or Try-out"
 msgstr "bijv. Première of Try-out"
 
-#: functions/wpt_admin.php:133
+#: functions/wpt_admin.php:142
 #@ wp_theatre
 msgid "Stick this production to all listings."
 msgstr "In het overzicht met producties plakken (sticky)."
 
-#: functions/wpt_admin.php:585
-#: functions/wpt_admin.php:604
+#: functions/wpt_admin.php:740
 #@ default
 msgid "Edit"
 msgstr ""
 
-#: functions/wpt_admin.php:586
-#: functions/wpt_admin.php:605
+#: functions/wpt_admin.php:741
 #@ default
 msgid "Trash"
 msgstr ""
 
-#: functions/wpt_admin.php:606
-#@ default
-msgid "View"
-msgstr ""
-
-#: functions/wpt_admin.php:714
+#: functions/wpt_admin.php:681
 #@ wp_theatre
 msgid "Dates"
 msgstr "Speeldata"
 
-#: functions/wpt_admin.php:715
+#: functions/wpt_admin.php:682
 #@ wp_theatre
 msgid "Cities"
 msgstr "Steden"
 
-#: functions/wpt_admin.php:25
+#: functions/wpt_admin.php:26
 #@ default
 msgid "General"
 msgstr ""
 
-#: functions/wpt_event.php:63
+#: functions/wpt_event.php:82
 #@ wp_theatre
 msgid "from"
 msgstr "vanaf"
@@ -308,81 +296,93 @@ msgstr "Theater Voorstellingen"
 msgid "List of upcoming events"
 msgstr "Overzicht met komende voorstellingen"
 
-#: functions/wpt_widget.php:41
-#: functions/wpt_widget.php:99
-#: functions/wpt_widget.php:143
+#: functions/wpt_widget.php:40
+#: functions/wpt_widget.php:94
+#: functions/wpt_widget.php:138
 #@ default
 msgid "Title:"
 msgstr ""
 
-#: functions/wpt_widget.php:45
+#: functions/wpt_widget.php:44
 #@ wp_theatre
 msgid "Number of events to show:"
 msgstr "Aantal te tonen voorstellingen:"
 
-#: functions/wpt_widget.php:64
+#: functions/wpt_widget.php:63
 #@ wp_theatre
 msgid "Theatre Productions"
 msgstr "Theater Producties"
 
-#: functions/wpt_widget.php:65
+#: functions/wpt_widget.php:64
 #@ wp_theatre
 msgid "List of upcoming productions"
 msgstr "Overzicht met komende producties"
 
-#: functions/wpt_admin.php:58
+#: functions/wpt_admin.php:59
 #@ wp_theatre
 msgid "Tickets integration"
 msgstr "Kaartverkoop integratie"
 
-#: functions/wpt_admin.php:65
+#: functions/wpt_admin.php:74
 #@ wp_theatre
 msgid "Integration type"
 msgstr "Manier van integratie"
 
-#: functions/wpt_admin.php:73
+#: functions/wpt_admin.php:82
 #@ wp_theatre
 msgid "Iframe page"
 msgstr "Iframe pagina"
 
-#: functions/wpt_admin.php:530
+#: functions/wpt_admin.php:535
 #@ wp_theatre
 msgid "Select the page that embeds all Ticketmatic iframes."
 msgstr "Selecteer de pagina waarop alle Ticketmatic iframes worden weergegeven."
 
-#: functions/wpt_admin.php:531
+#: functions/wpt_admin.php:536
 #@ wp_theatre
 msgid "The page must contain the following shortcode:"
 msgstr "De pagina moet de volgende shortcode bevatten:"
 
-#: functions/wpt_widget.php:89
+#: functions/wpt_widget.php:84
 #@ wp_theatre
 msgid "Upcoming productions"
 msgstr "Komende producties"
 
-#: functions/wpt_widget.php:103
+#: functions/wpt_widget.php:98
 #@ wp_theatre
 msgid "Number of productions to show:"
 msgstr "Aantal te tonen producties:"
 
-#: functions/wpt_widget.php:114
+#: functions/wpt_widget.php:109
 #@ wp_theatre
 msgid "Theatre Cart"
 msgstr "Theater Winkelwagen"
 
-#: functions/wpt_widget.php:115
+#: functions/wpt_widget.php:110
 #@ wp_theatre
 msgid "Contents of the shopping cart."
 msgstr "Inhoud van de winkelwagen."
 
-#: functions/wpt_widget.php:139
+#: functions/wpt_widget.php:134
 #@ wp_theatre
 msgid "Cart"
 msgstr "Winkelwagen"
 
+#: functions/wpt_admin.php:66
+#@ wp_theatre
+msgid "Currency symbol"
+msgstr "Valutateken"
+
 #. translators: plugin header field 'Version'
 #: theatre.php:0
 #@ wp_theatre
-msgid "0.3.4.1"
-msgstr "0.3.4.1"
+msgid "0.3.6"
+msgstr ""
+
+#: theatre.php:167
+#: theatre.php:172
+#: theatre.php:173
+#@ wp_theatre
+msgid "month"
+msgstr "maand"
 

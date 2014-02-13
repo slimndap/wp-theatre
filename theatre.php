@@ -10,14 +10,7 @@ Text Domain: wp_theatre
 Domain Path: /lang
 */
 
-require_once(__DIR__ . '/functions/wpt_season.php');
-require_once(__DIR__ . '/functions/wpt_production.php');
-require_once(__DIR__ . '/functions/wpt_event.php');
-require_once(__DIR__ . '/functions/wpt_setup.php');
-require_once(__DIR__ . '/functions/wpt_admin.php');
-require_once(__DIR__ . '/functions/wpt_widget.php');
-require_once(__DIR__ . '/functions/wpt_frontend.php');
-require_once(__DIR__ . '/functions/wpt_cart.php');
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	
 /** Usage:
  *
@@ -33,21 +26,50 @@ require_once(__DIR__ . '/functions/wpt_cart.php');
  */
 
 class WP_Theatre {
-
-	function __construct($ID=false, $PostClass=false) {
+	function __construct() {
 	
-		$this->PostClass = $PostClass;
+		$this->version = '0.3.6';
 
-		if ($ID instanceof WP_Post) {
-			// $ID is a WP_Post object
-			if (!$PostClass) {
-				$this->post = $ID;
-			}
-			$ID = $ID->ID;
+		// Includes
+		$this->includes();
+	
+		// Setup
+		$this->setup = new WPT_Setup();
+		if (is_admin()) {
+			$this->admin = new WPT_Admin();
+		} else {
+			$this->frontend = new WPT_Frontend();
+			$this->cart = new WPT_Cart();
 		}
-		$this->ID = $ID;
 		
-		$this->options = get_option('wp_theatre');
+		// Options
+		$this->options = get_option( 'wp_theatre' );
+
+		// Hooks
+		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this->setup, 'plugin_action_links' ) );
+		
+		// Loaded action
+		do_action( 'wpt_loaded' );
+	}
+	
+	/**
+	 * Include required core files used in admin and on the frontend.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	function includes() {
+		require_once(__DIR__ . '/functions/wpt_setup.php');
+		require_once(__DIR__ . '/functions/wpt_season.php');
+		require_once(__DIR__ . '/functions/wpt_production.php');
+		require_once(__DIR__ . '/functions/wpt_event.php');
+		require_once(__DIR__ . '/functions/wpt_widget.php');
+		if (is_admin()) {
+			require_once(__DIR__ . '/functions/wpt_admin.php');
+		} else {
+			require_once(__DIR__ . '/functions/wpt_frontend.php');
+			require_once(__DIR__ . '/functions/wpt_cart.php');	
+		}
 	}
 	
 	/**
@@ -93,26 +115,7 @@ class WP_Theatre {
 	public function seasons($PostClass = false) {
 		return self::get_seasons($PostClass);
 	}
-	
-	/**
-	 * The custom post as a WP_Post object.
-	 *
-	 * This function is inherited by the WPT_Production, WPT_Event and WPT_Seasons object.
-	 * It can be used to access all properties and methods of the corresponding WP_Post object.
-	 * 
-	 * Example:
-	 *
-	 * $event = new WPT_Event();
-	 * echo WPT_Event->post()->post_title();
-	 *
-	 * @since 0.3.5
-	 *
-	 * @return mixed A WP_Post object.
-	 */
-	public function post() {
-		return $this->get_post();
-	}
-	
+		
 	/**
 	 * A list of upcoming events in HTML.
 	 *
@@ -235,17 +238,6 @@ class WP_Theatre {
 	 * Private functions.
 	 */
 	 
-	private function get_post() {
-		if (!isset($this->post)) {
-			if ($this->PostClass) {
-				$this->post = new $this->PostClass($this->ID);				
-			} else {
-				$this->post = get_post($this->ID);
-			}
-		}
-		return $this->post;
-	}
-	
 	private function get_productions($PostClass = false) {
 		
 		global $wpdb;
@@ -329,5 +321,10 @@ class WP_Theatre {
 		
 	}
 }
+
+/**
+ * Init WP_Theatre class
+ */
+$wp_theatre = new WP_Theatre();
 
 ?>

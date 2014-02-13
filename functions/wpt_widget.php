@@ -112,14 +112,14 @@
 		}
 	
 		public function widget( $args, $instance ) {
-			global $WPT_Cart;			
-			if (!$WPT_Cart->is_empty()) {
+			global $wp_theatre;			
+			if (!$wp_theatre->cart->is_empty()) {
 				$title = apply_filters( 'widget_title', $instance['title'] );
 				
 				echo $args['before_widget'];
 				if ( ! empty( $title ) )
 					echo $args['before_title'] . $title . $args['after_title'];
-				echo $WPT_Cart->render();
+				echo $wp_theatre->cart->render();
 				echo $args['after_widget'];
 			}
 

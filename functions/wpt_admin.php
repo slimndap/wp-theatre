@@ -771,9 +771,4 @@ function wp_ajax_save_bulk_edit_production() {
 	die();					
 }
 
-
-if (is_admin()) {
-	$wpt_admin = new WPT_Admin();
-}
-
 ?>

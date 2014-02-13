@@ -23,7 +23,8 @@ class WPT_Frontend {
 	}
 
 	function wp_head() {
-		echo '<meta name="generator" content="Theatre" />'."\n";
+		global $wp_theatre;
+		echo '<meta name="generator" content="Theatre '.$wp_theatre->version.'" />'."\n";
 	}
 	
 	function pre_get_posts($query) {
@@ -82,7 +83,4 @@ class WPT_Frontend {
 	}
 }
 
-if (!is_admin()) {
-	$WPT_Frontend = new WPT_Frontend();
-}
 ?>
