@@ -4,7 +4,7 @@ Plugin Name: Theatre
 Plugin URI: http://wordpress.org/plugins/theatre/
 Description: Turn your Wordpress website into a theatre website.
 Author: Jeroen Schmit, Slim & Dapper
-Version: 0.3.6
+Version: 0.3.7
 Author URI: http://slimndap.com/
 Text Domain: wp_theatre
 Domain Path: /lang
@@ -28,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class WP_Theatre {
 	function __construct() {
 	
-		$this->version = '0.3.6';
+		$this->version = '0.3.7';
 
 		// Includes
 		$this->includes();
@@ -252,10 +252,10 @@ class WP_Theatre {
 			JOIN $wpdb->postmeta AS sticky ON productions.ID = sticky.post_ID
 			WHERE 
 			(
-				events.post_type = 'wp_theatre_event'
+				events.post_type = '".WPT_Event::post_type_name."'
 				AND events.post_status = 'publish'
 				AND event_date.meta_key = 'event_date'
-				AND wp_theatre_prod.meta_key = 'wp_theatre_prod'
+				AND wp_theatre_prod.meta_key = '".WPT_Production::post_type_name."'
 				AND sticky.meta_key = 'sticky'
 				AND event_date.meta_value > NOW( )
 			) 
@@ -273,33 +273,28 @@ class WP_Theatre {
 	}
 	
 	private function get_events($PostClass = false) {
-		$args = array(
-			'post_type'=>WPT_Event::post_type_name,
-			'posts_per_page' => -1,
-			'meta_key'=>'event_date',
-			'orderby' => 'meta_value_num',
-			'order' => 'ASC',
-			'meta_query' => array( // WordPress has all the results, now, return only the events after today's date
-				array(
-					'key' => 'event_date', // Check the start date field
-					'value' => date("Y-m-d"), // Set today's date (note the similar format)
-					'compare' => '>=', // Return the ones greater than today's date
-				),
-				array(
-					'key' => WPT_Production::post_type_name, // Check if events is attached to production
-					'compare' => 'EXISTS'
-				)
-			),
-		);
-		$posts = get_posts($args);
+		global $wpdb;
+		$querystr = "
+			SELECT events.ID
+			FROM $wpdb->posts AS
+			events
+			
+			join $wpdb->postmeta AS productions on events.ID = productions.post_ID
+			join $wpdb->postmeta AS event_date on events.ID = event_date.post_ID
+			
+			WHERE 
+			events.post_type = '".WPT_Event::post_type_name."'
+			and events.post_status='publish'
+			and productions.meta_key = '".WPT_Production::post_type_name."'
+			and event_date.meta_key = 'event_date'
+			AND event_date.meta_value > NOW( )
+		";
+		$posts = $wpdb->get_results($querystr, OBJECT);
 
 		$events = array();
 		for ($i=0;$i<count($posts);$i++) {
-			$datetime = strtotime(get_post_meta($posts[$i]->ID,'event_date',true));
-			$events[$datetime.$posts[$i]->ID] = new WPT_Event($posts[$i], $PostClass);
+			$events[] = new WPT_Event($posts[$i]->ID, $PostClass);
 		}
-		
-		ksort($events);
 		return array_values($events);
 	}
 

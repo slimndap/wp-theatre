@@ -15,4 +15,11 @@ class wpt_admin_ticketspage
 
 jQuery ->
 	wpt_admin_ticketspage = new wpt_admin_ticketspage
-	
+
+	###
+	Enable datepicker in event admin form.
+	###
+
+	jQuery('.wp_theatre_datepicker').datetimepicker
+		dateFormat : 'yy-mm-dd'
+		timeFormat: 'HH:mm:ss'	

@@ -130,11 +130,11 @@
 .widget_wpt_events_widget .wp_theatre_event figure {
   width: 30%;
 }
-.widget_wpt_events_widget .wp_theatre_event .main {
+.widget_wpt_events_widget .wp_theatre_event .wp_theatre_event_main {
   float: left;
   width: 70%;
 }
-.widget_wpt_events_widget .wp_theatre_event .main > div {
+.widget_wpt_events_widget .wp_theatre_event .wp_theatre_event_main > div {
   float: none;
   width: auto;
 }
