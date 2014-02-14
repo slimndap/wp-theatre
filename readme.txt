@@ -63,6 +63,11 @@ You can also add header above the listing:
  
 == Changelog ==
 
+= 0.3.7 =
+* Microdata for production listings
+* Social meta tags (for Facebook, Twitter & Google+)
+* Disable built-in CSS and add custom CSS
+
 = 0.3.6 =
 * Currency symbol can be set
 * Responsive event listings 

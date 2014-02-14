@@ -34,7 +34,7 @@ jQuery ->
 		# get the selected post ids that are being edited
 		post_ids = new Array()
 		bulk_row.find( '#bulk-titles' ).children().each () ->
-			post_ids.push jQuery(@).attr( 'id' ).replace( /^(title)/i, '' )
+			post_ids.push jQuery(@).attr( 'id' ).replace( /^(ttle)/i, '' )
 		# get the data
 		post_status = bulk_row.find( 'select[name="_status"]' ).val();
 		# save the data

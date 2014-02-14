@@ -1,42 +1,52 @@
 <?php
 class WPT_Admin {
 	function __construct() {
-		add_action( 'admin_init', array($this,'admin_init'));
-		add_action( 'admin_menu', array($this, 'admin_menu' ));
-		add_action( 'add_meta_boxes', array($this, 'add_meta_boxes'));
-		add_action( 'edit_post', array( $this, 'edit_post' ));
-		add_action( 'delete_post',array( $this, 'delete_post' ));
-		add_action( 'wpt_after_event', array($this,'wpt_after_event'));
+		// Hooks (only in admin screens)
+		if (is_admin()) {
+			add_action( 'admin_init', array($this,'admin_init'));
+			add_action( 'admin_menu', array($this, 'admin_menu' ));
+			add_action( 'add_meta_boxes', array($this, 'add_meta_boxes'));
+			add_action( 'edit_post', array( $this, 'edit_post' ));
+			add_action( 'delete_post',array( $this, 'delete_post' ));
+			add_filter( 'wpt_event', array($this,'wpt_event'), 10 ,2);
+			add_action( 'quick_edit_custom_box', array($this,'quick_edit_custom_box'), 10, 2 );
+			add_action( 'wp_dashboard_setup', array($this,'wp_dashboard_setup' ));
 
+			add_filter('manage_wp_theatre_prod_posts_columns', array($this,'manage_wp_theatre_prod_posts_columns'), 10, 2);
+			add_filter('manage_wp_theatre_event_posts_columns', array($this,'manage_wp_theatre_event_posts_columns'), 10, 2);
+			add_action('manage_wp_theatre_prod_posts_custom_column', array($this,'manage_wp_theatre_prod_posts_custom_column'), 10, 2);
+			add_action('manage_wp_theatre_event_posts_custom_column', array($this,'manage_wp_theatre_event_posts_custom_column'), 10, 2);	
+		}
+
+		// More hooks (always load, necessary for AJAX)
 		add_action( 'save_post_'.WPT_Production::post_type_name, array( $this, 'save_production' ) );
 		add_action( 'save_post_'.WPT_Event::post_type_name, array( $this, 'save_event' ) );
-
-		add_action( 'quick_edit_custom_box', array($this,'quick_edit_custom_box'), 10, 2 );
 		add_action( 'bulk_edit_custom_box', array($this,'bulk_edit_custom_box'), 10, 2 );
 
-		add_filter('manage_wp_theatre_prod_posts_columns', array($this,'manage_wp_theatre_prod_posts_columns'), 10, 2);
-		add_filter('manage_wp_theatre_event_posts_columns', array($this,'manage_wp_theatre_event_posts_columns'), 10, 2);
-		add_action('manage_wp_theatre_prod_posts_custom_column', array($this,'manage_wp_theatre_prod_posts_custom_column'), 10, 2);
-		add_action('manage_wp_theatre_event_posts_custom_column', array($this,'manage_wp_theatre_event_posts_custom_column'), 10, 2);
-
-		add_action( 'wp_dashboard_setup', array($this,'wp_dashboard_setup' ));
-
+		// Options
 		$this->options = get_option( 'wp_theatre' );
 		
-		$this->tabs = array('wp_theatre'=>__('General'));
+		// Tabs on settings screens
+		$this->tabs = array(
+			'wp_theatre'=>__('General'),
+			'wpt_social'=>__('Social','wp_theatre')
+		);
 		$this->tab = isset( $_GET['tab'] ) ? $_GET['tab'] : 'wp_theatre';
 	}	
 
 	function admin_init() {
-		wp_enqueue_script( 'wp_theatre_admin_js', plugins_url( '../js/admin.js', __FILE__ ), array('jquery') );
-		wp_enqueue_style( 'wp_theatre_admin_css', plugins_url( '../css/admin.css', __FILE__ ) );
+		wp_enqueue_script( 'wp_theatre_admin', plugins_url( '../js/admin.js', __FILE__ ), array('jquery') );
+		wp_enqueue_style( 'wp_theatre_admin', plugins_url( '../css/admin.css', __FILE__ ) );
 		wp_enqueue_script( 'jquery-ui-timepicker', plugins_url( '../js/jquery-ui-timepicker-addon.js', __FILE__ ), array('jquery-ui-datepicker','jquery-ui-slider')  );
 		wp_enqueue_style('jquery-style', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css');
+		wp_enqueue_style( 'wp_theatre', plugins_url( '../css/style.css', __FILE__ ) );
+
 
         register_setting(
             'wp_theatre', // Option group
             'wp_theatre' // Option name
         );
+        
 		if ($this->tab=='wp_theatre') {
 
 	        add_settings_section(
@@ -50,6 +60,22 @@ class WPT_Admin {
 	            'settings_field_show_events', // ID
 	            __('Show events on production page.','wp_theatre'), // Title 
 	            array( $this, 'settings_field_show_events' ), // Callback
+	            'wp_theatre', // Page
+	            'display_section_id' // Section           
+	        );
+
+	        add_settings_field(
+	            'stylesheet', // ID
+	            __('Stylesheet','wp_theatre'), // Title 
+	            array( $this, 'settings_field_stylesheet' ), // Callback
+	            'wp_theatre', // Page
+	            'display_section_id' // Section           
+	        );
+
+	        add_settings_field(
+	            'css', // ID
+	            __('Custom CSS','wp_theatre'), // Title 
+	            array( $this, 'settings_field_css' ), // Callback
 	            'wp_theatre', // Page
 	            'display_section_id' // Section           
 	        );
@@ -84,6 +110,28 @@ class WPT_Admin {
 	            'wp_theatre', // Page
 	            'tickets_integration' // Section           
 	        );      
+		}
+
+        register_setting(
+            'wpt_social', // Option group
+            'wpt_social' // Option name
+        );
+		if ($this->tab=='wpt_social') {
+        
+	        add_settings_section(
+	            'sharing', // ID
+	            __('Sharing','wp_theatre'), // Title
+	            '', // Callback
+	            'wpt_social' // Page
+	        );  
+	
+	        add_settings_field(
+	            'social_meta_tags', // ID
+	            __('Add social meta tags on production pages for:','wp_theatre'), // Title 
+	            array( $this, 'settings_field_social_meta_tags' ), // Callback
+	            'wpt_social', // Page
+	            'sharing' // Section           
+	        );
 		}
 	}
 
@@ -496,77 +544,7 @@ class WPT_Admin {
 		if (function_exists('w3tc_pgcache_flush')) { w3tc_pgcache_flush(); }		
 	}
 
-    public function settings_field_show_events() {
-        printf(
-            '<input type="checkbox" id="show_events" name="wp_theatre[show_events]" value="yes" %s />',
-    		(isset( $this->options['show_events'] ) && (esc_attr( $this->options['show_events'])=='yes')) ? 'checked="checked"' : ''
-        );
-    }
 
-	function settings_field_integrationtype() {
-		$options = array('link','iframe','new_window','lightbox');
-		
-		foreach($options as $option) {
-			echo '<label>';
-			echo '<input type="radio" name="wp_theatre[integrationtype]" value="'.$option.'"';
-			if ($option==$this->options['integrationtype']) {
-				echo ' checked="checked"';
-			}
-			echo '>'.__($option,'wp_theatre').'</option>';
-			echo '</label>';
-			echo '<br />';
-		}
-		
-	}
-
-	function settings_field_iframepage() {
-		$pages = get_pages();
-
-		echo '<select id="iframepage" name="wp_theatre[iframepage]">';
-		echo '<option></option>';
-		foreach($pages as $page) {
-			echo '<option value="'.$page->ID.'"';
-			if ($page->ID==$this->options['iframepage']) {
-				echo ' selected="selected"';
-			}
-			echo '>'.$page->post_title.'</option>';
-		}
-		echo '</select>';
-		echo '<p class="description">'.__('Select the page that embeds all Ticketmatic iframes.','wp_theatre').'</p>';
-		echo '<p class="description">'.__('The page must contain the following shortcode:','wp_theatre');
-		echo '<pre>[wp_theatre_iframe]</pre>';
-		echo '</p>';
-	}
-
-	function settings_field_currencysymbol() {
-		echo '<input type="text" id="currencysymbol" name="wp_theatre[currencysymbol]" value="'.$this->options['currencysymbol'].'" />';
-
-	}
-
-	public function admin_page() {
-        ?>
-        <div class="wrap">
-            <?php screen_icon(); ?>
-       		<h2><?php echo __('Theatre','wp_theatre').' '.__('Settings');?></h2>
-            <h2 class="nav-tab-wrapper">
-            <?php foreach ($this->tabs as $key=>$val) { ?>
-            	<a class="nav-tab <?php echo $key==$this->tab?'nav-tab-active':'';?>" href="?page=wpt_admin&tab=<?php echo $key;?>">
-            		<?php echo $val;?>
-            	</a>
-            <?php } ?>
-            </h2>
-            <form method="post" action="options.php">
-            <?php
-                // This prints out all hidden setting fields
-                settings_fields( $this->tab );   
-                do_settings_sections( $this->tab );
-                submit_button(); 
-            ?>
-            </form>
-        </div>
-        <?php
-    }
-    
     function wp_dashboard_setup() {
 		wp_add_dashboard_widget(
              'dashboard_wp_theatre',         // Widget slug.
@@ -735,13 +713,133 @@ class WPT_Admin {
 		wp_nonce_field($post_type, $post_type.'_nonce' );
 	}
 	
-	function wpt_after_event($event) {
-		echo '<div class="row-actions">';
-		echo '<span><a href="'.get_edit_post_link($event->production->ID).'">'.__('Edit').'</a></span>';;
-		echo '<span> | <a href="'.get_delete_post_link($event->production->ID).'">'.__('Trash').'</a></span>';;
-		echo '</div>'; //.row-actions
+	function wpt_event($html,$event) {
+		$html.= '<div class="row-actions">';
+		$html.= '<span><a href="'.get_edit_post_link($event->production->ID).'">'.__('Edit').'</a></span>';;
+		$html.= '<span> | <a href="'.get_delete_post_link($event->production->ID).'">'.__('Trash').'</a></span>';;
+		$html.= '</div>'; //.row-actions
+		return $html;
 	}
-	
+
+	/**
+	 * Admin setting.
+	 */
+
+	public function admin_page() {
+        ?>
+        <div class="wrap">
+            <?php screen_icon(); ?>
+       		<h2><?php echo __('Theatre','wp_theatre').' '.__('Settings');?></h2>
+            <h2 class="nav-tab-wrapper">
+            <?php foreach ($this->tabs as $key=>$val) { ?>
+            	<a class="nav-tab <?php echo $key==$this->tab?'nav-tab-active':'';?>" href="?page=wpt_admin&tab=<?php echo $key;?>">
+            		<?php echo $val;?>
+            	</a>
+            <?php } ?>
+            </h2>
+            <form method="post" action="options.php">
+            <?php
+                // This prints out all hidden setting fields
+                settings_fields( $this->tab );   
+                do_settings_sections( $this->tab );
+                submit_button(); 
+            ?>
+            </form>
+        </div>
+        <?php
+    }
+    
+    public function settings_field_show_events() {
+        printf(
+            '<input type="checkbox" id="show_events" name="wp_theatre[show_events]" value="yes" %s />',
+    		(isset( $this->options['show_events'] ) && (esc_attr( $this->options['show_events'])=='yes')) ? 'checked="checked"' : ''
+        );
+    }
+
+    public function settings_field_css() {
+		echo '<p>';
+		echo '<textarea id="custom_css" name="wp_theatre[custom_css]">'.$this->options['custom_css'].'</textarea>';
+		echo '</p>';
+    }
+
+    public function settings_field_stylesheet() {
+		echo '<label>';
+		echo '<input type="checkbox" name="wp_theatre[stylesheet]"';
+		if (!empty($this->options['stylehseet'])) {
+			echo ' checked="checked"';
+		}
+		echo '>'.__('Enable built-in Theatre stylesheet','wp_theatre').'</option>';
+		echo '</label>';
+    }
+
+	function settings_field_integrationtype() {
+		$options = array('link','iframe','new_window','lightbox');
+		
+		foreach($options as $option) {
+			echo '<label>';
+			echo '<input type="radio" name="wp_theatre[integrationtype]" value="'.$option.'"';
+			if ($option==$this->options['integrationtype']) {
+				echo ' checked="checked"';
+			}
+			echo '>'.__($option,'wp_theatre').'</option>';
+			echo '</label>';
+			echo '<br />';
+		}
+		
+	}
+
+	function settings_field_iframepage() {
+		$pages = get_pages();
+
+		echo '<select id="iframepage" name="wp_theatre[iframepage]">';
+		echo '<option></option>';
+		foreach($pages as $page) {
+			echo '<option value="'.$page->ID.'"';
+			if ($page->ID==$this->options['iframepage']) {
+				echo ' selected="selected"';
+			}
+			echo '>'.$page->post_title.'</option>';
+		}
+		echo '</select>';
+		echo '<p class="description">'.__('Select the page that embeds all Ticketmatic iframes.','wp_theatre').'</p>';
+		echo '<p class="description">'.__('The page must contain the following shortcode:','wp_theatre');
+		echo '<pre>[wp_theatre_iframe]</pre>';
+		echo '</p>';
+	}
+
+	function settings_field_currencysymbol() {
+		echo '<input type="text" id="currencysymbol" name="wp_theatre[currencysymbol]" value="'.$this->options['currencysymbol'].'" />';
+
+	}
+
+	function settings_field_social_meta_tags() {
+		global $wp_theatre;
+		
+		$options = array(
+			'facebook' => __('Facebook (Open Graph)','wp_theatre'),
+			'twitter' => __('Twitter (Twitter Card)','wp_theatre'),
+			'google+' => __('Google+ (Schema.org)','wp_theatre'),
+		
+		);
+		foreach ($options as $key=>$value) {
+			echo '<label>';
+			echo '<input type="checkbox" id="'.$key.'" name="wpt_social[social_meta_tags][]" value="'.$key.'"';
+			if (in_array($key, $wp_theatre->wpt_social_options['social_meta_tags'])) {
+				echo ' checked="checked"';
+			}
+			
+			echo '/>';
+			echo $value;
+			echo '</label>';
+			echo '<br />';
+			
+		}
+		
+		echo '<p class="description">'.__('Make your productions shine on social networks.','wp_theatre').'</p>';
+		echo '<p class="description">'.__('Leave unchecked if this causes conflicts with SEO plugins.','wp_theatre').'</p>';
+		
+	}
+    	
 }
 
 

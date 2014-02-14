@@ -84,47 +84,24 @@
     width: auto !important;
   }
 }
-.wp_theatre_events nav {
-  border-bottom: 1px solid lightgrey;
-  padding-bottom: 0.5em;
-}
 .wp_theatre_events nav span {
   padding-right: 0.5em;
   font-size: 0.875em;
 }
-.wp_theatre_events ul {
-  list-style-type: none;
-  margin: 0 0 1em;
-  padding: 0;
-}
-.wp_theatre_events ul li {
-  list-style-type: none;
+.wp_theatre_events .wp_theatre_event {
   border-top: 1px solid lightgrey;
   padding-top: 0.5em;
   margin-top: 0.5em;
 }
-.wp_theatre_events ul li:first-child {
+.wp_theatre_events .wp_theatre_event:first-child {
   border-top: none;
 }
-.wp_theatre_productions nav {
-  border-bottom: 1px solid lightgrey;
-  padding-bottom: 0.5em;
-}
-.wp_theatre_productions nav span {
-  padding-right: 0.5em;
-  font-size: 0.875em;
-}
-.wp_theatre_productions ul {
-  list-style-type: none;
-  margin: 0 0 1em;
-  padding: 0;
-}
-.wp_theatre_productions ul li {
+.wp_theatre_productions .wp_theatre_prod {
   border-top: 1px solid lightgrey;
   padding-top: 0.5em;
   margin-top: 0.5em;
 }
-.wp_theatre_productions ul li:first-child {
+.wp_theatre_productions .wp_theatre_prod:first-child {
   border-top: none;
 }
 .widget_wpt_events_widget .wp_theatre_event figure {

@@ -44,6 +44,7 @@ class WP_Theatre {
 		
 		// Options
 		$this->options = get_option( 'wp_theatre' );
+		$this->wpt_social_options = get_option( 'wpt_social' );
 
 		// Hooks
 		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this->setup, 'plugin_action_links' ) );
@@ -138,7 +139,7 @@ class WP_Theatre {
 	 * @see WP_Theatre::get_events()
  	 * @return string HTML.
 	 */
-	function render_events($args=array()) {
+	function compile_events($args=array()) {
 		$defaults = array(
 			'paged' => false,
 			'grouped' => false,
@@ -160,7 +161,7 @@ class WP_Theatre {
 		}			
 
 		$html = '';
-		echo '<div class="wp_theatre_events">';
+		$html.= '<div class="wp_theatre_events">';
 
 		if ($paged && count($months)) {
 			if (empty($_GET['month'])) {
@@ -170,20 +171,20 @@ class WP_Theatre {
 				$current_month = $_GET[__('month','wp_theatre')];
 			}
 			
-			echo '<nav>';
+			$html.= '<nav>';
 			foreach($months as $month=>$events) {
 				$url = remove_query_arg(__('month','wp_theatre'));
 				$url = add_query_arg( __('month','wp_theatre'), sanitize_title($month) , $url);
-				echo '<span>';
+				$html.= '<span>';
 				if (sanitize_title($month) != $current_month) {
-					echo '<a href="'.$url.'">'.$month.'</a>';
+					$html.= '<a href="'.$url.'">'.$month.'</a>';
 				} else {
-					echo $month;
+					$html.= $month;
 					
 				}
-				echo '</span>';
+				$html.= '</span>';
 			}
-			echo '</nav>';
+			$html.= '</nav>';
 		}
 
 		foreach($months as $month=>$events) {
@@ -193,18 +194,22 @@ class WP_Theatre {
 				}
 			}
 			if ($grouped) {
-				echo '<h4>'.$month.'</h4>';				
+				$html.= '<h4>'.$month.'</h4>';				
 			}
-			echo '<ul>';
 			foreach ($events as $event) {
-				echo '<li>';
-				$event->render();			
-				echo '</li>';
+				$html.=$event->compile();			
 			}
-			echo '</ul>';			
 		}
 	
-		echo '</div>'; //.wp-theatre_events
+		$html.= '</div>'; //.wp-theatre_events
+		
+		return $html;
+	}
+	
+	function render_events($args=array()) {
+		do_action('wpt_events_before',$this);
+		echo self::compile_events($args);
+		do_action('wpt_events_after',$this);
 	}
 
 	function render_productions($args=array()) {
@@ -222,13 +227,9 @@ class WP_Theatre {
 
 		$html.= '<div class="wp_theatre_productions">';
 
-		$html.= '<ul>';
 		foreach ($productions as $production) {
-			$html.= '<li>';
 			$html.= $production->render();			
-			$html.= '</li>';
 		}
-		$html.= '</ul>';			
 	
 		$html.= '</div>'; //.wp-theatre_productions
 		return $html;

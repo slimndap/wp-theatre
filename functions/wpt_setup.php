@@ -86,7 +86,6 @@ class WPT_Setup {
 			'show_in_menu'  => 'theatre',
 			)
 		);
-		wp_enqueue_style( 'wp_theatre_css', plugins_url( '../css/style.css', __FILE__ ) );
 	}	
 
 	function plugins_loaded(){

@@ -4,6 +4,7 @@ class WPT_Production {
 	const post_type_name = 'wp_theatre_prod';
 	
 	function __construct($ID=false, $PostClass=false) {
+		$this->PostClass = $PostClass;
 	
 		if ($ID instanceof WP_Post) {
 			// $ID is a WP_Post object
@@ -104,14 +105,17 @@ class WPT_Production {
 	function summary() {
 		if (!isset($this->summary)) {
 			if ($this->dates()!='') {
-				$full = $this->dates();
+				$short = $this->dates();
 				if ($this->cities()!='') {
-					$full .= ' '.__('in','wp_theatre').' '.$this->cities();
+					$short .= ' '.__('in','wp_theatre').' '.$this->cities();
 				}
+				$short.='.';
 			}
+			$full = $short.' '.wp_trim_words($this->post()->post_content, 15);
 			$this->summary = array(
 				'dates' => $this->dates(),
 				'cities' => $this->cities(),
+				'short' => $short,
 				'full' => $full
 			);
 		}		
@@ -211,7 +215,7 @@ class WPT_Production {
 		$html.= '</div>'; //.title
 
 		$html.= '<div class="'.self::post_type_name.'_summary">';
-		$html.= $summary['full']; 
+		$html.= $summary['short']; 
 		$html.= '</div>';
 
 		$html.= '</div>'; // .main
@@ -257,13 +261,9 @@ class WPT_Production {
 		if (!empty($events)) {
 			$html = '';
 			$html.= '<div class="wp_theatre_events">';
-			$html.= '<ul>';
 			foreach ($events as $event) {
-				$html.= '<li>';
 				$html.= $event->compile();			
-				$html.= '</li>';
 			}
-			$html.= '</ul>';
 			$html.= '</div>';
 			return $html;		
 		}
@@ -271,6 +271,61 @@ class WPT_Production {
 
 	function render_events() {
 		echo $this->compile_events();
+	}
+
+	/**
+	 * Social meta tags for this production.
+	 *
+	 * Compiles meta tags for Facebook (Open Graph), Twitter (Twitetr Cards) and Google+ (Schema.org).
+	 * Can be place in the HTML head of a production page.
+	 * 
+	 * @since 0.3.7
+	 *
+	 * @return mixed HTML
+	 */
+	function social_meta_tags() {
+		global $wp_theatre;
+		
+		$meta = array();
+		
+		$summary = $this->summary();
+		$thumbnail = wp_get_attachment_url( get_post_thumbnail_id($this->ID) );
+
+		if (!empty($wp_theatre->wpt_social_options['social_meta_tags']) && is_array($wp_theatre->wpt_social_options['social_meta_tags'])) {
+			foreach ($wp_theatre->wpt_social_options['social_meta_tags'] as $option) {
+				switch ($option) {
+					case 'facebook':
+						$meta[] = '<!-- Open Graph data -->';	
+						$meta[] = '<meta property="og:title" content="'.$this->post()->post_title.'" />';
+						$meta[] = '<meta property="og:type" content="article" />';
+						$meta[] = '<meta property="og:url" content="'.get_permalink($this->ID).'" />';
+						if (!empty($thumbnail)) {
+							$meta[] = '<meta property="og:image" content="'.$thumbnail.'" />';
+						}
+						$meta[] = '<meta property="og:description" content="'.$summary['full'].'" />';
+						$meta[] = '<meta property="og:site_name" content="'.get_bloginfo('site_name').'" />';
+						break;
+					case 'twitter':
+						$meta[] = '<!-- Twitter Card data -->';	
+						$meta[] = '<meta name="twitter:card" content="summary">';
+						$meta[] = '<meta name="twitter:title" content="'.$this->post()->post_title.'">';
+						$meta[] = '<meta name="twitter:description" content="'.$summary['full'].'">';
+						if (!empty($thumbnail)) {
+							$meta[] = '<meta name="twitter:image:src" content="'.$thumbnail.'" />';
+						}
+						break;
+					case 'google+':
+						$meta[] = '<!-- Schema.org markup for Google+ -->';	
+						$meta[] = '<meta itemprop="name" content="'.$this->post()->post_title.'">';
+						$meta[] = '<meta itemprop="description" content="'.$summary['full'].'">';
+						if (!empty($thumbnail)) {
+							$meta[] = '<meta itemprop="image" content="'.$thumbnail.'">';
+						}
+						break;
+				}
+			}
+		}
+		return implode("\n",$meta);
 	}
 
 	/**
