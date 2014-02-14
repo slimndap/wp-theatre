@@ -14,10 +14,7 @@
 			echo $args['before_widget'];
 			if ( ! empty( $title ) )
 				echo $args['before_title'] . $title . $args['after_title'];
-			$args = array(
-				'limit'=>$instance['limit']
-			);
-			WP_Theatre::render_events($args);
+			WP_Theatre::render_events(array('limit'=>$instance['limit']));
 			echo $args['after_widget'];
 
 		}
