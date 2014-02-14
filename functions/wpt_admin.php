@@ -765,7 +765,7 @@ class WPT_Admin {
     public function settings_field_stylesheet() {
 		echo '<label>';
 		echo '<input type="checkbox" name="wp_theatre[stylesheet]"';
-		if (!empty($this->options['stylehseet'])) {
+		if (!empty($this->options['stylesheet'])) {
 			echo ' checked="checked"';
 		}
 		echo '>'.__('Enable built-in Theatre stylesheet','wp_theatre').'</option>';

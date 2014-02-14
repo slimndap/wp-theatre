@@ -7,7 +7,7 @@ Stable tag: trunk
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Add event listings to your Wordpress website. Build a website for your theater, music venue, museum, conference center or you rockband!
+Add event listings to your Wordpress website. Build a website for your theater, music venue, museum, conference center or your rockband!
 
 == Description ==
 This plugin gives you the ability to manage seasons, productions and events in Wordpress and comes with all necessary shortcodes and widgets to show your events on your website.
@@ -60,7 +60,12 @@ You can also add header above the listing:
 
 	[wp_theatre_events]Upcoming events[/wp_theatre_events]
 
- 
+== Frequently Asked Questions ==
+
+__All event listings look really weird!__
+
+Make sure that you checked the 'Enable built-in Theatre stylesheet'-option in the Theatre plugin settings.
+
 == Changelog ==
 
 = 0.3.7 =
