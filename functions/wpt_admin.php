@@ -824,7 +824,7 @@ class WPT_Admin {
 		foreach ($options as $key=>$value) {
 			echo '<label>';
 			echo '<input type="checkbox" id="'.$key.'" name="wpt_social[social_meta_tags][]" value="'.$key.'"';
-			if (in_array($key, $wp_theatre->wpt_social_options['social_meta_tags'])) {
+			if (is_array($wp_theatre->wpt_social_options['social_meta_tags']) && in_array($key, $wp_theatre->wpt_social_options['social_meta_tags'])) {
 				echo ' checked="checked"';
 			}
 			
