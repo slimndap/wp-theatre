@@ -7,6 +7,7 @@ class WPT_Setup {
 
 		// Hooks
 		add_action( 'init', array($this,'init'));
+		add_filter( 'gettext', array($this,'gettext'), 20, 3 );
 		
 		add_action( 'widgets_init', function(){
 		     register_widget( 'WPT_Events_Widget' );
@@ -97,7 +98,26 @@ class WPT_Setup {
 		flush_rewrite_rules();
 	}
 
-
+	function gettext($translated_text, $text, $domain) {
+		global $wp_theatre;
+		
+		if ($domain=='wp_theatre') {
+			switch ( $translated_text ) {
+				case 'Tickets' :
+					if (!empty($wp_theatre->wpt_language_options['language_tickets'])) {
+						$translated_text = $wp_theatre->wpt_language_options['language_tickets'];
+					}
+					break;
+				case 'Events' :
+					if (!empty($wp_theatre->wpt_language_options['language_events'])) {
+						$translated_text = $wp_theatre->wpt_language_options['language_events'];
+					}
+					break;
+			}
+			
+		}
+		return $translated_text;
+	}
 }
 
 add_action( 'wp_ajax_save_bulk_edit_'.WPT_Production::post_type_name, 'wp_ajax_save_bulk_edit_production' );

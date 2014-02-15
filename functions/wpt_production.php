@@ -262,6 +262,7 @@ class WPT_Production {
 			$html = '';
 			$html.= '<div class="wp_theatre_events">';
 			foreach ($events as $event) {
+				$event->format = 'production';
 				$html.= $event->compile();			
 			}
 			$html.= '</div>';

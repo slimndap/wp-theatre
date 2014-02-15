@@ -12,6 +12,7 @@
 		img {
 			max-width: 100%;
 			height: auto;
+			padding: 0;
 		}
 	}
 	.wp_theatre_prod_main {
@@ -22,28 +23,25 @@
 }
 
 .wp_theatre_event {
-	overflow: auto;
 	line-height: inherit;
+	.box-sizing(border-box);
 	figure {
-		float: left;
-		width: 15%;
 		padding-right: 0.5em;
 		margin: 0;
 		.box-sizing(border-box);
 		img {
 			.box-sizing(border-box);
 			max-width: 100%;
+			padding: 0;
 			height: auto;
 		}
 	}
 	.wp_theatre_event_main {
-		float: left;
-		width: 85%;
-		.box-sizing(border-box);
+		overflow: auto;
 		>div {
 			float: left;
 			.box-sizing(border-box);			
-			&.wp_theatre_event_date {
+			&.wp_theatre_event_datetime {
 				width: 35%;
 				padding-right: 0.5em;
 			}
@@ -61,6 +59,17 @@
 					font-size: 0.875em;
 				}
 			}
+		}
+	}
+	&.wp_theatre_event_format_full {
+		overflow: auto;
+		figure {
+			width: 15%;
+			float: left;
+		}
+		.wp_theatre_event_main {
+			width: 85%;
+			float: left;
 		}
 	}
 	@media(max-width: 768px) {

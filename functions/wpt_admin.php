@@ -29,6 +29,7 @@ class WPT_Admin {
 		// Tabs on settings screens
 		$this->tabs = array(
 			'wp_theatre'=>__('General'),
+			'wpt_language'=>__('Language','wp_theatre'),
 			'wpt_social'=>__('Social','wp_theatre')
 		);
 		$this->tab = isset( $_GET['tab'] ) ? $_GET['tab'] : 'wp_theatre';
@@ -96,8 +97,16 @@ class WPT_Admin {
 	        );      
 	
 	        add_settings_field(
+	            'ticket_button_tag', // ID
+	            __('Show ticket button as','wp_theatre'), // Title 
+	            array( $this, 'settings_field_ticket_button_tag' ), // Callback
+	            'wp_theatre', // Page
+	            'tickets_integration' // Section           
+	        );      
+	        
+	        add_settings_field(
 	            'integrationtype', // ID
-	            __('Integration type','wp_theatre'), // Title 
+	            __('Open tickets screens in','wp_theatre'), // Title 
 	            array( $this, 'settings_field_integrationtype' ), // Callback
 	            'wp_theatre', // Page
 	            'tickets_integration' // Section           
@@ -112,6 +121,37 @@ class WPT_Admin {
 	        );      
 		}
 
+        register_setting(
+            'wpt_language', // Option group
+            'wpt_language' // Option name
+        );
+		if ($this->tab=='wpt_language') {
+ 	        add_settings_section(
+	            'language', // ID
+	            __('Language','wp_theatre'), // Title
+	            '', // Callback
+	            'wpt_language' // Page
+	        );  
+
+	        add_settings_field(
+	            'language_tickets', // ID
+	            __('Tickets','wp_theatre'), // Title 
+	            array( $this, 'settings_field_language_tickets' ), // Callback
+	            'wpt_language', // Page
+	            'language' // Section           
+	        );      
+	
+	        add_settings_field(
+	            'language_events', // ID
+	            __('Events','wp_theatre'), // Title 
+	            array( $this, 'settings_field_language_events' ), // Callback
+	            'wpt_language', // Page
+	            'language' // Section           
+	        );      
+	
+       
+		}
+		
         register_setting(
             'wpt_social', // Option group
             'wpt_social' // Option name
@@ -753,7 +793,7 @@ class WPT_Admin {
 		$options = array(
 			'above' => __('show above content','wp_theatre'),
 			'below' => __('show below content','wp_theatre'),
-			'not' => __('don\'t show (use a shortcode instead)','wp_theatre')
+			'not' => __('don\'t show (use <code>[wpt_production_events]</code> shortcode instead)','wp_theatre')
 		);
 		
 		foreach($options as $key=>$value) {
@@ -788,16 +828,55 @@ class WPT_Admin {
 		echo '</label>';
     }
 
-	function settings_field_integrationtype() {
-		$options = array('link','iframe','new_window','lightbox');
+	function settings_field_language_tickets() {
+		global $wp_theatre;
+		echo '<input type="text" id="language_tickets" name="wpt_language[language_tickets]" value="'.$wp_theatre->wpt_language_options['language_tickets'].'" />';
+		echo '<p class="description">'.__('Displayed on ticket buttons.','wp_theatre').'</p>';
+		echo '<p class="description">'.__('Can be overruled on a per-event basis.','wp_theatre').'</p>';
+
+	}
+
+	function settings_field_language_events() {
+		global $wp_theatre;
+		echo '<input type="text" id="language_events" name="wpt_language[language_events]" value="'.$wp_theatre->wpt_language_options['language_events'].'" />';
+		echo '<p class="description">'.__('Displayed above event listings.','wp_theatre').'</p>';
+
+	}
+
+	function settings_field_ticket_button_tag() {
+		$options = array(
+			'a' => __('link','wp_theatre'),
+			'button' => __('button','wp_theatre')
+		);
 		
-		foreach($options as $option) {
+		foreach($options as $key=>$value) {
 			echo '<label>';
-			echo '<input type="radio" name="wp_theatre[integrationtype]" value="'.$option.'"';
-			if ($option==$this->options['integrationtype']) {
+			echo '<input type="radio" name="wp_theatre[ticket_button_tag]" value="'.$key.'"';
+			if ($key==$this->options['ticket_button_tag']) {
 				echo ' checked="checked"';
 			}
-			echo '>'.__($option,'wp_theatre').'</option>';
+			echo '>'.$value.'</option>';
+			echo '</label>';
+			echo '<br />';
+		}
+		
+	}
+
+	function settings_field_integrationtype() {
+		$options = array(
+			'self' => __('same window','wp_theatre'),
+			'iframe' => __('iframe','wp_theatre'),
+			'_blank' => __('new window','wp_theatre'),
+			'lightbox' => __('lightbox','wp_theatre')
+		);
+		
+		foreach($options as $key=>$value) {
+			echo '<label>';
+			echo '<input type="radio" name="wp_theatre[integrationtype]" value="'.$key.'"';
+			if ($key==$this->options['integrationtype']) {
+				echo ' checked="checked"';
+			}
+			echo '>'.$value.'</option>';
 			echo '</label>';
 			echo '<br />';
 		}

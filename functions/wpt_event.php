@@ -33,7 +33,9 @@ class WPT_Event {
 			$ID = $ID->ID;
 		}
 
-		$this->ID = $ID;		
+		$this->ID = $ID;
+		
+		$this->format = 'full';		
 	}
 
 	function post_type() {
@@ -104,6 +106,30 @@ class WPT_Event {
 		return $this->summary;
 	}
 
+	function thumbnail() {
+		$attr = array(
+			'itemprop'=>'image'
+		);
+		$html_thumbnail = '';
+		if ($this->format=='full') {
+			$thumbnail = get_the_post_thumbnail($this->production()->ID,'thumbnail',$attr);
+			if (!empty($thumbnail)) {
+				$html_thumbnail.= '<figure>';
+				$html_thumbnail.= '<a href="'.get_permalink($this->production()->ID).'">';
+				$html_thumbnail.= $thumbnail;
+				$html_thumbnail.= '</a>';
+				$html_thumbnail.= '</figure>';
+			}
+		} else {
+			$thumbnail = wp_get_attachment_url( get_post_thumbnail_id($this->production->ID) );
+			if (!empty($thumbnail)) {
+				$html_thumbnail.= '<meta itemprop="image" content="'.$thumbnail.'" />';
+			}
+			
+		}
+		return apply_filters('wpt_event-thumbnail',$html_thumbnail,$this);
+	}
+
 	function post_class() {
 		$classes = array();
 		$classes[] = self::post_type_name;
@@ -117,39 +143,30 @@ class WPT_Event {
 		
 		$html = '';
 		
-		$html.= '<div class='.self::post_type_name.' itemscope itemtype="http://data-vocabulary.org/Event">';
+		$html.= '<div class="'.self::post_type_name.' '.self::post_type_name.'_format_'.$this->format.'" itemscope itemtype="http://data-vocabulary.org/Event">';
 
-		$attr = array(
-			'itemprop'=>'image'
-		);
-		$thumbnail = get_the_post_thumbnail($this->production()->ID,'thumbnail',$attr);
-		$html_thumbnail = '';
-		if (!empty($thumbnail)) {
-			$html_thumbnail.= '<figure>';
-			$html_thumbnail.= $thumbnail;
-			$html_thumbnail.= '</figure>';
-		}
-		$html.= apply_filters('wpt_event-thumbnail',$html_thumbnail,$this);
+		$html.= $this->thumbnail();
 	
 		$html.= '<div class="'.self::post_type_name.'_main">';
 
-		$html.= '<div class="'.self::post_type_name.'_date">';
+		$html.= '<div class="'.self::post_type_name.'_datetime">';
 		$html.= '<time itemprop="startDate" datetime="'.date('c',$this->datetime()).'">';
-		$html.= $this->date().' '.$this->time(); 
+		$html.= '<div class="'.self::post_type_name.'_date">'.$this->date().'</div>';
+		$html.= '<div class="'.self::post_type_name.'_time">'.$this->time().'</div>';
 		$html.= '</time>';
 		$html.= '</div>';
 
 		$html.= '<div class="'.self::post_type_name.'_content">';
 
-		if (is_singular(WPT_Production::post_type_name)) {
-			$html.= '<meta itemprop="summary" content="'.$this->production()->post()->post_title.'" />';
-			$html.= '<meta itemprop="url" content="'.get_permalink($this->production()->ID).'" />';
-		} else {
+		if ($this->format=='full') {
 			$html.= '<div class="'.self::post_type_name.'_title">';
 			$html.= '<a itemprop="url" href="'.get_permalink($this->production()->ID).'">';
 			$html.= '<span itemprop="summary">'.$this->production()->post()->post_title.'</span>';
 			$html.= '</a>';
 			$html.= '</div>'; //.title			
+		} else {
+			$html.= '<meta itemprop="summary" content="'.$this->production()->post()->post_title.'" />';
+			$html.= '<meta itemprop="url" content="'.get_permalink($this->production()->ID).'" />';
 		}
 		
 		$remark = get_post_meta($this->ID,'remark',true);
@@ -184,6 +201,15 @@ class WPT_Event {
 		
 		$html.= '</div>'; // .content
 
+		$html.= $this->tickets_button();
+		$html.= '</div>'; // .main
+
+		$html.= '</div>';
+		return apply_filters('wpt_event',$html, $this);	
+	}
+	
+	function tickets_button() {
+		global $wp_theatre;
 		$html.= '<div class="'.self::post_type_name.'_tickets">';			
 		if (get_post_meta($this->ID,'tickets_status',true) == 'soldout') {
 			$html.= '<span class="'.self::post_type_name.'_soldout">'.__('Sold out', 'wp_theatre').'</span>';
@@ -201,7 +227,12 @@ class WPT_Event {
 			$url = apply_filters('wpt_event_tickets_url',$url,$this);
 			if ($url!='') {
 				$html_tickets_button = '';
-				$html_tickets_button.= '<a href="'.$url.'"';
+				
+				$ticket_button_tag = 'a';
+				if (!empty($wp_theatre->options['ticket_button_tag'])) {
+					$ticket_button_tag = $wp_theatre->options['ticket_button_tag'];
+				}
+				$html_tickets_button.= '<'.$ticket_button_tag.' href="'.$url.'" rel="nofollow"';
 				
 				// Add classes to tickets button
 				$html_tickets_button_classes = array('button');
@@ -218,7 +249,7 @@ class WPT_Event {
 					$text = __('Tickets','wp_theatre');			
 				}
 				$html_tickets_button.= $text;
-				$html_tickets_button.= '</a>';
+				$html_tickets_button.= '</'.$ticket_button_tag.'>';
 				
 				$html.= apply_filters('wpt_event_tickets_button',$html_tickets_button, $this);
 			}
@@ -228,12 +259,9 @@ class WPT_Event {
 			}
 		}
 
-		$html.= '</div>'; // .tickets
-
-		$html.= '</div>'; // .main
-
-		$html.= '</div>';
-		return apply_filters('wpt_event',$html, $this);	
+		$html.= '</div>'; // .tickets		
+		
+		return $html;
 	}
 	
 	function render() {

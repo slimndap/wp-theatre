@@ -68,6 +68,11 @@ Make sure that you checked the 'Enable built-in Theatre stylesheet'-option in th
 
 == Changelog ==
 
+= 0.3.8 =
+* Show event listings above or below content on production page.
+* Set your own default text on ticket buttons and above event listings.
+* New wpt_event_ticket_button shortcode.
+
 = 0.3.7 =
 * Microdata for production listings
 * Social meta tags (for Facebook, Twitter & Google+)
