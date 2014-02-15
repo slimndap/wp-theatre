@@ -79,7 +79,7 @@ class WPT_Frontend {
 			) {
 				$production = new WPT_Production();			
 				$events_html = '<h3>'.WPT_Event::post_type()->labels->name.'</h3>';
-				$events_html.= $production->compile_events();
+				$events_html.= '[wpt_production_events]';
 				
 				switch ($wp_theatre->options['show_events']) {
 					case 'above' :
@@ -100,7 +100,7 @@ class WPT_Frontend {
 		), $atts );
 		extract($atts);
 				
-		return WP_Theatre::render_events($atts);
+		return WP_Theatre::compile_events($atts);
 	}
 
 	function wp_theatre_iframe($atts, $content=null) {

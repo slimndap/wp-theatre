@@ -289,6 +289,9 @@ class WP_Theatre {
 			and productions.meta_key = '".WPT_Production::post_type_name."'
 			and event_date.meta_key = 'event_date'
 			AND event_date.meta_value > NOW( )
+			
+			ORDER BY event_date.meta_value
+
 		";
 		$posts = $wpdb->get_results($querystr, OBJECT);
 
