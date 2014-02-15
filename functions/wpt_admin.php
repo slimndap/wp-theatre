@@ -11,6 +11,8 @@ class WPT_Admin {
 			add_filter( 'wpt_event', array($this,'wpt_event'), 10 ,2);
 			add_action( 'quick_edit_custom_box', array($this,'quick_edit_custom_box'), 10, 2 );
 			add_action( 'wp_dashboard_setup', array($this,'wp_dashboard_setup' ));
+			add_action( 'save_post_'.WPT_Production::post_type_name, array( $this, 'save_production' ) );
+			add_action( 'save_post_'.WPT_Event::post_type_name, array( $this, 'save_event' ) );
 
 			add_filter('manage_wp_theatre_prod_posts_columns', array($this,'manage_wp_theatre_prod_posts_columns'), 10, 2);
 			add_filter('manage_wp_theatre_event_posts_columns', array($this,'manage_wp_theatre_event_posts_columns'), 10, 2);
@@ -18,9 +20,7 @@ class WPT_Admin {
 			add_action('manage_wp_theatre_event_posts_custom_column', array($this,'manage_wp_theatre_event_posts_custom_column'), 10, 2);	
 		}
 
-		// More hooks (always load, necessary for AJAX)
-		add_action( 'save_post_'.WPT_Production::post_type_name, array( $this, 'save_production' ) );
-		add_action( 'save_post_'.WPT_Event::post_type_name, array( $this, 'save_event' ) );
+		// More hooks (always load, necessary for bulk editing through AJAX)
 		add_action( 'bulk_edit_custom_box', array($this,'bulk_edit_custom_box'), 10, 2 );
 
 		// Options
@@ -58,7 +58,7 @@ class WPT_Admin {
 	
 	        add_settings_field(
 	            'settings_field_show_events', // ID
-	            __('Show events on production page.','wp_theatre'), // Title 
+	            __('Event listings on production page','wp_theatre'), // Title 
 	            array( $this, 'settings_field_show_events' ), // Callback
 	            'wp_theatre', // Page
 	            'display_section_id' // Section           
@@ -750,15 +750,31 @@ class WPT_Admin {
     }
     
     public function settings_field_show_events() {
-        printf(
-            '<input type="checkbox" id="show_events" name="wp_theatre[show_events]" value="yes" %s />',
-    		(isset( $this->options['show_events'] ) && (esc_attr( $this->options['show_events'])=='yes')) ? 'checked="checked"' : ''
-        );
+		$options = array(
+			'above' => __('show above content','wp_theatre'),
+			'below' => __('show below content','wp_theatre'),
+			'not' => __('don\'t show (use a shortcode instead)','wp_theatre')
+		);
+		
+		foreach($options as $key=>$value) {
+			echo '<label>';
+			echo '<input type="radio" name="wp_theatre[show_events]" value="'.$key.'"';
+			if ($key==$this->options['show_events']) {
+				echo ' checked="checked"';
+			}
+			echo '>'.$value.'</option>';
+			echo '</label>';
+			echo '<br />';
+		}
     }
 
     public function settings_field_css() {
 		echo '<p>';
-		echo '<textarea id="custom_css" name="wp_theatre[custom_css]">'.$this->options['custom_css'].'</textarea>';
+		echo '<textarea id="custom_css" name="wp_theatre[custom_css]">';
+		if (!empty($this->options['custom_css'])) {
+			echo $this->options['custom_css'];
+		}
+		echo '</textarea>';
 		echo '</p>';
     }
 

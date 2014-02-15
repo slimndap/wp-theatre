@@ -70,11 +70,24 @@ class WPT_Frontend {
 	}
 
 	function the_content($content) {
+		global $wp_theatre;
+		
 		if (is_singular(WPT_Production::post_type_name)) {
-			if (isset( $this->options['show_events'] ) && (esc_attr( $this->options['show_events'])=='yes')) {
+			if (
+				isset( $wp_theatre->options['show_events'] ) &&
+				in_array($wp_theatre->options['show_events'], array('above','below'))
+			) {
 				$production = new WPT_Production();			
-				$content .= '<h3>'.WPT_Event::post_type()->labels->name.'</h3>';
-				$content .= $production->compile_events();
+				$events_html = '<h3>'.WPT_Event::post_type()->labels->name.'</h3>';
+				$events_html.= $production->compile_events();
+				
+				switch ($wp_theatre->options['show_events']) {
+					case 'above' :
+						$content = $events_html.$content;
+						break;
+					case 'below' :
+						$content.= $events_html;
+				}
 			}
 		}
 		return $content;

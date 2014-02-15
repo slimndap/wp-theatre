@@ -202,10 +202,14 @@ class WPT_Event {
 			if ($url!='') {
 				$html_tickets_button = '';
 				$html_tickets_button.= '<a href="'.$url.'"';
-
+				
+				// Add classes to tickets button
+				$html_tickets_button_classes = array('button');
 				if (!empty($wp_theatre->options['integrationtype'])) {
-					$html_tickets_button.= ' class="wpt_tickets_url wp_theatre_integrationtype_'.$wp_theatre->options['integrationtype'].'"';
+					$html_tickets_button_classes[] = 'wpt_tickets_url wp_theatre_integrationtype_'.$wp_theatre->options['integrationtype'].'"';
 				}
+				$html_tickets_button_classes = apply_filters('wpt_event_tickets_button_classes',$html_tickets_button_classes,$this);
+				$html_tickets_button.= ' class="'.implode(' ' ,$html_tickets_button_classes).'"';
 
 				$html_tickets_button.= '>';
 

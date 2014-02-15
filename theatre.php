@@ -164,7 +164,7 @@ class WP_Theatre {
 		$html.= '<div class="wp_theatre_events">';
 
 		if ($paged && count($months)) {
-			if (empty($_GET['month'])) {
+			if (empty($_GET[__('month','wp_theatre')])) {
 				reset($months);
 				$current_month = sanitize_title(key($months));
 			} else {

@@ -73,7 +73,7 @@ class WPT_Production {
 			if (is_array($events) && (count($events)>0)) {
 				foreach ($events as $event) {
 					$city = trim(ucwords(get_post_meta($event->ID,'city',true)));
-					if (!in_array($city, $cities)) {
+					if (!empty($city) && !in_array($city, $cities)) {
 						$cities[] = $city;
 					}
 				}
