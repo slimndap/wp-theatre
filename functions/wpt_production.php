@@ -256,24 +256,6 @@ class WPT_Production {
 		return $html;
 	}
 	
-	function compile_events() {
-		$events = $this->upcoming_events();
-		if (!empty($events)) {
-			$html = '';
-			$html.= '<div class="wp_theatre_events">';
-			foreach ($events as $event) {
-				$event->format = 'production';
-				$html.= $event->compile();			
-			}
-			$html.= '</div>';
-			return $html;		
-		}
-	}
-
-	function render_events() {
-		echo $this->compile_events();
-	}
-
 	/**
 	 * Social meta tags for this production.
 	 *
@@ -332,7 +314,6 @@ class WPT_Production {
 	/**
 	 * The custom post as a WP_Post object.
 	 *
-	 * This function is inherited by the WPT_Production, WPT_Event and WPT_Seasons object.
 	 * It can be used to access all properties and methods of the corresponding WP_Post object.
 	 * 
 	 * Example:

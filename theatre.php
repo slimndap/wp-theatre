@@ -4,7 +4,7 @@ Plugin Name: Theatre
 Plugin URI: http://wordpress.org/plugins/theatre/
 Description: Turn your Wordpress website into a theatre website.
 Author: Jeroen Schmit, Slim & Dapper
-Version: 0.3.8
+Version: 0.4
 Author URI: http://slimndap.com/
 Text Domain: wp_theatre
 Domain Path: /lang
@@ -27,8 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class WP_Theatre {
 	function __construct() {
-	
-		$this->version = '0.3.7';
+		$this->version = '0.4';
 
 		// Includes
 		$this->includes();
@@ -36,6 +35,7 @@ class WP_Theatre {
 		// Setup
 		$this->setup = new WPT_Setup();
 		$this->admin = new WPT_Admin();
+		$this->events = new WPT_Events();
 		if (is_admin()) {
 		} else {
 			$this->frontend = new WPT_Frontend();
@@ -63,6 +63,7 @@ class WP_Theatre {
 	function includes() {
 		require_once(__DIR__ . '/functions/wpt_production.php');
 		require_once(__DIR__ . '/functions/wpt_event.php');
+		require_once(__DIR__ . '/functions/wpt_events.php');
 		require_once(__DIR__ . '/functions/wpt_setup.php');
 		require_once(__DIR__ . '/functions/wpt_season.php');
 		require_once(__DIR__ . '/functions/wpt_widget.php');
@@ -90,8 +91,8 @@ class WP_Theatre {
 	 * @param  string $PostClass Optional. 
 	 * @return mixed An array of WPT_Event objects.
 	 */
- 	public function events($PostClass = false) {
-		return self::get_events($PostClass);
+ 	public function events($args = array(), $PostClass = false) {
+ 		return $this->events->upcoming(null, $PostClass);
 	}
 	
 	/**
@@ -141,76 +142,11 @@ class WP_Theatre {
  	 * @return string HTML.
 	 */
 	function compile_events($args=array()) {
-		$defaults = array(
-			'paged' => false,
-			'grouped' => false,
-			'limit' => false
-		);
-		$args = wp_parse_args( $args, $defaults );
-		extract($args);
-		
-		$events = self::get_events();
-		
-		if ($limit) {
-			$events = array_slice($events, 0, $limit);
-		}
-		$months = array();
-		
-		foreach($events as $event) {
-			$month = date_i18n('M Y',$event->datetime());
-			$months[$month][] = $event;
-		}			
-
-		$html = '';
-		$html.= '<div class="wp_theatre_events">';
-
-		if ($paged && count($months)) {
-			if (empty($_GET[__('month','wp_theatre')])) {
-				reset($months);
-				$current_month = sanitize_title(key($months));
-			} else {
-				$current_month = $_GET[__('month','wp_theatre')];
-			}
-			
-			$html.= '<nav>';
-			foreach($months as $month=>$events) {
-				$url = remove_query_arg(__('month','wp_theatre'));
-				$url = add_query_arg( __('month','wp_theatre'), sanitize_title($month) , $url);
-				$html.= '<span>';
-				if (sanitize_title($month) != $current_month) {
-					$html.= '<a href="'.$url.'">'.$month.'</a>';
-				} else {
-					$html.= $month;
-					
-				}
-				$html.= '</span>';
-			}
-			$html.= '</nav>';
-		}
-
-		foreach($months as $month=>$events) {
-			if ($paged) {
-				if (sanitize_title($month) != $current_month) {
-					continue;
-				}
-			}
-			if ($grouped) {
-				$html.= '<h4>'.$month.'</h4>';				
-			}
-			foreach ($events as $event) {
-				$html.=$event->compile();			
-			}
-		}
-	
-		$html.= '</div>'; //.wp-theatre_events
-		
-		return $html;
+		return $this->events->html_listing($args);
 	}
 	
 	function render_events($args=array()) {
-		do_action('wpt_events_before',$this);
-		echo self::compile_events($args);
-		do_action('wpt_events_after',$this);
+		echo $this->compile_events($args);
 	}
 
 	function render_productions($args=array()) {
@@ -275,32 +211,7 @@ class WP_Theatre {
 	}
 	
 	private function get_events($PostClass = false) {
-		global $wpdb;
-		$querystr = "
-			SELECT events.ID
-			FROM $wpdb->posts AS
-			events
-			
-			join $wpdb->postmeta AS productions on events.ID = productions.post_ID
-			join $wpdb->postmeta AS event_date on events.ID = event_date.post_ID
-			
-			WHERE 
-			events.post_type = '".WPT_Event::post_type_name."'
-			and events.post_status='publish'
-			and productions.meta_key = '".WPT_Production::post_type_name."'
-			and event_date.meta_key = 'event_date'
-			AND event_date.meta_value > NOW( )
-			
-			ORDER BY event_date.meta_value
-
-		";
-		$posts = $wpdb->get_results($querystr, OBJECT);
-
-		$events = array();
-		for ($i=0;$i<count($posts);$i++) {
-			$events[] = new WPT_Event($posts[$i]->ID, $PostClass);
-		}
-		return array_values($events);
+		return WP_Theatre::events(null, $PosctClass);
 	}
 
 

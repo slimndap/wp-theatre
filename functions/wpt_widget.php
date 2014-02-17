@@ -9,12 +9,13 @@
 		}
 	
 		public function widget( $args, $instance ) {
+			global $wp_theatre;
 			$title = apply_filters( 'widget_title', $instance['title'] );
 			
 			echo $args['before_widget'];
 			if ( ! empty( $title ) )
 				echo $args['before_title'] . $title . $args['after_title'];
-			echo WP_Theatre::compile_events(array('limit'=>$instance['limit']));
+			echo $wp_theatre->events->html_listing(array('limit'=>$instance['limit']));
 			echo $args['after_widget'];
 
 		}

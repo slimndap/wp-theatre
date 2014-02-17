@@ -5,7 +5,7 @@ class wpt_tickets
 	tickets: (e) ->
 		tickets_url = jQuery e
 		
-		if tickets_url.hasClass 'wp_theatre_integrationtype_new_window'
+		if tickets_url.hasClass 'wp_theatre_integrationtype__blank'
 			window.open tickets_url.attr 'href'
 			return false
 		if tickets_url.hasClass 'wp_theatre_integrationtype_lightbox'

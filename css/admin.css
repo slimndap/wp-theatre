@@ -104,7 +104,7 @@
   border-top: 1px solid #ececec;
   background-color: #fafafa;
 }
-.theatre_page_wpt_admin textarea#custom_css {
+textarea#wpt_custom_css {
   width: 500px;
   height: 200px;
 }

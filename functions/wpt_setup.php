@@ -1,6 +1,7 @@
 <?php
 class WPT_Setup {
 	function __construct() {
+
 		$this->options = get_option( 'wp_theatre' );
 		// Installation
 		register_activation_hook( __FILE__, array($this, 'activate' ));		
@@ -147,7 +148,6 @@ function wp_ajax_save_bulk_edit_production() {
 	die();					
 }
 
-$WPT_Setup = new WPT_Setup();
 
 
 ?>

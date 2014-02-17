@@ -810,7 +810,7 @@ class WPT_Admin {
 
     public function settings_field_css() {
 		echo '<p>';
-		echo '<textarea id="custom_css" name="wp_theatre[custom_css]">';
+		echo '<textarea id="wpt_custom_css" name="wp_theatre[custom_css]">';
 		if (!empty($this->options['custom_css'])) {
 			echo $this->options['custom_css'];
 		}
@@ -844,6 +844,7 @@ class WPT_Admin {
 	}
 
 	function settings_field_ticket_button_tag() {
+		global $wp_theatre;
 		$options = array(
 			'a' => __('link','wp_theatre'),
 			'button' => __('button','wp_theatre')
@@ -852,7 +853,7 @@ class WPT_Admin {
 		foreach($options as $key=>$value) {
 			echo '<label>';
 			echo '<input type="radio" name="wp_theatre[ticket_button_tag]" value="'.$key.'"';
-			if ($key==$this->options['ticket_button_tag']) {
+			if (!empty($wp_theatre->options['ticket_button_tag']) && $key==$wp_theatre->options['ticket_button_tag']) {
 				echo ' checked="checked"';
 			}
 			echo '>'.$value.'</option>';
