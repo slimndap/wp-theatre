@@ -69,7 +69,7 @@
 			echo $args['before_widget'];
 			if ( ! empty( $title ) )
 				echo $args['before_title'] . $title . $args['after_title'];
-			echo WP_Theatre::compile_productions(array('limit'=>$instance['limit']));
+			echo WP_Theatre::render_productions(array('limit'=>$instance['limit']));
 			echo $args['after_widget'];
 
 		}

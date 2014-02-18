@@ -107,6 +107,61 @@ class WPT_Events {
 		
 		return $html;
 	}
+	
+	public function meta_listing() {
+		$defaults = array(
+			'paged' => false,
+			'grouped' => false,
+			'limit' => false,
+			WPT_Production::post_type_name => false,
+		);
+		$args = wp_parse_args( $args, $defaults );
+		extract($args);
+
+		$html = '';
+
+		$events_args = array(
+			'limit' => $args['limit'],
+			WPT_Production::post_type_name => $args[WPT_Production::post_type_name]
+		);
+		$events = $this->upcoming($events_args);
+		
+		$uniqid = uniqid();
+		
+		for($i=0;$i<count($events);$i++) {
+		
+			if ($i==0) {
+				$html.= '<span itemscope itemtype="http://schema.org/Event">';			
+				$html.= '<meta itemprop="name" id="'.WPT_Production::post_type_name.'_title_'.$uniqid.'" content="'.$events[$i]->production()->title().'" />';
+				$html.= '<meta itemprop="url" id="'.WPT_Production::post_type_name.'_permalink_'.$uniqid.'" content="'.$events[$i]->production()->permalink().'" />';
+				$html.= '<meta itemprop="image" id="'.WPT_Production::post_type_name.'_thumbnail_'.$uniqid.'" content="'.wp_get_attachment_url($events[$i]->production()->thumbnail()).'" />';
+			} else {
+				$html.= '<span itemscope itemtype="http://schema.org/Event" itemref="'.WPT_Production::post_type_name.'_title_'.$uniqid.' '.WPT_Production::post_type_name.'_permalink_'.$uniqid.' '.WPT_Production::post_type_name.'_thumbnail_'.$uniqid.'">';
+			}
+		
+			$html.= '<meta itemprop="startDate" content="'.date('c',$events[$i]->datetime()).'" />';
+			$html.= '<span class="'.WPT_Event::post_type_name.'_location" itemprop="location" itemscope itemtype="http://data-vocabulary.org/Organization">';
+			$venue = get_post_meta($events[$i]->ID,'venue',true);
+			$city = get_post_meta($events[$i]->ID,'city',true);
+			if ($venue!='') {
+				$html.= '<meta itemprop="name" content="'.$venue.'" />';
+			}
+			if ($venue!='' && $city!='') {
+				$html.= ', ';
+			}
+			if ($city!='') {
+				$html.= '<span itemprop="address" itemscope itemtype="http://data-vocabulary.org/Address">';
+				$html.= '<meta itemprop="locality" content="'.$city.'" />';
+				$html.= '</span>';
+			}
+			$html.= '</span>'; // .location
+
+			$html.= '</span>'; // .event
+		
+		}
+
+		return $html;
+	}
 
 	/**
 	 * All upcoming events.
@@ -125,12 +180,24 @@ class WPT_Events {
 	 * @return mixed An array of WPT_Event objects.
 	 */
  	public function upcoming($args = array(), $PostClass = false) {
+ 		$args['upcoming'] = true;
+ 		return $this->all($args,$PostClass);
+ 	}
+ 	
+ 	public function past($args = array(), $PostClass = false) {
+ 		$args['past'] = true;
+ 		return $this->all($args,$PostClass);
+ 	}
+ 	
+ 	public function all($args = array(), $PostClass = false) {
 		global $wpdb;
 
 		$defaults = array(
 			'paged' => false,
 			'grouped' => false,
-			'limit' => false
+			'limit' => false,
+			'upcoming' => false,
+			'past' => false
 		);
 		$args = wp_parse_args( $args, $defaults );
 
@@ -147,8 +214,13 @@ class WPT_Events {
 			AND events.post_status='publish'
 			AND productions.meta_key = '".WPT_Production::post_type_name."'
 			AND event_date.meta_key = 'event_date'
-			AND event_date.meta_value > NOW( )
 		";
+
+		if ($args['upcoming']) {
+			$querystr.= ' AND event_date.meta_value > NOW( )';
+		} elseif ($args['past']) {
+			$querystr.= ' AND event_date.meta_value < NOW( )';
+		}
 		
 		if (!empty($args[__('month','wp_theatre')])) {
 			$querystr.= ' AND event_date.meta_value LIKE "'.$args[__('month','wp_theatre')].'%"';

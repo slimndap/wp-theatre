@@ -28,48 +28,46 @@ class WPT_Production {
 		return get_post_type_object(self::post_type_name);
 	}
 
-	function is_upcoming() {		
-		$events = $this->upcoming_events();
-		return (is_array($events) && (count($events)>0));
-	}
+
 	
-	function dates() {
-		if (!isset($this->dates)) {			
-			$dates = '';
-			$dates_short = '';
-			$first_datetimestamp = $last_datetimestamp = '';
-			
-			$events = $this->events();
-			$upcoming = $this->upcoming_events();
-			if (is_array($upcoming) && (count($upcoming)>0)) {
 
-				$first = $events[0];
-				$next = $upcoming[0];
-				$last = $events[count($events)-1];
 
-				if ($next->date()==$last->date()) {
-					// one or more events on the same day
-					$dates.= $next->date();
-				} else {
-					if (time() < $first->datetime()) {
-						// serie starts in the future
-						$dates.= $first->date().' '.__('to','wp_theatre').' '.$last->date();
-					} else {
-						// serie is already running
-						$dates.= __('until','wp_theatre').' '.$last->date();
-					}
-				}
+	function past_events() {
+		$events = $this->get_events();
+		
+		$past_events = array();
+		$now = time();
+		foreach ($events as $event)	{
+			if (strtotime($event->post()->event_date) < $now) {
+				$past_events[] = $event;
 			}
-			$this->dates = $dates;
 		}
-		return $this->dates;
+		return $past_events;		
 	}
 
+	/**
+	 * Production cites.
+	 * 
+	 * Returns a summary of the cities of the production events as plain text or as an HTML element.
+	 *
+	 * @since 0.4
+	 *
+	 * @param array $args {
+	 *     @type bool $html Return HTML? Default <false>.
+	 * }
+	 * @return string URL or HTML.
+	 */
 	function cities() {
+		$defaults = array(
+			'html' => false
+		);
+
+		$args = wp_parse_args( $args, $defaults );
+		
 		if (!isset($this->cities)) {
 			$cities = array();
 			
-			$events = $this->upcoming_events();
+			$events = $this->upcoming();
 			if (is_array($events) && (count($events)>0)) {
 				foreach ($events as $event) {
 					$city = trim(ucwords(get_post_meta($event->ID,'city',true)));
@@ -97,12 +95,186 @@ class WPT_Production {
 			if (count($cities)>3) {
 				$cities_text = __('ao','wp_theatre').' '.$cities_text;
 			}
-			$this->cities = $cities_text;
+			$this->cities = apply_filters('wpt_event_cities',$cities_text, $this);
 		}
-		return $this->cities;
+		if ($args['html']) {
+			$html = '';
+			$html.= '<p class="'.self::post_type_name.'_cities">'.$this->cities.'</p>';
+			return apply_filters('wpt_event_cities_html', $html, $this);				
+		} else {
+			return $this->cities;
+		}
+	}
+
+	/**
+	 * Production dates.
+	 * 
+	 * Returns a summary of the dates of the production events as plain text or as an HTML element.
+	 *
+	 * @since 0.4
+	 *
+	 * @param array $args {
+	 *     @type bool $html Return HTML? Default <false>.
+	 * }
+	 * @return string URL or HTML.
+	 */
+	function dates() {
+		$defaults = array(
+			'html' => false
+		);
+
+		$args = wp_parse_args( $args, $defaults );
+				
+		if (!isset($this->dates)) {			
+			$dates = '';
+			$dates_short = '';
+			$first_datetimestamp = $last_datetimestamp = '';
+			
+			$upcoming = $this->upcoming();
+			$events = $this->events();
+			if (is_array($upcoming) && (count($upcoming)>0)) {
+
+				$first = $events[0];
+				$next = $upcoming[0];
+				$last = $events[count($events)-1];
+
+				if ($next->date()==$last->date()) {
+					// one or more events on the same day
+					$dates.= $next->date();
+				} else {
+					if (time() < $first->datetime()) {
+						// serie starts in the future
+						$dates.= $first->date().' '.__('to','wp_theatre').' '.$last->date();
+					} else {
+						// serie is already running
+						$dates.= __('until','wp_theatre').' '.$last->date();
+					}
+				}
+			}
+			$this->dates = $dates;
+			$this->dates = apply_filters('wpt_event_dates',$dates, $this);
+		}
+		if ($args['html']) {
+			$html = '';
+			$html.= '<p class="'.self::post_type_name.'_dates">'.$this->dates.'</p>';
+			return apply_filters('wpt_event_dates_html', $html, $this);				
+		} else {
+			return $this->dates;
+		}
+	}
+
+	function events() {
+		global $wp_theatre;
+		if (!isset($this->events)) {
+			$args = array(
+				WPT_Production::post_type_name => $this->ID
+			);
+			$this->events = $wp_theatre->events->all($args);
+		}
+		return $this->events;
 	}
 	
+	/**
+	 * Production excerpt.
+	 * 
+	 * Returns an excerpt of the production page as plain text or as an HTML element.
+	 *
+	 * @since 0.4
+	 *
+	 * @param array $args {
+	 *     @type bool $html Return HTML? Default <false>.
+	 * }
+	 * @return string URL or HTML.
+	 */
+	function excerpt($args=array()) {
+		$defaults = array(
+			'html' => false,
+			'words' => 15
+		);
+
+		$args = wp_parse_args( $args, $defaults );
+
+		if (!isset($this->excerpt)) {
+			$this->excerpt = apply_filters('wpt_production_excerpt',wp_trim_words($this->post()->post_content, $args['words']), $this);
+		}
+
+		if ($args['html']) {
+			$html = '';
+			$html.= '<p class="'.self::post_type_name.'_excerpt">'.$this->excerpt.'</p>';
+			return apply_filters('wpt_event_excerpt_html', $html, $this);				
+		} else {
+			return $this->excerpt;				
+		}
+	}
+
+	function past() {
+		global $wp_theatre;
+		if (!isset($this->past)) {
+			$args = array(
+				WPT_Production::post_type_name => $this->ID
+			);
+			$this->past = $wp_theatre->events->past($args);
+		}
+		return $this->past;
+	}
+
+	/**
+	 * Production permalink.
+	 * 
+	 * Returns a link to the production page as a URL or as an HTML element.
+	 *
+	 * @since 0.4
+	 *
+	 * @param array $args {
+	 *     @type bool $html Return HTML? Default <false>.
+	 *     @type string $text Display text for HTML version. Defaults to the title of the production.
+	 * }
+	 * @return string URL or HTML.
+	 */
+	function permalink($args=array()) {
+		$defaults = array(
+			'html' => false,
+			'text' => $this->post()->post_title
+		);
+
+		$args = wp_parse_args( $args, $defaults );
+
+		if (!isset($this->permalink)) {
+			$this->permalink = apply_filters('wpt_production_permalink',get_permalink($this->ID), $this);
+		}
+
+		if ($args['html']) {
+			$html = '';
+			$html.= '<a itemprop="url" href="'.get_permalink($this->ID).'">';
+			$html.= $args['text'];
+			$html.= '</a>';
+			return apply_filters('wpt_event_permalink_html', $html, $this);				
+		} else {
+			return $this->permalink;				
+		}
+	}
+
+	/**
+	 * Production summary.
+	 * 
+	 * Returns a summary of the production page containing dates, cities and excerpt as plain text or as an HTML element.
+	 *
+	 * @todo Add prices.
+	 *
+	 * @since 0.4
+	 *
+	 * @param array $args {
+	 *     @type bool $html Return HTML? Default <false>.
+	 * }
+	 * @return string URL or HTML.
+	 */
 	function summary() {
+		$defaults = array(
+			'html' => false
+		);
+
+		$args = wp_parse_args( $args, $defaults );
+
 		if (!isset($this->summary)) {
 			if ($this->dates()!='') {
 				$short = $this->dates();
@@ -111,151 +283,203 @@ class WPT_Production {
 				}
 				$short.='.';
 			}
-			$full = $short.' '.wp_trim_words($this->post()->post_content, 15);
-			$this->summary = array(
-				'dates' => $this->dates(),
-				'cities' => $this->cities(),
-				'short' => $short,
-				'full' => $full
-			);
-		}		
-		return $this->summary;
-	}
-
-
-	function get_events() {
-		if (!isset($this->events)) {
-			$args = array(
-				'post_type'=>WPT_Event::post_type_name,
-				'meta_key' => 'event_date',
-				'order_by' => 'meta_value',
-				'order' => 'ASC',
-				'posts_per_page' => -1,
-				'meta_query' => array(
-					array(
-						'key' => self::post_type_name,
-						'value' => $this->ID,
-						'compare' => '=',
-					),
-				),
-			);
-			$posts = get_posts($args);
-	
-			$events = array();
-			for ($i=0;$i<count($posts);$i++) {
-				$datetime = strtotime(get_post_meta($posts[$i]->ID,'event_date',true));
-				$events[$datetime.$posts[$i]->ID] = new WPT_Event($posts[$i]);
-			}
-			
-			ksort($events);
-			$this->events = array_values($events);
-
+			$this->summary = $short.' '.$this->excerpt();
 		}
-		return $this->events;
-	}
-	
-	function events() {
-		return $this->get_events();
-	}
-	
-	function upcoming_events() {
-		$events = $this->get_events();
-	
-		$upcoming_events = array();
-		$now = time();
-		foreach ($events as $event)	{
-			if (strtotime($event->post()->event_date) >= $now) {
-				$upcoming_events[] = $event;
-			}
-		}
-		return $upcoming_events;
-	}
-	
-	function past_events() {
-		$events = $this->get_events();
 		
-		$past_events = array();
-		$now = time();
-		foreach ($events as $event)	{
-			if (strtotime($event->post()->event_date) < $now) {
-				$past_events[] = $event;
-			}
+		if ($args['html']) {
+			$html = '';
+			$html.= '<p class="'.self::post_type_name.'_summary">'.$this->summary.'</p>';
+			return apply_filters('wpt_event_summary_html', $html, $this);				
+		} else {
+			return $this->summary;
 		}
-		return $past_events;		
 	}
 
-	function render() {
-		$summary = $this->summary();
+	/**
+	 * Production thumbnail.
+	 * 
+	 * Returns the production thumbnail as an ID or as an HTML element.
+	 * The HTML version includes a link to the production page.
+	 *
+	 * @since 0.4
+	 *
+	 * @param array $args {
+	 *     @type bool $html Return HTML? Default <false>.
+	 *     @type bool $meta Return as invisible meta tag? Default <false>.
+	 * }
+	 * @return integer ID or string HTML.
+	 */
+	function thumbnail($args=array()) {
+		$defaults = array(
+			'html' => false,
+			'meta' => false
+		);
+		$args = wp_parse_args( $args, $defaults );
+		
+		if (!isset($this->thumbnail)) {
+			$this->thumbnail = get_post_thumbnail_id($this->ID);
+		}	
+	
+		if ($args['html']) {
+			$html = '';
+			if ($args['meta']) {
+				$thumbnail = wp_get_attachment_url($this->thumbnail);
+				if (!empty($thumbnail)) {
+					$html_thumbnail.= '<meta itemprop="image" content="'.$thumbnail.'" />';
+				}
+			} else {
+				$attr = array(
+					'itemprop'=>'image'
+				);
+				$thumbnail = get_the_post_thumbnail($this->ID,'thumbnail',$attr);					
+				if (!empty($thumbnail)) {
+					$html.= '<figure>';
+					$permalink_args = $args;
+					$permalink_args['text'] = $thumbnail;
+					$html.= $this->permalink($permalink_args);
+					$html.= '</figure>';
+				}
+			}
+			return apply_filters('wpt_production_thumbnail_html', $html, $this);
+		} else {
+			return $this->thumbnail;			
+		}
+	}
+
+	/**
+	 * Event title.
+	 * 
+	 * Returns the event title as plain text or as an HTML element.
+	 *
+	 * @since 0.4
+	 *
+	 * @param array $args {
+	 *     @type bool $html Return HTML? Default <false>.
+	 *     @type bool $meta Return as invisible meta tag? Default <false>.
+	 * }
+	 * @return string text or HTML.
+	 */
+	function title($args=array()) {
+		$defaults = array(
+			'html' => false,
+			'meta' => false
+		);
+		$args = wp_parse_args( $args, $defaults );
+
+		if (!isset($this->title)) {
+			$this->title = apply_filters('wpt_event_title',$this->post()->post_title,$this);
+		}	
+		if ($args['html']) {
+			$html = '';
+			if ($args['meta']) {
+				$html.= '<meta itemprop="summary" content="'.$this->title.'" />';
+				$html.= '<meta itemprop="url" content="'.$this->permalink().'" />';					
+			} else {
+				$html.= '<h4 class="'.self::post_type_name.'_title">';
+				$permalink_args = $args;
+				$permalink_args['text'] = '<span itemprop="summary">'.$this->title.'</span>';
+				$html.= $this->permalink($permalink_args);
+				$html.= '</h4>'; //.title								
+			}
+			return apply_filters('wpt_event_title_html', $html, $this);
+		} else {
+			return $this->title;			
+		}
+	}
+
+	function upcoming() {
+		global $wp_theatre;
+		if (!isset($this->upcoming)) {
+			$args = array(
+				WPT_Production::post_type_name => $this->ID
+			);
+			$this->upcoming = $wp_theatre->events->upcoming($args);
+		}
+		return $this->upcoming;
+	}
+
+	/**
+	 * HTML version of the production.
+	 *
+	 * @since 0.4
+	 *
+	 * @param array $args {
+	 *
+	 *	   @type array $fields Fields to include. Default <array('title','remark', 'datetime','location')>.
+	 *     @type array $hide Fields that should be included as invisible meta elements. Default <array()>
+	 *     @type bool $thumbnail Include thumbnail? Default <true>.
+	 *     @type bool $tickets Include tickets button? Default <true>.
+	 * }
+	 * @return string HTML.
+	 */
+	function html($args=array()) {
+		global $wp_theatre;
+		
+		$defaults = array(
+			'fields' => array('title','summary'),
+			'hide' => array(),
+			'thumbnail' => true
+		);
+		$args = wp_parse_args( $args, $defaults );
 		
 		$html = '';
 		
-		$html.= '<div class='.self::post_type_name.' itemscope itemtype="http://schema.org/Event">';
+		$classes = array();
+		$classes[] = self::post_type_name;
 
-		$img_id = self::post_type_name.'_thumbnail_'.$this->ID;
-		$url_id = self::post_type_name.'_url_'.$this->ID;
-		$name_id = self::post_type_name.'_name_'.$this->ID;
-
-		$attr = array(
-			'id'=>$img_id,
-			'itemprop'=>'image'
-		);
-		$thumbnail = get_the_post_thumbnail($this->ID,'thumbnail',$attr);
-		if (!empty($thumbnail)) {
-			$html.= '<figure>';
+		// Thumbnail
+		$thumbnail = false;
+		if ($args['thumbnail']) {
+			$thumbnail_args = array(
+				'html'=>true,
+				'meta'=>in_array('thumbnail', $args['hide'])
+			);
+			$thumbnail = $this->thumbnail($thumbnail_args);
+		}
+		if (empty($thumbnail)) {
+			$classes[] = self::post_type_name.'_without_thumbnail';
+		} else {
 			$html.= $thumbnail;
-			$html.= '</figure>';
 		}
 
 		$html.= '<div class="'.self::post_type_name.'_main">';
-
-		$html.= '<div class="'.self::post_type_name.'_title">';
-		$html.= '<a itemprop="url" href="'.get_permalink($this->ID).'" id="'.$url_id.'">';
-		$html.= '<span itemprop="name" id="'.$name_id.'">'.$this->post()->post_title.'</span>';
-		$html.= '</a>';
-		$html.= '</div>'; //.title
-
-		$html.= '<div class="'.self::post_type_name.'_summary">';
-		$html.= $summary['short']; 
-		$html.= '</div>';
-
+		foreach ($args['fields'] as $field) {
+			$field_args = array(
+				'html'=>true,
+				'meta'=>in_array($field, $args['hide'])				
+			);
+			switch ($field) {
+				case 'title':
+					$html.= $this->title($field_args);
+					break;
+				case 'dates':
+					$html.= $this->dates($field_args);
+					break;
+				case 'cities':
+					$html.= $this->cities($field_args);
+					break;
+				case 'excerpt':
+					$html.= $this->excerpt($field_args);
+					break;
+				case 'summary':
+					$html.= $this->summary($field_args);
+					break;
+			}
+		}
 		$html.= '</div>'; // .main
 
-		/**
-		 * Microdata for events.
-		 */
-		$events = $this->upcoming_events();
-		for($i=0;$i<count($events);$i++) {
-		
-			if ($i>0) {
-				$html.= '<span itemscope itemtype="http://schema.org/Event" itemref="'.$img_id.' '.$url_id.' '.$name_id.'">';
-			}
-		
-			$html.= '<meta itemprop="startDate" content="'.date('c',$events[$i]->datetime()).'" />';
-			$html.= '<span class="'.self::post_type_name.'_location" itemprop="location" itemscope itemtype="http://data-vocabulary.org/Organization">';
-			$venue = get_post_meta($events[$i]->ID,'venue',true);
-			$city = get_post_meta($events[$i]->ID,'city',true);
-			if ($venue!='') {
-				$html.= '<meta itemprop="name" content="'.$venue.'" />';
-			}
-			if ($venue!='' && $city!='') {
-				$html.= ', ';
-			}
-			if ($city!='') {
-				$html.= '<span itemprop="address" itemscope itemtype="http://data-vocabulary.org/Address">';
-				$html.= '<meta itemprop="locality" content="'.$city.'" />';
-				$html.= '</span>';
-			}
-			$html.= '</span>'; // .location
-			if ($i>0) {
-				$html.= '</span>';
-			}
-		
-		}
+		// Microdata for events
+		$args = array(
+			WPT_Production::post_type_name => $this->ID
+		);
+		$html.= $wp_theatre->events->meta_listing($args);
 
-		$html.= '</div>';
-		return $html;
+		// Wrapper
+		$html = '<div class="'.implode(' ',$classes).'">'.$html.'</div>';
+		
+		return apply_filters('wpt_production_html',$html, $this);		
 	}
-	
+
 	/**
 	 * Social meta tags for this production.
 	 *
@@ -271,36 +495,35 @@ class WPT_Production {
 		
 		$meta = array();
 		
-		$summary = $this->summary();
-		$thumbnail = wp_get_attachment_url( get_post_thumbnail_id($this->ID) );
+		$thumbnail = wp_get_attachment_url($this->thumbnail());
 
 		if (!empty($wp_theatre->wpt_social_options['social_meta_tags']) && is_array($wp_theatre->wpt_social_options['social_meta_tags'])) {
 			foreach ($wp_theatre->wpt_social_options['social_meta_tags'] as $option) {
 				switch ($option) {
 					case 'facebook':
 						$meta[] = '<!-- Open Graph data -->';	
-						$meta[] = '<meta property="og:title" content="'.$this->post()->post_title.'" />';
+						$meta[] = '<meta property="og:title" content="'.$this->title().'" />';
 						$meta[] = '<meta property="og:type" content="article" />';
-						$meta[] = '<meta property="og:url" content="'.get_permalink($this->ID).'" />';
+						$meta[] = '<meta property="og:url" content="'.$this->permalink().'" />';
 						if (!empty($thumbnail)) {
 							$meta[] = '<meta property="og:image" content="'.$thumbnail.'" />';
 						}
-						$meta[] = '<meta property="og:description" content="'.$summary['full'].'" />';
+						$meta[] = '<meta property="og:description" content="'.$this->summary().'" />';
 						$meta[] = '<meta property="og:site_name" content="'.get_bloginfo('site_name').'" />';
 						break;
 					case 'twitter':
 						$meta[] = '<!-- Twitter Card data -->';	
 						$meta[] = '<meta name="twitter:card" content="summary">';
-						$meta[] = '<meta name="twitter:title" content="'.$this->post()->post_title.'">';
-						$meta[] = '<meta name="twitter:description" content="'.$summary['full'].'">';
+						$meta[] = '<meta name="twitter:title" content="'.$this->title().'">';
+						$meta[] = '<meta name="twitter:description" content="'.$this->summary().'">';
 						if (!empty($thumbnail)) {
 							$meta[] = '<meta name="twitter:image:src" content="'.$thumbnail.'" />';
 						}
 						break;
 					case 'google+':
 						$meta[] = '<!-- Schema.org markup for Google+ -->';	
-						$meta[] = '<meta itemprop="name" content="'.$this->post()->post_title.'">';
-						$meta[] = '<meta itemprop="description" content="'.$summary['full'].'">';
+						$meta[] = '<meta itemprop="name" content="'.$this->title().'">';
+						$meta[] = '<meta itemprop="description" content="'.$this->summary().'">';
 						if (!empty($thumbnail)) {
 							$meta[] = '<meta itemprop="image" content="'.$thumbnail.'">';
 						}
@@ -338,6 +561,14 @@ class WPT_Production {
 			}
 		}
 		return $this->post;
+	}
+	
+	function render() {
+		return $this->html();
+	}
+	
+	function get_events() {
+		return $this->events();
 	}
 	
 

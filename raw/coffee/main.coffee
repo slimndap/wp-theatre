@@ -1,6 +1,6 @@
 class wpt_tickets
 	constructor: ->
-		@.ticket_urls = jQuery('.wpt_tickets_url').click (e) =>
+		@.ticket_urls = jQuery('.wp_theatre_event_tickets_url').click (e) =>
 			@.tickets e.currentTarget
 	tickets: (e) ->
 		tickets_url = jQuery e

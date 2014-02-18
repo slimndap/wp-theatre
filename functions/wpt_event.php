@@ -115,15 +115,19 @@ class WPT_Event {
 		$args = wp_parse_args( $args, $defaults );
 
 		if (!isset($this->datetime)) {
-			$this->datetime = apply_filters('wpt_event_datetime',strtotime($this->post()->event_date), $this);
+			$this->datetime = apply_filters('wpt_event_datetime',date_i18n('U',strtotime($this->post()->event_date),true), $this);
 		}
 		
 		if ($args['html']) {
 			$html = '';
-			$html.= '<time class="'.self::post_type_name.'_datetime" itemprop="startDate" datetime="'.date('c',$this->datetime()).'">';
-			$html.= $this->date($args);
-			$html.= $this->time($args);
-			$html.= '</time>';
+			if ($args['meta']) {
+				$html.= '<meta itemprop="startDate" content="'.date_i18n('c',$this->datetime(), true).'" />';
+			} else {
+				$html.= '<time class="'.self::post_type_name.'_datetime" itemprop="startDate" datetime="'.date_i18n('c',$this->datetime(),true).'">';
+				$html.= $this->date($args);
+				$html.= $this->time($args);
+				$html.= '</time>';
+			}
 			return apply_filters('wpt_event_datetime_html', $html, $this);				
 		} else {
 			return $this->datetime;				
@@ -173,7 +177,6 @@ class WPT_Event {
 			$venue = $this->venue();
 			$city = $this->city();
 			$html = '';
-			$html.= '<div class="'.self::post_type_name.'_location" itemprop="location" itemscope itemtype="http://data-vocabulary.org/Organization">';
 			if ($args['meta']) {
 				if (!empty($venue)) {
 					$html.= '<meta itemprop="name" content="'.$this->venue().'" />';
@@ -184,6 +187,7 @@ class WPT_Event {
 					$html.= '</span>';
 				}
 			} else {
+				$html.= '<div class="'.self::post_type_name.'_location" itemprop="location" itemscope itemtype="http://data-vocabulary.org/Organization">';
 				if (!empty($venue)) {
 					$html.= '<div itemprop="name">'.$this->venue().'</div>';
 				}
@@ -192,47 +196,11 @@ class WPT_Event {
 					$html.= '<span itemprop="locality">'.$this->city().'</span>';
 					$html.= '</div>';
 				}
+				$html.= '</div>'; // .location
 			}
-			$html.= '</div>'; // .location
 			return apply_filters('wpt_event_location_html', $html, $this);
 		} else {
 			return $this->location;			
-		}
-	}
-	
-	/**
-	 * Event permalink.
-	 * 
-	 * Returns a link to the production page of the event as a URL or as an HTML element.
-	 *
-	 * @since 0.4
-	 *
-	 * @param array $args {
-	 *     @type bool $html Return HTML? Default <false>.
-	 *     @type string $text Display text for HTML version. Defaults to the title of the production.
-	 * }
-	 * @return string URL or HTML.
-	 */
-	function permalink($args=array()) {
-		$defaults = array(
-			'html' => false,
-			'text' => $this->production()->post()->post_title
-		);
-
-		$args = wp_parse_args( $args, $defaults );
-
-		if (!isset($this->permalink)) {
-			$this->permalink = apply_filters('wpt_event_permalink',get_permalink($this->production()->ID), $this);
-		}
-
-		if ($args['html']) {
-			$html = '';
-			$html.= '<a itemprop="url" href="'.get_permalink($this->production()->ID).'">';
-			$html.= $args['text'];
-			$html.= '</a>';
-			return apply_filters('wpt_event_permalink_html', $html, $this);				
-		} else {
-			return $this->permalink;				
 		}
 	}
 	
@@ -270,13 +238,13 @@ class WPT_Event {
 			);
 			$html.= $this->prices($prices_args);
 			$html.= '</div>';
-			return apply_filters('wpt_event_permalink_html', $html, $this);				
+			return apply_filters('wpt_event_prices_html', $html, $this);				
 		} else {
 			if ($args['summary']) {
 				$summary = '';
 				if (count($this->prices)>0) {
 					if (count($this->prices)==1) {
-						$summary = $wp_theatre->options['currencysymbol'].'&nbsp;'.$this->prices[0]->price;
+						$summary = $wp_theatre->options['currencysymbol'].'&nbsp;'.number_format_i18n($this->prices[0]->price,2);
 					} else {
 						$lowest = $this->prices[0]->price;
 						for($p=1;$p<count($this->prices);$p++) {
@@ -284,7 +252,7 @@ class WPT_Event {
 								$lowest = $this->prices[$p]->price;
 							}
 						}
-						$summary = __('from','wp_theatre').' '.$wp_theatre->options['currencysymbol'].'&nbsp;'.$this->prices[0]->price;
+						$summary = __('from','wp_theatre').' '.$wp_theatre->options['currencysymbol'].'&nbsp;'.number_format_i18n($this->prices[0]->price,2);
 					}
 				}
 				return $summary;
@@ -342,60 +310,8 @@ class WPT_Event {
 		} else {
 			return $this->remark;				
 		}
-		
 	}
 	
-	/**
-	 * Event thumbnail.
-	 * 
-	 * Returns the event thumbnail as an ID or as an HTML element.
-	 * The HTML version includes a link to the production page.
-	 *
-	 * @since 0.4
-	 *
-	 * @param array $args {
-	 *     @type bool $html Return HTML? Default <false>.
-	 *     @type bool $meta Return as invisible meta tag? Default <false>.
-	 * }
-	 * @return integer ID or string HTML.
-	 */
-	function thumbnail($args=array()) {
-		$defaults = array(
-			'html' => false,
-			'meta' => false
-		);
-		$args = wp_parse_args( $args, $defaults );
-		
-		if (!isset($this->thumbnail)) {
-			$this->thumbnail = get_post_thumbnail_id($this->production()->ID);
-		}	
-	
-		if ($args['html']) {
-			$html = '';
-			if ($args['meta']) {
-				$thumbnail = wp_get_attachment_url($this->thumbnail);
-				if (!empty($thumbnail)) {
-					$html_thumbnail.= '<meta itemprop="image" content="'.$thumbnail.'" />';
-				}
-			} else {
-				$attr = array(
-					'itemprop'=>'image'
-				);
-				$thumbnail = get_the_post_thumbnail($this->production()->ID,'thumbnail',$attr);					
-				if (!empty($thumbnail)) {
-					$html.= '<figure>';
-					$permalink_args = $args;
-					$permalink_args['text'] = $thumbnail;
-					$html.= $this->permalink($permalink_args);
-					$html.= '</figure>';
-				}
-			}
-			return apply_filters('wpt_event_thumbnail_html', $html, $this);
-		} else {
-			return $this->thumbnail;			
-		}
-	}
-
 	/**
 	 * Event ticket link.
 	 * 
@@ -507,48 +423,7 @@ class WPT_Event {
 			return $this->time;			
 		}
 	}
-	
-	/**
-	 * Event title.
-	 * 
-	 * Returns the event title as plain text or as an HTML element.
-	 *
-	 * @since 0.4
-	 *
-	 * @param array $args {
-	 *     @type bool $html Return HTML? Default <false>.
-	 *     @type bool $meta Return as invisible meta tag? Default <false>.
-	 * }
-	 * @return string text or HTML.
-	 */
-	function title($args=array()) {
-		$defaults = array(
-			'html' => false,
-			'meta' => false
-		);
-		$args = wp_parse_args( $args, $defaults );
-
-		if (!isset($this->title)) {
-			$this->title = apply_filters('wpt_event_title',$this->production()->post()->post_title,$this);
-		}	
-		if ($args['html']) {
-			$html = '';
-			if ($args['meta']) {
-				$html.= '<meta itemprop="summary" content="'.$this->title.'" />';
-				$html.= '<meta itemprop="url" content="'.$this->permalink().'" />';					
-			} else {
-				$html.= '<h4 class="'.self::post_type_name.'_title">';
-				$permalink_args = $args;
-				$permalink_args['text'] = '<span itemprop="summary">'.$this->title.'</span>';
-				$html.= $this->permalink($permalink_args);
-				$html.= '</h4>'; //.title								
-			}
-			return apply_filters('wpt_event_title_html', $html, $this);
-		} else {
-			return $this->title;			
-		}
-	}
-	
+		
 	/**
 	 * Event venue.
 	 *
@@ -585,11 +460,12 @@ class WPT_Event {
 			'tickets' => true
 		);
 		$args = wp_parse_args( $args, $defaults );
+
 		$classes = array();
 		$classes[] = self::post_type_name;
 
 		$html = '';
-		
+
 		// Thumbnail
 		$thumbnail = false;
 		if ($args['thumbnail']) {
@@ -597,7 +473,7 @@ class WPT_Event {
 				'html'=>true,
 				'meta'=>in_array('thumbnail', $args['hide'])
 			);
-			$thumbnail = $this->thumbnail($thumbnail_args);
+			$thumbnail = $this->production()->thumbnail($thumbnail_args);
 		}
 		if (empty($thumbnail)) {
 			$classes[] = self::post_type_name.'_without_thumbnail';
@@ -606,6 +482,7 @@ class WPT_Event {
 		}
 
 		$html.= '<div class="'.self::post_type_name.'_main">';
+
 		foreach ($args['fields'] as $field) {
 			$field_args = array(
 				'html'=>true,
@@ -616,7 +493,7 @@ class WPT_Event {
 					$html.= $this->datetime($field_args);
 					break;
 				case 'title':
-					$html.= $this->title($field_args);
+					$html.= $this->production()->title($field_args);
 					break;
 				case 'location':
 					$html.= $this->location($field_args);

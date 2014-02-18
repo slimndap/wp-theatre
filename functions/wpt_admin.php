@@ -262,12 +262,13 @@ class WPT_Admin {
 	}
 
 	function meta_box_events($production) {
+		global $wp_theatre;
 		$production = new WPT_Production(get_the_id());
 		
 		if (get_post_status($production->ID) == 'auto-draft') {
 			echo __('You need to save this production before you can add events.','wp_theatre');
 		} else {
-			$events = $this->get_events($production->ID);
+			$events = $production->upcoming($args);
 			if (count($events)>0) {
 				echo '<ul>';
 				foreach ($events as $event) {
@@ -278,7 +279,7 @@ class WPT_Admin {
 				}
 				echo '</ul>';	
 			}	
-			$events = $production->past_events();
+			$events = $production->past($args);
 			if (count($events)>0) {
 				echo '<h4>'.__('Past events','wp_theatre').'</h4>';
 				echo '<ul>';
@@ -594,10 +595,11 @@ class WPT_Admin {
     }
     
     function wp_add_dashboard_widget() {
+    	global $wp_theatre;
     	$args = array(
     		'paged' => 'true'
     	);
-    	echo WP_Theatre::render_events($args);
+    	echo $wp_theatre->events->html_listing($args);
     }
 
 	function render_event($event) {
