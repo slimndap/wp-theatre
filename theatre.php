@@ -14,15 +14,15 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	
 /** Usage:
  *
- *  $events = WP_Theatre::events();
+ *  $events = $wp_theatre->events->upcoming();
  *  $productions = WP_Theatre::productions();
  *  $seasons = WP_Theatre::seasons();
  *
  *	$args = array('limit'=>5);
- *	WP_Theatre::render_productions($args); // a list of 5 production with upcoming events
+ *	echo $wp_theatreWP_Theatre::render_productions($args); // a list of 5 production with upcoming events
  *
  *	$args = array('paged'=>true);
- *	WP_Theatre::render_events($args); // a list of all upcoming events, paginated by month
+ *	echo $wp_theatre->events->html_listing($args); // a list of all upcoming events, paginated by month
  */
 
 class WP_Theatre {
@@ -76,26 +76,6 @@ class WP_Theatre {
 	}
 	
 	/**
-	 * All upcoming events.
-	 *
-	 * Returns an array of all pubished events attached to a production and with a startdate in the future.
-	 * 
-	 * Example:
-	 *
-	 * $events = WP_Theatre::events();
-	 *
-	 * @since 0.3.6
-	 *
-	 * @see WP_Theatre::get_events()
-	 *
-	 * @param  string $PostClass Optional. 
-	 * @return mixed An array of WPT_Event objects.
-	 */
- 	public function events($args = array(), $PostClass = false) {
- 		return $this->events->upcoming(null, $PostClass);
-	}
-	
-	/**
 	 * All upcoming productions.
 	 *
 	 * Returns an array of all productions that have pubished events with a startdate in the future.
@@ -119,36 +99,6 @@ class WP_Theatre {
 		return self::get_seasons($PostClass);
 	}
 		
-	/**
-	 * A list of upcoming events in HTML.
-	 *
-	 * Compiles a list of all upcoming events and outputs the result to the browser.
-	 * 
-	 * Example:
-	 *
-	 * $args = array('paged'=>true);
-	 * WP_Theatre::render_events($args); // a list of all upcoming events, paginated by month
-	 *
-	 * @since 0.3.5
-	 *
-	 * @param array $args {
-	 *     An array of arguments. Optional.
-	 *
-	 *     @type bool $paged Paginate the list by month. Default <false>.
-	 *     @type bool $grouped Group the list by month. Default <false>.
-	 *     @type int $limit Limit the list to $limit events. Use <false> for an unlimited list. Default <false>.
-	 * }
-	 * @see WP_Theatre::get_events()
- 	 * @return string HTML.
-	 */
-	function compile_events($args=array()) {
-		return $this->events->html_listing($args);
-	}
-	
-	function render_events($args=array()) {
-		echo $this->compile_events($args);
-	}
-
 	function render_productions($args=array()) {
 		$defaults = array(
 			'limit' => false
@@ -210,10 +160,6 @@ class WP_Theatre {
 		return $productions;
 	}
 	
-	private function get_events($PostClass = false) {
-		return WP_Theatre::events(null, $PosctClass);
-	}
-
 
 	private function get_seasons($PostClass=false) {
 		$args = array(
@@ -229,7 +175,28 @@ class WP_Theatre {
 			$seasons[] = new WPT_Season($posts[$i], $PostClass);
 		}
 		return $seasons;
-		
+	}
+
+	/**
+	 * Deprecated functions. 
+	 *
+	 * @deprecated 0.4.
+	 */
+
+	function compile_events($args=array()) {
+		return $this->events->html_listing($args);
+	}
+	
+ 	public function events($args = array(), $PostClass = false) {
+ 		return $this->events->upcoming(null, $PostClass);
+	}
+
+	private function get_events($PostClass = false) {
+		return WP_Theatre::events(null, $PosctClass);
+	}
+
+	function render_events($args=array()) {
+		echo $this->compile_events($args);
 	}
 }
 

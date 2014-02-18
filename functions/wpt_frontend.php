@@ -7,12 +7,15 @@ class WPT_Frontend {
 		add_filter('pre_get_posts', array($this,'pre_get_posts') );
 		add_action('the_content', array($this, 'the_content'));
 
-		add_shortcode('wp_theatre_events', array($this,'wp_theatre_events'));
+		add_shortcode('wpt_events', array($this,'wpt_events'));
 		add_shortcode('wp_theatre_iframe', array($this,'wp_theatre_iframe'));
 		add_shortcode('wpt_production_events', array($this,'wpt_production_events'));
 		add_shortcode('wpt_event_ticket_button', array($this,'wpt_event_ticket_button'));
 
 		$this->options = get_option( 'wp_theatre' );
+		
+		// Deprecated
+		add_shortcode('wp_theatre_events', array($this,'wpt_events'));
 	}
 	
 	function init() {
@@ -94,12 +97,12 @@ class WPT_Frontend {
 		return $content;
 	}
 
-	function wp_theatre_events($atts, $content=null) {
+	function wpt_events($atts, $content=null) {
 		global $wp_theatre;
 		
 		$atts = shortcode_atts( array(
-			'paged' => 0,
-			'grouped' => 0,
+			'paged' => false,
+			'grouped' => false,
 			'fields' => null,
 			'hide' => null
 		), $atts );
@@ -164,7 +167,6 @@ class WPT_Frontend {
 			);
 			return $event->tickets($args);
 		}
-		return 'kkk';
 	}
 }
 
