@@ -64,12 +64,18 @@
 		}
 	
 		public function widget( $args, $instance ) {
+			global $wp_theatre;
 			$title = apply_filters( 'widget_title', $instance['title'] );
 			
 			echo $args['before_widget'];
 			if ( ! empty( $title ) )
 				echo $args['before_title'] . $title . $args['after_title'];
-			echo WP_Theatre::render_productions(array('limit'=>$instance['limit']));
+			echo $wp_theatre->productions->html_listing(
+				array(
+					'limit'=>$instance['limit'],
+					'upcoming' => true
+				)
+			);
 			echo $args['after_widget'];
 
 		}

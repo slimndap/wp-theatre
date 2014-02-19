@@ -30,6 +30,10 @@ class WPT_Events {
 			'paged' => false,
 			'grouped' => false,
 			'limit' => false,
+			'thumbnail'=>true,
+			'tickets'=>true,
+			'fields'=>NULL,
+			'hide'=>NULL,
 			WPT_Production::post_type_name => false,
 		);
 		$args = wp_parse_args( $args, $defaults );
@@ -40,8 +44,15 @@ class WPT_Events {
 			WPT_Production::post_type_name => $args[WPT_Production::post_type_name]
 		);
 		
+		$classes = array();
+		$classes[] = "wpt_events";
+
+		// Thumbnail
+		if (!$args['thumbnail']) {
+			$classes[] = 'wpt_events_without_thumbnail';
+		}
+
 		$html = '';
-		$html.= '<div class="wp_theatre_events">';
 
 		if ($args['paged']) {
 			$querystr = "
@@ -103,12 +114,13 @@ class WPT_Events {
 			$html.=$event->html($event_args);
 		}
 
-		$html.= '</div>'; //.wp-theatre_events
+		// Wrapper
+		$html = '<div class="'.implode(' ',$classes).'">'.$html.'</div>'; 
 		
 		return $html;
 	}
 	
-	public function meta_listing() {
+	public function meta_listing($args) {
 		$defaults = array(
 			'paged' => false,
 			'grouped' => false,
@@ -116,7 +128,6 @@ class WPT_Events {
 			WPT_Production::post_type_name => false,
 		);
 		$args = wp_parse_args( $args, $defaults );
-		extract($args);
 
 		$html = '';
 
@@ -145,9 +156,6 @@ class WPT_Events {
 			$city = get_post_meta($events[$i]->ID,'city',true);
 			if ($venue!='') {
 				$html.= '<meta itemprop="name" content="'.$venue.'" />';
-			}
-			if ($venue!='' && $city!='') {
-				$html.= ', ';
 			}
 			if ($city!='') {
 				$html.= '<span itemprop="address" itemscope itemtype="http://data-vocabulary.org/Address">';
@@ -193,11 +201,11 @@ class WPT_Events {
 		global $wpdb;
 
 		$defaults = array(
-			'paged' => false,
-			'grouped' => false,
 			'limit' => false,
 			'upcoming' => false,
-			'past' => false
+			'past' => false,
+			'month' => false,
+			WPT_Production::post_type_name => false
 		);
 		$args = wp_parse_args( $args, $defaults );
 
@@ -222,7 +230,7 @@ class WPT_Events {
 			$querystr.= ' AND event_date.meta_value < NOW( )';
 		}
 		
-		if (!empty($args[__('month','wp_theatre')])) {
+		if ($args[__('month','wp_theatre')]) {
 			$querystr.= ' AND event_date.meta_value LIKE "'.$args[__('month','wp_theatre')].'%"';
 		}
 		

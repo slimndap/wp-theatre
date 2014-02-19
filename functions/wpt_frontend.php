@@ -8,6 +8,7 @@ class WPT_Frontend {
 		add_action('the_content', array($this, 'the_content'));
 
 		add_shortcode('wpt_events', array($this,'wpt_events'));
+		add_shortcode('wpt_productions', array($this,'wpt_productions'));
 		add_shortcode('wp_theatre_iframe', array($this,'wp_theatre_iframe'));
 		add_shortcode('wpt_production_events', array($this,'wpt_production_events'));
 		add_shortcode('wpt_event_ticket_button', array($this,'wpt_event_ticket_button'));
@@ -114,6 +115,26 @@ class WPT_Frontend {
 		$atts['hide'] = $hide;
 		
 		return $wp_theatre->events->html_listing($atts);
+	}
+
+	function wpt_productions($atts, $content=null) {
+		global $wp_theatre;
+		
+		$atts = shortcode_atts( array(
+			'paged' => false,
+			'grouped' => false,
+			'fields' => null,
+			'hide' => null,
+			'upcoming' => false
+		), $atts );
+				
+		$hide = explode(',',$atts['hide']);
+		for ($i=0;$i<count($hide);$i++) {
+			$hide[$i] = trim($hide[$i]);
+		}
+		$atts['hide'] = $hide;
+		
+		return $wp_theatre->productions->html_listing($atts);
 	}
 
 	function wp_theatre_iframe($atts, $content=null) {

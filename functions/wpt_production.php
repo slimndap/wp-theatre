@@ -57,7 +57,7 @@ class WPT_Production {
 	 * }
 	 * @return string URL or HTML.
 	 */
-	function cities() {
+	function cities($args) {
 		$defaults = array(
 			'html' => false
 		);
@@ -253,6 +253,25 @@ class WPT_Production {
 			return $this->permalink;				
 		}
 	}
+	
+	/**
+	 * Production season.
+	 *
+	 * @since 0.4
+	 *
+	 * @return object WPT_Season.
+	 */
+	function season() {
+		if (!isset($this->season)) {
+			$season = get_post_meta($this->ID,'wp_theatre_season',true);
+			if (!empty($season)) {
+				$this->season = new WPT_Season($season);
+			} else {
+				$this->season = false;
+			}
+		}	
+		return $this->season;			
+	}
 
 	/**
 	 * Production summary.
@@ -375,11 +394,11 @@ class WPT_Production {
 				$html.= '<meta itemprop="summary" content="'.$this->title.'" />';
 				$html.= '<meta itemprop="url" content="'.$this->permalink().'" />';					
 			} else {
-				$html.= '<h4 class="'.self::post_type_name.'_title">';
+				$html.= '<div class="'.self::post_type_name.'_title">';
 				$permalink_args = $args;
 				$permalink_args['text'] = '<span itemprop="summary">'.$this->title.'</span>';
 				$html.= $this->permalink($permalink_args);
-				$html.= '</h4>'; //.title								
+				$html.= '</div>'; //.title								
 			}
 			return apply_filters('wpt_event_title_html', $html, $this);
 		} else {
@@ -416,8 +435,7 @@ class WPT_Production {
 		global $wp_theatre;
 		
 		$defaults = array(
-			'fields' => array('title','summary'),
-			'hide' => array(),
+			'fields' => array('title','dates','cities'),
 			'thumbnail' => true
 		);
 		$args = wp_parse_args( $args, $defaults );
@@ -445,8 +463,7 @@ class WPT_Production {
 		$html.= '<div class="'.self::post_type_name.'_main">';
 		foreach ($args['fields'] as $field) {
 			$field_args = array(
-				'html'=>true,
-				'meta'=>in_array($field, $args['hide'])				
+				'html'=>true
 			);
 			switch ($field) {
 				case 'title':
