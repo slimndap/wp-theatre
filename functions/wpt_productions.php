@@ -35,19 +35,19 @@ class WPT_Productions {
 		$querystr = "
 			SELECT productions.ID FROM $wpdb->posts AS productions
 			
-			LEFT JOIN 
+			LEFT OUTER JOIN 
 				$wpdb->postmeta AS wpt_events 
 				ON (wpt_events.meta_value = productions.ID AND wpt_events.meta_key='".WPT_Production::post_type_name."')
-			LEFT JOIN 
+			LEFT OUTER JOIN 
 				$wpdb->posts AS events 
 				ON (events.ID = wpt_events.post_ID AND events.post_status='publish')
-			LEFT JOIN 
+			LEFT OUTER JOIN 
 				$wpdb->postmeta AS wpt_startdate 
 				ON (wpt_startdate.post_ID = events.ID AND wpt_startdate.meta_key='event_date')
-			LEFT JOIN 
+			LEFT OUTER JOIN 
 				$wpdb->postmeta AS wpt_season 
 				ON (wpt_season.post_ID=productions.ID AND wpt_season.meta_key='".WPT_Season::post_type_name."')
-			LEFT JOIN 
+			LEFT OUTER JOIN 
 				$wpdb->posts AS seasons 
 				ON seasons.ID = wpt_season.meta_value
 			
@@ -234,29 +234,52 @@ class WPT_Productions {
 			'grouped' => false
 		);
 		$args = wp_parse_args( $args, $defaults );
-
+		
 		$querystr = "
 			SELECT productions . ID
 			FROM $wpdb->posts AS
 			events
-			JOIN $wpdb->postmeta AS event_date ON events.ID = event_date.post_ID
-			JOIN $wpdb->postmeta AS wp_theatre_prod ON events.ID = wp_theatre_prod.post_ID
-			JOIN $wpdb->posts AS productions ON wp_theatre_prod.meta_value = productions.ID
-			JOIN $wpdb->postmeta AS sticky ON productions.ID = sticky.post_ID
-			JOIN $wpdb->postmeta AS wpt_season ON (productions.ID = wpt_season.post_ID)
-			LEFT JOIN $wpdb->posts AS seasons ON wpt_season.meta_value = seasons.ID
+			INNER JOIN 
+				$wpdb->postmeta AS event_date ON (
+					events.ID = event_date.post_ID
+					AND event_date.meta_key = 'event_date'
+					AND event_date.meta_value > NOW( )
+				)
+			INNER JOIN 
+				$wpdb->postmeta AS wp_theatre_prod ON (
+					events.ID = wp_theatre_prod.post_ID
+					AND wp_theatre_prod.meta_key = '".WPT_Production::post_type_name."'
+				)
+			INNER JOIN 
+				$wpdb->posts AS productions ON wp_theatre_prod.meta_value = productions.ID
+			LEFT OUTER JOIN 
+				$wpdb->postmeta AS sticky ON (
+					productions.ID = sticky.post_ID
+					AND sticky.meta_key = 'sticky'
+				)
+			LEFT OUTER JOIN 
+				$wpdb->postmeta AS wpt_season ON (
+					productions.ID = wpt_season.post_ID
+					AND wpt_season.meta_key = '".WPT_Season::post_type_name."'
+				)
+			LEFT OUTER JOIN 
+				$wpdb->posts AS seasons ON (
+					wpt_season.meta_value = seasons.ID
+				)
 			WHERE 
-			(
-				events.post_type = '".WPT_Event::post_type_name."'
-				AND events.post_status = 'publish'
-				AND event_date.meta_key = 'event_date'
-				AND wp_theatre_prod.meta_key = '".WPT_Production::post_type_name."'
-				AND wpt_season.meta_key = '".WPT_Season::post_type_name."'
-				AND sticky.meta_key = 'sticky'
-				AND event_date.meta_value > NOW( )
-			) 
-			OR sticky.meta_value = 'on'
-			GROUP BY productions.ID
+				(
+					events.post_type = '".WPT_Event::post_type_name."'
+					AND events.post_status = 'publish'
+				) 
+		";
+		if ($args[WPT_Season::post_type_name]) {
+			$querystr.= " AND seasons.post_name='".$args[WPT_Season::post_type_name]."'";
+		}
+		$querystr.= "
+			OR 
+				sticky.meta_value = 'on'
+			GROUP BY 
+				productions.ID
 		";
 		
 		if ($args['grouped']) {
