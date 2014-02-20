@@ -87,23 +87,6 @@
   font-family: 'theatre-webfont' !important;
   content: '\e808';
 }
-#dashboard_wp_theatre .inside {
-  padding: 0;
-  margin: 0;
-}
-#dashboard_wp_theatre .inside .wp_theatre_events {
-  padding: 8px 12px 4px;
-}
-#dashboard_wp_theatre .inside .wp_theatre_events .wp_theatre_event:hover + .row-actions {
-  visibility: visible;
-}
-#dashboard_wp_theatre .inside .wp_theatre_events .row-actions:hover {
-  visibility: visible;
-}
-#dashboard_wp_theatre .inside .productions {
-  border-top: 1px solid #ececec;
-  background-color: #fafafa;
-}
 textarea#wpt_custom_css {
   width: 500px;
   height: 200px;

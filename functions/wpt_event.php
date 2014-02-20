@@ -189,10 +189,10 @@ class WPT_Event {
 			} else {
 				$html.= '<div class="'.self::post_type_name.'_location" itemprop="location" itemscope itemtype="http://data-vocabulary.org/Organization">';
 				if (!empty($venue)) {
-					$html.= '<div itemprop="name">'.$this->venue().'</div>';
+					$html.= '<div class="'.self::post_type_name.'_venue" itemprop="name">'.$this->venue().'</div>';
 				}
 				if (!empty($city)) {
-					$html.= '<div itemprop="address" itemscope itemtype="http://data-vocabulary.org/Address">';
+					$html.= '<div class="'.self::post_type_name.'_city" itemprop="address" itemscope itemtype="http://data-vocabulary.org/Address">';
 					$html.= '<span itemprop="locality">'.$this->city().'</span>';
 					$html.= '</div>';
 				}
@@ -360,9 +360,6 @@ class WPT_Event {
 					// Add classes to tickets button
 					$classes = array();
 					$classes[] = self::post_type_name.'_tickets_url';
-					if (!empty($wp_theatre->options['ticket_button_tag']) && $wp_theatre->options['ticket_button_tag']=='button') {
-						$classes[] = 'button';
-					}
 					if (!empty($wp_theatre->options['integrationtype'])) {
 						$classes[] = 'wp_theatre_integrationtype_'.$wp_theatre->options['integrationtype'];
 					}

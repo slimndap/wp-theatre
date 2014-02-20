@@ -154,7 +154,7 @@ class WPT_Frontend {
 
 		$atts = shortcode_atts( array(
 			'fields' => null,
-			'hide' => null
+			'hide' => 'title'
 		), $atts );
 				
 		$hide = explode(',',$atts['hide']);

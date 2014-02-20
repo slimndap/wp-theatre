@@ -37,14 +37,24 @@
 		overflow: auto;
 		.wp_theatre_event_datetime {
 			.wp_theatre_event_date {
+				display: inline;
 			}
 			.wp_theatre_event_time {
+				display: inline;
+				&:before {
+					content: '\00a0\2014\00a0';
+				}
 			}
 		}
 		.wp_theatre_event_location {
 			.wp_theatre_event_venue {
+				display: inline;
 			}
 			.wp_theatre_event_city {
+				display: inline;
+				&:before {
+					content: ',\00a0';
+				}
 			}
 		}
 	}
@@ -140,8 +150,8 @@
 		}
 		&.wp_theatre_prod_without_thumbnail {
 			padding-left: 25%;
-			.wp_theatre_event_main {
-				width: (75%/0.75);
+			.wp_theatre_prod_main {
+				width: 100%;
 			}
 		}
 	}
@@ -158,6 +168,20 @@
 			> div {
 				float: none;
 				width: auto;
+			}
+		}
+		.wp_theatre_event_tickets {
+			width: 100%;
+			padding-left: 30%;
+		}
+		&.wp_theatre_event_without_thumbnail {
+			padding-left: 30%;
+			.wp_theatre_event_main {
+				width: (70%/0.75);
+			}
+			.wp_theatre_event_tickets {
+				padding-left: 0;
+				width: 100%;
 			}
 		}
 	}

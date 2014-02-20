@@ -97,14 +97,6 @@ class WPT_Admin {
 	        );      
 	
 	        add_settings_field(
-	            'ticket_button_tag', // ID
-	            __('Show ticket button as','wp_theatre'), // Title 
-	            array( $this, 'settings_field_ticket_button_tag' ), // Callback
-	            'wp_theatre', // Page
-	            'tickets_integration' // Section           
-	        );      
-	        
-	        add_settings_field(
 	            'integrationtype', // ID
 	            __('Open tickets screens in','wp_theatre'), // Title 
 	            array( $this, 'settings_field_integrationtype' ), // Callback
@@ -843,26 +835,6 @@ class WPT_Admin {
 		echo '<input type="text" id="language_events" name="wpt_language[language_events]" value="'.$wp_theatre->wpt_language_options['language_events'].'" />';
 		echo '<p class="description">'.__('Displayed above event listings.','wp_theatre').'</p>';
 
-	}
-
-	function settings_field_ticket_button_tag() {
-		global $wp_theatre;
-		$options = array(
-			'a' => __('link','wp_theatre'),
-			'button' => __('button','wp_theatre')
-		);
-		
-		foreach($options as $key=>$value) {
-			echo '<label>';
-			echo '<input type="radio" name="wp_theatre[ticket_button_tag]" value="'.$key.'"';
-			if (!empty($wp_theatre->options['ticket_button_tag']) && $key==$wp_theatre->options['ticket_button_tag']) {
-				echo ' checked="checked"';
-			}
-			echo '>'.$value.'</option>';
-			echo '</label>';
-			echo '<br />';
-		}
-		
 	}
 
 	function settings_field_integrationtype() {

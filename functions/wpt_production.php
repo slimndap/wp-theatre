@@ -57,7 +57,7 @@ class WPT_Production {
 	 * }
 	 * @return string URL or HTML.
 	 */
-	function cities($args) {
+	function cities($args=array()) {
 		$defaults = array(
 			'html' => false
 		);
@@ -99,7 +99,7 @@ class WPT_Production {
 		}
 		if ($args['html']) {
 			$html = '';
-			$html.= '<p class="'.self::post_type_name.'_cities">'.$this->cities.'</p>';
+			$html.= '<div class="'.self::post_type_name.'_cities">'.$this->cities.'</div>';
 			return apply_filters('wpt_event_cities_html', $html, $this);				
 		} else {
 			return $this->cities;
@@ -118,7 +118,7 @@ class WPT_Production {
 	 * }
 	 * @return string URL or HTML.
 	 */
-	function dates() {
+	function dates($args=array()) {
 		$defaults = array(
 			'html' => false
 		);
@@ -156,7 +156,7 @@ class WPT_Production {
 		}
 		if ($args['html']) {
 			$html = '';
-			$html.= '<p class="'.self::post_type_name.'_dates">'.$this->dates.'</p>';
+			$html.= '<div class="'.self::post_type_name.'_dates">'.$this->dates.'</div>';
 			return apply_filters('wpt_event_dates_html', $html, $this);				
 		} else {
 			return $this->dates;
@@ -287,7 +287,7 @@ class WPT_Production {
 	 * }
 	 * @return string URL or HTML.
 	 */
-	function summary() {
+	function summary($args=array()) {
 		$defaults = array(
 			'html' => false
 		);
@@ -436,10 +436,11 @@ class WPT_Production {
 		
 		$defaults = array(
 			'fields' => array('title','dates','cities'),
-			'thumbnail' => true
+			'thumbnail' => true,
+			'hide' => array()
 		);
 		$args = wp_parse_args( $args, $defaults );
-		
+
 		$html = '';
 		
 		$classes = array();

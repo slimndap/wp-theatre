@@ -225,7 +225,6 @@ class WPT_Productions {
 	 */
 
 	function upcoming($args = array(), $PostClass = false) {
-		
 		global $wpdb;
 		
 		$defaults = array(
@@ -256,6 +255,7 @@ class WPT_Productions {
 				$wpdb->postmeta AS sticky ON (
 					productions.ID = sticky.post_ID
 					AND sticky.meta_key = 'sticky'
+					AND sticky.meta_value = 'on'
 				)
 			LEFT OUTER JOIN 
 				$wpdb->postmeta AS wpt_season ON (
@@ -276,8 +276,6 @@ class WPT_Productions {
 			$querystr.= " AND seasons.post_name='".$args[WPT_Season::post_type_name]."'";
 		}
 		$querystr.= "
-			OR 
-				sticky.meta_value = 'on'
 			GROUP BY 
 				productions.ID
 		";
@@ -287,7 +285,7 @@ class WPT_Productions {
 		} else {
 			$querystr.= " ORDER BY sticky.meta_value DESC , event_date.meta_value ASC";			
 		}
-		
+
 		if ($args['limit']) {
 			$querystr.= ' LIMIT 0,'.$args['limit'];
 		}
