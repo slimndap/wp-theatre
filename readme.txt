@@ -7,7 +7,7 @@ Stable tag: trunk
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Add event listings to your Wordpress website. Build a website for your theater, music venue, museum, conference center or your rockband!
+Add events to your Wordpress website. Build a website for your theater, music venue, museum, conference center or your rockband!
 
 == Description ==
 This plugin gives you the ability to manage seasons, productions and events in Wordpress and comes with all necessary shortcodes and widgets to show your events on your website.
