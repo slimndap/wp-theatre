@@ -78,7 +78,7 @@ class WP_Theatre {
 	}
 	
 	public function seasons($PostClass = false) {
-		return self::get_seasons($PostClass);
+		return $this->get_seasons($PostClass);
 	}
 		
 
@@ -117,7 +117,7 @@ class WP_Theatre {
 	}
 
 	private function get_events($PostClass = false) {
-		return WP_Theatre::events(null, $PosctClass);
+		return $this->events(null, $PosctClass);
 	}
 
 	function render_events($args=array()) {
@@ -129,7 +129,7 @@ class WP_Theatre {
 	}
 
 	public function productions($PostClass = false) {
-		return $this->productions->upcoming();
+		return $this->productions->upcoming(null, $PostClass);
 	}
 
 	function render_productions($args=array()) {

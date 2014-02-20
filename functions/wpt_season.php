@@ -1,5 +1,5 @@
 <?php
-class WPT_Season extends WP_Theatre {
+class WPT_Season {
 	const post_type_name = 'wp_theatre_season';
 	
 	function __construct($ID=false, $PostClass=false) {
@@ -18,6 +18,14 @@ class WPT_Season extends WP_Theatre {
 	
 	function post_type() {
 		return get_post_type_object(self::post_type_name);
+	}
+
+	function productions() {
+		global $wp_theatre;
+		$args = array(
+			self::post_type_name=>$this->post()->post_name
+		);
+		return $wp_theatre->productions->all($args,$this->PostClass);
 	}
 
 	/**

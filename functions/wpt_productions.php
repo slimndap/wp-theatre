@@ -28,7 +28,8 @@ class WPT_Productions {
 		$defaults = array(
 			'limit' => false,
 			WPT_Season::post_type_name => false,
-			'grouped' => false
+			'grouped' => false,
+			'upcoming' => false
 		);
 		$args = wp_parse_args( $args, $defaults );
 
@@ -43,14 +44,22 @@ class WPT_Productions {
 				ON (events.ID = wpt_events.post_ID AND events.post_status='publish')
 			LEFT OUTER JOIN 
 				$wpdb->postmeta AS wpt_startdate 
-				ON (wpt_startdate.post_ID = events.ID AND wpt_startdate.meta_key='event_date')
+				ON (
+					wpt_startdate.post_ID = events.ID AND wpt_startdate.meta_key='event_date'
+					AND wpt_startdate.meta_value > NOW()
+				)
 			LEFT OUTER JOIN 
 				$wpdb->postmeta AS wpt_season 
 				ON (wpt_season.post_ID=productions.ID AND wpt_season.meta_key='".WPT_Season::post_type_name."')
 			LEFT OUTER JOIN 
 				$wpdb->posts AS seasons 
-				ON seasons.ID = wpt_season.meta_value
-			
+				ON seasons.ID = wpt_season.meta_value	
+			LEFT OUTER JOIN 
+				$wpdb->postmeta AS sticky ON (
+					productions.ID = sticky.post_ID
+					AND sticky.meta_key = 'sticky'
+					AND sticky.meta_value = 'on'
+				)
 			WHERE
 				productions.post_type='".WPT_Production::post_type_name."'
 				AND	productions.post_status= 'publish'
@@ -58,16 +67,24 @@ class WPT_Productions {
 		if ($args[WPT_Season::post_type_name]) {
 			$querystr.= " AND seasons.post_name='".$args[WPT_Season::post_type_name]."'";
 		}
-		$queryst.= "
+		if ($args['upcoming']) {
+			$querystr.= " AND wpt_startdate.meta_value > NOW()";
+		}
+		$querystr.= "
+			OR sticky.meta_value = 'on'
 			GROUP BY productions.ID
 		";
 
 		if ($args['grouped']) {
-			$querystr.= " ORDER BY seasons.post_title DESC, wpt_startdate.meta_value ASC";
+			$querystr.= " ORDER BY seasons.post_title DESC, sticky.meta_value, wpt_startdate.meta_value ASC";
 		} else {
-			$querystr.= " ORDER BY wpt_startdate.meta_value ASC";			
+			$querystr.= " ORDER BY sticky.meta_value DESC, wpt_startdate.meta_value ASC";			
 		}
-		
+
+		if ($args['limit']) {
+			$querystr.= ' LIMIT 0,'.$args['limit'];
+		}
+
 		$posts = $wpdb->get_results($querystr, OBJECT);
 		
 		$productions = array();
@@ -225,78 +242,8 @@ class WPT_Productions {
 	 */
 
 	function upcoming($args = array(), $PostClass = false) {
-		global $wpdb;
-		
-		$defaults = array(
-			'limit' => false,
-			WPT_Season::post_type_name => false,
-			'grouped' => false
-		);
-		$args = wp_parse_args( $args, $defaults );
-		
-		$querystr = "
-			SELECT productions . ID
-			FROM $wpdb->posts AS
-			events
-			INNER JOIN 
-				$wpdb->postmeta AS event_date ON (
-					events.ID = event_date.post_ID
-					AND event_date.meta_key = 'event_date'
-					AND event_date.meta_value > NOW( )
-				)
-			INNER JOIN 
-				$wpdb->postmeta AS wp_theatre_prod ON (
-					events.ID = wp_theatre_prod.post_ID
-					AND wp_theatre_prod.meta_key = '".WPT_Production::post_type_name."'
-				)
-			INNER JOIN 
-				$wpdb->posts AS productions ON wp_theatre_prod.meta_value = productions.ID
-			LEFT OUTER JOIN 
-				$wpdb->postmeta AS sticky ON (
-					productions.ID = sticky.post_ID
-					AND sticky.meta_key = 'sticky'
-					AND sticky.meta_value = 'on'
-				)
-			LEFT OUTER JOIN 
-				$wpdb->postmeta AS wpt_season ON (
-					productions.ID = wpt_season.post_ID
-					AND wpt_season.meta_key = '".WPT_Season::post_type_name."'
-				)
-			LEFT OUTER JOIN 
-				$wpdb->posts AS seasons ON (
-					wpt_season.meta_value = seasons.ID
-				)
-			WHERE 
-				(
-					events.post_type = '".WPT_Event::post_type_name."'
-					AND events.post_status = 'publish'
-				) 
-		";
-		if ($args[WPT_Season::post_type_name]) {
-			$querystr.= " AND seasons.post_name='".$args[WPT_Season::post_type_name]."'";
-		}
-		$querystr.= "
-			GROUP BY 
-				productions.ID
-		";
-		
-		if ($args['grouped']) {
-			$querystr.= " ORDER BY seasons.post_title DESC, sticky.meta_value DESC , event_date.meta_value ASC";
-		} else {
-			$querystr.= " ORDER BY sticky.meta_value DESC , event_date.meta_value ASC";			
-		}
-
-		if ($args['limit']) {
-			$querystr.= ' LIMIT 0,'.$args['limit'];
-		}
-
-		$posts = $wpdb->get_results($querystr, OBJECT);
-		
-		$productions = array();
-		for ($i=0;$i<count($posts);$i++) {
-			$productions[] = new WPT_Production($posts[$i]->ID, $PostClass);
-		}
-		return $productions;
+		$args['upcoming'] = true;
+		return $this->all($args, $PostClass);
 	}
 		
 }
