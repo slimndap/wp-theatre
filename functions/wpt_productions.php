@@ -15,8 +15,9 @@ class WPT_Productions {
 	 * @param array $args {
 	 *     An array of arguments. Optional.
 	 *
-	 *     @type int $wp_theatre_season Only return production that are linked to season <$wp_theatre_season>. Default <false>.
+	 *     @type int $wp_theatre_season Only return production that are linked to season <$wp_theatre_season>. No additional sticky productions get added. Default <false>.
 	 *     @type bool $grouped Order the list by season, so it can be grouped later. Default <false>.
+	 *     @type bool $upcoming Only show productions with upcoming events. Plus sticky productions. Default <false>.
 	 *     @type int $limit Limit the list to $limit productions. Use <false> for an unlimited list. Default <false>.
 	 * }
 	 * @return mixed An array of WPT_Production objects.
@@ -64,22 +65,21 @@ class WPT_Productions {
 				productions.post_type='".WPT_Production::post_type_name."'
 				AND	productions.post_status= 'publish'
 		";
-		if ($args[WPT_Season::post_type_name]) {
-			$querystr.= " AND seasons.post_name='".$args[WPT_Season::post_type_name]."'";
-		}
+
 		if ($args['upcoming']) {
 			$querystr.= " AND wpt_startdate.meta_value > NOW()";
 		}
-		$querystr.= "
-			OR sticky.meta_value = 'on'
-			GROUP BY productions.ID
-		";
 
-		if ($args['grouped']) {
-			$querystr.= " ORDER BY seasons.post_title DESC, sticky.meta_value, wpt_startdate.meta_value ASC";
+		if ($args[WPT_Season::post_type_name]) {
+			$querystr.= " AND seasons.post_name='".$args[WPT_Season::post_type_name]."'";
 		} else {
-			$querystr.= " ORDER BY sticky.meta_value DESC, wpt_startdate.meta_value ASC";			
+			$querystr.= " OR sticky.meta_value = 'on'";
 		}
+
+		$querystr.= "
+			GROUP BY productions.ID
+			ORDER BY seasons.post_title DESC, sticky.meta_value DESC, wpt_startdate.meta_value ASC
+		";
 
 		if ($args['limit']) {
 			$querystr.= ' LIMIT 0,'.$args['limit'];
