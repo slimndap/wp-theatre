@@ -57,7 +57,7 @@ class WPT_Production {
 	 * }
 	 * @return string URL or HTML.
 	 */
-	function cities($args) {
+	function cities($args=array()) {
 		$defaults = array(
 			'html' => false
 		);
@@ -118,7 +118,7 @@ class WPT_Production {
 	 * }
 	 * @return string URL or HTML.
 	 */
-	function dates() {
+	function dates($args=array()) {
 		$defaults = array(
 			'html' => false
 		);
@@ -195,7 +195,12 @@ class WPT_Production {
 		$args = wp_parse_args( $args, $defaults );
 
 		if (!isset($this->excerpt)) {
-			$this->excerpt = apply_filters('wpt_production_excerpt',wp_trim_words($this->post()->post_content, $args['words']), $this);
+			$excerpt = apply_filters('get_the_excerpt', $this->post()->post_excerpt);
+			if (empty($excerpt)) {
+				 $excerpt = wp_trim_words($this->post()->post_content, $args['words']);
+			}
+			$this->excerpt = apply_filters('wpt_production_excerpt',$excerpt, $this);
+
 		}
 
 		if ($args['html']) {
@@ -287,7 +292,7 @@ class WPT_Production {
 	 * }
 	 * @return string URL or HTML.
 	 */
-	function summary() {
+	function summary($args=array()) {
 		$defaults = array(
 			'html' => false
 		);
@@ -436,7 +441,8 @@ class WPT_Production {
 		
 		$defaults = array(
 			'fields' => array('title','dates','cities'),
-			'thumbnail' => true
+			'thumbnail' => true,
+			'hide' => array()
 		);
 		$args = wp_parse_args( $args, $defaults );
 		

@@ -58,7 +58,7 @@ class WPT_Productions {
 		if ($args[WPT_Season::post_type_name]) {
 			$querystr.= " AND seasons.post_name='".$args[WPT_Season::post_type_name]."'";
 		}
-		$queryst.= "
+		$querystr.= "
 			GROUP BY productions.ID
 		";
 

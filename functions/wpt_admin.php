@@ -268,7 +268,7 @@ class WPT_Admin {
 		if (get_post_status($production->ID) == 'auto-draft') {
 			echo __('You need to save this production before you can add events.','wp_theatre');
 		} else {
-			$events = $production->upcoming($args);
+			$events = $production->upcoming();
 			if (count($events)>0) {
 				echo '<ul>';
 				foreach ($events as $event) {
@@ -279,7 +279,7 @@ class WPT_Admin {
 				}
 				echo '</ul>';	
 			}	
-			$events = $production->past($args);
+			$events = $production->past();
 			if (count($events)>0) {
 				echo '<h4>'.__('Past events','wp_theatre').'</h4>';
 				echo '<ul>';
@@ -801,7 +801,7 @@ class WPT_Admin {
 		foreach($options as $key=>$value) {
 			echo '<label>';
 			echo '<input type="radio" name="wp_theatre[show_events]" value="'.$key.'"';
-			if ($key==$this->options['show_events']) {
+			if (!empty($this->options['show_events']) && $key==$this->options['show_events']) {
 				echo ' checked="checked"';
 			}
 			echo '>'.$value.'</option>';
@@ -876,7 +876,7 @@ class WPT_Admin {
 		foreach($options as $key=>$value) {
 			echo '<label>';
 			echo '<input type="radio" name="wp_theatre[integrationtype]" value="'.$key.'"';
-			if ($key==$this->options['integrationtype']) {
+			if (!empty($this->options['integrationtype']) && $key==$this->options['integrationtype']) {
 				echo ' checked="checked"';
 			}
 			echo '>'.$value.'</option>';
@@ -906,7 +906,12 @@ class WPT_Admin {
 	}
 
 	function settings_field_currencysymbol() {
-		echo '<input type="text" id="currencysymbol" name="wp_theatre[currencysymbol]" value="'.$this->options['currencysymbol'].'" />';
+		echo '<input type="text" id="currencysymbol" name="wp_theatre[currencysymbol]"';
+		if (!empty($this->options['currencysymbol'])) {
+			echo ' value="'.$this->options['currencysymbol'].'"';
+			
+		}
+		echo ' />';
 
 	}
 

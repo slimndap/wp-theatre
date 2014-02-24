@@ -10,12 +10,24 @@
 	
 		public function widget( $args, $instance ) {
 			global $wp_theatre;
-			$title = apply_filters( 'widget_title', $instance['title'] );
+			
+			if ( isset( $instance[ 'title' ] ) ) {
+				$title = apply_filters( 'widget_title', $instance['title'] );
+			} else {
+				$title = '';
+			}
+
+			if ( isset( $instance[ 'limit' ] ) ) {
+				$limit = $instance[ 'limit' ];
+			}
+			else {
+				$limit = 5;
+			}
 			
 			echo $args['before_widget'];
 			if ( ! empty( $title ) )
 				echo $args['before_title'] . $title . $args['after_title'];
-			echo $wp_theatre->events->html_listing(array('limit'=>$instance['limit']));
+			echo $wp_theatre->events->html_listing(array('limit'=>$limit));
 			echo $args['after_widget'];
 
 		}
