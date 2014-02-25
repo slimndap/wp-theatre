@@ -195,7 +195,12 @@ class WPT_Production {
 		$args = wp_parse_args( $args, $defaults );
 
 		if (!isset($this->excerpt)) {
-			$this->excerpt = apply_filters('wpt_production_excerpt',wp_trim_words($this->post()->post_content, $args['words']), $this);
+			$excerpt = apply_filters('get_the_excerpt', $this->post()->post_excerpt);
+			if (empty($excerpt)) {
+				 $excerpt = wp_trim_words($this->post()->post_content, $args['words']);
+			}
+			$this->excerpt = apply_filters('wpt_production_excerpt',$excerpt, $this);
+
 		}
 
 		if ($args['html']) {

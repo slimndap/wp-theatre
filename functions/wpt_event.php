@@ -337,7 +337,7 @@ class WPT_Event {
 		$args = wp_parse_args( $args, $defaults );
 
 		if (!isset($this->tickets)) {
-			if ($wp_theatre->options['integrationtype']=='iframe') {
+			if (!empty($wp_theatre->options['integrationtype']) && $wp_theatre->options['integrationtype']=='iframe') {
 				$url = get_permalink($wp_theatre->options['iframepage']);
 				$args = array(
 					__('Event','wp_theatre') => $this->ID

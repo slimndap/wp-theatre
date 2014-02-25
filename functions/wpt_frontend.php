@@ -31,7 +31,7 @@ class WPT_Frontend {
 		}
 
 		// Add Thickbox files
-		if ($wp_theatre->options['integrationtype']=='lightbox') {
+		if (!empty($wp_theatre->options['integrationtype']) && $wp_theatre->options['integrationtype']=='lightbox') {
 			wp_enqueue_script('thickbox');
 			wp_enqueue_style('thickbox', includes_url('/js/thickbox/thickbox.css'), null, $wp_theatre->version);			
 		}
@@ -104,6 +104,7 @@ class WPT_Frontend {
 		$atts = shortcode_atts( array(
 			'paged' => false,
 			'grouped' => false,
+			'thumbnail' => true,
 			'fields' => null,
 			'hide' => null
 		), $atts );
@@ -113,6 +114,18 @@ class WPT_Frontend {
 			$hide[$i] = trim($hide[$i]);
 		}
 		$atts['hide'] = $hide;
+		
+		if (!empty($atts['fields'])) {
+			$fields = explode(',',$atts['fields']);
+			for ($i=0;$i<count($fields);$i++) {
+				$fields[$i] = trim($fields[$i]);
+			}
+			$atts['fields'] = $fields;
+		}
+		
+		if (!empty($atts['thumbnail'])) {
+			$atts['thumbnail'] = $atts['thumbnail'] == 1;
+		}
 		
 		return $wp_theatre->events->html_listing($atts);
 	}
@@ -128,6 +141,14 @@ class WPT_Frontend {
 			'upcoming' => false
 		), $atts );
 				
+		if (!empty($atts['fields'])) {
+			$fields = explode(',',$atts['fields']);
+			for ($i=0;$i<count($fields);$i++) {
+				$fields[$i] = trim($fields[$i]);
+			}
+			$atts['fields'] = $fields;
+		}
+		
 		$hide = explode(',',$atts['hide']);
 		for ($i=0;$i<count($hide);$i++) {
 			$hide[$i] = trim($hide[$i]);

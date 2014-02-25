@@ -878,7 +878,12 @@ class WPT_Admin {
 	}
 
 	function settings_field_currencysymbol() {
-		echo '<input type="text" id="currencysymbol" name="wp_theatre[currencysymbol]" value="'.$this->options['currencysymbol'].'" />';
+		echo '<input type="text" id="currencysymbol" name="wp_theatre[currencysymbol]"';
+		if (!empty($this->options['currencysymbol'])) {
+			echo ' value="'.$this->options['currencysymbol'].'"';
+			
+		}
+		echo ' />';
 
 	}
 

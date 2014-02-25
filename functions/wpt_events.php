@@ -204,7 +204,7 @@ class WPT_Events {
 			'limit' => false,
 			'upcoming' => false,
 			'past' => false,
-			'month' => false,
+			__('month','wp_theatre') => false,
 			WPT_Production::post_type_name => false
 		);
 		$args = wp_parse_args( $args, $defaults );
