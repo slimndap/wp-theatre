@@ -101,9 +101,8 @@ class WPT_Setup {
 
 	function gettext($translated_text, $text, $domain) {
 		global $wp_theatre;
-		
 		if ($domain=='wp_theatre') {
-			switch ( $translated_text ) {
+			switch ( $text ) {
 				case 'Tickets' :
 					if (!empty($wp_theatre->wpt_language_options['language_tickets'])) {
 						$translated_text = $wp_theatre->wpt_language_options['language_tickets'];
@@ -112,6 +111,11 @@ class WPT_Setup {
 				case 'Events' :
 					if (!empty($wp_theatre->wpt_language_options['language_events'])) {
 						$translated_text = $wp_theatre->wpt_language_options['language_events'];
+					}
+					break;
+				case 'categories' :				
+					if (!empty($wp_theatre->wpt_language_options['language_categories'])) {
+						$translated_text = strtolower($wp_theatre->wpt_language_options['language_categories']);
 					}
 					break;
 			}

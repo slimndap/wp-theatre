@@ -141,6 +141,14 @@ class WPT_Admin {
 	            'language' // Section           
 	        );      
 	
+	        add_settings_field(
+	            'language_categories', // ID
+	            __('Categories','wp_theatre'), // Title 
+	            array( $this, 'settings_field_language_categories' ), // Callback
+	            'wpt_language', // Page
+	            'language' // Section           
+	        );      
+	
        
 		}
 		
@@ -245,7 +253,7 @@ class WPT_Admin {
 		$events = array();
 		for ($i=0;$i<count($posts);$i++) {
 			$datetime = strtotime(get_post_meta($posts[$i]->ID,'event_date',true));
-			$events[$datetime.$posts[$i]->ID] = new WPT_Event($posts[$i], $PostClass);
+			$events[$datetime.$posts[$i]->ID] = new WPT_Event($posts[$i]);
 		}
 		
 		ksort($events);
@@ -257,10 +265,12 @@ class WPT_Admin {
 		global $wp_theatre;
 		$production = new WPT_Production(get_the_id());
 		
+		$wp_theatre->events->args['production'] = $production->ID;
+		
 		if (get_post_status($production->ID) == 'auto-draft') {
 			echo __('You need to save this production before you can add events.','wp_theatre');
 		} else {
-			$events = $production->upcoming($args);
+			$events = $production->upcoming();
 			if (count($events)>0) {
 				echo '<ul>';
 				foreach ($events as $event) {
@@ -271,7 +281,7 @@ class WPT_Admin {
 				}
 				echo '</ul>';	
 			}	
-			$events = $production->past($args);
+			$events = $production->past();
 			if (count($events)>0) {
 				echo '<h4>'.__('Past events','wp_theatre').'</h4>';
 				echo '<ul>';
@@ -589,9 +599,9 @@ class WPT_Admin {
     function wp_add_dashboard_widget() {
     	global $wp_theatre;
     	$args = array(
-    		'paged' => 'true'
+    		'paginateby' => array('month','category')
     	);
-    	echo $wp_theatre->events->html_listing($args);
+    	echo $wp_theatre->events->html($args);
     }
 
 	function render_event($event) {
@@ -834,6 +844,13 @@ class WPT_Admin {
 		global $wp_theatre;
 		echo '<input type="text" id="language_events" name="wpt_language[language_events]" value="'.$wp_theatre->wpt_language_options['language_events'].'" />';
 		echo '<p class="description">'.__('Displayed above event listings.','wp_theatre').'</p>';
+
+	}
+
+	function settings_field_language_categories() {
+		global $wp_theatre;
+		echo '<input type="text" id="language_categories" name="wpt_language[language_categories]" value="'.$wp_theatre->wpt_language_options['language_categories'].'" />';
+		echo '<p class="description">'.__('Displayed in category listings.','wp_theatre').'</p>';
 
 	}
 

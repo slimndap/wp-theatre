@@ -124,7 +124,6 @@ class WPT_Production {
 		);
 
 		$args = wp_parse_args( $args, $defaults );
-				
 		if (!isset($this->dates)) {			
 			$dates = '';
 			$dates_short = '';
@@ -414,10 +413,8 @@ class WPT_Production {
 	function upcoming() {
 		global $wp_theatre;
 		if (!isset($this->upcoming)) {
-			$args = array(
-				WPT_Production::post_type_name => $this->ID
-			);
-			$this->upcoming = $wp_theatre->events->upcoming($args);
+			$wp_theatre->events->args['production'] = $this->ID;
+			$this->upcoming = $wp_theatre->events->upcoming();
 		}
 		return $this->upcoming;
 	}
