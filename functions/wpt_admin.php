@@ -793,7 +793,7 @@ class WPT_Admin {
 		foreach($options as $key=>$value) {
 			echo '<label>';
 			echo '<input type="radio" name="wp_theatre[show_events]" value="'.$key.'"';
-			if ($key==$this->options['show_events']) {
+			if (!empty($this->options['show_events']) && $key==$this->options['show_events']) {
 				echo ' checked="checked"';
 			}
 			echo '>'.$value.'</option>';
