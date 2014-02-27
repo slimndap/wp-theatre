@@ -49,12 +49,14 @@
 		.wp_theatre_event_location {
 			.wp_theatre_event_venue {
 				display: inline;
+				+ .wp_theatre_event_city {
+					&:before {
+						content: ',\00a0';
+					}
+				}
 			}
 			.wp_theatre_event_city {
 				display: inline;
-				&:before {
-					content: ',\00a0';
-				}
 			}
 		}
 	}
@@ -165,6 +167,7 @@
 		.wp_theatre_event_main {
 			float: left;
 			width: 70%;
+			overflow: auto;
 			> div {
 				float: none;
 				width: auto;
