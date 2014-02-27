@@ -68,6 +68,10 @@ Make sure that you checked the 'Enable built-in Theatre stylesheet'-option in th
 
 == Changelog ==
 
+= 0.4 =
+* New wpt_productions shortcode.
+* Customize whcih fields to show in event and production listings. See [documentation](https://github.com/slimndap/wp-theatre/wiki/Shortcodes).
+
 = 0.3.8 =
 * Show event listings above or below content on production page.
 * Set your own default text on ticket buttons and above event listings.
