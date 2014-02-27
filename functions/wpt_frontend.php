@@ -138,7 +138,8 @@ class WPT_Frontend {
 			'grouped' => false,
 			'fields' => null,
 			'hide' => null,
-			'upcoming' => false
+			'upcoming' => false,
+			'thumbnail' => true
 		), $atts );
 				
 		if (!empty($atts['fields'])) {

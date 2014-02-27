@@ -78,8 +78,17 @@ class WPT_Productions {
 
 		$querystr.= "
 			GROUP BY productions.ID
-			ORDER BY seasons.post_title DESC, sticky.meta_value DESC, wpt_startdate.meta_value ASC
 		";
+		
+		if($args['grouped']) {
+			$querystr.= "
+				ORDER BY seasons.post_title DESC, sticky.meta_value DESC, wpt_startdate.meta_value ASC
+			";			
+		} else {
+			$querystr.= "
+				ORDER BY sticky.meta_value DESC, wpt_startdate.meta_value ASC
+			";						
+		}
 
 		if ($args['limit']) {
 			$querystr.= ' LIMIT 0,'.$args['limit'];
