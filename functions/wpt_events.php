@@ -34,6 +34,7 @@ class WPT_Events {
 			'tickets'=>true,
 			'fields'=>NULL,
 			'hide'=>NULL,
+			'paginateby' => array(),
 			WPT_Production::post_type_name => false,
 		);
 		$args = wp_parse_args( $args, $defaults );
@@ -118,6 +119,48 @@ class WPT_Events {
 		$html = '<div class="'.implode(' ',$classes).'">'.$html.'</div>'; 
 		
 		return $html;
+	}
+	
+	/**
+	 * All months with upcoming events.
+	 *
+	 * Returns a list of all months with upcoming events.
+	 * 
+	 * @since 0.5
+	 *
+ 	 * @return array Months.
+	 */
+	function months() {
+		
+	}
+	
+	/**
+	 * All categories with upcoming events.
+	 *
+	 * Returns a list of all months with upcoming events.
+	 * 
+	 * @since 0.5
+	 *
+ 	 * @return array Categories.
+	 */
+	function categories() {
+		
+	}
+	
+	/**
+	 * Setup the current selection of events.
+	 * 
+	 * @since 0.5
+	 *
+ 	 * @return array Events.
+	 */
+	function set($args = array()) {
+		
+	}
+	
+	// To replace html_listing
+	function html() {
+		
 	}
 	
 	public function meta_listing($args) {
