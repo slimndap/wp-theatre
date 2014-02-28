@@ -370,9 +370,9 @@ class WPT_Production {
 	}
 
 	/**
-	 * Event title.
+	 * Production title.
 	 * 
-	 * Returns the event title as plain text or as an HTML element.
+	 * Returns the production title as plain text or as an HTML element.
 	 *
 	 * @since 0.4
 	 *

@@ -3,6 +3,7 @@ class WPT_Events {
 
 	function __construct($args = array()) {
 
+		// Set filters
 		$defaults = array(
 			'limit' => false,
 			'upcoming' => true,
@@ -11,45 +12,56 @@ class WPT_Events {
 			'category' => false,
 			'production' => false
 		);
-		$this->args = wp_parse_args( $args, $defaults );
+		$this->filters = wp_parse_args( $args, $defaults );
 
 		add_action( 'plugins_loaded', array($this,'plugins_loaded' ));
 
 	}
 	
+	public function __toString() {
+		return $this->html();
+	}
+	
+	public function __invoke() {
+		return $this->get();
+	}
+	
+	/**
+	 * Set month and category filters from GET parameters.
+	 * @since 0.5
+	 */
 	function plugins_loaded() {
 		if (!empty($_GET[__('month','wp_theatre')])) {
-			$this->args['month'] = $_GET[__('month','wp_theatre')];
+			$this->filters['month'] = $_GET[__('month','wp_theatre')];
 		}		
 		if (!empty($_GET[__('category','wp_theatre')])) {
 			if ($category = get_category_by_slug($_GET[__('category','wp_theatre')])) {
-	  			$this->args['category'] = $category->term_id;				
+	  			$this->filters['category'] = $category->term_id;				
 			}
 		}
 	}
 	
+	/**
+	 * An array of all events.
+	 * @since 0.5
+	 */
  	public function all() {
- 		$this->args['past'] = false;
- 		$this->args['upcoming'] = false;
+ 		$this->filters['past'] = false;
+ 		$this->filters['upcoming'] = false;
  		return $this->get();
 	}
 		
 	/**
-	 * All categories with upcoming events.
-	 *
-	 * Returns a list of all months with upcoming events.
-	 * 
+	 * An array of all categories with upcoming events.
 	 * @since 0.5
-	 *
- 	 * @return array Categories.
 	 */
 	function categories() {
-		$current_category = $this->args['category'];
+		$current_category = $this->filters['category'];
 		
 		// temporarily disable current month filter
-		$this->args['category'] = false;
+		$this->filters['category'] = false;
 
-		// get all event according to remaining filters
+		// get all events according to remaining filters
 		$events = $this->get();		
 		$categories = array();
 		foreach ($events as $event) {
@@ -62,31 +74,31 @@ class WPT_Events {
 		asort($categories);
 		
 		// reset current month filter
-		$this->args['category'] = $current_category;
+		$this->filters['category'] = $current_category;
 		
 		return $categories;
 		
 	}
 	
+	/**
+	 * An array of all filtered events.
+	 * @since 0.5
+	 */
 	function get() {
-		$hash = md5(serialize($this->args));
-		
+		$hash = md5(serialize($this->filters));
 		if (empty($this->events[$hash])) {
 			$this->events[$hash] = $this->load();
 		}
-		
 		return $this->events[$hash];				
 	}
 
 	/**
 	 * A list of upcoming events in HTML.
-	 *
-	 * Compiles a list of all upcoming events and outputs the result to the browser.
 	 * 
 	 * Example:
 	 *
-	 * $args = array('paged'=>true);
-	 * WP_Theatre::render_events($args); // a list of all upcoming events, paginated by month
+	 * $args = array('paginateby'=>'month');
+	 * echo $wp_theatre->events->html($args); // a list of all upcoming events, paginated by month
 	 *
 	 * @since 0.5
 	 *
@@ -97,7 +109,6 @@ class WPT_Events {
 	 *     @type bool $grouped Group the list by month. Default <false>.
 	 *     @type int $limit Limit the list to $limit events. Use <false> for an unlimited list. Default <false>.
 	 * }
-	 * @see WP_Theatre::get_events()
  	 * @return string HTML.
 	 */
 	public function html($args=array()) {
@@ -245,27 +256,27 @@ class WPT_Events {
 			AND event_date.meta_key = 'event_date'
 		";
 		
-		if ($this->args['upcoming']) {
+		if ($this->filters['upcoming']) {
 			$querystr.= ' AND event_date.meta_value > NOW( )';
-		} elseif ($this->args['past']) {
+		} elseif ($this->filters['past']) {
 			$querystr.= ' AND event_date.meta_value < NOW( )';
 		}
 		
-		if ($this->args['month']) {
-			$querystr.= ' AND event_date.meta_value LIKE "'.$this->args['month'].'%"';
+		if ($this->filters['month']) {
+			$querystr.= ' AND event_date.meta_value LIKE "'.$this->filters['month'].'%"';
 		}
 		
-		if ($this->args['category']) {
-			$querystr.= ' AND term_taxonomy_id = '.$this->args['category'];
+		if ($this->filters['category']) {
+			$querystr.= ' AND term_taxonomy_id = '.$this->filters['category'];
 		}
 		
-		if ($this->args['production']) {
-			$querystr.= ' AND productions.meta_value='.$this->args['production'].'';			
+		if ($this->filters['production']) {
+			$querystr.= ' AND productions.meta_value='.$this->filters['production'].'';			
 		}
 		$querystr.= ' GROUP BY events.ID';
 		$querystr.= ' ORDER BY event_date.meta_value';
 		
-		if ($this->args['limit']) {
+		if ($this->filters['limit']) {
 			$querystr.= ' LIMIT 0,'.$args['limit'];
 		}
 
@@ -280,19 +291,14 @@ class WPT_Events {
 	}
 
 	/**
-	 * All months with upcoming events.
-	 *
-	 * Returns a list of all months with upcoming events.
-	 * 
+	 * An array of all months with upcoming events.
 	 * @since 0.5
-	 *
- 	 * @return array Months.
 	 */
 	function months() {
-		$current_month = $this->args['month'];
+		$current_month = $this->filters['month'];
 		
 		// temporarily disable current month filter
-		$this->args['month'] = false;
+		$this->filters['month'] = false;
 
 		// get all event according to remaining filters
 		$events = $this->get();		
@@ -303,7 +309,7 @@ class WPT_Events {
 		sort($months);
 		
 		// reset current month filter
-		$this->args['month'] = $current_month;
+		$this->filters['month'] = $current_month;
 		
 		return $months;
 	}
@@ -354,34 +360,31 @@ class WPT_Events {
 		return $html;
 	}
 	
+	/**
+	 * An array of all past filtered events.
+	 * @since 0.5
+	 */
  	public function past() {
- 		$this->args['upcoming'] = false;
- 		$this->args['past'] = true;
+ 		$this->filters['upcoming'] = false;
+ 		$this->filters['past'] = true;
  		return $this->get();
  	}
  	
 	/**
-	 * All upcoming events.
-	 *
-	 * Returns an array of all pubished events attached to a production and with a startdate in the future.
-	 * 
-	 * Example:
-	 *
-	 * $events = $wp_theatre->events();
-	 *
-	 * @since 0.3.6
-	 *
-	 * @see WP_Theatre::get_events()
-	 *
-	 * @param  string $PostClass Optional. 
-	 * @return mixed An array of WPT_Event objects.
+	 * An array of all upcoming filtered events.
+	 * @since 0.5
 	 */
  	public function upcoming() {
- 		$this->args['past'] = false;
- 		$this->args['upcoming'] = true;
+ 		$this->filters['past'] = false;
+ 		$this->filters['upcoming'] = true;
  		return $this->get();
  	}
  	
+	/**
+	 * Deprecated functions. 
+	 *
+	 * @deprecated 0.5.
+	 */
 	public function html_listing($args=array()) {
 		return $this->html($args);
 	}

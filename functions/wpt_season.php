@@ -28,6 +28,14 @@ class WPT_Season {
 		return $wp_theatre->productions->all($args,$this->PostClass);
 	}
 
+	function title() {
+		if (!isset($this->title)) {
+			$this->title = apply_filters('wpt_season_title',$this->post()->post_title,$this);
+		}	
+		return $this->title;			
+	}
+
+
 	/**
 	 * The custom post as a WP_Post object.
 	 *

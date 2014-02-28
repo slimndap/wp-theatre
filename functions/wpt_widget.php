@@ -76,12 +76,9 @@
 			if ( ! empty( $title ) )
 				echo $args['before_title'] . $title . $args['after_title'];
 				
-			echo $wp_theatre->productions->html_listing(
-				array(
-					'limit'=>$instance['limit'],
-					'upcoming' => true
-				)
-			);
+			$wp_theatre->productions->filters['limit'] = $instance['limit'];
+			$wp_theatre->productions->filters['upcoming'] = false;
+			echo $wp_theatre->productions->html_listing();
 			echo $args['after_widget'];
 
 		}
