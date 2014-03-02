@@ -66,7 +66,7 @@ class WP_Theatre {
 	public function __call($method, $args) {
 		if(property_exists($this, $method)) {
 		    $prop = $this->$method;
-		    return $prop($args[0]);
+		    return call_user_func_array($this->$method,$args);
 		}
 	}
 	
