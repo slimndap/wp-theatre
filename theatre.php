@@ -66,7 +66,7 @@ class WP_Theatre {
 	public function __call($method, $args) {
 		if(property_exists($this, $method)) {
 		    $prop = $this->$method;
-		    return $prop();
+		    return $prop($args[0]);
 		}
 	}
 	
@@ -77,6 +77,7 @@ class WP_Theatre {
 	 * @return void
 	 */
 	function includes() {
+		require_once(__DIR__ . '/functions/wpt_listing.php');
 		require_once(__DIR__ . '/functions/wpt_production.php');
 		require_once(__DIR__ . '/functions/wpt_productions.php');
 		require_once(__DIR__ . '/functions/wpt_event.php');

@@ -132,7 +132,6 @@ class WPT_Production {
 			$upcoming = $this->upcoming();
 			$events = $this->events();
 			if (is_array($upcoming) && (count($upcoming)>0)) {
-
 				$first = $events[0];
 				$next = $upcoming[0];
 				$last = $events[count($events)-1];
@@ -165,10 +164,10 @@ class WPT_Production {
 	function events() {
 		global $wp_theatre;
 		if (!isset($this->events)) {
-			$args = array(
-				WPT_Production::post_type_name => $this->ID
-			);
-			$this->events = $wp_theatre->events->all($args);
+			$filters = array(
+				'production'=>$this->ID,
+			);			
+			$this->events = $wp_theatre->events($filters);
 		}
 		return $this->events;
 	}
@@ -214,10 +213,11 @@ class WPT_Production {
 	function past() {
 		global $wp_theatre;
 		if (!isset($this->past)) {
-			$args = array(
-				WPT_Production::post_type_name => $this->ID
+			$filters = array(
+				'production' => $this->ID,
+				'past' => true
 			);
-			$this->past = $wp_theatre->events->past($args);
+			$this->past = $wp_theatre->events($filters);
 		}
 		return $this->past;
 	}
@@ -413,8 +413,11 @@ class WPT_Production {
 	function upcoming() {
 		global $wp_theatre;
 		if (!isset($this->upcoming)) {
-			$wp_theatre->events->args['production'] = $this->ID;
-			$this->upcoming = $wp_theatre->events->upcoming();
+			$filters = array(
+				'production' => $this->ID,
+				'upcoming' => true
+			);
+			$this->upcoming = $wp_theatre->events($filters);
 		}
 		return $this->upcoming;
 	}
@@ -489,10 +492,10 @@ class WPT_Production {
 		$html.= '</div>'; // .main
 
 		// Microdata for events
-		$args = array(
-			WPT_Production::post_type_name => $this->ID
+		$filters = array(
+			'production' => $this->ID
 		);
-		$html.= $wp_theatre->events->meta_listing($args);
+		$html.= $wp_theatre->events->meta($filters);
 
 		// Wrapper
 		$html = '<div class="'.implode(' ',$classes).'">'.$html.'</div>';

@@ -1,29 +1,6 @@
 <?php
-class WPT_Productions {
+class WPT_Productions extends WPT_Listing {
 
-	function __construct($args = array()) {
-
-		// Set filters
-		$defaults = array(
-			'limit' => false,
-			'upcoming' => false,
-			'category' => false,
-			'season' => false
-		);
-		$this->filters = wp_parse_args( $args, $defaults );
-
-		add_action( 'plugins_loaded', array($this,'plugins_loaded' ));
-
-	}
-	
-	public function __toString() {
-		return $this->html();
-	}
-	
-	public function __invoke() {
-		return $this->get();
-	}
-	
 	/**
 	 * Set month and category filters from GET parameters.
 	 * @since 0.5
@@ -32,11 +9,6 @@ class WPT_Productions {
 		if (!empty($_GET[__('season','wp_theatre')])) {
 			$this->filters['season'] = $_GET[__('season','wp_theatre')];
 		}		
-		if (!empty($_GET[__('category','wp_theatre')])) {
-			if ($category = get_category_by_slug($_GET[__('category','wp_theatre')])) {
-	  			$this->filters['category'] = $category->term_id;				
-			}
-		}
 	}
 
 	/**
@@ -44,12 +16,6 @@ class WPT_Productions {
 	 * @since 0.5
 	 */
 	function categories() {
-		$current_category = $this->filters['category'];
-		
-		// temporarily disable current month filter
-		$this->filters['category'] = false;
-
-		// get all events according to remaining filters
 		$productions = $this->get();		
 		$categories = array();
 		foreach ($productions as $production) {
@@ -61,25 +27,19 @@ class WPT_Productions {
 		}
 		asort($categories);
 		
-		// reset current month filter
-		$this->filters['category'] = $current_category;
-		
 		return $categories;
 		
 	}
 
-	/**
-	 * An array of all filtered productions.
-	 * @since 0.5
-	 */
-	function get() {
-		$hash = md5(serialize($this->filters));
-		if (empty($this->productions[$hash])) {
-			$this->productions[$hash] = $this->load();
-		}
-		return $this->productions[$hash];				
-	}
+	function defaults() {
+		return array(
+			'limit' => false,
+			'upcoming' => false,
+			'category' => false,
+			'season' => false
+		);
 
+	}
 	
 	/**
 	 * A list of productions in HTML.
@@ -111,29 +71,41 @@ class WPT_Productions {
 			'limit' => false,
 			'upcoming' => false,
 			'season' => false,
-			'paginateby' => array()
+			'paginateby' => array(),
+			'groupby' => false
 
 		);
 		$args = wp_parse_args( $args, $defaults );
 		
-		print_r($this->filters);
-
 		// translate deprecated 'paged' argument
 		if (!empty($args['paged']) && !in_array('season', $args['paginateby'])) {
 			$args['paginateby'][] ='season';
 		}
 
+		$filters = array(
+			'season' => $args['season'],
+			'limit' => $args['limit'],
+			'upcoming' => $args['upcoming']
+		);
+
+		$classes = array();
+		$classes[] = "wpt_productions";
+
+		// Thumbnail
+		if (!$args['thumbnail']) {
+			$classes[] = 'wpt_productions_without_thumbnail';
+		}
+
 		$html = '';
-		$html.= '<div class="wpt_productions">';
 
 		if (in_array('season',$args['paginateby'])) {
 			$seasons = $this->seasons();
 
 			if (!empty($_GET[__('season','wp_theatre')])) {
-				$this->filters['season'] = $_GET[__('season','wp_theatre')];
+				$filters['season'] = $_GET[__('season','wp_theatre')];
 			} else {
 				$slugs = array_keys($seasons);
-				$this->filters['season'] = $slugs[0];				
+				$filters['season'] = $slugs[0];				
 			}
 
 			$html.= '<nav>';
@@ -144,7 +116,7 @@ class WPT_Productions {
 				$html.= '<span>';
 
 				$title = $season->title();
-				if ($slug == $this->filters['season']) {
+				if ($slug == $filters['season']) {
 					$html.= $title;
 				} else {
 					$html.= '<a href="'.$url.'">'.$title.'</a>';					
@@ -159,19 +131,20 @@ class WPT_Productions {
 
 			$page = '';
 			if (!empty($_GET[__('category','wp_theatre')])) {
-				$page = $_GET[__('category','wp_theatre')];
+				if ($category = get_category_by_slug($_GET[__('category','wp_theatre')])) {
+		  			$filters['category'] = $category->term_id;				
+				}
 			}
 			
 			$html.= '<nav class="wpt_event_categories">';
-			if (empty($page)) {
+
+			$html.= '<span>';
+			if (empty($filters['category'])) {
 				$html.= __('All','wp_theatre').' '.__('categories','wp_theatre');
 			} else {				
 				$url = remove_query_arg(__('category','wp_theatre'));
 				$html.= '<a href="'.$url.'">'.__('All','wp_theatre').' '.__('categories','wp_theatre').'</a>';
 			}
-			
-			$html.= '<span>';
-			
 			$html.= '</span>';
 			
 			foreach($categories as $slug=>$name) {
@@ -179,7 +152,7 @@ class WPT_Productions {
 				$url = add_query_arg( __('category','wp_theatre'), $slug , $url);
 				$html.= '<span>';
 				
-				if ($slug != $page) {
+				if ($slug != $_GET[__('category','wp_theatre')]) {
 					$html.= '<a href="'.$url.'">'.$name.'</a>';
 				} else {
 					$html.= $name;
@@ -190,18 +163,53 @@ class WPT_Productions {
 			$html.= '</nav>';
 		}
 
-		$productions = $this->get();
-
 		$production_args = array();
 		if (isset($args['fields'])) { $production_args['fields'] = $args['fields']; }
 		if (isset($args['hide'])) { $production_args['hide'] = $args['hide']; }
 		if (isset($args['thumbnail'])) { $production_args['thumbnail'] = $args['thumbnail']; }
 
-		foreach ($productions as $production) {
-			$html.=$production->html($production_args);
+		switch ($args['groupby']) {
+			case 'season':
+				if (!in_array('season', $args['paginateby'])) {
+					$seasons = $this->seasons();
+					
+					foreach($seasons as  $slug=>$season) {
+						$filters['season'] = $slug;
+						$productions = $this->get($filters);
+						if (!empty($productions)) {
+							$html.= '<h3>'.$season->title().'</h3>';
+							foreach ($productions as $production) {
+								$html.=$production->html($production_args);							
+							}
+						}
+					}
+					break;					
+				}
+			case 'category':
+				if (!in_array('category', $args['paginateby'])) {
+					$categories = $this->categories();
+					foreach($categories as $slug=>$name) {
+						if ($category = get_category_by_slug($slug)) {
+				  			$filters['category'] = $category->term_id;				
+						}
+						$productions = $this->get($filters);
+						if (!empty($productions)) {
+							$html.= '<h3>'.$name.'</h3>';
+							foreach ($productions as $production) {
+								$html.=$production->html($production_args);							
+							}							
+						}
+					}
+					break;					
+				}
+			default:
+				$productions = $this->get($filters);
+				foreach ($productions as $production) {
+					$html.=$production->html($production_args);							
+				}
 		}
 
-		$html.= '</div>'; //.wp-theatre_events
+		$html = '<div class="'.implode(' ',$classes).'">'.$html.'</div>'; 
 		
 		return $html;
 	}
@@ -228,8 +236,10 @@ class WPT_Productions {
 	 * @return mixed An array of WPT_Production objects.
 	 */
 
-	function load() {
+	function load($filters=array()) {
 		global $wpdb;
+
+		$filters = wp_parse_args( $filters, $this->defaults() );
 
 		$querystr = "
 			SELECT productions.ID FROM $wpdb->posts AS productions
@@ -266,19 +276,19 @@ class WPT_Productions {
 				AND	productions.post_status= 'publish'
 		";
 
-		if ($this->filters['upcoming']) {
+		if ($filters['upcoming']) {
 			$querystr.= " AND wpt_startdate.meta_value > NOW()";
 		}
 
-		if ($this->filters['season']) {
-			$querystr.= " AND seasons.post_name='".$this->filters['season']."'";
+		if ($filters['season']) {
+			$querystr.= " AND seasons.post_name='".$filters['season']."'";
 		}
 		
-		if ($this->filters['category']) {
-			$querystr.= ' AND term_taxonomy_id = '.$this->filters['category'];
+		if ($filters['category']) {
+			$querystr.= ' AND term_taxonomy_id = '.$filters['category'];
 		}
 		
-		if (!$this->filters['season'] && !$this->filters['category']) {
+		if (!$filters['season'] && !$filters['category']) {
 			$querystr.= " OR sticky.meta_value = 'on'";
 		}
 
@@ -288,8 +298,8 @@ class WPT_Productions {
 		
 		$querystr.= "ORDER BY sticky.meta_value DESC, wpt_startdate.meta_value ASC";						
 
-		if ($this->filters['limit']) {
-			$querystr.= ' LIMIT 0,'.$this->filters['limit'];
+		if ($filters['limit']) {
+			$querystr.= ' LIMIT 0,'.$filters['limit'];
 		}
 
 		$posts = $wpdb->get_results($querystr, OBJECT);
@@ -302,13 +312,7 @@ class WPT_Productions {
 	}
 	
 	function seasons() {
-		$current_filters = $this->filters;
-		
-		// temporarily disable current month filter
-		$this->filters['season'] = false;
-
-		// get all event according to remaining filters
-		$productions = $this->get();		
+		$productions = $this->get();
 		$seasons = array();
 		foreach ($productions as $production) {
 			if ($production->season()) {
@@ -316,42 +320,11 @@ class WPT_Productions {
 				
 			}
 		}
-		
-		// reset current month filter
-		$this->filters = $current_filters;
-		
+		asort($seasons);
 		return $seasons;
 
 	}
 	
-	/**
-	 * All upcoming productions.
-	 *
-	 * Returns an array of all productions that have published events with a startdate in the future.
-	 * 
-	 * Example:
-	 *
-	 * $productions = $wp_theatre->productions->upcoming();
-	 *
-	 * @since 0.4
-	 *
-	 * @param array $args {
-	 *     An array of arguments. Optional.
-	 *
-	 *     @type int $wp_theatre_season Only return production that are linked to season <$wp_theatre_season>. Default <false>.
-	 *     @type bool $grouped Order the list by season, so it can be grouped later. Default <false>.
-	 *     @type int $limit Limit the list to $limit productions. Use <false> for an unlimited list. Default <false>.
-	 * }
-	 * @return mixed An array of WPT_Production objects.
-	 */
-
-	function upcoming() {
-		$current_filters = $this->filters;
-		$this->filters['upcoming'] = true;
-		$productions = $this->get();
-		$this->filters = $current_filters;
-		return $productions;
-	}
 		
 }
 ?>

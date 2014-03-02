@@ -110,7 +110,8 @@ class WPT_Frontend {
 			'hide' => null,
 			'upcoming' => true,
 			'past' => 'false',
-			'paginateby'=>null
+			'paginateby'=>array(),
+			'groupby'=>false
 		), $atts );
 				
 		$hide = explode(',',$atts['hide']);
@@ -153,7 +154,8 @@ class WPT_Frontend {
 			'grouped' => false,
 			'fields' => null,
 			'hide' => null,
-			'paginateby' => null,
+			'paginateby' => array(),
+			'groupby' => false,
 			'upcoming' => false,
 			'thumbnail' => true
 		), $atts );
@@ -248,13 +250,11 @@ class WPT_Frontend {
 				'thumbnail' => false,
 				'hide' => array('title'),
 				'fields' => $atts['fields'],
-				'hide' => $atts['hide']
+				'hide' => $atts['hide'],
+				'production' => get_the_ID()
 			);
-			
-			$wp_theatre->events->filters['upcoming'] = true;
-			$wp_theatre->events->filters['production'] = get_the_ID();
 		
-			return $wp_theatre->events->html_listing($args);
+			return $wp_theatre->events->html($args);
 		}
 	}
 	

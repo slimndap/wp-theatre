@@ -16,11 +16,11 @@
 			if ( ! empty( $title ) )
 				echo $args['before_title'] . $title . $args['after_title'];
 				
-			$events_args = array(
+			$filters = array(
 				'limit'=>$instance['limit']
 			);
 			
-			echo $wp_theatre->events->html_listing($events_args);
+			echo $wp_theatre->events($filters);
 			echo $args['after_widget'];
 
 		}
@@ -76,9 +76,11 @@
 			if ( ! empty( $title ) )
 				echo $args['before_title'] . $title . $args['after_title'];
 				
-			$wp_theatre->productions->filters['limit'] = $instance['limit'];
-			$wp_theatre->productions->filters['upcoming'] = false;
-			echo $wp_theatre->productions->html_listing();
+			$filters = array(
+				'limit' => $instance['limit'],
+				'upcoming' => true
+			);
+			echo $wp_theatre->productions->html($filters);
 			echo $args['after_widget'];
 
 		}
