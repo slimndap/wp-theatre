@@ -320,9 +320,8 @@ class WPT_Productions extends WPT_Listing {
 				
 			}
 		}
-		asort($seasons);
+		krsort($seasons);
 		return $seasons;
-
 	}
 	
 		

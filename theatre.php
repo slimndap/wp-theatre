@@ -137,11 +137,7 @@ class WP_Theatre {
 	}
 
 	private function get_productions($PostClass = false) {
-		return $this->productions->upcoming();
-	}
-
-	public function productions($PostClass = false) {
-		return $this->productions->upcoming(null, $PostClass);
+		return $this->productions();
 	}
 
 	function render_productions($args=array()) {
