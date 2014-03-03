@@ -20,7 +20,7 @@
 				'limit'=>$instance['limit']
 			);
 			
-			echo $wp_theatre->events($filters);
+			echo $wp_theatre->events->html($filters);
 			echo $args['after_widget'];
 
 		}

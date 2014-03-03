@@ -50,7 +50,7 @@ class WPT_Cart {
 			foreach($this->items as $item) {
 				$html.= '<div class="wpt_cart_item">';
 				$html.= '<div class="wpt_cart_item_amount">'.$item['amount'].'</div>';
-				$html.= $item['production']->render();
+				$html.= $item['production']->html();
 				$html.= '</div>'; // .wpt_cart_item				
 			}
 		}
