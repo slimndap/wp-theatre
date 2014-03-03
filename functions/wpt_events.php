@@ -5,14 +5,10 @@ class WPT_Events extends WPT_Listing {
 	 * An array of all categories with upcoming events.
 	 * @since 0.5
 	 */
-	function categories() {
-		$current_category = $this->filters['category'];
-		
-		// temporarily disable current month filter
-		$this->filters['category'] = false;
-
+	function categories($filters=array()) {
 		// get all events according to remaining filters
-		$events = $this->get();		
+		$filters['category'] = false;
+		$events = $this->get($filters);		
 		$categories = array();
 		foreach ($events as $event) {
 			$post_categories = wp_get_post_categories( $event->production()->ID );
@@ -23,8 +19,6 @@ class WPT_Events extends WPT_Listing {
 		}
 		asort($categories);
 		
-		// reset current month filter
-		$this->filters['category'] = $current_category;
 		return $categories;
 		
 	}
@@ -96,7 +90,7 @@ class WPT_Events extends WPT_Listing {
 		);
 
 		if (in_array('month',$args['paginateby'])) {
-			$months = $this->months();
+			$months = $this->months($filters);
 			
 			if (!empty($_GET[__('month','wp_theatre')])) {
 				$filters['month'] = $_GET[__('month','wp_theatre')];
@@ -120,12 +114,10 @@ class WPT_Events extends WPT_Listing {
 				$html.= '</span>';
 			}
 			$html.= '</nav>';
-			
-			$events_args[__('month','wp_theatre')] = $page;
 		}
 	
 		if (in_array('category',$args['paginateby'])) {
-			$categories = $this->categories();
+			$categories = $this->categories($filters);
 
 			if (!empty($_GET[__('category','wp_theatre')])) {
 				if ($category = get_category_by_slug($_GET[__('category','wp_theatre')])) {
@@ -226,6 +218,8 @@ class WPT_Events extends WPT_Listing {
 		
 		$filters = wp_parse_args( $filters, $this->defaults() );
 		
+		$value_parameters = array();
+		
 		$querystr = "
 			SELECT events.ID
 			FROM $wpdb->posts AS
@@ -249,24 +243,29 @@ class WPT_Events extends WPT_Listing {
 		}
 		
 		if ($filters['month']) {
-			$querystr.= ' AND event_date.meta_value LIKE "'.$filters['month'].'%"';
+			$querystr.= ' AND event_date.meta_value LIKE "%s"';
+			$value_parameters[] = $filters['month'].'%';
 		}
 		
 		if ($filters['category']) {
-			$querystr.= ' AND term_taxonomy_id = '.$filters['category'];
+			$querystr.= ' AND term_taxonomy_id = %d';
+			$value_parameters[] = $filters['category'];
 		}
 		
 		if ($filters['production']) {
-			$querystr.= ' AND productions.meta_value='.$filters['production'].'';			
+			$querystr.= ' AND productions.meta_value=%d';			
+			$value_parameters[] = $filters['production'];
 		}
 		$querystr.= ' GROUP BY events.ID';
 		$querystr.= ' ORDER BY event_date.meta_value';
 		
 		if ($filters['limit']) {
-			$querystr.= ' LIMIT 0,'.$filters['limit'];
+			$querystr.= ' LIMIT 0,%d';
+			$value_parameters[] = $filters['limit'];
 		}
 
-
+		$querystr = $wpdb->prepare($querystr,$value_parameters);
+		
 		$posts = $wpdb->get_results($querystr, OBJECT);
 
 		$events = array();
@@ -281,9 +280,10 @@ class WPT_Events extends WPT_Listing {
 	 * An array of all months with upcoming events.
 	 * @since 0.5
 	 */
-	function months() {
+	function months($filters=array()) {
 		// get all event according to remaining filters
-		$events = $this->get();		
+		$filters['month'] = false;
+		$events = $this->get($filters);		
 		$months = array();
 		foreach ($events as $event) {
 			$months[] = date('Y-m',$event->datetime());
@@ -315,32 +315,7 @@ class WPT_Events extends WPT_Listing {
 		$uniqid = uniqid();
 		
 		for($i=0;$i<count($events);$i++) {
-		
-			if ($i==0) {
-				$html.= '<span itemscope itemtype="http://schema.org/Event">';			
-				$html.= '<meta itemprop="name" id="'.WPT_Production::post_type_name.'_title_'.$uniqid.'" content="'.$events[$i]->production()->title().'" />';
-				$html.= '<meta itemprop="url" id="'.WPT_Production::post_type_name.'_permalink_'.$uniqid.'" content="'.$events[$i]->production()->permalink().'" />';
-				$html.= '<meta itemprop="image" id="'.WPT_Production::post_type_name.'_thumbnail_'.$uniqid.'" content="'.wp_get_attachment_url($events[$i]->production()->thumbnail()).'" />';
-			} else {
-				$html.= '<span itemscope itemtype="http://schema.org/Event" itemref="'.WPT_Production::post_type_name.'_title_'.$uniqid.' '.WPT_Production::post_type_name.'_permalink_'.$uniqid.' '.WPT_Production::post_type_name.'_thumbnail_'.$uniqid.'">';
-			}
-		
-			$html.= '<meta itemprop="startDate" content="'.date('c',$events[$i]->datetime()).'" />';
-			$html.= '<span class="'.WPT_Event::post_type_name.'_location" itemprop="location" itemscope itemtype="http://data-vocabulary.org/Organization">';
-			$venue = get_post_meta($events[$i]->ID,'venue',true);
-			$city = get_post_meta($events[$i]->ID,'city',true);
-			if ($venue!='') {
-				$html.= '<meta itemprop="name" content="'.$venue.'" />';
-			}
-			if ($city!='') {
-				$html.= '<span itemprop="address" itemscope itemtype="http://data-vocabulary.org/Address">';
-				$html.= '<meta itemprop="locality" content="'.$city.'" />';
-				$html.= '</span>';
-			}
-			$html.= '</span>'; // .location
-
-			$html.= '</span>'; // .event
-		
+			$html.= $events[$i]->meta();
 		}
 
 		return $html;

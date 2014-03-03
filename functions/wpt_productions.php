@@ -241,6 +241,8 @@ class WPT_Productions extends WPT_Listing {
 
 		$filters = wp_parse_args( $filters, $this->defaults() );
 
+		$value_parameters = array();
+
 		$querystr = "
 			SELECT productions.ID FROM $wpdb->posts AS productions
 			
@@ -277,15 +279,17 @@ class WPT_Productions extends WPT_Listing {
 		";
 
 		if ($filters['upcoming']) {
-			$querystr.= " AND wpt_startdate.meta_value > NOW()";
+			$querystr.= ' AND wpt_startdate.meta_value > NOW()';
 		}
 
 		if ($filters['season']) {
-			$querystr.= " AND seasons.post_name='".$filters['season']."'";
+			$querystr.= ' AND seasons.post_name=%s';
+			$value_parameters[] = $filters['season'];
 		}
 		
 		if ($filters['category']) {
-			$querystr.= ' AND term_taxonomy_id = '.$filters['category'];
+			$querystr.= ' AND term_taxonomy_id = %d';
+			$value_parameters[] = $filters['category'];
 		}
 		
 		if (!$filters['season'] && !$filters['category']) {
@@ -299,8 +303,11 @@ class WPT_Productions extends WPT_Listing {
 		$querystr.= "ORDER BY sticky.meta_value DESC, wpt_startdate.meta_value ASC";						
 
 		if ($filters['limit']) {
-			$querystr.= ' LIMIT 0,'.$filters['limit'];
+			$querystr.= ' LIMIT 0,%d';
+			$value_parameters[] = $filters['limit'];
 		}
+
+		$querystr = $wpdb->prepare($querystr,$value_parameters);
 
 		$posts = $wpdb->get_results($querystr, OBJECT);
 		

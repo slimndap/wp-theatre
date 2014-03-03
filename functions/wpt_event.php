@@ -68,14 +68,12 @@ class WPT_Event {
 	 *
 	 * @param array $args {
 	 *     @type bool $html Return HTML? Default <false>.
-	 *     @type bool $meta Return as invisible meta tag? Default <false>.
 	 * }
 	 * @return string text or HTML.
 	 */
 	function date($args=array()) {
 		$defaults = array(
-			'html' => false,
-			'meta' => false
+			'html' => false
 		);
 		$args = wp_parse_args( $args, $defaults );
 
@@ -99,7 +97,6 @@ class WPT_Event {
 	 *
 	 * @param array $args {
 	 *     @type bool $html Return HTML? Default <false>.
-	 *     @type bool $meta Return as invisible meta tag? Default <false>.
 	 * }
 	 *
 	 * @see WPT_Event::date().
@@ -109,8 +106,7 @@ class WPT_Event {
 	 */
 	function datetime($args=array()) {
 		$defaults = array(
-			'html' => false,
-			'meta' => false
+			'html' => false
 		);
 		$args = wp_parse_args( $args, $defaults );
 
@@ -120,15 +116,11 @@ class WPT_Event {
 		
 		if ($args['html']) {
 			$html = '';
-			if ($args['meta']) {
-				$html.= '<meta itemprop="startDate" content="'.date_i18n('c',$this->datetime(), true).'" />';
-			} else {
-				$html.= '<time class="'.self::post_type_name.'_datetime" itemprop="startDate" datetime="'.date_i18n('c',$this->datetime(),true).'">';
-				$html.= $this->date($args);
-				$html.= $this->time($args);
-				$html.= '</time>';
-			}
-			return apply_filters('wpt_event_datetime_html', $html, $this);				
+			$html.= '<time class="'.self::post_type_name.'_datetime">';
+			$html.= $this->date($args);
+			$html.= $this->time($args);
+			$html.= '</time>';
+			return $html;
 		} else {
 			return $this->datetime;				
 		}
@@ -143,7 +135,6 @@ class WPT_Event {
 	 *
 	 * @param array $args {
 	 *     @type bool $html Return HTML? Default <false>.
-	 *     @type bool $meta Return as invisible meta tag? Default <false>.
 	 * }
 	 *
 	 * @see WPT_Event::venue().
@@ -154,7 +145,6 @@ class WPT_Event {
 	function location($args=array()) {
 		$defaults = array(
 			'html' => false,
-			'meta' => false
 		);
 		$args = wp_parse_args( $args, $defaults );
 
@@ -177,33 +167,58 @@ class WPT_Event {
 			$venue = $this->venue();
 			$city = $this->city();
 			$html = '';
-			if ($args['meta']) {
-				if (!empty($venue)) {
-					$html.= '<meta itemprop="name" content="'.$this->venue().'" />';
-				}
-				if (!empty($city)) {
-					$html.= '<span itemprop="address" itemscope itemtype="http://data-vocabulary.org/Address">';
-					$html.= '<meta itemprop="locality" content="'.$this->city().'" />';
-					$html.= '</span>';
-				}
-			} else {
-				$html.= '<div class="'.self::post_type_name.'_location" itemprop="location" itemscope itemtype="http://data-vocabulary.org/Organization">';
-				if (!empty($venue)) {
-					$html.= '<div class="'.self::post_type_name.'_venue" itemprop="name">'.$this->venue().'</div>';
-				}
-				if (!empty($city)) {
-					$html.= '<div class="'.self::post_type_name.'_city" itemprop="address" itemscope itemtype="http://data-vocabulary.org/Address">';
-					$html.= '<span itemprop="locality">'.$this->city().'</span>';
-					$html.= '</div>';
-				}
-				$html.= '</div>'; // .location
+			$html.= '<div class="'.self::post_type_name.'_location">';
+			if (!empty($venue)) {
+				$html.= '<div class="'.self::post_type_name.'_venue">'.$this->venue().'</div>';
 			}
+			if (!empty($city)) {
+				$html.= '<div class="'.self::post_type_name.'_city" >'.$this->city().'</div>';
+			}
+			$html.= '</div>'; // .location
 			return apply_filters('wpt_event_location_html', $html, $this);
 		} else {
 			return $this->location;			
 		}
 	}
 	
+	function meta() {
+		$html = '';
+		
+		$html.= '<span itemscope itemtype="http://data-vocabulary.org/Event">';	
+
+		// image
+		// Thumbnail
+		if ($this->production()->thumbnail()!='') {
+			$html.= '<meta itemprop="image" content="'.wp_get_attachment_url($this->production()->thumbnail()).'" />';
+		}
+
+		// startDate
+		$html.= '<meta itemprop="startDate" content="'.date('c',$this->datetime()).'" />';
+		
+		// summary
+		$html.= '<meta itemprop="summary" content="'.$this->production()->title().'" />';
+		
+		// url
+		$html.= '<meta itemprop="url" content="'.get_permalink($this->production()->ID).'" />';
+
+		//location
+		$html.= '<span itemprop="location" itemscope itemtype="http://data-vocabulary.org/Organization">';
+		if ($this->venue()!='') {
+			$html.= '<meta itemprop="name" content="'.$this->venue().'" />';
+		}
+		if ($this->city()!='') {
+			$html.= '<span itemprop="address" itemscope itemtype="http://data-vocabulary.org/Address">';
+			$html.= '<meta itemprop="locality" content="'.$this->city().'" />';
+			$html.= '</span>';
+		}
+		
+		$html.= '</span>'; // .location
+
+		$html.= '</span>';
+		
+		return $html;
+	}
+
 	/**
 	 * Event prices.
 	 * 
@@ -293,7 +308,6 @@ class WPT_Event {
 	function remark($args=array()) {
 		$defaults = array(
 			'html' => false,
-			'meta' => false,
 			'text' => false
 		);
 
@@ -399,14 +413,12 @@ class WPT_Event {
 	 *
 	 * @param array $args {
 	 *     @type bool $html Return HTML? Default <false>.
-	 *     @type bool $meta Return as invisible meta tag? Default <false>.
 	 * }
 	 * @return string text or HTML.
 	 */
 	function time($args=array()) {
 		$defaults = array(
-			'html' => false,
-			'meta' => false
+			'html' => false
 		);
 		$args = wp_parse_args( $args, $defaults );
 
@@ -443,7 +455,6 @@ class WPT_Event {
 	 * @param array $args {
 	 *
 	 *	   @type array $fields Fields to include. Default <array('title','remark', 'datetime','location')>.
-	 *     @type array $hide Fields that should be included as invisible meta elements. Default <array()>
 	 *     @type bool $thumbnail Include thumbnail? Default <true>.
 	 *     @type bool $tickets Include tickets button? Default <true>.
 	 * }
@@ -467,8 +478,7 @@ class WPT_Event {
 		$thumbnail = false;
 		if ($args['thumbnail']) {
 			$thumbnail_args = array(
-				'html'=>true,
-				'meta'=>in_array('thumbnail', $args['hide'])
+				'html'=>true
 			);
 			$thumbnail = $this->production()->thumbnail($thumbnail_args);
 		}
@@ -482,8 +492,7 @@ class WPT_Event {
 
 		foreach ($args['fields'] as $field) {
 			$field_args = array(
-				'html'=>true,
-				'meta'=>in_array($field, $args['hide'])				
+				'html'=>true
 			);
 			switch ($field) {
 				case 'datetime':
@@ -506,8 +515,7 @@ class WPT_Event {
 		$tickets = false;
 		if ($args['tickets']) {
 			$tickets_args = array(
-				'html'=>true,
-				'meta'=>in_array('thumbnail', $args['hide'])
+				'html'=>true
 			);
 			$tickets = $this->tickets($tickets_args);
 		}
@@ -517,8 +525,10 @@ class WPT_Event {
 			$html.= $tickets;
 		}
 
+		$html.= $this->meta();
+
 		// Wrapper
-		$html = '<div class="'.implode(' ',$classes).'" itemscope itemtype="http://data-vocabulary.org/Event">'.$html.'</div>';
+		$html = '<div class="'.implode(' ',$classes).'">'.$html.'</div>';
 		
 		return apply_filters('wpt_event_html',$html, $this);		
 	}
