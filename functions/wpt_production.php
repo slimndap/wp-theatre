@@ -3,14 +3,10 @@ class WPT_Production {
 
 	const post_type_name = 'wp_theatre_prod';
 	
-	function __construct($ID=false, $PostClass=false) {
-		$this->PostClass = $PostClass;
-	
+	function __construct($ID=false) {	
 		if ($ID instanceof WP_Post) {
 			// $ID is a WP_Post object
-			if (!$PostClass) {
-				$this->post = $ID;
-			}
+			$this->post = $ID;
 			$ID = $ID->ID;
 		}
 
@@ -560,11 +556,7 @@ class WPT_Production {
 
 	private function get_post() {
 		if (!isset($this->post)) {
-			if ($this->PostClass) {
-				$this->post = new $this->PostClass($this->ID);				
-			} else {
-				$this->post = get_post($this->ID);
-			}
+			$this->post = get_post($this->ID);
 		}
 		return $this->post;
 	}

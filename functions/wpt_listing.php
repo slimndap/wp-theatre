@@ -13,11 +13,16 @@ class WPT_Listing {
 	}
 
 	function get($filters=array()) {
-		$hash = md5(serialize($filters));
-		if (empty($this->listing[$hash])) {
-			$this->listing[$hash] = $this->load($filters);
+		$filters = wp_parse_args( $filters, $this->defaults() );
+
+		$key = 'WPT_Listing_'.md5(serialize($filters));
+		$listing = wp_cache_get($key,'wp_theatre');
+		if ( false === $listing ) {
+			$listing = $this->load($filters);
+			wp_cache_set($key,$listing,'wp_theatre');
+		} else {
 		}
-		return $this->listing[$hash];				
+		return $listing;				
 	}
 	
 	public function html($args=array()) {

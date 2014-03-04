@@ -263,13 +263,22 @@ class WPT_Events extends WPT_Listing {
 			$value_parameters[] = $filters['limit'];
 		}
 
+		$querystr.= "\n# Filter: ".http_build_query($filters);
 		$querystr = $wpdb->prepare($querystr,$value_parameters);
 		
 		$posts = $wpdb->get_results($querystr, OBJECT);
 
 		$events = array();
 		for ($i=0;$i<count($posts);$i++) {
-			$events[] = new WPT_Event($posts[$i]->ID);
+			$key = $posts[$i]->ID;
+			$event = wp_cache_get($key,'wp_theatre');
+			if ( false === $event ) {
+				$event = new WPT_Event($posts[$i]->ID);
+				wp_cache_set($key,$event,'wp_theatre');
+			} else {
+				echo '<!-- cache '.$key.'-->';
+			}
+			$events[] = $event;
 		}
 		
 		return $events;

@@ -316,7 +316,13 @@ class WPT_Productions extends WPT_Listing {
 		
 		$productions = array();
 		for ($i=0;$i<count($posts);$i++) {
-			$productions[] = new WPT_Production($posts[$i]->ID);
+			$key = $posts[$i]->ID;
+			$production = wp_cache_get($key,'wp_theatre');
+			if ( false === $production ) {
+				$production = new WPT_Production($posts[$i]->ID);
+				wp_cache_set($key,$production,'wp_theatre');
+			}
+			$productions[] = $production;
 		}
 		return $productions;
 	}
