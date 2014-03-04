@@ -73,18 +73,25 @@ class WPT_Event {
 	 */
 	function date($args=array()) {
 		$defaults = array(
-			'html' => false
+			'html' => false,
+			'start' => true
 		);
 		$args = wp_parse_args( $args, $defaults );
 
-		if (!isset($this->date)) {
-			$this->date = apply_filters('wpt_event_date',date_i18n(get_option('date_format'),$this->datetime()),$this);
+		if ($args['start']) {
+			$field = 'event_date';
+		} else {
+			$field = 'enddate';
+		}
+		if (!isset($this->date[$field])) {
+			$datetime_args = array('start'=>$args['start']);
+			$this->date[$field] = apply_filters('wpt_event_date',date_i18n(get_option('date_format'),$this->datetime($datetime_args)),$this);
 		}	
 		if ($args['html']) {
-			$html= '<span class="'.self::post_type_name.'_date">'.$this->date().'</span>';
+			$html= '<span class="'.self::post_type_name.'_date">'.$this->date[$field].'</span>';
 			return apply_filters('wpt_event_date_html', $html, $this);
 		} else {
-			return $this->date;			
+			return $this->date[$field];			
 		}
 	}
 	
@@ -106,12 +113,19 @@ class WPT_Event {
 	 */
 	function datetime($args=array()) {
 		$defaults = array(
-			'html' => false
+			'html' => false,
+			'start' => true
 		);
 		$args = wp_parse_args( $args, $defaults );
 
-		if (!isset($this->datetime)) {
-			$this->datetime = apply_filters('wpt_event_datetime',date_i18n('U',strtotime($this->post()->event_date),true), $this);
+		if ($args['start']) {
+			$field = 'event_date';
+		} else {
+			$field = 'enddate';
+		}
+
+		if (!isset($this->datetime[$field])) {
+			$this->datetime[$field] = apply_filters('wpt_event_datetime',date_i18n('U',strtotime($this->post()->{$field}),true), $this);
 		}
 		
 		if ($args['html']) {
@@ -122,8 +136,26 @@ class WPT_Event {
 			$html.= '</time>';
 			return $html;
 		} else {
-			return $this->datetime;				
+			return $this->datetime[$field];				
 		}
+	}
+	
+	function duration($args=array()) {
+		$defaults = array(
+			'html' => false
+		);
+		$args = wp_parse_args( $args, $defaults );
+		if (!isset($this->duration)) {
+			$this->duration = apply_filters('wpt_event_duration',human_time_diff(strtotime($this->post()->enddate), strtotime($this->post()->event_date)),$this);
+		}
+		if ($args['html']) {
+			$html = '';
+			$html.= '<div class="'.self::post_type_name.'_duration">'.$this->duration.'</div>';
+			return $html;
+		} else {
+			return $this->duration;				
+		}
+		return $this->duration;		
 	}
 	
 	/**
@@ -418,18 +450,26 @@ class WPT_Event {
 	 */
 	function time($args=array()) {
 		$defaults = array(
-			'html' => false
+			'html' => false,
+			'start' => true
 		);
 		$args = wp_parse_args( $args, $defaults );
 
-		if (!isset($this->time)) {
-			$this->time = apply_filters('wpt_event_time',date_i18n(get_option('time_format'),$this->datetime()),$this);
+		if ($args['start']) {
+			$field = 'event_date';
+		} else {
+			$field = 'enddate';
+		}
+		
+		if (!isset($this->time[$field])) {
+			$datetime_args = array('start'=>$args['start']);
+			$this->time[$field] = apply_filters('wpt_event_time',date_i18n(get_option('time_format'),$this->datetime($datetime_args)),$this);
 		}	
 		if ($args['html']) {
-			$html= '<div class="'.self::post_type_name.'_time">'.$this->time().'</div>';
+			$html= '<div class="'.self::post_type_name.'_time">'.$this->time[$field].'</div>';
 			return apply_filters('wpt_event_time_html', $html, $this);
 		} else {
-			return $this->time;			
+			return $this->time[$field];			
 		}
 	}
 		
@@ -462,7 +502,7 @@ class WPT_Event {
 	 */
 	function html($args=array()) {
 		$defaults = array(
-			'fields' => array('title','remark', 'datetime','location'),
+			'fields' => array('title','remark', 'datetime','location','duration'),
 			'hide' => array(),
 			'thumbnail' => true,
 			'tickets' => true
@@ -506,6 +546,9 @@ class WPT_Event {
 					break;
 				case 'remark':
 					$html.= $this->remark($field_args);
+					break;
+				case 'duration':
+					$html.= $this->duration($field_args);
 					break;
 			}
 		}

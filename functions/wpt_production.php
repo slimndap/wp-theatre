@@ -126,8 +126,8 @@ class WPT_Production {
 			$first_datetimestamp = $last_datetimestamp = '';
 			
 			$upcoming = $this->upcoming();
-			$events = $this->events();
 			if (is_array($upcoming) && (count($upcoming)>0)) {
+				$events = $this->events();
 				$first = $events[0];
 				$next = $upcoming[0];
 				$last = $events[count($events)-1];

@@ -233,17 +233,18 @@ class WPT_Frontend {
 	
 	function wpt_production_events($atts, $content=null) {
 		global $wp_theatre;
-
 		$atts = shortcode_atts( array(
 			'fields' => null,
 			'hide' => 'title',
 		), $atts );
 				
-		$hide = explode(',',$atts['hide']);
-		for ($i=0;$i<count($hide);$i++) {
-			$hide[$i] = trim($hide[$i]);
+		if (!empty($atts['fields'])) {
+			$fields = explode(',',$atts['fields']);
+			for ($i=0;$i<count($fields);$i++) {
+				$fields[$i] = trim($fields[$i]);
+			}
+			$atts['fields'] = $fields;
 		}
-		$atts['hide'] = $hide;
 
 		if (is_singular(WPT_Production::post_type_name)) {
 			$args = array(
@@ -253,7 +254,6 @@ class WPT_Frontend {
 				'hide' => $atts['hide'],
 				'production' => get_the_ID()
 			);
-		
 			return $wp_theatre->events->html($args);
 		}
 	}

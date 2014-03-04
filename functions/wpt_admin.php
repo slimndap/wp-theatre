@@ -342,10 +342,18 @@ class WPT_Admin {
 		echo '</tr>';
 		
 		echo '<tr class="form-field">';
-		echo '<th><label>'.__('Event date','wp_theatre').'</label></th>';	
+		echo '<th><label>'.__('Start date','wp_theatre').'</label></th>';	
 		echo '<td>';
 		echo '<input type="text" class="wp_theatre_datepicker" name="event_date"';
         echo ' value="' . get_post_meta($event->ID,'event_date',true) . '" />';
+ 		echo '</td>';
+		echo '</tr>';
+       
+		echo '<tr class="form-field">';
+		echo '<th><label>'.__('End date','wp_theatre').'</label></th>';	
+		echo '<td>';
+		echo '<input type="text" class="wp_theatre_datepicker" name="enddate"';
+        echo ' value="' . get_post_meta($event->ID,'enddate',true) . '" />';
  		echo '</td>';
 		echo '</tr>';
        
@@ -499,7 +507,13 @@ class WPT_Admin {
 
 		// Sanitize the user input.
 		$production = sanitize_text_field( $_POST[WPT_Production::post_type_name] );
-		$event_date = sanitize_text_field( $_POST['event_date'] );
+		
+		$event_date = strtotime($_POST['event_date']);
+		$enddate = strtotime($_POST['enddate']);
+		if ($enddate<$event_date) {
+			$enddate = $event_date;
+		}
+
 		$venue = sanitize_text_field( $_POST['venue'] );
 		$city = sanitize_text_field( $_POST['city'] );
 		$remark = sanitize_text_field( $_POST['remark'] );
@@ -509,7 +523,8 @@ class WPT_Admin {
 		
 		// Update the meta field.
 		update_post_meta( $post_id, WPT_Production::post_type_name, $production );
-		update_post_meta( $post_id, 'event_date', $event_date );
+		update_post_meta( $post_id, 'event_date', date('Y-m-d H:i:s',$event_date) );
+		update_post_meta( $post_id, 'enddate', date('Y-m-d H:i:s',$enddate) );
 		update_post_meta( $post_id, 'venue', $venue );
 		update_post_meta( $post_id, 'city', $city );
 		update_post_meta( $post_id, 'remark', $remark );
