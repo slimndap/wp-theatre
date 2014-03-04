@@ -265,7 +265,6 @@ class WPT_Events extends WPT_Listing {
 
 		$querystr = $wpdb->prepare($querystr,$value_parameters);
 		
-		echo '<!-- '.$querystr.'-->';
 		$posts = $wpdb->get_results($querystr, OBJECT);
 
 		$events = array();
