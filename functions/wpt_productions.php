@@ -271,8 +271,11 @@ class WPT_Productions extends WPT_Listing {
 					AND sticky.meta_value = 'on'
 				)
 			LEFT OUTER JOIN 
-				$wpdb->term_relationships AS categories ON 
-					productions.ID = categories.object_id
+				$wpdb->term_relationships AS term_relationships ON 
+					productions.ID = term_relationships.object_id
+			LEFT OUTER JOIN 
+				$wpdb->term_taxonomy AS categories ON 
+					term_relationships.term_taxonomy_id = categories.term_taxonomy_id
 			WHERE
 				productions.post_type='".WPT_Production::post_type_name."'
 				AND	productions.post_status= 'publish'
@@ -288,7 +291,7 @@ class WPT_Productions extends WPT_Listing {
 		}
 		
 		if ($filters['category']) {
-			$querystr.= ' AND term_taxonomy_id = %d';
+			$querystr.= ' AND term_id = %d';
 			$value_parameters[] = $filters['category'];
 		}
 		

@@ -155,7 +155,6 @@ class WPT_Events extends WPT_Listing {
 
 		$event_args = array();
 		if (isset($args['fields'])) { $event_args['fields'] = $args['fields']; }
-		if (isset($args['hide'])) { $event_args['hide'] = $args['hide']; }
 		if (isset($args['thumbnail'])) { $event_args['thumbnail'] = $args['thumbnail']; }
 		if (isset($args['tickets'])) { $event_args['tickets'] = $args['tickets']; }
 
@@ -163,7 +162,7 @@ class WPT_Events extends WPT_Listing {
 		switch ($args['groupby']) {
 			case 'month':
 				if (!in_array('month', $args['paginateby'])) {
-					$months = $this->months();
+					$months = $this->months($filters);
 					foreach($months as $month) {
 						$filters['month'] = $month;
 						$events = $this->get($filters);
@@ -178,7 +177,7 @@ class WPT_Events extends WPT_Listing {
 				}
 			case 'category':
 				if (!in_array('category', $args['paginateby'])) {
-					$categories = $this->categories();
+					$categories = $this->categories($filters);
 					foreach($categories as $slug=>$name) {
 						if ($category = get_category_by_slug($slug)) {
 				  			$filters['category'] = $category->term_id;				
@@ -226,7 +225,8 @@ class WPT_Events extends WPT_Listing {
 			events
 			
 			JOIN $wpdb->postmeta AS productions on events.ID = productions.post_ID
-			LEFT OUTER JOIN $wpdb->term_relationships AS categories on productions.meta_value = categories.object_id
+			LEFT OUTER JOIN $wpdb->term_relationships AS term_relationships on productions.meta_value = term_relationships.object_id
+			LEFT OUTER JOIN $wpdb->term_taxonomy AS categories on term_relationships.term_taxonomy_id = categories.term_taxonomy_id
 			JOIN $wpdb->postmeta AS event_date on events.ID = event_date.post_ID
 			
 			WHERE 
@@ -248,7 +248,7 @@ class WPT_Events extends WPT_Listing {
 		}
 		
 		if ($filters['category']) {
-			$querystr.= ' AND term_taxonomy_id = %d';
+			$querystr.= ' AND categories.term_id = %d';
 			$value_parameters[] = $filters['category'];
 		}
 		
@@ -266,6 +266,7 @@ class WPT_Events extends WPT_Listing {
 
 		$querystr = $wpdb->prepare($querystr,$value_parameters);
 		
+		echo '<!-- '.$querystr.'-->';
 		$posts = $wpdb->get_results($querystr, OBJECT);
 
 		$events = array();
