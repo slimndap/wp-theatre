@@ -140,8 +140,7 @@ class WPT_Events extends WPT_Listing {
 				$url = remove_query_arg(__('category','wp_theatre'));
 				$url = add_query_arg( __('category','wp_theatre'), $slug , $url);
 				$html.= '<span>';
-				
-				if ($slug != $_GET[__('category','wp_theatre')]) {
+				if (empty($_GET[__('category','wp_theatre')]) || $slug != $_GET[__('category','wp_theatre')]) {
 					$html.= '<a href="'.$url.'">'.$name.'</a>';
 				} else {
 					$html.= $name;
