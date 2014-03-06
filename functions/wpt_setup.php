@@ -138,6 +138,7 @@ function wp_ajax_save_bulk_edit_production() {
 			// Update status of connected Events
 			$events = $wpt_admin->get_events($post_id);
 			foreach($events as $event) {
+				// @todo - check if $_POST[ 'post_status' ] is valid, otherwise wp_update_post
 				$post = array(
 					'ID'=>$event->ID,
 					'post_status'=>$_POST[ 'post_status' ]

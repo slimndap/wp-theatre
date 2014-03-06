@@ -75,15 +75,6 @@
       "outputAbbreviatedPath" : "No Output Path",
       "fileType" : 2048
     },
-    "\/functions\/wpt_setup.php" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/functions\/wpt_setup.php",
-      "outputAbbreviatedPath" : "No Output Path",
-      "fileType" : 2048
-    },
     "\/css\/admin.css" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 1,
@@ -92,6 +83,15 @@
       "inputAbbreviatedPath" : "\/css\/admin.css",
       "outputAbbreviatedPath" : "\/No Output Path",
       "fileType" : 16
+    },
+    "\/functions\/wpt_setup.php" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/functions\/wpt_setup.php",
+      "outputAbbreviatedPath" : "No Output Path",
+      "fileType" : 2048
     },
     "\/raw\/less\/admin\/production.less" : {
       "ieCompatibility" : 1,
