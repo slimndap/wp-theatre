@@ -265,25 +265,17 @@ class WPT_Admin {
 		global $wp_theatre;
 		$production = new WPT_Production(get_the_id());
 		
-		$wp_theatre->events->args['production'] = $production->ID;
 		
 		if (get_post_status($production->ID) == 'auto-draft') {
 			echo __('You need to save this production before you can add events.','wp_theatre');
 		} else {
-			$events = $production->upcoming();
+			$args = array(
+				'production' => $production->ID,
+				'status' => array('publish','draft')
+			);
+		
+			$events = $wp_theatre->events($args);
 			if (count($events)>0) {
-				echo '<ul>';
-				foreach ($events as $event) {
-					echo '<li>';
-					echo $this->render_event($event);
-					echo '</li>';
-					
-				}
-				echo '</ul>';	
-			}	
-			$events = $production->past();
-			if (count($events)>0) {
-				echo '<h4>'.__('Past events','wp_theatre').'</h4>';
 				echo '<ul>';
 				foreach ($events as $event) {
 					echo '<li>';

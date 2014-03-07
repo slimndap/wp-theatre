@@ -30,7 +30,8 @@ class WPT_Events extends WPT_Listing {
 			'past' => false,
 			'month' => false,
 			'category' => false,
-			'production' => false
+			'production' => false,
+			'status' => array('publish')
 		);
 	}
 	
@@ -215,7 +216,6 @@ class WPT_Events extends WPT_Listing {
 		global $wpdb;
 		
 		$filters = wp_parse_args( $filters, $this->defaults() );
-		
 		$value_parameters = array();
 		
 		$querystr = "
@@ -230,7 +230,7 @@ class WPT_Events extends WPT_Listing {
 			
 			WHERE 
 			events.post_type = '".WPT_Event::post_type_name."'
-			AND events.post_status='publish'
+			AND events.post_status IN ("."'" . implode("','", $filters['status']) . "')
 			AND productions.meta_key = '".WPT_Production::post_type_name."'
 			AND event_date.meta_key = 'event_date'
 		";
@@ -264,7 +264,7 @@ class WPT_Events extends WPT_Listing {
 		}
 
 		$querystr = $wpdb->prepare($querystr,$value_parameters);
-		
+
 		$posts = $wpdb->get_results($querystr, OBJECT);
 
 		$events = array();
@@ -298,7 +298,7 @@ class WPT_Events extends WPT_Listing {
 		$defaults = array(
 			'paged' => false,
 			'grouped' => false,
-			'production' => false
+			'production' => false,
 		);
 		$args = wp_parse_args( $args, $defaults );
 
