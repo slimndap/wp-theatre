@@ -1,8 +1,8 @@
 === Theatre ===
 Contributors: slimndap
-Tags: theatre, stage, venue, events, shows, concerts, tickets, ticketing, sports, performances, calendar, workshops
+Tags: theatre, stage, venue, events, shows, concerts, tickets, ticketing, sports, performances, calendar, workshops, theater
 Requires at least: 3.5
-Tested up to: 3.8
+Tested up to: 3.8.1
 Stable tag: trunk
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -142,4 +142,8 @@ Make sure that you checked the 'Enable built-in Theatre stylesheet'-option in th
 = 0.1 =
 * Basic version of the plugin.
 
+== Upgrade Notice ==
 
+= 0.5.3 =
+
+* v0.5.3 fixes a bug where the status of events got lost after bulk editing productions.

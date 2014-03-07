@@ -134,16 +134,19 @@ function wp_ajax_save_bulk_edit_production() {
 
 	$post_ids = ( ! empty( $_POST[ 'post_ids' ] ) ) ? $_POST[ 'post_ids' ] : array();
 	if ( ! empty( $post_ids ) && is_array( $post_ids ) ) {
-		foreach( $post_ids as $post_id ) {
-			// Update status of connected Events
-			$events = $wpt_admin->get_events($post_id);
-			foreach($events as $event) {
-				// @todo - check if $_POST[ 'post_status' ] is valid, otherwise wp_update_post
-				$post = array(
-					'ID'=>$event->ID,
-					'post_status'=>$_POST[ 'post_status' ]
-				);
-				wp_update_post($post);
+		if ($_POST['post_status']!=-1) {
+			// Status of production is updated			
+			foreach( $post_ids as $post_id ) {
+				// Update status of connected Events
+				$events = $wpt_admin->get_events($post_id);
+				foreach($events as $event) {
+					
+					$post = array(
+						'ID'=>$event->ID,
+						'post_status'=>$_POST[ 'post_status' ]
+					);
+					wp_update_post($post);
+				}
 			}
 		}
 	}
