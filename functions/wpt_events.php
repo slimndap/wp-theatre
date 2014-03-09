@@ -216,6 +216,7 @@ class WPT_Events extends WPT_Listing {
 		global $wpdb;
 		
 		$filters = wp_parse_args( $filters, $this->defaults() );
+		
 		$value_parameters = array();
 		
 		$querystr = "
@@ -263,7 +264,6 @@ class WPT_Events extends WPT_Listing {
 			$value_parameters[] = $filters['limit'];
 		}
 
-		$querystr.= "\n# Filter: ".http_build_query($filters);
 		$querystr = $wpdb->prepare($querystr,$value_parameters);
 
 		$posts = $wpdb->get_results($querystr, OBJECT);

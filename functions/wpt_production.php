@@ -24,23 +24,6 @@ class WPT_Production {
 		return get_post_type_object(self::post_type_name);
 	}
 
-
-	
-
-
-	function past_events() {
-		$events = $this->get_events();
-		
-		$past_events = array();
-		$now = time();
-		foreach ($events as $event)	{
-			if (strtotime($event->post()->event_date) < $now) {
-				$past_events[] = $event;
-			}
-		}
-		return $past_events;		
-	}
-
 	/**
 	 * Production cites.
 	 * 

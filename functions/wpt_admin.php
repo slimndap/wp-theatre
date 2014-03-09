@@ -18,8 +18,12 @@ class WPT_Admin {
 			add_filter('manage_wp_theatre_event_posts_columns', array($this,'manage_wp_theatre_event_posts_columns'), 10, 2);
 			add_action('manage_wp_theatre_prod_posts_custom_column', array($this,'manage_wp_theatre_prod_posts_custom_column'), 10, 2);
 			add_action('manage_wp_theatre_event_posts_custom_column', array($this,'manage_wp_theatre_event_posts_custom_column'), 10, 2);	
+			add_filter('manage_edit-wp_theatre_prod_sortable_columns', array($this,'manage_edit_wp_theatre_prod_sortable_columns') );
+			
+			add_filter( 'posts_join', array($this,'posts_join'), 10 ,2);
+			add_filter( 'posts_orderby', array($this,'posts_orderby'), 10 ,2);
 		}
-
+		
 		// More hooks (always load, necessary for bulk editing through AJAX)
 		add_action( 'bulk_edit_custom_box', array($this,'bulk_edit_custom_box'), 10, 2 );
 
@@ -708,7 +712,6 @@ class WPT_Admin {
 			$new_columns[$key] = $value;
 			if ($key == 'title') {
 				$new_columns['dates'] = __('Dates','wp_theatre');
-				$new_columns['cities'] = __('Cities','wp_theatre');
 			}
 		}
 
@@ -730,9 +733,7 @@ class WPT_Admin {
 		$production = new WPT_Production($post_id);
 		switch($column_name) {
 			case 'dates':
-				echo $production->dates();
-				break;
-			case 'cities':
+				echo $production->dates().'<br />';
 				echo $production->cities();
 				break;
 		}
@@ -751,6 +752,11 @@ class WPT_Admin {
 		}
 		
 	}
+
+    function manage_edit_wp_theatre_prod_sortable_columns($columns) {
+		$columns['dates'] = 'dates';
+		return $columns;
+    }
 
 	function quick_edit_custom_box($column_name, $post_type) {
 	    static $printNonce = TRUE;
@@ -938,6 +944,33 @@ class WPT_Admin {
 		echo '<p class="description">'.__('Leave unchecked if this causes conflicts with SEO plugins.','wp_theatre').'</p>';
 		
 	}
+	
+	function posts_join($join, $query) {
+		global $wpdb;
+		if (
+			isset( $query->query_vars['orderby'] ) && 
+			'dates' == $query->query_vars['orderby'] &&
+			is_admin() &&
+			is_post_type_archive(WPT_Production::post_type_name)
+		) {
+			$join.= " LEFT JOIN $wpdb->postmeta AS event ON event.meta_value = wp_posts.ID";
+			$join.= " LEFT JOIN $wpdb->postmeta AS startdate ON startdate.post_id = event.post_id AND startdate.meta_key='event_date' AND startdate.meta_value > NOW()";
+			return $join;
+		}
+	}
+
+	function posts_orderby($orderby, $query) {
+		if (
+			isset( $query->query_vars['orderby'] ) && 
+			'dates' == $query->query_vars['orderby'] &&
+			is_admin() &&
+			is_post_type_archive(WPT_Production::post_type_name)
+		) {
+			$orderby= "startdate.meta_value ".$query->query_vars['order'];
+			return $orderby;
+		}
+	}
+
     	
 }
 
