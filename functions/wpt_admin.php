@@ -709,9 +709,16 @@ class WPT_Admin {
 	function manage_wp_theatre_prod_posts_columns($columns) {
 		$new_columns = array();
 		foreach($columns as $key => $value) {
-			$new_columns[$key] = $value;
-			if ($key == 'title') {
-				$new_columns['dates'] = __('Dates','wp_theatre');
+			switch ($key) {
+				case 'date' :
+					break;
+				case 'title' :
+					$new_columns['thumbnail'] = __('Thumbnail','wp_theatre');
+					$new_columns[$key] = $value;			
+					$new_columns['dates'] = __('Dates','wp_theatre');
+					break;
+				default :
+					$new_columns[$key] = $value;								
 			}
 		}
 
@@ -732,6 +739,9 @@ class WPT_Admin {
 	function manage_wp_theatre_prod_posts_custom_column($column_name, $post_id) {
 		$production = new WPT_Production($post_id);
 		switch($column_name) {
+			case 'thumbnail':
+				echo $production->thumbnail(array('html'=>true));
+				break;
 			case 'dates':
 				echo $production->dates().'<br />';
 				echo $production->cities();

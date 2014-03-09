@@ -1,4 +1,4 @@
-@import "lesshat";
+@import "../../bower_components/lesshat/build/lesshat.less";
 @import "admin/datetimepicker.less";
 @import "admin/event.less";
 @import "admin/production.less";
@@ -19,4 +19,21 @@
 textarea#wpt_custom_css {
 	width: 500px;
 	height: 200px;
+}
+
+// Admin listings
+.wp-list-table {
+	&.fixed {
+		.column-thumbnail {
+			width: 6em;
+			figure {
+				margin: 0;
+				padding: 0;
+				img {
+					width: 100%;
+					height: auto;
+				}
+			}
+		}	
+	}
 }
