@@ -313,16 +313,17 @@ class WPT_Production {
 	function thumbnail($args=array()) {
 		$defaults = array(
 			'html' => false,
+			'size' => 'thumbnail'
 		);
 		$args = wp_parse_args( $args, $defaults );
 		
-		if (!isset($this->thumbnail)) {
-			$this->thumbnail = get_post_thumbnail_id($this->ID);
+		if (!isset($this->thumbnails[$args['size']])) {
+			$this->thumbnails[$args['size']] = get_post_thumbnail_id($this->ID,$args['size']);
 		}	
 	
 		if ($args['html']) {
 			$html = '';
-			$thumbnail = get_the_post_thumbnail($this->ID,'thumbnail');					
+			$thumbnail = get_the_post_thumbnail($this->ID,$args['size']);					
 			if (!empty($thumbnail)) {
 				$html.= '<figure>';
 				$permalink_args = $args;
@@ -332,7 +333,7 @@ class WPT_Production {
 			}
 			return apply_filters('wpt_production_thumbnail_html', $html, $this);
 		} else {
-			return $this->thumbnail;			
+			return $this->thumbnails[$args['size']];			
 		}
 	}
 
@@ -389,10 +390,8 @@ class WPT_Production {
 	 *
 	 * @param array $args {
 	 *
-	 *	   @type array $fields Fields to include. Default <array('title','remark', 'datetime','location')>.
-	 *     @type array $hide Fields that should be included as invisible meta elements. Default <array()>
+	 *	   @type array $fields Fields to include. Default <array('title','dates','cities')>.
 	 *     @type bool $thumbnail Include thumbnail? Default <true>.
-	 *     @type bool $tickets Include tickets button? Default <true>.
 	 * }
 	 * @return string HTML.
 	 */
@@ -401,8 +400,7 @@ class WPT_Production {
 		
 		$defaults = array(
 			'fields' => array('title','dates','cities'),
-			'thumbnail' => true,
-			'hide' => array()
+			'thumbnail' => true
 		);
 		$args = wp_parse_args( $args, $defaults );
 
@@ -415,8 +413,7 @@ class WPT_Production {
 		$thumbnail = false;
 		if ($args['thumbnail']) {
 			$thumbnail_args = array(
-				'html'=>true,
-				'meta'=>in_array('thumbnail', $args['hide'])
+				'html'=>true
 			);
 			$thumbnail = $this->thumbnail($thumbnail_args);
 		}

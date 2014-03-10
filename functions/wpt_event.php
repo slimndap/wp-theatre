@@ -145,7 +145,11 @@ class WPT_Event {
 			'html' => false
 		);
 		$args = wp_parse_args( $args, $defaults );
-		if (!isset($this->duration)) {
+		if (
+			!isset($this->duration) && 
+			!empty($this->post()->enddate) &&
+			$this->post()->enddate > $this->post()->event_date
+		) {
 			$this->duration = apply_filters('wpt_event_duration',human_time_diff(strtotime($this->post()->enddate), strtotime($this->post()->event_date)),$this);
 		}
 		if ($args['html']) {
