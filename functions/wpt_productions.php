@@ -72,16 +72,12 @@ class WPT_Productions extends WPT_Listing {
 			'upcoming' => false,
 			'season' => false,
 			'paginateby' => array(),
-			'groupby' => false
+			'groupby' => false,
+			'template' => NULL
 
 		);
 		$args = wp_parse_args( $args, $defaults );
 		
-		// translate deprecated 'paged' argument
-		if (!empty($args['paged']) && !in_array('season', $args['paginateby'])) {
-			$args['paginateby'][] ='season';
-		}
-
 		$filters = array(
 			'season' => $args['season'],
 			'limit' => $args['limit'],
@@ -92,7 +88,7 @@ class WPT_Productions extends WPT_Listing {
 		$classes[] = "wpt_productions";
 
 		// Thumbnail
-		if (!$args['thumbnail']) {
+		if (!empty($args['template']) && strpos($args['template'],'{{thumbnail}}')===false) { 
 			$classes[] = 'wpt_productions_without_thumbnail';
 		}
 
@@ -164,9 +160,7 @@ class WPT_Productions extends WPT_Listing {
 		}
 
 		$production_args = array();
-		if (isset($args['fields'])) { $production_args['fields'] = $args['fields']; }
-		if (isset($args['hide'])) { $production_args['hide'] = $args['hide']; }
-		if (isset($args['thumbnail'])) { $production_args['thumbnail'] = $args['thumbnail']; }
+		if (isset($args['template'])) { $production_args['template'] = $args['template']; }
 
 		switch ($args['groupby']) {
 			case 'season':

@@ -56,29 +56,19 @@ class WPT_Events extends WPT_Listing {
 	 */
 	public function html($args=array()) {
 		$defaults = array(
-			'paged' => false, //deprecated
-			'grouped' => false,
-			'thumbnail'=>true,
-			'tickets'=>true,
-			'fields'=>NULL,
-			'hide'=>NULL,
 			'paginateby' => array(),
 			'groupby'=>false,
 			'production' => false,
-			'limit' => false
+			'limit' => false,
+			'template' => NULL
 		);
 		$args = wp_parse_args( $args, $defaults );
-
-		// translate deprecated 'paged' argument
-		if ($args['paged'] && !in_array('month', $args['paginateby'])) {
-			$args['paginateby'][] ='month';
-		}
 
 		$classes = array();
 		$classes[] = "wpt_events";
 
 		// Thumbnail
-		if (!$args['thumbnail']) {
+		if (!empty($args['template']) && strpos($args['template'],'{{thumbnail}}')===false) { 
 			$classes[] = 'wpt_events_without_thumbnail';
 		}
 
@@ -154,9 +144,7 @@ class WPT_Events extends WPT_Listing {
 
 
 		$event_args = array();
-		if (isset($args['fields'])) { $event_args['fields'] = $args['fields']; }
-		if (isset($args['thumbnail'])) { $event_args['thumbnail'] = $args['thumbnail']; }
-		if (isset($args['tickets'])) { $event_args['tickets'] = $args['tickets']; }
+		if (isset($args['template'])) { $event_args['template'] = $args['template']; }
 
 		
 		switch ($args['groupby']) {

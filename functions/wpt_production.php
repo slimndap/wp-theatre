@@ -399,54 +399,35 @@ class WPT_Production {
 		global $wp_theatre;
 		
 		$defaults = array(
-			'fields' => array('title','dates','cities'),
-			'thumbnail' => true
+			'template' => '{{thumbnail}} {{title}} {{dates}} {{cities}}'
 		);
 		$args = wp_parse_args( $args, $defaults );
 
-		$html = '';
+		$html = $args['template'];
 		
 		$classes = array();
 		$classes[] = self::post_type_name;
 
 		// Thumbnail
-		$thumbnail = false;
-		if ($args['thumbnail']) {
+		if (strpos($html,'{{thumbnail}}')!==false) { 
 			$thumbnail_args = array(
 				'html'=>true
 			);
 			$thumbnail = $this->thumbnail($thumbnail_args);
+			$html = str_replace('{{thumbnail}}', $thumbnail, $html);
 		}
 		if (empty($thumbnail)) {
 			$classes[] = self::post_type_name.'_without_thumbnail';
-		} else {
-			$html.= $thumbnail;
 		}
 
-		$html.= '<div class="'.self::post_type_name.'_main">';
-		foreach ($args['fields'] as $field) {
-			$field_args = array(
-				'html'=>true
-			);
-			switch ($field) {
-				case 'title':
-					$html.= $this->title($field_args);
-					break;
-				case 'dates':
-					$html.= $this->dates($field_args);
-					break;
-				case 'cities':
-					$html.= $this->cities($field_args);
-					break;
-				case 'excerpt':
-					$html.= $this->excerpt($field_args);
-					break;
-				case 'summary':
-					$html.= $this->summary($field_args);
-					break;
-			}
-		}
-		$html.= '</div>'; // .main
+		$field_args = array(
+			'html'=>true
+		);
+		if (strpos($html,'{{title}}')!==false) { $html = str_replace('{{title}}', $this->title($field_args), $html); }
+		if (strpos($html,'{{dates}}')!==false) { $html = str_replace('{{dates}}', $this->dates($field_args), $html); }
+		if (strpos($html,'{{cities}}')!==false) { $html = str_replace('{{cities}}', $this->cities($field_args), $html); }
+		if (strpos($html,'{{excerpt}}')!==false) { $html = str_replace('{{excerpt}}', $this->excerpt($field_args), $html); }
+		if (strpos($html,'{{summary}}')!==false) { $html = str_replace('{{summary}}', $this->title($field_args), $html); }
 
 		// Microdata for events
 		if (!is_singular(WPT_Production::post_type_name)) {		

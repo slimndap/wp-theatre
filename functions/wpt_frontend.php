@@ -85,7 +85,7 @@ class WPT_Frontend {
 			) {
 				$production = new WPT_Production();			
 				$events_html = '<h3>'.WPT_Event::post_type()->labels->name.'</h3>';
-				$events_html.= '[wpt_production_events]';
+				$events_html.= '[wpt_production_events]{{remark}} {{datetime}} {{location}} {{tickets}}[/wpt_production_events]';
 				
 				switch ($wp_theatre->options['show_events']) {
 					case 'above' :
@@ -105,41 +105,18 @@ class WPT_Frontend {
 		$atts = shortcode_atts( array(
 			'paged' => false,
 			'grouped' => false,
-			'thumbnail' => true,
-			'fields' => null,
-			'hide' => null,
 			'upcoming' => true,
-			'past' => 'false',
+			'past' => false,
 			'paginateby'=>array(),
 			'groupby'=>false
 		), $atts );
 				
-		$hide = explode(',',$atts['hide']);
-		for ($i=0;$i<count($hide);$i++) {
-			$hide[$i] = trim($hide[$i]);
-		}
-		$atts['hide'] = $hide;
-		
-		if (!empty($atts['fields'])) {
-			$fields = explode(',',$atts['fields']);
-			for ($i=0;$i<count($fields);$i++) {
-				$fields[$i] = trim($fields[$i]);
-			}
-			$atts['fields'] = $fields;
-		}
-
 		if (!empty($atts['paginateby'])) {
 			$fields = explode(',',$atts['paginateby']);
 			for ($i=0;$i<count($fields);$i++) {
 				$fields[$i] = trim($fields[$i]);
 			}
 			$atts['paginateby'] = $fields;
-		}
-
-
-		
-		if (!empty($atts['thumbnail'])) {
-			$atts['thumbnail'] = $atts['thumbnail'] == 1;
 		}
 		
 		$wp_theatre->events->filters['upcoming'] = true;
@@ -233,26 +210,11 @@ class WPT_Frontend {
 	
 	function wpt_production_events($atts, $content=null) {
 		global $wp_theatre;
-		$atts = shortcode_atts( array(
-			'fields' => null,
-			'hide' => 'title',
-		), $atts );
 				
-		if (!empty($atts['fields'])) {
-			$fields = explode(',',$atts['fields']);
-			for ($i=0;$i<count($fields);$i++) {
-				$fields[$i] = trim($fields[$i]);
-			}
-			$atts['fields'] = $fields;
-		}
-
 		if (is_singular(WPT_Production::post_type_name)) {
 			$args = array(
-				'thumbnail' => false,
-				'hide' => array('title'),
-				'fields' => $atts['fields'],
-				'hide' => $atts['hide'],
-				'production' => get_the_ID()
+				'production' => get_the_ID(),
+				'template' => $content
 			);
 			return $wp_theatre->events->html($args);
 		}

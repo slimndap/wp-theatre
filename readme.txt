@@ -144,6 +144,6 @@ Make sure that you checked the 'Enable built-in Theatre stylesheet'-option in th
 
 == Upgrade Notice ==
 
-= 0.5.3 =
+= 0.6 =
 
-* v0.5.3 fixes a bug where the status of events got lost after bulk editing productions.
+* v0.6 requires you to update your shortcodes. Please check the [documentation](https://github.com/slimndap/wp-theatre/wiki/Shortcodes) for the details.

@@ -88,7 +88,7 @@ class WPT_Event {
 			$this->date[$field] = apply_filters('wpt_event_date',date_i18n(get_option('date_format'),$this->datetime($datetime_args)),$this);
 		}	
 		if ($args['html']) {
-			$html= '<span class="'.self::post_type_name.'_date">'.$this->date[$field].'</span>';
+			$html= '<div class="'.self::post_type_name.'_date">'.$this->date[$field].'</div>';
 			return apply_filters('wpt_event_date_html', $html, $this);
 		} else {
 			return $this->date[$field];			
@@ -130,10 +130,10 @@ class WPT_Event {
 		
 		if ($args['html']) {
 			$html = '';
-			$html.= '<time class="'.self::post_type_name.'_datetime">';
+			$html.= '<div class="'.self::post_type_name.'_datetime">';
 			$html.= $this->date($args);
 			$html.= $this->time($args);
-			$html.= '</time>';
+			$html.= '</div>';
 			return $html;
 		} else {
 			return $this->datetime[$field];				
@@ -353,7 +353,7 @@ class WPT_Event {
 			$this->remark = apply_filters('wpt_event_remark',get_post_meta($this->ID,'remark',true), $this);
 		}
 
-		if ($args['html']) {
+		if ($args['html'] && !empty($this->remark)) {
 			$html = '';
 			$html.= '<div class="'.self::post_type_name.'_remark">'.$this->remark.'</div>';
 			return apply_filters('wpt_event_remark_html', $html, $this);				
@@ -506,72 +506,50 @@ class WPT_Event {
 	 */
 	function html($args=array()) {
 		$defaults = array(
-			'fields' => array('title','remark', 'datetime','location','duration'),
-			'hide' => array(),
-			'thumbnail' => true,
-			'tickets' => true
+			'template' => '{{thumbnail}} {{title}} {{remark}} {{datetime}} {{location}} {{tickets}}'
 		);
 		$args = wp_parse_args( $args, $defaults );
 
 		$classes = array();
 		$classes[] = self::post_type_name;
 
-		$html = '';
+		$html = $args['template'];
 
 		// Thumbnail
-		$thumbnail = false;
-		if ($args['thumbnail']) {
+		if (strpos($html,'{{thumbnail}}')!==false) { 
 			$thumbnail_args = array(
 				'html'=>true
 			);
 			$thumbnail = $this->production()->thumbnail($thumbnail_args);
+			$html = str_replace('{{thumbnail}}', $thumbnail, $html);
 		}
 		if (empty($thumbnail)) {
 			$classes[] = self::post_type_name.'_without_thumbnail';
-		} else {
-			$html.= $thumbnail;
 		}
 
-		$html.= '<div class="'.self::post_type_name.'_main">';
-
-		foreach ($args['fields'] as $field) {
-			$field_args = array(
-				'html'=>true
-			);
-			switch ($field) {
-				case 'datetime':
-					$html.= $this->datetime($field_args);
-					break;
-				case 'title':
-					$html.= $this->production()->title($field_args);
-					break;
-				case 'location':
-					$html.= $this->location($field_args);
-					break;
-				case 'remark':
-					$html.= $this->remark($field_args);
-					break;
-				case 'duration':
-					$html.= $this->duration($field_args);
-					break;
-			}
-		}
-		$html.= '</div>'; // .main
+		$field_args = array(
+			'html'=>true
+		);
+		if (strpos($html,'{{date}}')!==false) { $html = str_replace('{{date}}', $this->date($field_args), $html); }
+		if (strpos($html,'{{datetime}}')!==false) { $html = str_replace('{{datetime}}', $this->datetime($field_args), $html); }
+		if (strpos($html,'{{duration}}')!==false) { $html = str_replace('{{duration}}', $this->duration($field_args), $html); }
+		if (strpos($html,'{{location}}')!==false) { $html = str_replace('{{location}}', $this->location($field_args), $html); }
+		if (strpos($html,'{{remark}}')!==false) { $html = str_replace('{{remark}}', $this->remark($field_args), $html); }
+		if (strpos($html,'{{time}}')!==false) { $html = str_replace('{{time}}', $this->time($field_args), $html); }
+		if (strpos($html,'{{title}}')!==false) { $html = str_replace('{{title}}', $this->production()->title($field_args), $html); }
 
 		// Tickets
-		$tickets = false;
-		if ($args['tickets']) {
+		if (strpos($html,'{{tickets}}')!==false) { 
 			$tickets_args = array(
 				'html'=>true
 			);
 			$tickets = $this->tickets($tickets_args);
+			if (empty($tickets)) {
+				$classes[] = self::post_type_name.'_without_tickets';
+			}
+			$html = str_replace('{{tickets}}', $tickets, $html);
 		}
-		if (empty($tickets)) {
-			$classes[] = self::post_type_name.'_without_tickets';
-		} else {
-			$html.= $tickets;
-		}
-
+		
 		$html.= $this->meta();
 
 		// Wrapper
