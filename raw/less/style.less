@@ -39,6 +39,23 @@
 			}
 		}
 	}
+	.wpt_production_categories {
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+		li {
+			display: inline-block;
+			&:before {
+				content: ', ';
+			}
+			&:first-child {
+				&:before {
+					content: '';
+					
+				}
+			}
+		}
+	}
 	
 }
 

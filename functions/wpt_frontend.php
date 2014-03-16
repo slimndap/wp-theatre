@@ -119,6 +119,10 @@ class WPT_Frontend {
 			$atts['paginateby'] = $fields;
 		}
 		
+		if (!is_null($content) && !empty($content)) {
+			$atts['template'] = html_entity_decode($content);
+		}
+
 		$wp_theatre->events->filters['upcoming'] = true;
 		return $wp_theatre->events->html($atts);
 	}
@@ -129,34 +133,21 @@ class WPT_Frontend {
 		$atts = shortcode_atts( array(
 			'paged' => false,
 			'grouped' => false,
-			'fields' => null,
-			'hide' => null,
 			'paginateby' => array(),
 			'groupby' => false,
-			'upcoming' => false,
-			'thumbnail' => true
+			'upcoming' => false
 		), $atts );
 				
-		if (!empty($atts['fields'])) {
-			$fields = explode(',',$atts['fields']);
-			for ($i=0;$i<count($fields);$i++) {
-				$fields[$i] = trim($fields[$i]);
-			}
-			$atts['fields'] = $fields;
-		}
-		
-		$hide = explode(',',$atts['hide']);
-		for ($i=0;$i<count($hide);$i++) {
-			$hide[$i] = trim($hide[$i]);
-		}
-		$atts['hide'] = $hide;
-		
 		if (!empty($atts['paginateby'])) {
 			$fields = explode(',',$atts['paginateby']);
 			for ($i=0;$i<count($fields);$i++) {
 				$fields[$i] = trim($fields[$i]);
 			}
 			$atts['paginateby'] = $fields;
+		}
+
+		if (!is_null($content) && !empty($content)) {
+			$atts['template'] = html_entity_decode($content);
 		}
 
 		return $wp_theatre->productions->html($atts);
@@ -210,12 +201,15 @@ class WPT_Frontend {
 	
 	function wpt_production_events($atts, $content=null) {
 		global $wp_theatre;
-				
+
 		if (is_singular(WPT_Production::post_type_name)) {
-			$args = array(
-				'production' => get_the_ID(),
-				'template' => $content
-			);
+			$args = array();
+			$args['production'] = get_the_ID();
+		
+			if (!is_null($content) && !empty($content)) {
+				$args['template'] = html_entity_decode($content);
+			}
+			
 			return $wp_theatre->events->html($args);
 		}
 	}

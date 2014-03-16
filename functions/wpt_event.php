@@ -150,7 +150,14 @@ class WPT_Event {
 			!empty($this->post()->enddate) &&
 			$this->post()->enddate > $this->post()->event_date
 		) {
-			$this->duration = apply_filters('wpt_event_duration',human_time_diff(strtotime($this->post()->enddate), strtotime($this->post()->event_date)),$this);
+			
+			// Don't use human_time_diff until filters are added.
+			// See: https://core.trac.wordpress.org/ticket/27271
+			// $this->duration = apply_filters('wpt_event_duration',human_time_diff(strtotime($this->post()->enddate), strtotime($this->post()->event_date)),$this);
+			$seconds = abs(strtotime($this->post()->enddate) - strtotime($this->post()->event_date));
+			$minutes = (int) $seconds/60;
+			$text = $minutes.' '._n('minute','minutes', $minutes, 'wp_theatre');
+			$this->duration = apply_filters('wpt_event_duration',$text,$this);
 		}
 		if ($args['html']) {
 			$html = '';
@@ -537,6 +544,7 @@ class WPT_Event {
 		if (strpos($html,'{{remark}}')!==false) { $html = str_replace('{{remark}}', $this->remark($field_args), $html); }
 		if (strpos($html,'{{time}}')!==false) { $html = str_replace('{{time}}', $this->time($field_args), $html); }
 		if (strpos($html,'{{title}}')!==false) { $html = str_replace('{{title}}', $this->production()->title($field_args), $html); }
+		if (strpos($html,'{{categories}}')!==false) { $html = str_replace('{{categories}}', $this->production()->categories($field_args), $html); }
 
 		// Tickets
 		if (strpos($html,'{{tickets}}')!==false) { 

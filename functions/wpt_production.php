@@ -24,6 +24,33 @@ class WPT_Production {
 		return get_post_type_object(self::post_type_name);
 	}
 
+	function categories($args=array()) {
+		$defaults = array(
+			'html' => false
+		);
+
+		$args = wp_parse_args( $args, $defaults );
+		
+		if (!isset($this->categories)) {
+			$this->categories = apply_filters('wpt_production_categories',wp_get_post_categories($this->ID),$this);
+		}
+		
+		if ($args['html']) {
+			if (!empty($this->categories)) {
+				$html = '';
+				$html.= '<ul class="wpt_production_categories">';
+				foreach ($this->categories as $category_id) {
+					$category = get_category( $category_id );
+					$html.= '<li>'.$category->name.'</li>';
+				}
+				$html.= '</ul>';
+				return apply_filters('wpt_production_categories_html', $html, $this);
+			}
+		} else {
+			return $this->categories;
+		}
+	}
+
 	/**
 	 * Production cites.
 	 * 
@@ -428,6 +455,7 @@ class WPT_Production {
 		if (strpos($html,'{{cities}}')!==false) { $html = str_replace('{{cities}}', $this->cities($field_args), $html); }
 		if (strpos($html,'{{excerpt}}')!==false) { $html = str_replace('{{excerpt}}', $this->excerpt($field_args), $html); }
 		if (strpos($html,'{{summary}}')!==false) { $html = str_replace('{{summary}}', $this->title($field_args), $html); }
+		if (strpos($html,'{{categories}}')!==false) { $html = str_replace('{{categories}}', $this->categories($field_args), $html); }
 
 		// Microdata for events
 		if (!is_singular(WPT_Production::post_type_name)) {		

@@ -41,6 +41,24 @@
 .wpt_events.wpt_productions_without_thumbnail .wp_theatre_event > * {
   margin-left: 0;
 }
+.wpt_productions .wpt_production_categories,
+.wpt_events .wpt_production_categories {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+.wpt_productions .wpt_production_categories li,
+.wpt_events .wpt_production_categories li {
+  display: inline-block;
+}
+.wpt_productions .wpt_production_categories li:before,
+.wpt_events .wpt_production_categories li:before {
+  content: ', ';
+}
+.wpt_productions .wpt_production_categories li:first-child:before,
+.wpt_events .wpt_production_categories li:first-child:before {
+  content: '';
+}
 .wp_theatre_prod > * {
   margin: 0 0 0 25%;
 }

@@ -22,59 +22,12 @@
   margin: 0;
   padding: 0;
 }
-#dashboard_wp_theatre .wp_theatre_event {
-  overflow: auto;
-}
-#dashboard_wp_theatre .wp_theatre_event > div {
-  float: left;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
-#dashboard_wp_theatre .wp_theatre_event > div.date {
-  width: 20%;
-  padding-right: 8px;
-}
-#dashboard_wp_theatre .wp_theatre_event > div.content {
-  width: 60%;
-  padding-right: 8px;
-}
-#dashboard_wp_theatre .wp_theatre_event > div.tickets {
-  width: 20%;
-}
 #poststuff .wp_theatre_event > div {
   float: none;
   width: auto;
 }
 #poststuff .wp_theatre_event > div.content .title {
   display: none;
-}
-.wp_theatre_event > div.content .title {
-  font-weight: bold;
-}
-.wp_theatre_event > div.content .remark {
-  font-style: italic;
-}
-.wp_theatre_prod {
-  overflow: auto;
-}
-.wp_theatre_prod > div {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  float: left;
-}
-.wp_theatre_prod > div.thumbnail {
-  width: 20%;
-  padding-right: 8px;
-}
-.wp_theatre_prod > div.thumbnail img {
-  width: 100%;
-  max-width: 100px;
-  height: auto;
-}
-.wp_theatre_prod > div.content {
-  width: 80%;
 }
 @font-face {
   font-family: "theatre-webfont";

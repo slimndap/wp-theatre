@@ -317,7 +317,7 @@ class WPT_Admin {
 		if (is_numeric($current_production)) {
 			$production = new WPT_Production($current_production);
 			echo '<input type="hidden" name="'.WPT_Production::post_type_name.'" value="'.$current_production.'" />';
-			echo $this->render_production($production);
+			echo $production->html();
 		} else {
 			echo '<select name="'.WPT_Production::post_type_name.'">';
 			$args = array(
