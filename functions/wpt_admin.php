@@ -22,6 +22,9 @@ class WPT_Admin {
 			
 			add_filter( 'posts_join', array($this,'posts_join'), 10 ,2);
 			add_filter( 'posts_orderby', array($this,'posts_orderby'), 10 ,2);
+			
+			add_filter('wpt_event_html',array($this,'wpt_event_html'), 10 , 2);
+			add_filter('wpt_production_html',array($this,'wpt_production_html'), 10 , 2);
 		}
 		
 		// More hooks (always load, necessary for bulk editing through AJAX)
@@ -780,14 +783,6 @@ class WPT_Admin {
 		wp_nonce_field($post_type, $post_type.'_nonce' );
 	}
 	
-	function wpt_event($html,$event) {
-		$html.= '<div class="row-actions">';
-		$html.= '<span><a href="'.get_edit_post_link($event->production->ID).'">'.__('Edit').'</a></span>';;
-		$html.= '<span> | <a href="'.get_delete_post_link($event->production->ID).'">'.__('Trash').'</a></span>';;
-		$html.= '</div>'; //.row-actions
-		return $html;
-	}
-
 	/**
 	 * Admin setting.
 	 */
@@ -981,7 +976,21 @@ class WPT_Admin {
 		}
 	}
 
-    	
+    function wpt_event_html($html, $event) {
+		$html.= '<div class="row-actions">';
+		$html.= '<span><a href="'.get_edit_post_link($event->production->ID).'">'.__('Edit').'</a></span>';;
+		$html.= '<span> | <a href="'.get_delete_post_link($event->production->ID).'">'.__('Trash').'</a></span>';;
+		$html.= '</div>'; //.row-actions
+		return $html;
+    }
+
+    function wpt_production_html($html, $production) {
+		$html.= '<div class="row-actions">';
+		$html.= '<span><a href="'.get_edit_post_link($production->ID).'">'.__('Edit').'</a></span>';;
+		$html.= '<span> | <a href="'.get_delete_post_link($production->ID).'">'.__('Trash').'</a></span>';;
+		$html.= '</div>'; //.row-actions
+		return $html;
+    }
 }
 
 

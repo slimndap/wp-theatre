@@ -560,10 +560,14 @@ class WPT_Event {
 		
 		$html.= $this->meta();
 
+		// Filters
+		$html = apply_filters('wpt_event_html',$html, $this);
+		$classes = apply_filters('wpt_event_classes',$classes, $this);
+		
 		// Wrapper
 		$html = '<div class="'.implode(' ',$classes).'">'.$html.'</div>';
 		
-		return apply_filters('wpt_event_html',$html, $this);		
+		return $html;		
 	}
 	
 	/**

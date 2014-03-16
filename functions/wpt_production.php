@@ -465,10 +465,14 @@ class WPT_Production {
 			$html.= $wp_theatre->events->meta($filters);
 		}
 
+		// Filters
+		$html = apply_filters('wpt_production_html',$html, $this);
+		$classes = apply_filters('wpt_production_classes',$classes, $this);
+
 		// Wrapper
 		$html = '<div class="'.implode(' ',$classes).'">'.$html.'</div>';
 		
-		return apply_filters('wpt_production_html',$html, $this);		
+		return $html;		
 	}
 
 	/**

@@ -3,7 +3,7 @@
 @import "admin/event.less";
 
 @font-face {
-	.font-face('theatre-webfont', ~'../font/theatre',normal, normal);
+	.font-face('theatre-webfont', ~'../font/theatre-webfont',normal, normal);
 }
 
 #toplevel_page_theatre {
@@ -36,3 +36,26 @@ textarea#wpt_custom_css {
 		}	
 	}
 }
+
+// Row actions
+.wptheatre_prod, .wp_theatre_event {
+	.row-actions {
+		visibility: hidden;
+	}
+	&:hover {
+		.row-actions {
+			visibility: visible;
+		}
+		
+	}
+}
+
+// Events meta box on production admin page
+#poststuff {
+	.wp_theatre_event {
+		> * {
+			margin: 0;
+		}
+	}
+}
+
