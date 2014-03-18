@@ -64,7 +64,7 @@ Make sure that you checked the 'Enable built-in Theatre stylesheet'-option in th
 
 = 0.6 =
 * Added support for templates and placeholders in the [wpt_events], [wpt_productions] and [wpt_production_events] shortcodes. See the [documentation](https://github.com/slimndap/wp-theatre/wiki/Shortcodes).
-* Made the 'dates' columns on the productions admin page sortable.
+* Sort your productions by date on the production admin page.
 * Added an end time to events so events can display a 'duration'.
 
 = 0.5 =
