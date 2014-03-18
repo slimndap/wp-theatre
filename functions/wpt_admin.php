@@ -22,6 +22,7 @@ class WPT_Admin {
 			
 			add_filter( 'posts_join', array($this,'posts_join'), 10 ,2);
 			add_filter( 'posts_orderby', array($this,'posts_orderby'), 10 ,2);
+			add_filter( 'posts_groupby', array($this,'posts_groupby'), 10 ,2);
 			
 			add_filter('wpt_event_html',array($this,'wpt_event_html'), 10 , 2);
 			add_filter('wpt_production_html',array($this,'wpt_production_html'), 10 , 2);
@@ -958,8 +959,25 @@ class WPT_Admin {
 			is_admin() &&
 			is_post_type_archive(WPT_Production::post_type_name)
 		) {
-			$join.= " LEFT JOIN $wpdb->postmeta AS event ON event.meta_value = wp_posts.ID";
-			$join.= " LEFT JOIN $wpdb->postmeta AS startdate ON startdate.post_id = event.post_id AND startdate.meta_key='event_date' AND startdate.meta_value > NOW()";
+			$join.="
+				LEFT JOIN (
+					SELECT production.meta_value AS ID, date.meta_value AS event_date
+					FROM $wpdb->posts
+					LEFT JOIN $wpdb->postmeta AS date ON date.post_id = $wpdb->posts.ID
+					AND date.meta_key = 'event_date'
+					LEFT JOIN $wpdb->postmeta AS production ON production.post_id = $wpdb->posts.ID
+					AND production.meta_key = 'wp_theatre_prod'
+					WHERE $wpdb->posts.post_type = 'wp_theatre_event'
+					AND (
+						$wpdb->posts.post_status = 'publish'
+						OR $wpdb->posts.post_status = 'future'
+						OR $wpdb->posts.post_status = 'draft'
+						OR $wpdb->posts.post_status = 'pending'
+						OR $wpdb->posts.post_status = 'private'
+					)
+					ORDER BY date.meta_value DESC
+				) AS startdate ON startdate.ID = $wpdb->posts.ID
+			";
 			return $join;
 		}
 	}
@@ -971,8 +989,21 @@ class WPT_Admin {
 			is_admin() &&
 			is_post_type_archive(WPT_Production::post_type_name)
 		) {
-			$orderby= "startdate.meta_value ".$query->query_vars['order'];
+			$orderby= "startdate.event_date ".$query->query_vars['order'];
 			return $orderby;
+		}
+	}
+
+	function posts_groupby($groupby, $query) {
+		global $wpdb;
+		if (
+			isset( $query->query_vars['orderby'] ) && 
+			'dates' == $query->query_vars['orderby'] &&
+			is_admin() &&
+			is_post_type_archive(WPT_Production::post_type_name)
+		) {
+			$groupby = "$wpdb->posts.ID";
+			return $groupby;
 		}
 	}
 
