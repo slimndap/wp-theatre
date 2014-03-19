@@ -476,60 +476,6 @@ class WPT_Production {
 	}
 
 	/**
-	 * Social meta tags for this production.
-	 *
-	 * Compiles meta tags for Facebook (Open Graph), Twitter (Twitetr Cards) and Google+ (Schema.org).
-	 * Can be place in the HTML head of a production page.
-	 * 
-	 * @since 0.3.7
-	 *
-	 * @return mixed HTML
-	 */
-	function social_meta_tags() {
-		global $wp_theatre;
-		
-		$meta = array();
-		
-		$thumbnail = wp_get_attachment_url($this->thumbnail());
-
-		if (!empty($wp_theatre->wpt_social_options['social_meta_tags']) && is_array($wp_theatre->wpt_social_options['social_meta_tags'])) {
-			foreach ($wp_theatre->wpt_social_options['social_meta_tags'] as $option) {
-				switch ($option) {
-					case 'facebook':
-						$meta[] = '<!-- Open Graph data -->';	
-						$meta[] = '<meta property="og:title" content="'.$this->title().'" />';
-						$meta[] = '<meta property="og:type" content="article" />';
-						$meta[] = '<meta property="og:url" content="'.$this->permalink().'" />';
-						if (!empty($thumbnail)) {
-							$meta[] = '<meta property="og:image" content="'.$thumbnail.'" />';
-						}
-						$meta[] = '<meta property="og:description" content="'.$this->summary().'" />';
-						$meta[] = '<meta property="og:site_name" content="'.get_bloginfo('site_name').'" />';
-						break;
-					case 'twitter':
-						$meta[] = '<!-- Twitter Card data -->';	
-						$meta[] = '<meta name="twitter:card" content="summary">';
-						$meta[] = '<meta name="twitter:title" content="'.$this->title().'">';
-						$meta[] = '<meta name="twitter:description" content="'.$this->summary().'">';
-						if (!empty($thumbnail)) {
-							$meta[] = '<meta name="twitter:image:src" content="'.$thumbnail.'" />';
-						}
-						break;
-					case 'google+':
-						$meta[] = '<!-- Schema.org markup for Google+ -->';	
-						$meta[] = '<meta itemprop="name" content="'.$this->title().'">';
-						$meta[] = '<meta itemprop="description" content="'.$this->summary().'">';
-						if (!empty($thumbnail)) {
-							$meta[] = '<meta itemprop="image" content="'.$thumbnail.'">';
-						}
-						break;
-				}
-			}
-		}
-		return implode("\n",$meta);
-	}
-
-	/**
 	 * The custom post as a WP_Post object.
 	 *
 	 * It can be used to access all properties and methods of the corresponding WP_Post object.

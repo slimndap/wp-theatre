@@ -37,8 +37,7 @@ class WPT_Admin {
 		// Tabs on settings screens
 		$this->tabs = array(
 			'wp_theatre'=>__('General'),
-			'wpt_language'=>__('Language','wp_theatre'),
-			'wpt_social'=>__('Social','wp_theatre')
+			'wpt_language'=>__('Language','wp_theatre')
 		);
 		$this->tab = isset( $_GET['tab'] ) ? $_GET['tab'] : 'wp_theatre';
 	}	
@@ -160,27 +159,6 @@ class WPT_Admin {
        
 		}
 		
-        register_setting(
-            'wpt_social', // Option group
-            'wpt_social' // Option name
-        );
-		if ($this->tab=='wpt_social') {
-        
-	        add_settings_section(
-	            'sharing', // ID
-	            __('Sharing','wp_theatre'), // Title
-	            '', // Callback
-	            'wpt_social' // Page
-	        );  
-	
-	        add_settings_field(
-	            'social_meta_tags', // ID
-	            __('Add social meta tags on production pages for:','wp_theatre'), // Title 
-	            array( $this, 'settings_field_social_meta_tags' ), // Callback
-	            'wpt_social', // Page
-	            'sharing' // Section           
-	        );
-		}
 	}
 
 	function admin_menu() {
@@ -923,34 +901,6 @@ class WPT_Admin {
 
 	}
 
-	function settings_field_social_meta_tags() {
-		global $wp_theatre;
-		
-		$options = array(
-			'facebook' => __('Facebook (Open Graph)','wp_theatre'),
-			'twitter' => __('Twitter (Twitter Card)','wp_theatre'),
-			'google+' => __('Google+ (Schema.org)','wp_theatre'),
-		
-		);
-		foreach ($options as $key=>$value) {
-			echo '<label>';
-			echo '<input type="checkbox" id="'.$key.'" name="wpt_social[social_meta_tags][]" value="'.$key.'"';
-			if (is_array($wp_theatre->wpt_social_options['social_meta_tags']) && in_array($key, $wp_theatre->wpt_social_options['social_meta_tags'])) {
-				echo ' checked="checked"';
-			}
-			
-			echo '/>';
-			echo $value;
-			echo '</label>';
-			echo '<br />';
-			
-		}
-		
-		echo '<p class="description">'.__('Make your productions shine on social networks.','wp_theatre').'</p>';
-		echo '<p class="description">'.__('Leave unchecked if this causes conflicts with SEO plugins.','wp_theatre').'</p>';
-		
-	}
-	
 	function posts_join($join, $query) {
 		global $wpdb;
 		if (

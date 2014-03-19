@@ -52,11 +52,6 @@ class WPT_Frontend {
 			$html[].= '</style>';
 		
 		}		
-		if (is_singular(WPT_Production::post_type_name)) {
-			$production = new WPT_Production();			
-			$html[].= $production->social_meta_tags();
-		}
-		
 		echo implode("\n",$html)."\n";
 	}
 	
