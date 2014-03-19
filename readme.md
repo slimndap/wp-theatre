@@ -55,7 +55,7 @@ To add a listing with all upcoming events to your Wordpress website:
 
 It is also possible to paginate the listing by month by altering the shortcode a bit:
 
-    [wp_theatre_events paged=1]
+    [wp_theatre_events paginateby="month"]
 
 #### Widgets
 
