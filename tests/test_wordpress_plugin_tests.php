@@ -48,5 +48,9 @@ class WP_Test_WordPress_Plugin_Tests extends WP_UnitTestCase {
 		$this->assertTrue( is_plugin_active( 'wp-theatre/theatre.php' ) );
 
 	}
+	
+	function deze_gaat_fout() {
+		$this->assertTrue(false);
+	}
 
 }
