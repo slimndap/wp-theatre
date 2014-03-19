@@ -49,8 +49,8 @@ class WP_Test_WordPress_Plugin_Tests extends WP_UnitTestCase {
 
 	}
 	
-	function deze_gaat_fout() {
-		$this->assertTrue(false);
+	function test_deze_gaat_fout() {
+		$this->assertTrue(false);	
 	}
 
 }
