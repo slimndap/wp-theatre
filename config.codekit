@@ -2879,14 +2879,6 @@
 		"outputAbbreviatedPath": "No Output Path",
 		"outputPathIsSetByUser": 0
 		},
-	"\/functions\/wpt_frontend.php": {
-		"fileType": 8192,
-		"ignore": 0,
-		"ignoreWasSetByUser": 0,
-		"inputAbbreviatedPath": "\/functions\/wpt_frontend.php",
-		"outputAbbreviatedPath": "No Output Path",
-		"outputPathIsSetByUser": 0
-		},
 	"\/functions\/wpt_listing.php": {
 		"fileType": 8192,
 		"ignore": 0,
@@ -3037,25 +3029,6 @@
 		"ignoreWasSetByUser": 0,
 		"inputAbbreviatedPath": "\/raw\/less\/admin\/event.less",
 		"outputAbbreviatedPath": "\/raw\/css\/event.css",
-		"outputPathIsSetByUser": 0,
-		"outputStyle": 0,
-		"relativeURLS": 0,
-		"shouldRunAutoprefixer": 0,
-		"shouldRunBless": 0,
-		"strictImports": 0,
-		"strictMath": 0,
-		"strictUnits": 0
-		},
-	"\/raw\/less\/admin\/production.less": {
-		"allowInsecureImports": 0,
-		"createSourceMap": 0,
-		"disableJavascript": 0,
-		"fileType": 1,
-		"ieCompatibility": 1,
-		"ignore": 1,
-		"ignoreWasSetByUser": 0,
-		"inputAbbreviatedPath": "\/raw\/less\/admin\/production.less",
-		"outputAbbreviatedPath": "\/raw\/css\/production.css",
 		"outputPathIsSetByUser": 0,
 		"outputStyle": 0,
 		"relativeURLS": 0,
