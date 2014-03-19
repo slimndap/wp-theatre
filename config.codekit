@@ -1144,6 +1144,14 @@
 		"outputStyle": 1,
 		"syntaxCheckerStyle": 1
 		},
+	"\/bower_components\/lesshat\/mixins\/display\/display.html": {
+		"fileType": 8192,
+		"ignore": 1,
+		"ignoreWasSetByUser": 0,
+		"inputAbbreviatedPath": "\/bower_components\/lesshat\/mixins\/display\/display.html",
+		"outputAbbreviatedPath": "No Output Path",
+		"outputPathIsSetByUser": 0
+		},
 	"\/bower_components\/lesshat\/mixins\/display\/display.js": {
 		"fileType": 64,
 		"ignore": 0,
@@ -1164,6 +1172,26 @@
 		"inputAbbreviatedPath": "\/bower_components\/lesshat\/mixins\/display\/display.md",
 		"outputAbbreviatedPath": "\/bower_components\/lesshat\/mixins\/display\/display.html",
 		"outputPathIsSetByUser": 0
+		},
+	"\/bower_components\/lesshat\/mixins\/display\/min\/display-ck.js": {
+		"fileType": 64,
+		"ignore": 1,
+		"ignoreWasSetByUser": 0,
+		"inputAbbreviatedPath": "\/bower_components\/lesshat\/mixins\/display\/min\/display-ck.js",
+		"outputAbbreviatedPath": "\/bower_components\/lesshat\/mixins\/display\/min\/min\/display-ck-ck.js",
+		"outputPathIsSetByUser": 0,
+		"outputStyle": 1,
+		"syntaxCheckerStyle": 1
+		},
+	"\/bower_components\/lesshat\/mixins\/display\/min\/test-ck.js": {
+		"fileType": 64,
+		"ignore": 1,
+		"ignoreWasSetByUser": 0,
+		"inputAbbreviatedPath": "\/bower_components\/lesshat\/mixins\/display\/min\/test-ck.js",
+		"outputAbbreviatedPath": "\/bower_components\/lesshat\/mixins\/display\/min\/min\/test-ck-ck.js",
+		"outputPathIsSetByUser": 0,
+		"outputStyle": 1,
+		"syntaxCheckerStyle": 1
 		},
 	"\/bower_components\/lesshat\/mixins\/display\/test.js": {
 		"fileType": 64,
@@ -1472,6 +1500,14 @@
 		"strictMath": 0,
 		"strictUnits": 0
 		},
+	"\/bower_components\/lesshat\/mixins\/grayscale\/grayscale.html": {
+		"fileType": 8192,
+		"ignore": 1,
+		"ignoreWasSetByUser": 0,
+		"inputAbbreviatedPath": "\/bower_components\/lesshat\/mixins\/grayscale\/grayscale.html",
+		"outputAbbreviatedPath": "No Output Path",
+		"outputPathIsSetByUser": 0
+		},
 	"\/bower_components\/lesshat\/mixins\/grayscale\/grayscale.js": {
 		"fileType": 64,
 		"ignore": 0,
@@ -1492,6 +1528,26 @@
 		"inputAbbreviatedPath": "\/bower_components\/lesshat\/mixins\/grayscale\/grayscale.md",
 		"outputAbbreviatedPath": "\/bower_components\/lesshat\/mixins\/grayscale\/grayscale.html",
 		"outputPathIsSetByUser": 0
+		},
+	"\/bower_components\/lesshat\/mixins\/grayscale\/min\/grayscale-ck.js": {
+		"fileType": 64,
+		"ignore": 1,
+		"ignoreWasSetByUser": 0,
+		"inputAbbreviatedPath": "\/bower_components\/lesshat\/mixins\/grayscale\/min\/grayscale-ck.js",
+		"outputAbbreviatedPath": "\/bower_components\/lesshat\/mixins\/grayscale\/min\/min\/grayscale-ck-ck.js",
+		"outputPathIsSetByUser": 0,
+		"outputStyle": 1,
+		"syntaxCheckerStyle": 1
+		},
+	"\/bower_components\/lesshat\/mixins\/grayscale\/min\/test-ck.js": {
+		"fileType": 64,
+		"ignore": 1,
+		"ignoreWasSetByUser": 0,
+		"inputAbbreviatedPath": "\/bower_components\/lesshat\/mixins\/grayscale\/min\/test-ck.js",
+		"outputAbbreviatedPath": "\/bower_components\/lesshat\/mixins\/grayscale\/min\/min\/test-ck-ck.js",
+		"outputPathIsSetByUser": 0,
+		"outputStyle": 1,
+		"syntaxCheckerStyle": 1
 		},
 	"\/bower_components\/lesshat\/mixins\/grayscale\/test.js": {
 		"fileType": 64,
@@ -1553,6 +1609,14 @@
 		"outputStyle": 1,
 		"syntaxCheckerStyle": 1
 		},
+	"\/bower_components\/lesshat\/mixins\/hyphens\/hyphens.html": {
+		"fileType": 8192,
+		"ignore": 1,
+		"ignoreWasSetByUser": 0,
+		"inputAbbreviatedPath": "\/bower_components\/lesshat\/mixins\/hyphens\/hyphens.html",
+		"outputAbbreviatedPath": "No Output Path",
+		"outputPathIsSetByUser": 0
+		},
 	"\/bower_components\/lesshat\/mixins\/hyphens\/hyphens.js": {
 		"fileType": 64,
 		"ignore": 0,
@@ -1573,6 +1637,26 @@
 		"inputAbbreviatedPath": "\/bower_components\/lesshat\/mixins\/hyphens\/hyphens.md",
 		"outputAbbreviatedPath": "\/bower_components\/lesshat\/mixins\/hyphens\/hyphens.html",
 		"outputPathIsSetByUser": 0
+		},
+	"\/bower_components\/lesshat\/mixins\/hyphens\/min\/hyphens-ck.js": {
+		"fileType": 64,
+		"ignore": 1,
+		"ignoreWasSetByUser": 0,
+		"inputAbbreviatedPath": "\/bower_components\/lesshat\/mixins\/hyphens\/min\/hyphens-ck.js",
+		"outputAbbreviatedPath": "\/bower_components\/lesshat\/mixins\/hyphens\/min\/min\/hyphens-ck-ck.js",
+		"outputPathIsSetByUser": 0,
+		"outputStyle": 1,
+		"syntaxCheckerStyle": 1
+		},
+	"\/bower_components\/lesshat\/mixins\/hyphens\/min\/test-ck.js": {
+		"fileType": 64,
+		"ignore": 1,
+		"ignoreWasSetByUser": 0,
+		"inputAbbreviatedPath": "\/bower_components\/lesshat\/mixins\/hyphens\/min\/test-ck.js",
+		"outputAbbreviatedPath": "\/bower_components\/lesshat\/mixins\/hyphens\/min\/min\/test-ck-ck.js",
+		"outputPathIsSetByUser": 0,
+		"outputStyle": 1,
+		"syntaxCheckerStyle": 1
 		},
 	"\/bower_components\/lesshat\/mixins\/hyphens\/test.js": {
 		"fileType": 64,
@@ -2937,7 +3021,7 @@
 		},
 	"\/js\/admin.js": {
 		"fileType": 64,
-		"ignore": 0,
+		"ignore": 1,
 		"ignoreWasSetByUser": 0,
 		"inputAbbreviatedPath": "\/js\/admin.js",
 		"outputAbbreviatedPath": "\/js\/min\/admin-ck.js",
@@ -2957,7 +3041,7 @@
 		},
 	"\/js\/main.js": {
 		"fileType": 64,
-		"ignore": 0,
+		"ignore": 1,
 		"ignoreWasSetByUser": 0,
 		"inputAbbreviatedPath": "\/js\/main.js",
 		"outputAbbreviatedPath": "\/js\/min\/main-ck.js",
@@ -2972,8 +3056,8 @@
 		"ignoreWasSetByUser": 0,
 		"inputAbbreviatedPath": "\/raw\/coffee\/admin.coffee",
 		"minifyOutput": 1,
-		"outputAbbreviatedPath": "\/raw\/coffee\/admin.js",
-		"outputPathIsSetByUser": 0,
+		"outputAbbreviatedPath": "\/js\/admin.js",
+		"outputPathIsSetByUser": 1,
 		"outputStyle": 0,
 		"syntaxCheckerStyle": 1
 		},
@@ -2984,8 +3068,8 @@
 		"ignoreWasSetByUser": 0,
 		"inputAbbreviatedPath": "\/raw\/coffee\/main.coffee",
 		"minifyOutput": 1,
-		"outputAbbreviatedPath": "\/raw\/coffee\/main.js",
-		"outputPathIsSetByUser": 0,
+		"outputAbbreviatedPath": "\/js\/main.js",
+		"outputPathIsSetByUser": 1,
 		"outputStyle": 0,
 		"syntaxCheckerStyle": 1
 		},
@@ -3037,25 +3121,6 @@
 		"ignoreWasSetByUser": 0,
 		"inputAbbreviatedPath": "\/raw\/less\/admin\/event.less",
 		"outputAbbreviatedPath": "\/raw\/css\/event.css",
-		"outputPathIsSetByUser": 0,
-		"outputStyle": 0,
-		"relativeURLS": 0,
-		"shouldRunAutoprefixer": 0,
-		"shouldRunBless": 0,
-		"strictImports": 0,
-		"strictMath": 0,
-		"strictUnits": 0
-		},
-	"\/raw\/less\/admin\/production.less": {
-		"allowInsecureImports": 0,
-		"createSourceMap": 0,
-		"disableJavascript": 0,
-		"fileType": 1,
-		"ieCompatibility": 1,
-		"ignore": 1,
-		"ignoreWasSetByUser": 0,
-		"inputAbbreviatedPath": "\/raw\/less\/admin\/production.less",
-		"outputAbbreviatedPath": "\/raw\/css\/production.css",
 		"outputPathIsSetByUser": 0,
 		"outputStyle": 0,
 		"relativeURLS": 0,
