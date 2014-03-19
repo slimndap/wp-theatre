@@ -92,6 +92,8 @@ class WP_Theatre {
 			require_once(__DIR__ . '/functions/wpt_cart.php');	
 		}
 		require_once(__DIR__ . '/integrations/wordpress-seo.php');
+		require_once(__DIR__ . '/integrations/jetpack-featured-content.php');
+		
 	}
 	
 	public function seasons($PostClass = false) {
