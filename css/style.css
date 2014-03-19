@@ -1,31 +1,3 @@
-.wp_theatre_prod,
-.wp_theatre_event {
-  padding-top: 0.5em;
-  margin-top: 0.5em;
-  overflow: auto;
-  position: relative;
-}
-.wp_theatre_prod > *,
-.wp_theatre_event > * {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
-.wp_theatre_prod figure,
-.wp_theatre_event figure {
-  width: 25%;
-  padding-right: 0.5em;
-  margin: 0;
-  float: left;
-}
-.wp_theatre_prod figure img,
-.wp_theatre_event figure img {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  max-width: 100%;
-  height: auto;
-}
 .wpt_productions,
 .wpt_events {
   margin-bottom: 1em;
@@ -40,6 +12,82 @@
 .wpt_productions.wpt_productions_without_thumbnail .wp_theatre_event > *,
 .wpt_events.wpt_productions_without_thumbnail .wp_theatre_event > * {
   margin-left: 0;
+}
+.wpt_productions .wp_theatre_prod,
+.wpt_events .wp_theatre_prod,
+.wpt_productions .wp_theatre_event,
+.wpt_events .wp_theatre_event {
+  padding-top: 0.5em;
+  margin-top: 0.5em;
+  overflow: auto;
+  position: relative;
+}
+.wpt_productions .wp_theatre_prod > *,
+.wpt_events .wp_theatre_prod > *,
+.wpt_productions .wp_theatre_event > *,
+.wpt_events .wp_theatre_event > * {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.wpt_productions .wp_theatre_prod figure,
+.wpt_events .wp_theatre_prod figure,
+.wpt_productions .wp_theatre_event figure,
+.wpt_events .wp_theatre_event figure {
+  width: 25%;
+  padding-right: 0.5em;
+  margin: 0;
+  float: left;
+}
+.wpt_productions .wp_theatre_prod figure img,
+.wpt_events .wp_theatre_prod figure img,
+.wpt_productions .wp_theatre_event figure img,
+.wpt_events .wp_theatre_event figure img {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  max-width: 100%;
+  height: auto;
+}
+.wpt_productions .wp_theatre_prod > *,
+.wpt_events .wp_theatre_prod > * {
+  margin: 0 0 0 25%;
+}
+.wpt_productions .wp_theatre_event > *,
+.wpt_events .wp_theatre_event > * {
+  margin: 0 25%;
+}
+.wpt_productions .wp_theatre_event .wp_theatre_event_datetime .wp_theatre_event_date,
+.wpt_events .wp_theatre_event .wp_theatre_event_datetime .wp_theatre_event_date {
+  display: inline;
+}
+.wpt_productions .wp_theatre_event .wp_theatre_event_datetime .wp_theatre_event_time,
+.wpt_events .wp_theatre_event .wp_theatre_event_datetime .wp_theatre_event_time {
+  display: inline;
+}
+.wpt_productions .wp_theatre_event .wp_theatre_event_datetime .wp_theatre_event_time:before,
+.wpt_events .wp_theatre_event .wp_theatre_event_datetime .wp_theatre_event_time:before {
+  content: '\00a0\2014\00a0';
+}
+.wpt_productions .wp_theatre_event .wp_theatre_event_location .wp_theatre_event_venue,
+.wpt_events .wp_theatre_event .wp_theatre_event_location .wp_theatre_event_venue {
+  display: inline;
+}
+.wpt_productions .wp_theatre_event .wp_theatre_event_location .wp_theatre_event_venue + .wp_theatre_event_city:before,
+.wpt_events .wp_theatre_event .wp_theatre_event_location .wp_theatre_event_venue + .wp_theatre_event_city:before {
+  content: ',\00a0';
+}
+.wpt_productions .wp_theatre_event .wp_theatre_event_location .wp_theatre_event_city,
+.wpt_events .wp_theatre_event .wp_theatre_event_location .wp_theatre_event_city {
+  display: inline;
+}
+.wpt_productions .wp_theatre_event .wp_theatre_event_tickets,
+.wpt_events .wp_theatre_event .wp_theatre_event_tickets {
+  width: 25%;
+  margin: 0;
+  position: absolute;
+  top: 0.5em;
+  right: 0;
 }
 .wpt_productions .wpt_production_categories,
 .wpt_events .wpt_production_categories {
@@ -59,43 +107,13 @@
 .wpt_events .wpt_production_categories li:first-child:before {
   content: '';
 }
-.wp_theatre_prod > * {
-  margin: 0 0 0 25%;
-}
-.wp_theatre_event > * {
-  margin: 0 25%;
-}
-.wp_theatre_event .wp_theatre_event_datetime .wp_theatre_event_date {
-  display: inline;
-}
-.wp_theatre_event .wp_theatre_event_datetime .wp_theatre_event_time {
-  display: inline;
-}
-.wp_theatre_event .wp_theatre_event_datetime .wp_theatre_event_time:before {
-  content: '\00a0\2014\00a0';
-}
-.wp_theatre_event .wp_theatre_event_location .wp_theatre_event_venue {
-  display: inline;
-}
-.wp_theatre_event .wp_theatre_event_location .wp_theatre_event_venue + .wp_theatre_event_city:before {
-  content: ',\00a0';
-}
-.wp_theatre_event .wp_theatre_event_location .wp_theatre_event_city {
-  display: inline;
-}
-.wp_theatre_event .wp_theatre_event_tickets {
-  width: 25%;
-  margin: 0;
-  position: absolute;
-  top: 0.5em;
-  right: 0;
-}
 .widget_wpt_events_widget .wp_theatre_event > * {
   margin-right: 0;
 }
 .widget_wpt_events_widget .wp_theatre_event .wp_theatre_event_tickets {
   position: static;
   margin-left: 25%;
+  width: auto;
 }
 .widget_wpt_cart_widget .wpt_cart_item {
   overflow: auto;
@@ -111,6 +129,19 @@
 .widget_wpt_cart_widget .wpt_cart_item .wp_theatre_prod {
   float: left;
   width: 85%;
+}
+.widget_wpt_cart_widget .wpt_cart_item .wp_theatre_prod > * {
+  margin-left: 33.33333333%;
+}
+.widget_wpt_cart_widget .wpt_cart_item .wp_theatre_prod figure {
+  margin: 0;
+  padding: 0 0.5em 0 0;
+  width: 33.33333333%;
+  float: left;
+}
+.widget_wpt_cart_widget .wpt_cart_item .wp_theatre_prod figure img {
+  width: 100%;
+  height: auto;
 }
 iframe.wp_theatre_iframe {
   width: 800px;
