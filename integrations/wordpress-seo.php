@@ -1,5 +1,5 @@
 <?php
-	class wpt_integration_wordpress_seo {
+	class WPT_Integration_Wordpress_seo {
 		function __construct() {
 			add_filter('wpseo_metadesc',array($this,'wpseo_metadesc'));
 		}
@@ -14,5 +14,5 @@
 			return $metadesc;	
 		}		
 	}
-	new wpt_integration_wordpress_seo();
+	new WPT_Integration_Wordpress_seo();
 ?>
