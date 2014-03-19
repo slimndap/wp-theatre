@@ -4,7 +4,6 @@ class WPT_Frontend {
 		add_action('init', array($this,'init'));
 		add_action('wp_head', array($this,'wp_head'));
 
-		add_filter('pre_get_posts', array($this,'pre_get_posts') );
 		add_action('the_content', array($this, 'the_content'));
 
 		add_shortcode('wpt_events', array($this,'wpt_events'));
@@ -22,19 +21,20 @@ class WPT_Frontend {
 	
 	function init() {
 		global $wp_theatre;
+		$version = $wp_theatre->version;
 
 		// Add built-in Theatre javascript
-		wp_enqueue_script( 'wp_theatre_js', plugins_url( '../js/main.js', __FILE__ ), array('jquery'), $wp_theatre->version );
+		wp_enqueue_script( 'wp_theatre_js', plugins_url( '../js/main.js', __FILE__ ), array('jquery'), $version );
 
 		// Add built-in Theatre stylesheet
 		if (!empty($wp_theatre->options['stylesheet'])) {
-			wp_enqueue_style( 'wp_theatre', plugins_url( '../css/style.css', __FILE__ ), null, $wp_theatre->version );
+			wp_enqueue_style( 'wp_theatre', plugins_url( '../css/style.css', __FILE__ ), null, $version );
 		}
 
 		// Add Thickbox files
 		if (!empty($wp_theatre->options['integrationtype']) && $wp_theatre->options['integrationtype']=='lightbox') {
 			wp_enqueue_script('thickbox');
-			wp_enqueue_style('thickbox', includes_url('/js/thickbox/thickbox.css'), null, $wp_theatre->version);			
+			wp_enqueue_style('thickbox', includes_url('/js/thickbox/thickbox.css'), null, $version);			
 		}
 	}
 
@@ -55,21 +55,6 @@ class WPT_Frontend {
 		echo implode("\n",$html)."\n";
 	}
 	
-	function pre_get_posts($query) {
-		// add productions to tag and category archives
-		if( is_category() || is_tag() && empty( $query->query_vars['suppress_filters'] ) ) {
-			$post_types = $query->get( 'post_type');
-			if (empty($post_types)) {
-				$post_types = array('post');
-			}
-			if (is_array($post_types)) {
-				$post_types[] = WPT_Production::post_type_name;
-			}
-			$query->set('post_type',$post_types);
-		}
-		return $query;
-	}
-
 	function the_content($content) {
 		global $wp_theatre;
 		
