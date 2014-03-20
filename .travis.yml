@@ -28,12 +28,6 @@ matrix:
   include:
     - php: "5.3"
       env: WP_VERSION=3.8.1
-    - php: "5.3"
-      env: WP_VERSION=3.5
-    - php: "5.3"
-      env: WP_VERSION=3.0
-    - php: "5.2"
-      env: WP_VERSION=3.8.1
 
 # Clones WordPress and configures our testing environment.
 before_script:
