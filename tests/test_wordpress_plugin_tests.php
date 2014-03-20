@@ -49,4 +49,9 @@ class WP_Test_WordPress_Plugin_Tests extends WP_UnitTestCase {
 
 	}
 	
+	function test_theatre_class_is_global() {
+		global $wp_theatre;
+		$this->assertTrue( is_object($wp_theatre));
+	}
+	
 }
