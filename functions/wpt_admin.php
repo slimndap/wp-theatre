@@ -928,8 +928,8 @@ class WPT_Admin {
 					ORDER BY date.meta_value DESC
 				) AS startdate ON startdate.ID = $wpdb->posts.ID
 			";
-			return $join;
 		}
+		return $join;
 	}
 
 	function posts_orderby($orderby, $query) {
@@ -940,8 +940,8 @@ class WPT_Admin {
 			is_post_type_archive(WPT_Production::post_type_name)
 		) {
 			$orderby= "startdate.event_date ".$query->query_vars['order'];
-			return $orderby;
 		}
+		return $orderby;
 	}
 
 	function posts_groupby($groupby, $query) {
@@ -953,8 +953,8 @@ class WPT_Admin {
 			is_post_type_archive(WPT_Production::post_type_name)
 		) {
 			$groupby = "$wpdb->posts.ID";
-			return $groupby;
 		}
+		return $groupby;
 	}
 
     function wpt_event_html($html, $event) {
