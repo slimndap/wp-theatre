@@ -149,6 +149,8 @@ Make sure that you checked the 'Enable built-in Theatre stylesheet'-option in th
 
 == Upgrade Notice ==
 
-= 0.6 =
+=0.6.1=
+* Fix: Theatre was messing up the listings of other post types.
 
+= 0.6 =
 * v0.6 requires you to update your shortcodes. Please check the [documentation](https://github.com/slimndap/wp-theatre/wiki/Shortcodes) for the details.
