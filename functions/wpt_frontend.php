@@ -210,7 +210,10 @@ class WPT_Frontend {
 		
 			if (!is_null($content) && !empty($content)) {
 				$args['template'] = html_entity_decode($content);
+			} else {
+				$args['template'] = '{{remark}} {{datetime}} {{location}} {{tickets}}';
 			}
+			
 			
 			return $wp_theatre->events->html($args);
 		}
