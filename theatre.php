@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class WP_Theatre {
 	function __construct() {
-		$this->version = '0.4';
+		$this->version = '0.6.1';
 
 		// Includes
 		$this->includes();
