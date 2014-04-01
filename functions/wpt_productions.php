@@ -235,79 +235,42 @@ class WPT_Productions extends WPT_Listing {
 
 		$filters = wp_parse_args( $filters, $this->defaults() );
 
-		$value_parameters = array();
-
-		$querystr = "
-			SELECT productions.ID FROM $wpdb->posts AS productions
-			
-			LEFT OUTER JOIN 
-				$wpdb->postmeta AS wpt_events 
-				ON (wpt_events.meta_value = productions.ID AND wpt_events.meta_key='".WPT_Production::post_type_name."')
-			LEFT OUTER JOIN 
-				$wpdb->posts AS events 
-				ON (events.ID = wpt_events.post_ID AND events.post_status='publish')
-			LEFT OUTER JOIN 
-				$wpdb->postmeta AS wpt_startdate 
-				ON (
-					wpt_startdate.post_ID = events.ID AND wpt_startdate.meta_key='event_date'
-					AND wpt_startdate.meta_value > NOW()
-				)
-			LEFT OUTER JOIN 
-				$wpdb->postmeta AS wpt_season 
-				ON (wpt_season.post_ID=productions.ID AND wpt_season.meta_key='".WPT_Season::post_type_name."')
-			LEFT OUTER JOIN 
-				$wpdb->posts AS seasons 
-				ON seasons.ID = wpt_season.meta_value	
-			LEFT OUTER JOIN 
-				$wpdb->postmeta AS sticky ON (
-					productions.ID = sticky.post_ID
-					AND sticky.meta_key = 'sticky'
-					AND sticky.meta_value = 'on'
-				)
-			LEFT OUTER JOIN 
-				$wpdb->term_relationships AS term_relationships ON 
-					productions.ID = term_relationships.object_id
-			LEFT OUTER JOIN 
-				$wpdb->term_taxonomy AS categories ON 
-					term_relationships.term_taxonomy_id = categories.term_taxonomy_id
-			WHERE
-				productions.post_type='".WPT_Production::post_type_name."'
-				AND	productions.post_status= 'publish'
-		";
-
+		$args = array(
+			'post_type' => WPT_Production::post_type_name,
+			'post_status' => 'publish',
+			'meta_query' => array(),
+			'order' => 'asc'
+		);
+		
 		if ($filters['upcoming']) {
-			$querystr.= ' AND wpt_startdate.meta_value > NOW()';
+			$args['meta_query'][] = array (
+				'key' => 'wpt_order',
+				'value' => time(),
+				'compare' => '>='
+			);
 		}
 
 		if ($filters['season']) {
-			$querystr.= ' AND seasons.post_name=%s';
-			$value_parameters[] = $filters['season'];
+			$args['meta_query'][] = array (
+				'key' => WPT_Season::post_type_name,
+				'value' => $filters['season'],
+				'compare' => '='
+			);
 		}
 		
 		if ($filters['category']) {
-			$querystr.= ' AND term_id = %d';
-			$value_parameters[] = $filters['category'];
+			$args['cat'] = $filters['category'];
 		}
 		
-		if (!$filters['season'] && !$filters['category']) {
-			$querystr.= " OR sticky.meta_value = 'on'";
-		}
-
-		$querystr.= "
-			GROUP BY productions.ID
-		";
-		
-		$querystr.= "ORDER BY sticky.meta_value DESC, wpt_startdate.meta_value ASC";						
-
 		if ($filters['limit']) {
-			$querystr.= ' LIMIT 0,%d';
-			$value_parameters[] = $filters['limit'];
+			$args['posts_per_page'] = $filters['limit'];
+		} else {
+			$args['posts_per_page'] = -1;
+			
 		}
 
-		$querystr = $wpdb->prepare($querystr,$value_parameters);
-
-		$posts = $wpdb->get_results($querystr, OBJECT);
-		
+		$posts = get_posts($args);
+			
 		$productions = array();
 		for ($i=0;$i<count($posts);$i++) {
 			$key = $posts[$i]->ID;
@@ -326,7 +289,7 @@ class WPT_Productions extends WPT_Listing {
 		$seasons = array();
 		foreach ($productions as $production) {
 			if ($production->season()) {
-				$seasons[$production->season()->title()] = $production->season();
+				$seasons[$production->season()->ID] = $production->season();
 				
 			}
 		}

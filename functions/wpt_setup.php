@@ -3,8 +3,8 @@ class WPT_Setup {
 	function __construct() {
 
 		$this->options = get_option( 'wp_theatre' );
+
 		// Installation
-		register_activation_hook( __FILE__, array($this, 'activate' ));		
 
 		// Hooks
 		add_action( 'init', array($this,'init'));
@@ -17,6 +17,8 @@ class WPT_Setup {
 		});
 		
 		add_action( 'plugins_loaded', array($this,'plugins_loaded'));
+		
+		add_action( 'save_post_'.WPT_Production::post_type_name, array( $this, 'save_production' ) );
 	}
 
 	/**
@@ -73,6 +75,7 @@ class WPT_Setup {
 				'has_archive' => true,
 				'show_in_menu'  => false,
 				'supports' => array(''),
+	  			'taxonomies' => array('category','post_tag'),
 				'show_in_nav_menus'=> false
 			)
 		);
@@ -122,6 +125,16 @@ class WPT_Setup {
 			
 		}
 		return $translated_text;
+	}
+	
+	function save_production($post_id) {
+		$production = new WPT_Production($post_id);
+		$categories = wp_get_post_categories($post_id);
+		$events = $production->events();
+		foreach ($events as $event) {
+			wp_set_post_categories($event->ID, $categories);
+		}
+		
 	}
 }
 

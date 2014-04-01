@@ -205,67 +205,54 @@ class WPT_Events extends WPT_Listing {
 		
 		$filters = wp_parse_args( $filters, $this->defaults() );
 		
-		$value_parameters = array();
-		
-		$querystr = "
-			SELECT events.ID
-			FROM $wpdb->posts AS
-			events
-			
-			JOIN $wpdb->postmeta AS productions on events.ID = productions.post_ID
-			LEFT OUTER JOIN $wpdb->term_relationships AS term_relationships on productions.meta_value = term_relationships.object_id
-			LEFT OUTER JOIN $wpdb->term_taxonomy AS categories on term_relationships.term_taxonomy_id = categories.term_taxonomy_id
-			JOIN $wpdb->postmeta AS event_date on events.ID = event_date.post_ID
-			
-			WHERE 
-			events.post_type = '".WPT_Event::post_type_name."'
-			AND events.post_status IN ("."'" . implode("','", $filters['status']) . "')
-			AND productions.meta_key = '".WPT_Production::post_type_name."'
-			AND event_date.meta_key = 'event_date'
-		";
+		$args = array(
+			'post_type' => WPT_Event::post_type_name,
+			'post_status' => 'publish',
+			'meta_query' => array(),
+			'order' => 'asc'
+		);
 		
 		if ($filters['upcoming']) {
-			$querystr.= ' AND event_date.meta_value > NOW( )';
-		} elseif ($filters['past']) {
-			$querystr.= ' AND event_date.meta_value < NOW( )';
+			$args['meta_query'][] = array (
+				'key' => 'wpt_order',
+				'value' => time(),
+				'compare' => '>='
+			);
+		}
+
+		if ($filters['production']) {
+			$args['meta_query'][] = array (
+				'key' => WPT_Production::post_type_name,
+				'value' => $filters['production'],
+				'compare' => '='
+			);
 		}
 		
 		if ($filters['month']) {
-			$querystr.= ' AND event_date.meta_value LIKE "%s"';
-			$value_parameters[] = $filters['month'].'%';
+			$args['meta_query'][] = array (
+				'key' => 'event_date',
+				'value' => $filters['month'],
+				'compare' => 'LIKE'
+			);
 		}
-		
+
 		if ($filters['category']) {
-			$querystr.= ' AND categories.term_id = %d';
-			$value_parameters[] = $filters['category'];
+			$args['cat'] = $filters['category'];
 		}
-		
-		if ($filters['production']) {
-			$querystr.= ' AND productions.meta_value=%d';			
-			$value_parameters[] = $filters['production'];
-		}
-		$querystr.= ' GROUP BY events.ID';
-		$querystr.= ' ORDER BY event_date.meta_value';
 		
 		if ($filters['limit']) {
-			$querystr.= ' LIMIT 0,%d';
-			$value_parameters[] = $filters['limit'];
+			$args['posts_per_page'] = $filters['limit'];
+		} else {
+			$args['posts_per_page'] = -1;
+			
 		}
 
-		$querystr = $wpdb->prepare($querystr,$value_parameters);
-
-		$posts = $wpdb->get_results($querystr, OBJECT);
-
+		$posts = get_posts($args);
+		
 		$events = array();
 		for ($i=0;$i<count($posts);$i++) {
 			$key = $posts[$i]->ID;
-			$event = wp_cache_get($key,'wp_theatre');
-			if ( false === $event ) {
-				$event = new WPT_Event($posts[$i]->ID);
-				wp_cache_set($key,$event,'wp_theatre');
-			} else {
-				echo '<!-- cache '.$key.'-->';
-			}
+			$event = new WPT_Event($posts[$i]->ID);
 			$events[] = $event;
 		}
 		

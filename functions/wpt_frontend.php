@@ -61,6 +61,7 @@ class WPT_Frontend {
 	}
 	
 	function pre_get_posts($query) {
+				
 		// add productions to tag and category archives
 		if( is_category() || is_tag() && empty( $query->query_vars['suppress_filters'] ) ) {
 			$post_types = $query->get( 'post_type');

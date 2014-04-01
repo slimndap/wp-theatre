@@ -11,6 +11,7 @@ class WPT_Admin {
 			add_filter( 'wpt_event', array($this,'wpt_event'), 10 ,2);
 			add_action( 'quick_edit_custom_box', array($this,'quick_edit_custom_box'), 10, 2 );
 			add_action( 'wp_dashboard_setup', array($this,'wp_dashboard_setup' ));
+
 			add_action( 'save_post_'.WPT_Production::post_type_name, array( $this, 'save_production' ) );
 			add_action( 'save_post_'.WPT_Event::post_type_name, array( $this, 'save_event' ) );
 
@@ -20,15 +21,12 @@ class WPT_Admin {
 			add_action('manage_wp_theatre_event_posts_custom_column', array($this,'manage_wp_theatre_event_posts_custom_column'), 10, 2);	
 			add_filter('manage_edit-wp_theatre_prod_sortable_columns', array($this,'manage_edit_wp_theatre_prod_sortable_columns') );
 			
-			add_filter( 'posts_join', array($this,'posts_join'), 10 ,2);
-			add_filter( 'posts_orderby', array($this,'posts_orderby'), 10 ,2);
-			add_filter( 'posts_groupby', array($this,'posts_groupby'), 10 ,2);
-			
 			add_filter('wpt_event_html',array($this,'wpt_event_html'), 10 , 2);
 			add_filter('wpt_production_html',array($this,'wpt_production_html'), 10 , 2);
 		}
 		
 		// More hooks (always load, necessary for bulk editing through AJAX)
+		add_filter('request', array($this,'request'));
 		add_action( 'bulk_edit_custom_box', array($this,'bulk_edit_custom_box'), 10, 2 );
 
 		// Options
@@ -471,12 +469,6 @@ class WPT_Admin {
 		$this->flush_cache();	
 	}
 	
-	function save_post( $post_id ) {
-		$this->save_production( $post_id );
-		$this->save_event( $post_id );
-		$this->flush_cache();
-	}
-	
 	function save_event( $post_id ) {
 		/*
 		 * We need to verify this came from the our screen and with proper authorization,
@@ -574,8 +566,14 @@ class WPT_Admin {
 		update_post_meta( $post_id, WPT_Season::post_type_name, $season );
 		update_post_meta( $post_id, 'sticky', $sticky );
 		
-		// Update status of connected Events
+		/*
+		 *	 Update connected Events
+		 */
+		
+		// unhook to avoid loops
 		remove_action( 'save_post', array( $this, 'save_post' ) );
+		remove_action( 'save_post_'.WPT_Event::post_type_name, array( $this, 'save_event' ) );
+
 		$events = $this->get_events($post_id);
 		foreach($events as $event) {
 			$post = array(
@@ -584,7 +582,10 @@ class WPT_Admin {
 			);
 			wp_update_post($post);
 		}
+
+		// rehook
 		add_action( 'save_post', array( $this, 'save_post' ) );
+		add_action( 'save_post_'.WPT_Event::post_type_name, array( $this, 'save_event' ) );
 	
 		
 	}
@@ -951,60 +952,14 @@ class WPT_Admin {
 		
 	}
 	
-	function posts_join($join, $query) {
-		global $wpdb;
-		if (
-			isset( $query->query_vars['orderby'] ) && 
-			'dates' == $query->query_vars['orderby'] &&
-			is_admin() &&
-			is_post_type_archive(WPT_Production::post_type_name)
-		) {
-			$join.="
-				LEFT JOIN (
-					SELECT production.meta_value AS ID, date.meta_value AS event_date
-					FROM $wpdb->posts
-					LEFT JOIN $wpdb->postmeta AS date ON date.post_id = $wpdb->posts.ID
-					AND date.meta_key = 'event_date'
-					LEFT JOIN $wpdb->postmeta AS production ON production.post_id = $wpdb->posts.ID
-					AND production.meta_key = 'wp_theatre_prod'
-					WHERE $wpdb->posts.post_type = 'wp_theatre_event'
-					AND (
-						$wpdb->posts.post_status = 'publish'
-						OR $wpdb->posts.post_status = 'future'
-						OR $wpdb->posts.post_status = 'draft'
-						OR $wpdb->posts.post_status = 'pending'
-						OR $wpdb->posts.post_status = 'private'
-					)
-					ORDER BY date.meta_value DESC
-				) AS startdate ON startdate.ID = $wpdb->posts.ID
-			";
+	function request($vars) {
+		if ( isset( $vars['orderby'] ) && 'dates' == $vars['orderby'] ) {
+		    $vars = array_merge( $vars, array(
+		        'meta_key' => 'wpt_order',
+		        'orderby' => 'meta_value_num'
+		    ) );
 		}
-		return $join;
-	}
-
-	function posts_orderby($orderby, $query) {
-		if (
-			isset( $query->query_vars['orderby'] ) && 
-			'dates' == $query->query_vars['orderby'] &&
-			is_admin() &&
-			is_post_type_archive(WPT_Production::post_type_name)
-		) {
-			$orderby= "startdate.event_date ".$query->query_vars['order'];
-		}
-		return $orderby;
-	}
-
-	function posts_groupby($groupby, $query) {
-		global $wpdb;
-		if (
-			isset( $query->query_vars['orderby'] ) && 
-			'dates' == $query->query_vars['orderby'] &&
-			is_admin() &&
-			is_post_type_archive(WPT_Production::post_type_name)
-		) {
-			$groupby = "$wpdb->posts.ID";
-		}
-		return $groupby;
+		return $vars;		
 	}
 
     function wpt_event_html($html, $event) {
