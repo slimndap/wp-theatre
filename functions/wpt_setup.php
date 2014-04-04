@@ -19,6 +19,10 @@ class WPT_Setup {
 		add_action( 'plugins_loaded', array($this,'plugins_loaded'));
 		
 		add_action( 'save_post_'.WPT_Production::post_type_name, array( $this, 'save_production' ) );
+		
+		add_filter( 'cron_schedules', array($this,'cron_schedules'));
+ 
+
 	}
 
 	/**
@@ -102,6 +106,15 @@ class WPT_Setup {
 		flush_rewrite_rules();
 	}
 
+	function cron_schedules( $schedules ) {
+		// Adds once weekly to the existing schedules.
+		$schedules['wpt_schedule'] = array(
+			'interval' => 5*60,
+			'display' => __( 'Every 5 minutes', 'wp_theatre' )
+		);
+		return $schedules;
+	}
+	
 	function gettext($translated_text, $text, $domain) {
 		global $wp_theatre;
 		if ($domain=='wp_theatre') {

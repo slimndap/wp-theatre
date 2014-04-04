@@ -105,7 +105,7 @@ class WP_Theatre {
 	}		
 
 	function activate() {
-		wp_schedule_event( time(), 'hourly', 'wpt_cron');		
+		wp_schedule_event( time(), 'wpt_schedule', 'wpt_cron');		
 	}
 	
 	function deactivate() {

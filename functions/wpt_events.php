@@ -204,7 +204,7 @@ class WPT_Events extends WPT_Listing {
 		global $wpdb;
 		
 		$filters = wp_parse_args( $filters, $this->defaults() );
-		
+
 		$args = array(
 			'post_type' => WPT_Event::post_type_name,
 			'post_status' => 'publish',

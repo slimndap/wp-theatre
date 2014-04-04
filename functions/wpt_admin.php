@@ -23,6 +23,8 @@ class WPT_Admin {
 			
 			add_filter('wpt_event_html',array($this,'wpt_event_html'), 10 , 2);
 			add_filter('wpt_production_html',array($this,'wpt_production_html'), 10 , 2);
+			
+			add_filter('views_edit-'.WPT_Production::post_type_name,array($this,'views_productions'));
 		}
 		
 		// More hooks (always load, necessary for bulk editing through AJAX)
@@ -959,6 +961,17 @@ class WPT_Admin {
 		        'orderby' => 'meta_value_num'
 		    ) );
 		}
+		if (!empty($_GET['upcoming'])) {
+			$vars['meta_query'] = array(
+				array(
+					'key' => 'wpt_order',
+					'value' => time(),
+					'compare' => '>=',
+					'type' => 'numeric'
+					
+				)
+			);
+		}
 		return $vars;		
 	}
 
@@ -976,6 +989,18 @@ class WPT_Admin {
 		$html.= '<span> | <a href="'.get_delete_post_link($production->ID).'">'.__('Trash').'</a></span>';;
 		$html.= '</div>'; //.row-actions
 		return $html;
+    }
+    
+    function views_productions($views) {
+    	$url = add_query_arg( 
+    		array(
+    	   		'upcoming' => 1,
+    	   		'post_status' => false
+		   	)
+    	);
+    	$class = empty($_GET['upcoming'])?'':'current';
+    	//$views['upcoming'] = '<a href="'.$url.'" class="'.$class.'">'.__('Upcoming','wp_theatre').'</a>';
+    	return $views;
     }
 }
 

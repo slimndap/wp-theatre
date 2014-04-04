@@ -25,7 +25,7 @@
 					$production = new WPT_Production($post->ID);
 					$events = $production->events();
 					if (!empty($events[0])) {
-						$wpt_order = strtotime($events[0]->post()->event_date);
+						$wpt_order = strtotime(get_post_meta($events[0]->ID, 'event_date',TRUE));
 						break;
 					}
 				case WPT_Event::post_type_name:
