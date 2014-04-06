@@ -18,11 +18,10 @@ class WPT_Setup {
 		
 		add_action( 'plugins_loaded', array($this,'plugins_loaded'));
 		
-		add_action( 'save_post_'.WPT_Production::post_type_name, array( $this, 'save_production' ) );
+		add_action('save_post_'.WPT_Production::post_type_name,array( $this,'save_production'));
 		
 		add_filter( 'cron_schedules', array($this,'cron_schedules'));
  
-
 	}
 
 	/**

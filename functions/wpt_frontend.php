@@ -206,15 +206,16 @@ class WPT_Frontend {
 		global $wp_theatre;
 
 		if (is_singular(WPT_Production::post_type_name)) {
-			$args = array();
-			$args['production'] = get_the_ID();
+			$args = array(
+				'production' => get_the_ID(),
+				'status' => get_post_status()
+			);
 		
 			if (!is_null($content) && !empty($content)) {
 				$args['template'] = html_entity_decode($content);
 			} else {
 				$args['template'] = '{{remark}} {{datetime}} {{location}} {{tickets}}';
 			}
-			
 			
 			return $wp_theatre->events->html($args);
 		}

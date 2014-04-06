@@ -207,7 +207,7 @@ class WPT_Events extends WPT_Listing {
 
 		$args = array(
 			'post_type' => WPT_Event::post_type_name,
-			'post_status' => 'publish',
+			'post_status' => $filters['status'],
 			'meta_query' => array(),
 			'order' => 'asc'
 		);

@@ -270,7 +270,7 @@ class WPT_Productions extends WPT_Listing {
 		}
 
 		$posts = get_posts($args);
-			
+
 		$productions = array();
 		for ($i=0;$i<count($posts);$i++) {
 			$key = $posts[$i]->ID;

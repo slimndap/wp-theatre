@@ -171,7 +171,7 @@ class WPT_Production {
 		global $wp_theatre;
 		if (!isset($this->events)) {
 			$filters = array(
-				'production'=>$this->ID,
+				'production'=>$this->ID
 			);			
 			$this->events = $wp_theatre->events($filters);
 		}
