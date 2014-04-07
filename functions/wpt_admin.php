@@ -398,6 +398,15 @@ class WPT_Admin {
 		echo '<span>'.__('Sold out','wp_theatre').'</span>';
 		echo '</label><br />';
 		
+		echo '<label>';
+		echo '<input type="radio" name="tickets_status" value="cancelled"';
+		if ($status=='cancelled') {
+			echo ' checked="checked"';
+		}
+		echo '> ';
+		echo '<span>'.__('Cancelled','wp_theatre').'</span>';
+		echo '</label><br />';
+		
  		echo '</td>';
 		echo '</tr>';
 		
@@ -636,8 +645,9 @@ class WPT_Admin {
 		$html.= '</div>'; //.content
 
 		$html.= '<div class="tickets">';
-		if (get_post_meta($event->ID,'tickets_status',true) == 'soldout') {
-			$html.= __('Sold out', 'wp_theatre');
+		$status = get_post_meta($event->ID,'tickets_status',true);
+		if (!empty($status)) {
+			$html.= '<span class="'.WPT_Event::post_type_name.'_tickets_status '.WPT_Event::post_type_name.'_tickets_status_'.$status.'">'.__($status, 'wp_theatre').'</span>';
 		} else {
 			$url = get_post_meta($event->ID,'tickets_url',true);
 			if ($url!='') {

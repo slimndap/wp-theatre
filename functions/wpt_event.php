@@ -407,9 +407,12 @@ class WPT_Event {
 		}	
 		
 		if ($args['html']) {
-			$html = '<div class="'.self::post_type_name.'_tickets">';			
-			if (get_post_meta($this->ID,'tickets_status',true) == 'soldout') {
-				$html.= '<span class="'.self::post_type_name.'_soldout">'.__('Sold out', 'wp_theatre').'</span>';
+			$html = '<div class="'.self::post_type_name.'_tickets">';
+			
+			$status = get_post_meta($this->ID,'tickets_status',true);
+			if (!empty($status)) {
+				$html.= '<span class="'.self::post_type_name.'_tickets_status '.self::post_type_name.'_tickets_status_'.$status.'">'.__($status, 'wp_theatre').'</span>';
+				
 			} else {
 				if (!empty($this->tickets)) {
 					$html.= '<a href="'.$this->tickets.'" rel="nofollow"';
