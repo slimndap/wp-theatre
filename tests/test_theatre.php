@@ -16,27 +16,27 @@ class WPT_Test extends WP_UnitTestCase {
 		
 		$production_id = $this->factory->post->create($production_args);
 		$event_id = $this->factory->post->create($event_args);
-		add_post_meta(event_id, WPT_Production::post_type_name, $production_id);
+		add_post_meta($event_id, WPT_Production::post_type_name, $production_id);
 		
 		$production_id = $this->factory->post->create($production_args);
 		$event_id = $this->factory->post->create($event_args);
-		add_post_meta(event_id, WPT_Production::post_type_name, $production_id);
+		add_post_meta($event_id, WPT_Production::post_type_name, $production_id);
 
 		$production_id = $this->factory->post->create($production_args);
 		$event_id = $this->factory->post->create($event_args);
-		add_post_meta(event_id, WPT_Production::post_type_name, $production_id);
+		add_post_meta($event_id, WPT_Production::post_type_name, $production_id);
 
 		$production_id = $this->factory->post->create($production_args);
 		$event_id = $this->factory->post->create($event_args);
-		add_post_meta(event_id, WPT_Production::post_type_name, $production_id);
+		add_post_meta($event_id, WPT_Production::post_type_name, $production_id);
 
 		$production_id = $this->factory->post->create($production_args);
 		$event_id = $this->factory->post->create($event_args);
-		add_post_meta(event_id, WPT_Production::post_type_name, $production_id);
+		add_post_meta($event_id, WPT_Production::post_type_name, $production_id);
 
 		$production_id = $this->factory->post->create($production_args);
 		$event_id = $this->factory->post->create($event_args);
-		add_post_meta(event_id, WPT_Production::post_type_name, $production_id);
+		add_post_meta($event_id, WPT_Production::post_type_name, $production_id);
 		
 	}
 
@@ -46,7 +46,9 @@ class WPT_Test extends WP_UnitTestCase {
 	}
 
 	function test_connected_events_are_trashed_when_production_is_trashed() {
-		
+		// Arrange
+		// Act
+		// Assert
 	}
 	
 	function test_connected_events_are_untrashed_when_production_is_untrashed() {

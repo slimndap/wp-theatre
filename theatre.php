@@ -25,10 +25,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *	echo $wp_theatre->events->html_listing($args); // a list of all upcoming events, paginated by month
  */
 
+$wpt_version = '0.7';
+
 class WP_Theatre {
 	function __construct() {
-		$this->version = '0.7';
-
 		// Includes
 		$this->includes();
 	

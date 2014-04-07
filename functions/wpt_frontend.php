@@ -21,20 +21,20 @@ class WPT_Frontend {
 	
 	function init() {
 		global $wp_theatre;
-		$version = $wp_theatre->version;
+		global $wpt_version;
 
 		// Add built-in Theatre javascript
-		wp_enqueue_script( 'wp_theatre_js', plugins_url( '../js/main.js', __FILE__ ), array('jquery'), $version );
+		wp_enqueue_script( 'wp_theatre_js', plugins_url( '../js/main.js', __FILE__ ), array('jquery'), $wpt_version );
 
 		// Add built-in Theatre stylesheet
 		if (!empty($wp_theatre->options['stylesheet'])) {
-			wp_enqueue_style( 'wp_theatre', plugins_url( '../css/style.css', __FILE__ ), null, $version );
+			wp_enqueue_style( 'wp_theatre', plugins_url( '../css/style.css', __FILE__ ), null, $wpt_version );
 		}
 
 		// Add Thickbox files
 		if (!empty($wp_theatre->options['integrationtype']) && $wp_theatre->options['integrationtype']=='lightbox') {
 			wp_enqueue_script('thickbox');
-			wp_enqueue_style('thickbox', includes_url('/js/thickbox/thickbox.css'), null, $version);			
+			wp_enqueue_style('thickbox', includes_url('/js/thickbox/thickbox.css'), null, $wpt_version);			
 		}
 	}
 
