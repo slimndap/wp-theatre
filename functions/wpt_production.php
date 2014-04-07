@@ -130,7 +130,7 @@ class WPT_Production {
 		);
 
 		$args = wp_parse_args( $args, $defaults );
-		if (!isset($this->dates)) {			
+		if (!isset($this->dates)) {	
 			$dates = '';
 			$dates_short = '';
 			$first_datetimestamp = $last_datetimestamp = '';
@@ -171,7 +171,7 @@ class WPT_Production {
 		global $wp_theatre;
 		if (!isset($this->events)) {
 			$filters = array(
-				'production'=>$this->ID,
+				'production'=>$this->ID
 			);			
 			$this->events = $wp_theatre->events($filters);
 		}
@@ -429,9 +429,8 @@ class WPT_Production {
 			'template' => '{{thumbnail}} {{title}} {{dates}} {{cities}}'
 		);
 		$args = wp_parse_args( $args, $defaults );
-
 		$html = $args['template'];
-		
+
 		$classes = array();
 		$classes[] = self::post_type_name;
 
