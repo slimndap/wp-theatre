@@ -37,6 +37,7 @@ class WP_Theatre {
 		$this->admin = new WPT_Admin();
 		$this->events = new WPT_Events();
 		$this->productions = new WPT_Productions();
+		$this->order = new WPT_Order();
 		if (is_admin()) {
 		} else {
 			$this->frontend = new WPT_Frontend();
@@ -50,6 +51,10 @@ class WP_Theatre {
 
 		// Hooks
 		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this->setup, 'plugin_action_links' ) );
+
+		// Plugin (de)activation hooks
+		register_activation_hook( __FILE__, array($this, 'activate' ));		
+		register_deactivation_hook( __FILE__, array($this, 'deactivate' ));		
 		
 		// Loaded action
 		do_action( 'wpt_loaded' );
@@ -86,6 +91,7 @@ class WP_Theatre {
 		require_once(__DIR__ . '/functions/wpt_season.php');
 		require_once(__DIR__ . '/functions/wpt_widget.php');
 		require_once(__DIR__ . '/functions/wpt_admin.php');
+		require_once(__DIR__ . '/functions/wpt_order.php');
 		if (is_admin()) {
 		} else {
 			require_once(__DIR__ . '/functions/wpt_frontend.php');
@@ -98,8 +104,16 @@ class WP_Theatre {
 	
 	public function seasons($PostClass = false) {
 		return $this->get_seasons($PostClass);
+	}		
+
+	function activate() {
+		wp_schedule_event( time(), 'wpt_schedule', 'wpt_cron');		
 	}
-		
+	
+	function deactivate() {
+		wp_clear_scheduled_hook('wpt_cron');
+		delete_post_meta_by_key('wpt_order');
+	}
 
 	/*
 	 * Private functions.

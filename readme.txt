@@ -1,13 +1,13 @@
 === Theatre ===
 Contributors: slimndap
-Tags: theatre, stage, venue, events, shows, concerts, tickets, ticketing, sports, performances, calendar, workshops, theater
+Tags: theatre, stage, venue, events, shows, concerts, tickets, ticketing, sports, performances, calendar, workshops, theater, cinema
 Requires at least: 3.5
 Tested up to: 3.8.1
 Stable tag: trunk
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Add events to your Wordpress website. Build a website for your theater, music venue, sports team or your rockband!
+Add events to your Wordpress website. Build a website for your theater, music venue, sports team, cinema or your rockband!
 
 == Description ==
 This plugin gives you the ability to manage seasons, productions and events in Wordpress and comes with all necessary shortcodes and widgets to show your events on your website.
@@ -149,8 +149,11 @@ Make sure that you checked the 'Enable built-in Theatre stylesheet'-option in th
 
 == Upgrade Notice ==
 
-=0.6.1=
-* Fix: Theatre was messing up the listings of other post types.
+= 0.6.2 =
+* Important: Please deactivate and then reactivate this plugin after the update.
+
+= 0.6.1 =
+* Fix: Theatre was messing up the admin listings of other post types.
 
 = 0.6 =
 * v0.6 requires you to update your shortcodes. Please check the [documentation](https://github.com/slimndap/wp-theatre/wiki/Shortcodes) for the details.

@@ -3,8 +3,8 @@ class WPT_Setup {
 	function __construct() {
 
 		$this->options = get_option( 'wp_theatre' );
+
 		// Installation
-		register_activation_hook( __FILE__, array($this, 'activate' ));		
 
 		// Hooks
 		add_action( 'init', array($this,'init'));
@@ -17,6 +17,11 @@ class WPT_Setup {
 		});
 		
 		add_action( 'plugins_loaded', array($this,'plugins_loaded'));
+		
+		add_action('save_post_'.WPT_Production::post_type_name,array( $this,'save_production'));
+		
+		add_filter( 'cron_schedules', array($this,'cron_schedules'));
+ 
 	}
 
 	/**
@@ -73,6 +78,7 @@ class WPT_Setup {
 				'has_archive' => true,
 				'show_in_menu'  => false,
 				'supports' => array(''),
+	  			'taxonomies' => array('category','post_tag'),
 				'show_in_nav_menus'=> false
 			)
 		);
@@ -99,6 +105,15 @@ class WPT_Setup {
 		flush_rewrite_rules();
 	}
 
+	function cron_schedules( $schedules ) {
+		// Adds once weekly to the existing schedules.
+		$schedules['wpt_schedule'] = array(
+			'interval' => 5*60,
+			'display' => __( 'Every 5 minutes', 'wp_theatre' )
+		);
+		return $schedules;
+	}
+	
 	function gettext($translated_text, $text, $domain) {
 		global $wp_theatre;
 		if ($domain=='wp_theatre') {
@@ -122,6 +137,16 @@ class WPT_Setup {
 			
 		}
 		return $translated_text;
+	}
+	
+	function save_production($post_id) {
+		$production = new WPT_Production($post_id);
+		$categories = wp_get_post_categories($post_id);
+		$events = $production->events();
+		foreach ($events as $event) {
+			wp_set_post_categories($event->ID, $categories);
+		}
+		
 	}
 }
 

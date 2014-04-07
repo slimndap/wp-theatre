@@ -55,6 +55,22 @@ class WPT_Frontend {
 		echo implode("\n",$html)."\n";
 	}
 	
+	function pre_get_posts($query) {
+				
+		// add productions to tag and category archives
+		if( is_category() || is_tag() && empty( $query->query_vars['suppress_filters'] ) ) {
+			$post_types = $query->get( 'post_type');
+			if (empty($post_types)) {
+				$post_types = array('post');
+			}
+			if (is_array($post_types)) {
+				$post_types[] = WPT_Production::post_type_name;
+			}
+			$query->set('post_type',$post_types);
+		}
+		return $query;
+	}
+
 	function the_content($content) {
 		global $wp_theatre;
 		
@@ -185,15 +201,16 @@ class WPT_Frontend {
 		global $wp_theatre;
 
 		if (is_singular(WPT_Production::post_type_name)) {
-			$args = array();
-			$args['production'] = get_the_ID();
+			$args = array(
+				'production' => get_the_ID(),
+				'status' => get_post_status()
+			);
 		
 			if (!is_null($content) && !empty($content)) {
 				$args['template'] = html_entity_decode($content);
 			} else {
 				$args['template'] = '{{remark}} {{datetime}} {{location}} {{tickets}}';
 			}
-			
 			
 			return $wp_theatre->events->html($args);
 		}
