@@ -34,6 +34,11 @@
  		function pre_get_posts($query) {
 			$post_types = (array) $query->get('post_type');
 			
+			// Don't interfere with custom sorting of post columns.
+			if (is_admin() && !empty($_GET['orderby'])) {
+				return;
+			}
+			
 			$wpt_post_types = array(WPT_Production::post_type_name,WPT_Event::post_type_name,'any');
 			foreach ($wpt_post_types as $wpt_post_type) {
 				if (in_array($wpt_post_type, $post_types)) {
