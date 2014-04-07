@@ -109,12 +109,14 @@ class WP_Theatre {
 	}		
 
 	function activate() {
-		wp_schedule_event( time(), 'wpt_schedule', 'wpt_cron');		
+		wp_schedule_event( time(), 'wpt_schedule', 'wpt_cron');
+		flush_rewrite_rules();		
 	}
 	
 	function deactivate() {
 		wp_clear_scheduled_hook('wpt_cron');
 		delete_post_meta_by_key('wpt_order');
+		flush_rewrite_rules();		
 	}
 
 	/*
