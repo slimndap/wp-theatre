@@ -53,6 +53,9 @@ class WPT_Frontend {
 		
 		}		
 		echo implode("\n",$html)."\n";
+		
+		$feed = get_post_type_archive_feed_link(WPT_Production::post_type_name);
+		echo '<link rel="alternate" type="application/rss+xml" title="'.__('New productions','wp_theatre').'" href="'.$feed.'" />';
 	}
 	
 	function pre_get_posts($query) {

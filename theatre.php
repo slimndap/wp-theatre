@@ -38,6 +38,7 @@ class WP_Theatre {
 		$this->events = new WPT_Events();
 		$this->productions = new WPT_Productions();
 		$this->order = new WPT_Order();
+		$this->feeds = new WPT_Feeds();
 		if (is_admin()) {
 		} else {
 			$this->frontend = new WPT_Frontend();
@@ -92,6 +93,7 @@ class WP_Theatre {
 		require_once(__DIR__ . '/functions/wpt_widget.php');
 		require_once(__DIR__ . '/functions/wpt_admin.php');
 		require_once(__DIR__ . '/functions/wpt_order.php');
+		require_once(__DIR__ . '/functions/wpt_feeds.php');	
 		if (is_admin()) {
 		} else {
 			require_once(__DIR__ . '/functions/wpt_frontend.php');
