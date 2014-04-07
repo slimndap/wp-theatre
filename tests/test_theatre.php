@@ -3,6 +3,7 @@
 class WPT_Test extends WP_UnitTestCase {
 
 	function setUp() {
+		parent::setUp();
 		$production_args = array(
 			'post_type'=>WPT_Production::post_type_name
 		);
@@ -41,11 +42,7 @@ class WPT_Test extends WP_UnitTestCase {
 
 	function test_events_are_loaded() {
 		global $wp_theatre;
-		$events = $wp_theatre->events();
-		$this->assertTrue( 
-			count($events)==5
-		);
-		
+		$this->assertCount(5, $wp_theatre->events());		
 	}
 
 	function test_connected_events_are_trashed_when_production_is_trashed() {
