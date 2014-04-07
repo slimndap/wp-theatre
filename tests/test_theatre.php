@@ -17,7 +17,7 @@ class WPT_Test extends WP_UnitTestCase {
 			'post_type'=>WPT_Event::post_type_name
 		);
 		
-		//create productions
+		//create 6 productions
 		$production_id = $this->factory->post->create($production_args);
 		$event_id = $this->factory->post->create($event_args);
 		add_post_meta($event_id, WPT_Production::post_type_name, $production_id);
@@ -58,7 +58,8 @@ class WPT_Test extends WP_UnitTestCase {
 		}
 		$args = array(
 			'post_type'=>WPT_Event::post_type_name,
-			'post_status'=>'trash'
+			'post_status'=>'trash',
+			'posts_per_page'=>-1
 		);
 		$this->assertCount(6, get_posts($args));		
 	}
