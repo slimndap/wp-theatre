@@ -20,7 +20,13 @@
 				'limit'=>$instance['limit']
 			);
 			
-			echo $wp_theatre->events->html($filters);
+			$transient_key = 'wpt_events_'.md5(serialize($filters));
+			if ( ! ( $html = get_transient($transient_key) ) ) {
+				$html = $wp_theatre->events->html($filters);
+				set_transient($transient_key, $html, 4 * MINUTE_IN_SECONDS );
+			}
+			echo  $html;
+
 			echo $args['after_widget'];
 
 		}
@@ -80,7 +86,13 @@
 				'limit' => $instance['limit'],
 				'upcoming' => true
 			);
-			echo $wp_theatre->productions->html($filters);
+
+			$transient_key = 'wpt_prods_'.md5(serialize($filters));
+			if ( ! ( $html = get_transient($transient_key) ) ) {
+				$html = $wp_theatre->productions->html($filters);
+				set_transient($transient_key, $html, 4 * MINUTE_IN_SECONDS );
+			}
+			echo  $html;
 			echo $args['after_widget'];
 
 		}

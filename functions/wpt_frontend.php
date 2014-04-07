@@ -121,7 +121,14 @@ class WPT_Frontend {
 		}
 
 		$wp_theatre->events->filters['upcoming'] = true;
-		return $wp_theatre->events->html($atts);
+		
+		$transient_key = 'wpt_events_'.md5(serialize(array_merge($atts, $_GET)));
+		if ( ! ( $html = get_transient($transient_key) ) ) {
+			$html = $wp_theatre->events->html($atts);
+			set_transient($transient_key, $html, 4 * MINUTE_IN_SECONDS );
+		}
+
+		return $html;
 	}
 
 	function wpt_productions($atts, $content=null) {
@@ -148,7 +155,13 @@ class WPT_Frontend {
 			$atts['template'] = html_entity_decode($content);
 		}
 
-		return $wp_theatre->productions->html($atts);
+		$transient_key = 'wpt_prod_'.md5(serialize(array_merge($atts, $_GET)));
+		if ( ! ( $html = get_transient($transient_key) ) ) {
+			$html = $wp_theatre->productions->html($atts);
+			set_transient($transient_key, $html, 4 * MINUTE_IN_SECONDS );
+		}
+
+		return $html;
 	}
 
 	function wpt_seasons($atts, $content=null) {
