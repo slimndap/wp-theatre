@@ -178,7 +178,6 @@
 			foreach ($events as $event) {
 				wp_set_post_categories($event->ID, $categories);
 			}
-			
 		}
 		
 		/**
