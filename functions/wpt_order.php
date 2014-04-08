@@ -91,6 +91,7 @@
 					}
 				case WPT_Event::post_type_name:
 					$wpt_order = strtotime(get_post_meta($post->ID, 'event_date',TRUE));
+					// also update wpt_order of parent production?
 					break;
 				default:
 					$wpt_order = strtotime($post->post_date);

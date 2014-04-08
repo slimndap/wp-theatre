@@ -18,7 +18,9 @@
 			
 			add_action( 'plugins_loaded', array($this,'plugins_loaded'));
 			
-			add_action('save_post_'.WPT_Production::post_type_name,array( $this,'save_production'));
+			// make sure this runs after any save_post hooks in WPT_Admin (priority 10)
+			add_action('save_post_'.WPT_Production::post_type_name,array( $this,'save_production'), 20);
+			
 			add_action('before_delete_post',array( $this,'before_delete_post'));
 			add_action('wp_trash_post',array( $this,'wp_trash_post'));
 			add_action('untrash_post',array( $this,'untrash_post'));
@@ -173,10 +175,20 @@
 		
 		function save_production($post_id) {
 			$production = new WPT_Production($post_id);
-			$categories = wp_get_post_categories($post_id);
 			$events = $production->events();
+			
+			// give child events the same categories
+			$categories = wp_get_post_categories($post_id);
 			foreach ($events as $event) {
 				wp_set_post_categories($event->ID, $categories);
+			}
+			
+			// give child events the same season
+			if ($season = $production->season()) {
+				foreach ($events as $event) {
+					delete_post_meta($event->ID, WPT_Season::post_type_name);
+					add_post_meta($event->ID, WPT_Season::post_type_name, $season->ID);
+				}
 			}
 		}
 		

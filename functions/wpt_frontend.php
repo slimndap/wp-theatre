@@ -100,11 +100,10 @@ class WPT_Frontend {
 		global $wp_theatre;
 		
 		$atts = shortcode_atts( array(
-			'paged' => false,
-			'grouped' => false,
 			'upcoming' => true,
 			'past' => false,
 			'paginateby'=>array(),
+			'season'=> false,
 			'groupby'=>false,
 			'limit'=>false
 		), $atts );
@@ -136,10 +135,9 @@ class WPT_Frontend {
 		global $wp_theatre;
 		
 		$atts = shortcode_atts( array(
-			'paged' => false,
-			'grouped' => false,
 			'paginateby' => array(),
 			'upcoming' => false,
+			'season'=> false,
 			'groupby'=>false,
 			'limit'=>false
 		), $atts );

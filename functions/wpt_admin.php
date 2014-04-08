@@ -12,7 +12,7 @@ class WPT_Admin {
 			add_action( 'quick_edit_custom_box', array($this,'quick_edit_custom_box'), 10, 2 );
 			add_action( 'wp_dashboard_setup', array($this,'wp_dashboard_setup' ));
 
-			add_action( 'save_post_'.WPT_Production::post_type_name, array( $this, 'save_production' ) );
+			add_action( 'save_post_'.WPT_Production::post_type_name, array( $this, 'save_production' ) , 10);
 			add_action( 'save_post_'.WPT_Event::post_type_name, array( $this, 'save_event' ) );
 
 			add_filter('manage_wp_theatre_prod_posts_columns', array($this,'manage_wp_theatre_prod_posts_columns'), 10, 2);
@@ -560,7 +560,6 @@ class WPT_Admin {
 		 */
 		
 		// unhook to avoid loops
-		remove_action( 'save_post', array( $this, 'save_post' ) );
 		remove_action( 'save_post_'.WPT_Event::post_type_name, array( $this, 'save_event' ) );
 
 		$events = $this->get_events($post_id);
@@ -573,7 +572,6 @@ class WPT_Admin {
 		}
 
 		// rehook
-		add_action( 'save_post', array( $this, 'save_post' ) );
 		add_action( 'save_post_'.WPT_Event::post_type_name, array( $this, 'save_event' ) );
 	
 		

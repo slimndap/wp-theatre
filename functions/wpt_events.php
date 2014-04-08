@@ -30,6 +30,7 @@ class WPT_Events extends WPT_Listing {
 			'past' => false,
 			'month' => false,
 			'category' => false,
+			'season' => false,
 			'production' => false,
 			'status' => array('publish')
 		);
@@ -55,6 +56,8 @@ class WPT_Events extends WPT_Listing {
  	 * @return string HTML.
 	 */
 	public function html($args=array()) {
+		global $wp_theatre;
+	
 		$defaults = array(
 			'paginateby' => array(),
 			'groupby'=>false,
@@ -77,7 +80,8 @@ class WPT_Events extends WPT_Listing {
 		$filters = array(
 			'upcoming' => true,
 			'production' => $args['production'],
-			'limit' => $args['limit']
+			'limit' => $args['limit'],
+			'season' => $args['season']
 		);
 
 		if (in_array('month',$args['paginateby'])) {
@@ -136,6 +140,34 @@ class WPT_Events extends WPT_Listing {
 				} else {
 					$html.= $name;
 					
+				}
+				$html.= '</span>';
+			}
+			$html.= '</nav>';
+		}
+
+		if (in_array('season',$args['paginateby'])) {
+			$seasons = $wp_theatre->productions->seasons();
+
+			if (!empty($_GET[__('season','wp_theatre')])) {
+				$filters['season'] = $_GET[__('season','wp_theatre')];
+			} else {
+				$slugs = array_keys($seasons);
+				$filters['season'] = $slugs[0];				
+			}
+
+			$html.= '<nav>';
+			foreach($seasons as $slug=>$season) {
+
+				$url = remove_query_arg(__('season','wp_theatre'));
+				$url = add_query_arg( __('season','wp_theatre'), $slug , $url);
+				$html.= '<span>';
+
+				$title = $season->title();
+				if ($slug == $filters['season']) {
+					$html.= $title;
+				} else {
+					$html.= '<a href="'.$url.'">'.$title.'</a>';					
 				}
 				$html.= '</span>';
 			}
@@ -236,6 +268,14 @@ class WPT_Events extends WPT_Listing {
 			);
 		}
 
+		if ($filters['season']) {
+			$args['meta_query'][] = array (
+				'key' => WPT_Season::post_type_name,
+				'value' => $filters['season'],
+				'compare' => '='
+			);
+		}
+		
 		if ($filters['category']) {
 			$args['cat'] = $filters['category'];
 		}
