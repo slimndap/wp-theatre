@@ -70,20 +70,33 @@ class WPT_Test extends WP_UnitTestCase {
 		
 	}
 
+	function dump_events() {
+		$args = array(
+			'post_type'=>WPT_Event::post_type_name,
+			'posts_er_page' => -1
+		);
+		$events = get_posts($args);
+		
+		$dump = '';
+		foreach($events as $event) {
+			$dump.= print_r($event,false);
+			$dump.= get_post_meta($event->ID, WPT_Production::post_type_name);
+		}
+		
+		return $dump;
+	}
+
 	function test_events_are_loaded() {
 		$this->assertCount(6, $this->wp_theatre->events());		
 	}
 
 	function test_productions_are_loaded() {
-		$this->assertCount(6, $this->wp_theatre->productions());		
+		$this->assertCount(7, $this->wp_theatre->productions());		
 	}
 
 
 	function test_upcoming_productions() {
-		$production = new WPT_Production($this->production_with_upcoming_event);
-	
-		$message = '';
-		$message.= print_r($production->events(),false);
+		$message = $this->dump_events();
 	
 		$args = array(
 			'upcoming' => TRUE
@@ -109,7 +122,7 @@ class WPT_Test extends WP_UnitTestCase {
 			wp_trash_post($production->ID);
 			wp_untrash_post($production->ID);
 		}
-		$this->assertCount(6, $this->wp_theatre->events());		
+		$this->assertCount(7, $this->wp_theatre->events());		
 		
 	}
 	
@@ -127,8 +140,6 @@ class WPT_Test extends WP_UnitTestCase {
 	// RSS feeds
 	
 	function test_upcoming_productions_feed() {
-		$productions = print_r($this->wp_theatre->productions(),FALSE);
-	
 		$xml = new DomDocument;
         $xml->loadXML($this->wp_theatre->feeds->get_upcoming_productions());
         $this->assertSelectCount('item', 2, $xml, $productions, FALSE);
