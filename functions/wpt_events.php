@@ -287,7 +287,6 @@ class WPT_Events extends WPT_Listing {
 			
 		}
 
-		print_r($args);
 
 		$posts = get_posts($args);
 		
