@@ -80,18 +80,18 @@ class WPT_Test extends WP_UnitTestCase {
 		$dump = '';
 		foreach($events as $event) {
 			$dump.= print_r($event,false);
-			$dump.= get_post_meta($event->ID, WPT_Production::post_type_name);
+			$dump.= get_post_meta($event->ID, WPT_Production::post_type_name, TRUE);
 		}
 		
 		return $dump;
 	}
 
 	function test_events_are_loaded() {
-		$this->assertCount(6, $this->wp_theatre->events());		
+		$this->assertCount(7, $this->wp_theatre->events());		
 	}
 
 	function test_productions_are_loaded() {
-		$this->assertCount(7, $this->wp_theatre->productions());		
+		$this->assertCount(6, $this->wp_theatre->productions());		
 	}
 
 
@@ -142,7 +142,7 @@ class WPT_Test extends WP_UnitTestCase {
 	function test_upcoming_productions_feed() {
 		$xml = new DomDocument;
         $xml->loadXML($this->wp_theatre->feeds->get_upcoming_productions());
-        $this->assertSelectCount('item', 2, $xml, $productions, FALSE);
+        $this->assertSelectCount('item', 2, $xml);
 	}
 	
 	function test_upcoming_events_feed() {
