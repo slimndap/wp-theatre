@@ -20,21 +20,28 @@ class WPT_Test extends WP_UnitTestCase {
 		//create 6 productions
 		
 		// production with upcoming event
-		$production_id = $this->factory->post->create($production_args);
-		$event_id = $this->factory->post->create($event_args);
-		add_post_meta($event_id, WPT_Production::post_type_name, $production_id);
-		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() + DAY_IN_SECONDS));
-		$this->wp_theatre->order->set_post_order($event_id);
-		$this->wp_theatre->order->set_post_order($production_id);
+		$this->production_with_upcoming_event = $this->factory->post->create($production_args);
+		$upcoming_event = $this->factory->post->create($event_args);
+		add_post_meta($upcoming_event, WPT_Production::post_type_name, $this->production_with_upcoming_event);
+		add_post_meta($upcoming_event, 'event_date', date('Y-m-d H:i:s', time() + DAY_IN_SECONDS));
+		$this->wp_theatre->order->set_post_order($upcoming_event);
+		$this->wp_theatre->order->set_post_order($this->production_with_upcoming_event);
 		
-		// production that starts tomorrow
-		$production_id = $this->factory->post->create($production_args);
-		$event_id = $this->factory->post->create($event_args);
-		add_post_meta($event_id, WPT_Production::post_type_name, $production_id);
-		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() + DAY_IN_SECONDS));
-		$this->wp_theatre->order->set_post_order($event_id);
-		$this->wp_theatre->order->set_post_order($production_id);
+		// production with 2 upcoming events
+		$this->production_with_upcoming_events = $this->factory->post->create($production_args);
 
+		$upcoming_event = $this->factory->post->create($event_args);
+		add_post_meta($upcoming_event, WPT_Production::post_type_name, $this->production_with_upcoming_events);
+		add_post_meta($upcoming_event, 'event_date', date('Y-m-d H:i:s', time() + DAY_IN_SECONDS));
+		$this->wp_theatre->order->set_post_order($upcoming_event);
+
+		$upcoming_event = $this->factory->post->create($event_args);
+		add_post_meta($upcoming_event, WPT_Production::post_type_name, $this->production_with_upcoming_events);
+		add_post_meta($upcoming_event, 'event_date', date('Y-m-d H:i:s', time() + DAY_IN_SECONDS));
+		$this->wp_theatre->order->set_post_order($upcoming_event);
+
+		$this->wp_theatre->order->set_post_order($this->production_with_upcoming_events);
+		
 		// production that started yesterday
 		$production_id = $this->factory->post->create($production_args);
 		$event_id = $this->factory->post->create($event_args);
@@ -73,10 +80,13 @@ class WPT_Test extends WP_UnitTestCase {
 
 
 	function test_upcoming_productions() {
+		$message = '';
+		$message.= print_r($this->production_with_upcoming_event->event(),false);
+	
 		$args = array(
 			'upcoming' => TRUE
 		);
-		$this->assertCount(2, $this->wp_theatre->productions($args));		
+		$this->assertCount(2, $this->wp_theatre->productions($args), $message);		
 		
 	}
 
