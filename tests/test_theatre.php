@@ -18,17 +18,24 @@ class WPT_Test extends WP_UnitTestCase {
 		);
 		
 		//create 6 productions
-		$production_id = $this->factory->post->create($production_args);
-		$event_id = $this->factory->post->create($event_args);
-		add_post_meta($event_id, WPT_Production::post_type_name, $production_id);
 		
+		// production that starts tomorrow
 		$production_id = $this->factory->post->create($production_args);
 		$event_id = $this->factory->post->create($event_args);
 		add_post_meta($event_id, WPT_Production::post_type_name, $production_id);
+		add_post_meta($event_id, 'event_date', date('Y-m-d H:s:i', time() + DAY_IN_SECONDS));
+		
+		// production that starts tomorrow
+		$production_id = $this->factory->post->create($production_args);
+		$event_id = $this->factory->post->create($event_args);
+		add_post_meta($event_id, WPT_Production::post_type_name, $production_id);
+		add_post_meta($event_id, 'event_date', date('Y-m-d H:s:i', time() + DAY_IN_SECONDS));
 
+		// production that started yesterday
 		$production_id = $this->factory->post->create($production_args);
 		$event_id = $this->factory->post->create($event_args);
 		add_post_meta($event_id, WPT_Production::post_type_name, $production_id);
+		add_post_meta($event_id, 'event_date', date('Y-m-d H:s:i', time() - DAY_IN_SECONDS));
 
 		$production_id = $this->factory->post->create($production_args);
 		$event_id = $this->factory->post->create($event_args);
@@ -89,7 +96,7 @@ class WPT_Test extends WP_UnitTestCase {
 	function test_upcoming_productions_feed() {
 		$xml = new DomDocument;
         $xml->loadXML($this->wp_theatre->feeds->get_upcoming_productions());
-        $this->assertSelectCount('item', 6, $xml, $xml->saveXML(), FALSE);
+        $this->assertSelectCount('item', 2, $xml, $xml->saveXML(), FALSE);
 	}
 	
 	function test_upcoming_events_feed() {
