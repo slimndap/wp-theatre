@@ -66,7 +66,7 @@
 
 			$feed.= $items;
 
-			$feed.= '<channel>';
+			$feed.= '</channel>';
 
 			$feed.=	'</rss>';
 
