@@ -1,4 +1,13 @@
 <?php
+	/**
+	 * Add feeds for events and productions.
+	 *
+	 * Adds two new feeds: upcoming_productions and upcoming_events.
+	 * Adds a link to both feeds, plus the productions archive feed to header.
+	 *
+	 * @since 0.7
+	 *
+	 */
 	class WPT_Feeds {
 		function __construct() {
 			add_action('init', array($this,'init'));
@@ -12,7 +21,12 @@
 			
 		function wp_head() {
 			$feed = get_post_type_archive_feed_link(WPT_Production::post_type_name);
-			echo '<link rel="alternate" type="application/rss+xml" title="'.__('New productions','wp_theatre').'" href="'.$feed.'" />';
+			$html = array();
+			
+			$html[] = '<link rel="alternate" type="application/rss+xml" title="'.__('New productions','wp_theatre').'" href="'.$feed.'" />';
+			$html[] = '<link rel="alternate" type="application/rss+xml" title="'.__('Upcoming productions','wp_theatre').'" href="'.site_url('/upcoming_productions').'" />';
+			$html[] = '<link rel="alternate" type="application/rss+xml" title="'.__('Upcoming events','wp_theatre').'" href="'.site_url('/upcoming_events').'" />';
+			echo implode("\n",$html)."\n";
 		}
 		
 		function upcoming_productions() {			

@@ -287,7 +287,7 @@ class WPT_Event {
 		if (!isset($this->prices)) {
 			$this->prices = apply_filters('wpt_event_prices',get_post_meta($this->ID,'price',false), $this);
 		}
-
+		
 		if ($args['html']) {
 			$html = '';
 			$html.= '<div class="'.self::post_type_name.'_prices">';
@@ -310,7 +310,7 @@ class WPT_Event {
 								$lowest = $this->prices[$p]->price;
 							}
 						}
-						$summary = __('from','wp_theatre').' '.$wp_theatre->options['currencysymbol'].'&nbsp;'.number_format_i18n($this->prices[0]->price,2);
+						$summary = __('from','wp_theatre').' '.$wp_theatre->options['currencysymbol'].'&nbsp;'.number_format_i18n($lowest,2);
 					}
 				}
 				return $summary;
