@@ -61,6 +61,15 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertCount(6, $this->wp_theatre->productions());		
 	}
 
+
+	function test_upcoming_productions() {
+		$args = array(
+			'upcoming' => TRUE
+		);
+		$this->assertCount(2, $this->wp_theatre->productions($args));		
+		
+	}
+
 	function test_connected_events_are_trashed_when_production_is_trashed() {
 		foreach($this->wp_theatre->productions() as $production) {
 			wp_trash_post($production->ID);
