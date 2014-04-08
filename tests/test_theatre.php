@@ -89,7 +89,7 @@ class WPT_Test extends WP_UnitTestCase {
 	function test_upcoming_productions_feed() {
 		$xml = new DomDocument;
         $xml->loadXML($this->wp_theatre->feeds->get_upcoming_productions());
-        $this->assertSelectCount('item', 6, $xml);
+        $this->assertSelectCount('item', 6, $xml, '', FALSE);
 	}
 	
 	function test_upcoming_events_feed() {
