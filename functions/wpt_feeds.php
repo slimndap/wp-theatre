@@ -31,8 +31,10 @@
 		
 		function upcoming_productions() {			
 			header('Content-Type: ' . feed_content_type('rss-http') . '; charset=' . get_option('blog_charset'), true);
-			echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>';
-			echo $this->get_upcoming_productions();				
+			
+			$xml = new DomDocument;
+			$xml->loadXML($this->get_upcoming_productions());
+			echo $xml->saveXML();
 		}
 		
 		function get_upcoming_productions() {
