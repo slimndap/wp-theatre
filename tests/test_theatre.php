@@ -80,9 +80,7 @@ class WPT_Test extends WP_UnitTestCase {
 		$dump = '';
 		foreach($events as $event) {
 			$dump.= print_r($event,true);
-			$dump.= 'production: '.get_post_meta($event->ID, WPT_Production::post_type_name, TRUE);
-			$dump.= 'event_date: '.get_post_meta($event->ID, 'event_date', TRUE);
-			$dump.= 'wpt_order: '.get_post_meta($event->ID, 'wpt_order', TRUE);
+			$dump.= print_r(get_post_meta($event->ID),true);
 		}
 		
 		return $dump;
@@ -98,7 +96,7 @@ class WPT_Test extends WP_UnitTestCase {
 		$dump = '';
 		foreach($productions as $production) {
 			$dump.= print_r($production,true);
-			$dump.= 'wpt_order: '.get_post_meta($production->ID, 'wpt_order', TRUE);
+			$dump.= print_r(get_post_meta($production->ID),true);
 		}
 		
 		return $dump;
