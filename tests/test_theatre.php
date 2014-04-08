@@ -23,19 +23,19 @@ class WPT_Test extends WP_UnitTestCase {
 		$production_id = $this->factory->post->create($production_args);
 		$event_id = $this->factory->post->create($event_args);
 		add_post_meta($event_id, WPT_Production::post_type_name, $production_id);
-		add_post_meta($event_id, 'event_date', date('Y-m-d H:s:i', time() + DAY_IN_SECONDS));
+		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() + DAY_IN_SECONDS));
 		
 		// production that starts tomorrow
 		$production_id = $this->factory->post->create($production_args);
 		$event_id = $this->factory->post->create($event_args);
 		add_post_meta($event_id, WPT_Production::post_type_name, $production_id);
-		add_post_meta($event_id, 'event_date', date('Y-m-d H:s:i', time() + DAY_IN_SECONDS));
+		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() + DAY_IN_SECONDS));
 
 		// production that started yesterday
 		$production_id = $this->factory->post->create($production_args);
 		$event_id = $this->factory->post->create($event_args);
 		add_post_meta($event_id, WPT_Production::post_type_name, $production_id);
-		add_post_meta($event_id, 'event_date', date('Y-m-d H:s:i', time() - DAY_IN_SECONDS));
+		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() - DAY_IN_SECONDS));
 
 		$production_id = $this->factory->post->create($production_args);
 		$event_id = $this->factory->post->create($event_args);
@@ -48,6 +48,8 @@ class WPT_Test extends WP_UnitTestCase {
 		$production_id = $this->factory->post->create($production_args);
 		$event_id = $this->factory->post->create($event_args);
 		add_post_meta($event_id, WPT_Production::post_type_name, $production_id);
+		
+		$this->wp_theatre->order->update_post_order();
 		
 	}
 
