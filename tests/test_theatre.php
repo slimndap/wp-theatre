@@ -19,37 +19,47 @@ class WPT_Test extends WP_UnitTestCase {
 		
 		//create 6 productions
 		
-		// production that starts tomorrow
+		// production with upcoming event
 		$production_id = $this->factory->post->create($production_args);
 		$event_id = $this->factory->post->create($event_args);
 		add_post_meta($event_id, WPT_Production::post_type_name, $production_id);
 		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() + DAY_IN_SECONDS));
+		$this->wp_theatre->order->set_post_order($event_id);
+		$this->wp_theatre->order->set_post_order($production_id);
 		
 		// production that starts tomorrow
 		$production_id = $this->factory->post->create($production_args);
 		$event_id = $this->factory->post->create($event_args);
 		add_post_meta($event_id, WPT_Production::post_type_name, $production_id);
 		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() + DAY_IN_SECONDS));
+		$this->wp_theatre->order->set_post_order($event_id);
+		$this->wp_theatre->order->set_post_order($production_id);
 
 		// production that started yesterday
 		$production_id = $this->factory->post->create($production_args);
 		$event_id = $this->factory->post->create($event_args);
 		add_post_meta($event_id, WPT_Production::post_type_name, $production_id);
 		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() - DAY_IN_SECONDS));
+		$this->wp_theatre->order->set_post_order($event_id);
+		$this->wp_theatre->order->set_post_order($production_id);
 
 		$production_id = $this->factory->post->create($production_args);
 		$event_id = $this->factory->post->create($event_args);
 		add_post_meta($event_id, WPT_Production::post_type_name, $production_id);
+		$this->wp_theatre->order->set_post_order($event_id);
+		$this->wp_theatre->order->set_post_order($production_id);
 
 		$production_id = $this->factory->post->create($production_args);
 		$event_id = $this->factory->post->create($event_args);
 		add_post_meta($event_id, WPT_Production::post_type_name, $production_id);
+		$this->wp_theatre->order->set_post_order($event_id);
+		$this->wp_theatre->order->set_post_order($production_id);
 
 		$production_id = $this->factory->post->create($production_args);
 		$event_id = $this->factory->post->create($event_args);
 		add_post_meta($event_id, WPT_Production::post_type_name, $production_id);
-		
-		$this->wp_theatre->order->update_post_order();
+		$this->wp_theatre->order->set_post_order($event_id);
+		$this->wp_theatre->order->set_post_order($production_id);
 		
 	}
 
