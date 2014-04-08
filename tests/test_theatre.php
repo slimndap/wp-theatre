@@ -22,7 +22,6 @@ class WPT_Test extends WP_UnitTestCase {
 		// production with upcoming event
 		$this->production_with_upcoming_event = $this->factory->post->create($production_args);
 		$upcoming_event = $this->factory->post->create($event_args);
-		add_post_meta(, , , )
 		add_post_meta($upcoming_event, WPT_Production::post_type_name, $this->production_with_upcoming_event);
 		add_post_meta($upcoming_event, 'event_date', date('Y-m-d H:i:s', time() + DAY_IN_SECONDS));
 		$this->wp_theatre->order->set_post_order($upcoming_event);
