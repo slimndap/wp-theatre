@@ -15,7 +15,13 @@
 			echo '<link rel="alternate" type="application/rss+xml" title="'.__('New productions','wp_theatre').'" href="'.$feed.'" />';
 		}
 		
-		function upcoming_productions() {
+		function upcoming_productions() {			
+			header('Content-Type: ' . feed_content_type('rss-http') . '; charset=' . get_option('blog_charset'), true);
+			echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>';
+			echo $this->get_upcoming_productions();				
+		}
+		
+		function get_upcoming_productions() {
 			global $wp_theatre;
 	
 			$args = array(
@@ -35,6 +41,7 @@
 				$items.=$item;				
 			}
 			
+			
 			$feed = '';
 			$feed.=	'<rss version="2.0">';
 
@@ -48,15 +55,12 @@
 			$feed.= '<channel>';
 
 			$feed.=	'</rss>';
-			
-			header('Content-Type: ' . feed_content_type('rss-http') . '; charset=' . get_option('blog_charset'), true);
 
-			echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>';
-			echo $feed;
+			return $feed;
 
 		}
 		
-		function upcoming_events() {
+		function upcoming_events($echo=true) {
 			global $wp_theatre;
 	
 			$args = array(
