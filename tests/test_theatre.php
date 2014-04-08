@@ -113,7 +113,7 @@ class WPT_Test extends WP_UnitTestCase {
 
 	function test_upcoming_productions() {
 		$message = $this->dump_events().$this->dump_productions();
-	
+		$message='';
 		$args = array(
 			'upcoming' => TRUE
 		);
