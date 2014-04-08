@@ -22,6 +22,7 @@ class WPT_Test extends WP_UnitTestCase {
 		// production with upcoming event
 		$this->production_with_upcoming_event = $this->factory->post->create($production_args);
 		$upcoming_event = $this->factory->post->create($event_args);
+		add_post_meta(, , , )
 		add_post_meta($upcoming_event, WPT_Production::post_type_name, $this->production_with_upcoming_event);
 		add_post_meta($upcoming_event, 'event_date', date('Y-m-d H:i:s', time() + DAY_IN_SECONDS));
 		$this->wp_theatre->order->set_post_order($upcoming_event);
@@ -79,8 +80,9 @@ class WPT_Test extends WP_UnitTestCase {
 		
 		$dump = '';
 		foreach($events as $event) {
-			$dump.= print_r($event,false);
-			$dump.= get_post_meta($event->ID, WPT_Production::post_type_name, TRUE);
+			$dump.= print_r($event,true);
+			$dump.= 'production: '.get_post_meta($event->ID, WPT_Production::post_type_name, TRUE);
+			$dump.= 'event_date: '.get_post_meta($event->ID, 'event_date', TRUE);
 		}
 		
 		return $dump;
@@ -114,7 +116,7 @@ class WPT_Test extends WP_UnitTestCase {
 			'post_status'=>'trash',
 			'posts_per_page'=>-1
 		);
-		$this->assertCount(6, get_posts($args));		
+		$this->assertCount(7, get_posts($args));		
 	}
 	
 	function test_connected_events_are_untrashed_when_production_is_untrashed() {
