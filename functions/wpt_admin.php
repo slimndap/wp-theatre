@@ -573,7 +573,6 @@ class WPT_Admin {
 		 */
 		
 		// unhook to avoid loops
-		remove_action( 'save_post', array( $this, 'save_post' ) );
 		remove_action( 'save_post_'.WPT_Event::post_type_name, array( $this, 'save_event' ) );
 
 		$events = $this->get_events($post_id);
@@ -586,7 +585,6 @@ class WPT_Admin {
 		}
 
 		// rehook
-		add_action( 'save_post', array( $this, 'save_post' ) );
 		add_action( 'save_post_'.WPT_Event::post_type_name, array( $this, 'save_event' ) );
 	
 		
