@@ -84,9 +84,7 @@
 			switch ($post->post_type) {
 				case WPT_Production::post_type_name:
 					$production = new WPT_Production($post->ID);
-					print_r($production);
 					$events = $production->events();
-					print_r($events);
 					if (!empty($events[0])) {
 						$wpt_order = strtotime(get_post_meta($events[0]->ID, 'event_date',TRUE));
 						break;

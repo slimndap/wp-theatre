@@ -31,7 +31,6 @@
 		
 		function upcoming_productions() {			
 			header('Content-Type: ' . feed_content_type('rss-http') . '; charset=' . get_option('blog_charset'), true);
-			
 			$xml = new DomDocument;
 			$xml->loadXML($this->get_upcoming_productions());
 			echo $xml->saveXML();
@@ -76,7 +75,14 @@
 
 		}
 		
-		function upcoming_events($echo=true) {
+		function upcoming_events() {
+			header('Content-Type: ' . feed_content_type('rss-http') . '; charset=' . get_option('blog_charset'), true);
+			$xml = new DomDocument;
+			$xml->loadXML($this->get_upcoming_productions());
+			echo $xml->saveXML();
+		}
+		
+		function get_upcoming_events() {
 			global $wp_theatre;
 	
 			$args = array(
@@ -109,11 +115,8 @@
 			$feed.= '<channel>';
 
 			$feed.=	'</rss>';
-			
-			header('Content-Type: ' . feed_content_type('rss-http') . '; charset=' . get_option('blog_charset'), true);
 
-			echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>';
-			echo $feed;
+			return $feed;
 		}
 		
 		

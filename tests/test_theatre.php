@@ -38,6 +38,7 @@ class WPT_Test extends WP_UnitTestCase {
 		$upcoming_event = $this->factory->post->create($event_args);
 		add_post_meta($upcoming_event, WPT_Production::post_type_name, $this->production_with_upcoming_events);
 		add_post_meta($upcoming_event, 'event_date', date('Y-m-d H:i:s', time() + DAY_IN_SECONDS));
+		add_post_meta($upcoming_event, 'tickets_status', 'cancelled' );
 		$this->wp_theatre->order->set_post_order($upcoming_event);
 
 		$this->wp_theatre->order->set_post_order($this->production_with_upcoming_events);
@@ -112,15 +113,14 @@ class WPT_Test extends WP_UnitTestCase {
 
 
 	function test_upcoming_productions() {
-		$message = $this->dump_events().$this->dump_productions();
-		$message='';
 		$args = array(
 			'upcoming' => TRUE
 		);
-		$this->assertCount(2, $this->wp_theatre->productions($args), $message);		
+		$this->assertCount(2, $this->wp_theatre->productions($args));		
 		
 	}
 
+	// Test sync between productions and connected events
 	function test_connected_events_are_trashed_when_production_is_trashed() {
 		foreach($this->wp_theatre->productions() as $production) {
 			wp_trash_post($production->ID);
@@ -153,15 +153,42 @@ class WPT_Test extends WP_UnitTestCase {
 		
 	}
 	
-	// RSS feeds
+	function test_event_inherits_season_from_production() {
+		
+	}
 	
+	// Test shortcodes
+	function test_shortcode_wpt_productions() {
+		$xml = new DomDocument;
+        $xml->loadXML(do_shortcode('[wpt_production]'));
+        $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 6, $xml);		
+	}
+	
+	function test_shortcode_wpt_events() {
+		$xml = new DomDocument;
+        $xml->loadXML(do_shortcode('[wpt_events]'));
+        $this->assertSelectCount('.wpt_events .wp_theatre_event', 3, $xml);		
+	}
+	
+	// Test event features
+	function test_wpt_event_tickets_status_cancelled() {
+		$xml = new DomDocument;
+        $xml->loadXML(do_shortcode('[wpt_events]'));
+        $this->assertSelectCount('.wpt_events .wp_theatre_event .wp_theatre_event_tickets_status_cancelled', 1, $xml);		
+		
+	}
+	
+	// Test RSS feeds
 	function test_upcoming_productions_feed() {
 		$xml = new DomDocument;
         $xml->loadXML($this->wp_theatre->feeds->get_upcoming_productions());
-        $this->assertSelectCount('item', 2, $xml);
+        $this->assertSelectCount('rss channel item', 2, $xml);
 	}
 	
 	function test_upcoming_events_feed() {
+		$xml = new DomDocument;
+        $xml->loadXML($this->wp_theatre->feeds->get_upcoming_events());
+        $this->assertSelectCount('rss channel item', 3, $xml);
 		
 	}
 	
