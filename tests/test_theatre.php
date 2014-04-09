@@ -36,6 +36,7 @@ class WPT_Test extends WP_UnitTestCase {
 		
 		// production with 2 upcoming events
 		$this->production_with_upcoming_events = $this->factory->post->create($production_args);
+		add_post_meta($this->production_with_upcoming_events, WPT_Season::post_type_name, $this->season2);
 
 		$upcoming_event = $this->factory->post->create($event_args);
 		add_post_meta($upcoming_event, WPT_Production::post_type_name, $this->production_with_upcoming_events);
@@ -170,7 +171,7 @@ class WPT_Test extends WP_UnitTestCase {
 	
 	function test_shortcode_wpt_events_filter_season() {
 		$xml = new DomDocument;
-        $xml->loadHTML(do_shortcode('[wpt_events season="'.$this->season1.'"]'));
+        $xml->loadHTML(do_shortcode('[wpt_events season="'.$this->season2.'"]'));
         $this->assertSelectCount('.wpt_events .wp_theatre_event', 2, $xml);		
 	}
 	
