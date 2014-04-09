@@ -20,6 +20,8 @@
 			
 			// make sure this runs after any save_post hooks in WPT_Admin (priority 10)
 			add_action('save_post_'.WPT_Production::post_type_name,array( $this,'save_production'), 20);
+			add_action('updated_post_meta', array($this,'updated_post_meta'), 20 ,4);
+			add_action('added_post_meta', array($this,'updated_post_meta'), 20 ,4);
 			
 			add_action('before_delete_post',array( $this,'before_delete_post'));
 			add_action('wp_trash_post',array( $this,'wp_trash_post'));
@@ -183,13 +185,6 @@
 				wp_set_post_categories($event->ID, $categories);
 			}
 			
-			// give child events the same season
-			if ($season = $production->season()) {
-				foreach ($events as $event) {
-					delete_post_meta($event->ID, WPT_Season::post_type_name);
-					add_post_meta($event->ID, WPT_Season::post_type_name, $season->ID);
-				}
-			}
 		}
 		
 		/**
@@ -240,6 +235,39 @@
 				foreach ($events as $event) {
 					wp_untrash_post($event->ID);
 				}							
+			}
+		}
+
+		/**
+		 * Update the season of all child events to the season of the parent production.
+		 *
+		 * Triggered by the updated_post_meta action.
+		 *
+		 * @since 0.7
+		 *
+		 */
+
+		function updated_post_meta($meta_id, $object_id, $meta_key, $meta_value) {
+			global $wp_theatre;
+			if ($meta_key==WPT_Season::post_type_name) {
+				$post = get_post($object_id);
+				if ($post->post_type==WPT_Production::post_type_name) {
+
+					// avoid loops
+					remove_action('updated_post_meta', array($this,'updated_post_meta'), 20 ,4);
+					remove_action('added_post_meta', array($this,'updated_post_meta'), 20 ,4);
+				
+					$args = array(
+						'production'=>$post->ID
+					);
+					$events = $wp_theatre->events($args);
+					foreach($events as $event) {
+						update_post_meta($event->ID, WPT_Season::post_type_name, $meta_value);
+					}
+
+					add_action('updated_post_meta', array($this,'updated_post_meta'), 20 ,4);
+					add_action('added_post_meta', array($this,'updated_post_meta'), 20 ,4);
+				}
 			}
 		}
 	}

@@ -183,8 +183,6 @@ class WPT_Test extends WP_UnitTestCase {
 	
 	// Test order
 	function test_order_productions() {
-		$message = $this->dump_productions();
-	
 		$actual = array();
 		$productions = $this->wp_theatre->productions();
 		foreach($productions as $production) {
@@ -198,7 +196,7 @@ class WPT_Test extends WP_UnitTestCase {
 			$this->production_with_upcoming_and_historic_events
 		);	
 		
-		$this->assertEquals($expected,$actual, $message);
+		$this->assertEquals($expected,$actual);
 	}
 	 
 	function test_order_events() {
