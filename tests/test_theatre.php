@@ -53,9 +53,9 @@ class WPT_Test extends WP_UnitTestCase {
 		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() - DAY_IN_SECONDS));
 		
 		// production with an upcoming and a historic event
-		$this->production_with_upcoming and_historic_events = $this->factory->post->create($production_args);
+		$this->production_with_upcoming_and_historic_events = $this->factory->post->create($production_args);
 		$event_id = $this->factory->post->create($event_args);
-		add_post_meta($event_id, WPT_Production::post_type_name, $this->production_with_upcoming and_historic_events);
+		add_post_meta($event_id, WPT_Production::post_type_name, $this->production_with_upcoming_and_historic_events);
 		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() - WEEK_IN_SECONDS));
 		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() + WEEK_IN_SECONDS));
 		
@@ -188,7 +188,7 @@ class WPT_Test extends WP_UnitTestCase {
 		}
 		
 		$expected = array(
-			$this->production_with_upcoming and_historic_events,
+			$this->production_with_upcoming_and_historic_events,
 			$this->production_with_historic_event,
 			$this->production_with_upcoming_events,
 			$this->production_with_upcoming_event
