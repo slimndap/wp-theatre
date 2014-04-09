@@ -32,9 +32,7 @@ class WPT_Test extends WP_UnitTestCase {
 		add_post_meta($this->production_with_upcoming_event, WPT_Season::post_type_name, $this->season1);
 		$upcoming_event = $this->factory->post->create($event_args);
 		add_post_meta($upcoming_event, WPT_Production::post_type_name, $this->production_with_upcoming_event);
-		add_post_meta($upcoming_event, 'event_date', date('Y-m-d H:i:s', time() + DAY_IN_SECONDS));
-		$this->wp_theatre->order->set_post_order($upcoming_event);
-		$this->wp_theatre->order->set_post_order($this->production_with_upcoming_event);
+		add_post_meta($upcoming_event, 'event_date', date('Y-m-d H:i:s', time() + (2 * DAY_IN_SECONDS)));
 		
 		// production with 2 upcoming events
 		$this->production_with_upcoming_events = $this->factory->post->create($production_args);
@@ -42,41 +40,24 @@ class WPT_Test extends WP_UnitTestCase {
 		$upcoming_event = $this->factory->post->create($event_args);
 		add_post_meta($upcoming_event, WPT_Production::post_type_name, $this->production_with_upcoming_events);
 		add_post_meta($upcoming_event, 'event_date', date('Y-m-d H:i:s', time() + DAY_IN_SECONDS));
-		$this->wp_theatre->order->set_post_order($upcoming_event);
 
 		$upcoming_event = $this->factory->post->create($event_args);
 		add_post_meta($upcoming_event, WPT_Production::post_type_name, $this->production_with_upcoming_events);
-		add_post_meta($upcoming_event, 'event_date', date('Y-m-d H:i:s', time() + DAY_IN_SECONDS));
+		add_post_meta($upcoming_event, 'event_date', date('Y-m-d H:i:s', time() + (3 * DAY_IN_SECONDS)));
 		add_post_meta($upcoming_event, 'tickets_status', 'cancelled' );
-		$this->wp_theatre->order->set_post_order($upcoming_event);
-
-		$this->wp_theatre->order->set_post_order($this->production_with_upcoming_events);
 		
-		// production that started yesterday
-		$production_id = $this->factory->post->create($production_args);
+		// production with a historic event
+		$this->production_with_historic_event = $this->factory->post->create($production_args);
 		$event_id = $this->factory->post->create($event_args);
-		add_post_meta($event_id, WPT_Production::post_type_name, $production_id);
+		add_post_meta($event_id, WPT_Production::post_type_name, $this->production_with_historic_event);
 		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() - DAY_IN_SECONDS));
-		$this->wp_theatre->order->set_post_order($event_id);
-		$this->wp_theatre->order->set_post_order($production_id);
-
-		$production_id = $this->factory->post->create($production_args);
+		
+		// production with an upcoming and a historic event
+		$this->production_with_upcoming and_historic_events = $this->factory->post->create($production_args);
 		$event_id = $this->factory->post->create($event_args);
-		add_post_meta($event_id, WPT_Production::post_type_name, $production_id);
-		$this->wp_theatre->order->set_post_order($event_id);
-		$this->wp_theatre->order->set_post_order($production_id);
-
-		$production_id = $this->factory->post->create($production_args);
-		$event_id = $this->factory->post->create($event_args);
-		add_post_meta($event_id, WPT_Production::post_type_name, $production_id);
-		$this->wp_theatre->order->set_post_order($event_id);
-		$this->wp_theatre->order->set_post_order($production_id);
-
-		$production_id = $this->factory->post->create($production_args);
-		$event_id = $this->factory->post->create($event_args);
-		add_post_meta($event_id, WPT_Production::post_type_name, $production_id);
-		$this->wp_theatre->order->set_post_order($event_id);
-		$this->wp_theatre->order->set_post_order($production_id);
+		add_post_meta($event_id, WPT_Production::post_type_name, $this->production_with_upcoming and_historic_events);
+		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() - WEEK_IN_SECONDS));
+		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() + WEEK_IN_SECONDS));
 		
 	}
 
@@ -113,11 +94,11 @@ class WPT_Test extends WP_UnitTestCase {
 	}
 
 	function test_events_are_loaded() {
-		$this->assertCount(7, $this->wp_theatre->events());		
+		$this->assertCount(6, $this->wp_theatre->events());		
 	}
 
 	function test_productions_are_loaded() {
-		$this->assertCount(6, $this->wp_theatre->productions());		
+		$this->assertCount(4, $this->wp_theatre->productions());		
 	}
 
 
@@ -125,7 +106,7 @@ class WPT_Test extends WP_UnitTestCase {
 		$args = array(
 			'upcoming' => TRUE
 		);
-		$this->assertCount(2, $this->wp_theatre->productions($args));		
+		$this->assertCount(3, $this->wp_theatre->productions($args));		
 		
 	}
 
@@ -139,7 +120,7 @@ class WPT_Test extends WP_UnitTestCase {
 			'post_status'=>'trash',
 			'posts_per_page'=>-1
 		);
-		$this->assertCount(7, get_posts($args));		
+		$this->assertCount(6, get_posts($args));		
 	}
 	
 	function test_connected_events_are_untrashed_when_production_is_untrashed() {
@@ -147,7 +128,7 @@ class WPT_Test extends WP_UnitTestCase {
 			wp_trash_post($production->ID);
 			wp_untrash_post($production->ID);
 		}
-		$this->assertCount(7, $this->wp_theatre->events());		
+		$this->assertCount(6, $this->wp_theatre->events());		
 		
 	}
 	
@@ -170,19 +151,25 @@ class WPT_Test extends WP_UnitTestCase {
 	function test_shortcode_wpt_productions() {
 		$xml = new DomDocument;
         $xml->loadHTML(do_shortcode('[wpt_productions]'));
-        $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 6, $xml);		
-	}
-	
-	function test_shortcode_wpt_events() {
-		$xml = new DomDocument;
-        $xml->loadHTML(do_shortcode('[wpt_events]'));
-        $this->assertSelectCount('.wpt_events .wp_theatre_event', 3, $xml);		
+        $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 4, $xml);		
 	}
 	
 	function test_shortcode_wpt_production_filter_season() {
 		$xml = new DomDocument;
         $xml->loadHTML(do_shortcode('[wpt_productions season="'.$this->season1.'"]'));
         $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 1, $xml);				
+	}
+
+	function test_shortcode_wpt_events() {
+		$xml = new DomDocument;
+        $xml->loadHTML(do_shortcode('[wpt_events]'));
+        $this->assertSelectCount('.wpt_events .wp_theatre_event', 4, $xml);		
+	}
+	
+	function test_shortcode_wpt_events_filter_season() {
+		$xml = new DomDocument;
+        $xml->loadHTML(do_shortcode('[wpt_events season="'.$this->season1.'"]'));
+        $this->assertSelectCount('.wpt_events .wp_theatre_event', 2, $xml);		
 	}
 	
 	// Test event features
@@ -192,17 +179,39 @@ class WPT_Test extends WP_UnitTestCase {
         $this->assertSelectCount('.wpt_events .wp_theatre_event .wp_theatre_event_tickets_status_cancelled', 1, $xml);			
 	}
 	
+	// Test order
+	function test_order_productions() {
+		$actual = array();
+		$productions = $this->wp_theatre->productions();
+		foreach($productions as $production) {
+			$actual[] = $production->ID;
+		}
+		
+		$expected = array(
+			$this->production_with_upcoming and_historic_events,
+			$this->production_with_historic_event,
+			$this->production_with_upcoming_events,
+			$this->production_with_upcoming_event
+		);	
+		
+		$this->assertEquals($expected,$actual);
+	}
+	 
+	function test_order_events() {
+					
+	}
+	
 	// Test RSS feeds
 	function test_upcoming_productions_feed() {
 		$xml = new DomDocument;
         $xml->loadXML($this->wp_theatre->feeds->get_upcoming_productions());
-        $this->assertSelectCount('rss channel item', 2, $xml);
+        $this->assertSelectCount('rss channel item', 3, $xml);
 	}
 	
 	function test_upcoming_events_feed() {
 		$xml = new DomDocument;
         $xml->loadXML($this->wp_theatre->feeds->get_upcoming_events());
-        $this->assertSelectCount('rss channel item', 3, $xml);
+        $this->assertSelectCount('rss channel item', 4, $xml);
 		
 	}
 	

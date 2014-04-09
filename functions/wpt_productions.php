@@ -232,6 +232,7 @@ class WPT_Productions extends WPT_Listing {
 
 	function load($filters=array()) {
 		global $wpdb;
+		global $wp_theatre;
 
 		$filters = wp_parse_args( $filters, $this->defaults() );
 
@@ -244,7 +245,7 @@ class WPT_Productions extends WPT_Listing {
 		
 		if ($filters['upcoming']) {
 			$args['meta_query'][] = array (
-				'key' => 'wpt_order',
+				'key' => $wp_theatre->order->meta_key,
 				'value' => time(),
 				'compare' => '>='
 			);
