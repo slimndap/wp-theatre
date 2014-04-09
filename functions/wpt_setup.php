@@ -185,6 +185,13 @@
 				wp_set_post_categories($event->ID, $categories);
 			}
 			
+			// give child events the same season
+			if ($season = $production->season()) {
+				foreach ($events as $event) {
+					delete_post_meta($event->ID, WPT_Season::post_type_name);
+					add_post_meta($event->ID, WPT_Season::post_type_name, $season->ID);
+				}
+			}
 		}
 		
 		/**
@@ -239,9 +246,13 @@
 		}
 
 		/**
-		 * Update the season of all child events to the season of the parent production.
+		 * Update the season of events to the season of the parent production.
 		 *
 		 * Triggered by the updated_post_meta action.
+		 *
+		 * Used when:
+		 * - a production is saved through the admin screen or
+		 * - an event is attached to a production.
 		 *
 		 * @since 0.7
 		 *
@@ -249,6 +260,8 @@
 
 		function updated_post_meta($meta_id, $object_id, $meta_key, $meta_value) {
 			global $wp_theatre;
+			
+			// A production is saved through the admin screen.
 			if ($meta_key==WPT_Season::post_type_name) {
 				$post = get_post($object_id);
 				if ($post->post_type==WPT_Production::post_type_name) {
@@ -269,6 +282,21 @@
 					add_action('added_post_meta', array($this,'updated_post_meta'), 20 ,4);
 				}
 			}
+
+			// An event is attached to a production.
+			if ($meta_key==WPT_Production::post_type_name) {
+				$event = new WPT_Event($object_id);
+
+				// avoid loops
+				remove_action('updated_post_meta', array($this,'updated_post_meta'), 20 ,4);
+				remove_action('added_post_meta', array($this,'updated_post_meta'), 20 ,4);
+				
+				update_post_meta($event->ID, WPT_Season::post_type_name, $event->production()->season()->ID);
+				
+				add_action('updated_post_meta', array($this,'updated_post_meta'), 20 ,4);
+				add_action('added_post_meta', array($this,'updated_post_meta'), 20 ,4);
+			}
+
 		}
 	}
 	
