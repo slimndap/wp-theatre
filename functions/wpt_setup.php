@@ -291,7 +291,9 @@
 				remove_action('updated_post_meta', array($this,'updated_post_meta'), 20 ,4);
 				remove_action('added_post_meta', array($this,'updated_post_meta'), 20 ,4);
 				
-				update_post_meta($event->ID, WPT_Season::post_type_name, $event->production()->season()->ID);
+				if ($season = $event->production()->season()) {
+					update_post_meta($event->ID, WPT_Season::post_type_name, $season->ID);				
+				}
 				
 				add_action('updated_post_meta', array($this,'updated_post_meta'), 20 ,4);
 				add_action('added_post_meta', array($this,'updated_post_meta'), 20 ,4);
