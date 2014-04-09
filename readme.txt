@@ -149,6 +149,9 @@ Make sure that you checked the 'Enable built-in Theatre stylesheet'-option in th
 
 == Upgrade Notice ==
 
+= 0.6.3 =
+* Fix: Saving a production generated a PHP warning.
+
 = 0.6.2 =
 * Important: Please deactivate and then reactivate this plugin after the update.
 
