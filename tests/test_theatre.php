@@ -57,6 +57,8 @@ class WPT_Test extends WP_UnitTestCase {
 		$event_id = $this->factory->post->create($event_args);
 		add_post_meta($event_id, WPT_Production::post_type_name, $this->production_with_upcoming_and_historic_events);
 		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() - WEEK_IN_SECONDS));
+		$event_id = $this->factory->post->create($event_args);
+		add_post_meta($event_id, WPT_Production::post_type_name, $this->production_with_upcoming_and_historic_events);
 		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() + WEEK_IN_SECONDS));
 		
 	}
@@ -181,6 +183,8 @@ class WPT_Test extends WP_UnitTestCase {
 	
 	// Test order
 	function test_order_productions() {
+		$message = $this->dump_productions();
+	
 		$actual = array();
 		$productions = $this->wp_theatre->productions();
 		foreach($productions as $production) {
@@ -188,13 +192,13 @@ class WPT_Test extends WP_UnitTestCase {
 		}
 		
 		$expected = array(
-			$this->production_with_upcoming_and_historic_events,
 			$this->production_with_historic_event,
 			$this->production_with_upcoming_events,
-			$this->production_with_upcoming_event
+			$this->production_with_upcoming_event,
+			$this->production_with_upcoming_and_historic_events
 		);	
 		
-		$this->assertEquals($expected,$actual);
+		$this->assertEquals($expected,$actual, $message);
 	}
 	 
 	function test_order_events() {
