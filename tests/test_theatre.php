@@ -160,20 +160,20 @@ class WPT_Test extends WP_UnitTestCase {
 	// Test shortcodes
 	function test_shortcode_wpt_productions() {
 		$xml = new DomDocument;
-        $xml->loadXML(do_shortcode('[wpt_production]'));
+        $xml->loadHTML(do_shortcode('[wpt_productions]'));
         $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 6, $xml);		
 	}
 	
 	function test_shortcode_wpt_events() {
 		$xml = new DomDocument;
-        $xml->loadXML(do_shortcode('[wpt_events]'));
+        $xml->loadHTML(do_shortcode('[wpt_events]'));
         $this->assertSelectCount('.wpt_events .wp_theatre_event', 3, $xml);		
 	}
 	
 	// Test event features
 	function test_wpt_event_tickets_status_cancelled() {
 		$xml = new DomDocument;
-        $xml->loadXML(do_shortcode('[wpt_events]'));
+        $xml->loadHTML(do_shortcode('[wpt_events]'));
         $this->assertSelectCount('.wpt_events .wp_theatre_event .wp_theatre_event_tickets_status_cancelled', 1, $xml);		
 		
 	}
