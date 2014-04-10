@@ -21,20 +21,18 @@ class WPT_Test extends WP_UnitTestCase {
 			'post_type'=>WPT_Event::post_type_name
 		);
 		
-		//create 2 seasons
+		// create seasons
 		$this->season1 = $this->factory->post->create($season_args);
 		$this->season2 = $this->factory->post->create($season_args);
 		
-		//create 6 productions
-		
-		// production with upcoming event
+		// create production with upcoming event
 		$this->production_with_upcoming_event = $this->factory->post->create($production_args);
 		add_post_meta($this->production_with_upcoming_event, WPT_Season::post_type_name, $this->season1);
 		$upcoming_event = $this->factory->post->create($event_args);
 		add_post_meta($upcoming_event, WPT_Production::post_type_name, $this->production_with_upcoming_event);
 		add_post_meta($upcoming_event, 'event_date', date('Y-m-d H:i:s', time() + (2 * DAY_IN_SECONDS)));
 		
-		// production with 2 upcoming events
+		// create production with 2 upcoming events
 		$this->production_with_upcoming_events = $this->factory->post->create($production_args);
 		add_post_meta($this->production_with_upcoming_events, WPT_Season::post_type_name, $this->season2);
 
@@ -47,13 +45,13 @@ class WPT_Test extends WP_UnitTestCase {
 		add_post_meta($upcoming_event, 'event_date', date('Y-m-d H:i:s', time() + (3 * DAY_IN_SECONDS)));
 		add_post_meta($upcoming_event, 'tickets_status', 'cancelled' );
 		
-		// production with a historic event
+		// create production with a historic event
 		$this->production_with_historic_event = $this->factory->post->create($production_args);
 		$event_id = $this->factory->post->create($event_args);
 		add_post_meta($event_id, WPT_Production::post_type_name, $this->production_with_historic_event);
 		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() - DAY_IN_SECONDS));
 		
-		// production with an upcoming and a historic event
+		// create production with an upcoming and a historic event
 		$this->production_with_upcoming_and_historic_events = $this->factory->post->create($production_args);
 		$event_id = $this->factory->post->create($event_args);
 		add_post_meta($event_id, WPT_Production::post_type_name, $this->production_with_upcoming_and_historic_events);
