@@ -103,7 +103,7 @@ class WPT_Test extends WP_UnitTestCase {
 	}
 	
 	function test_seasons_are_loaded() {
-		$this->assertCount(2, $this->wp_theatre->get_seasons());
+		$this->assertCount(2, $this->wp_theatre->seasons());
 	}
 
 
