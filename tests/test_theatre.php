@@ -192,7 +192,9 @@ class WPT_Test extends WP_UnitTestCase {
 	function test_wpt_events_template_permalink() {
 		$matcher = array(
 			'tag' => 'a',
-			'attributes' => array('href' => get_permalink($this->upcoming_event_with_prices)),
+			'attributes' => array(
+				'href' => get_permalink($this->upcoming_event_with_prices)
+			),
 			'parent' => array(
 				'tag' => 'div',
 				'attributes' => array(
@@ -200,7 +202,9 @@ class WPT_Test extends WP_UnitTestCase {
 				)
 			)	
 		);
-        $this->assertTag($matcher, do_shortcode('[wpt_events]{{location|permalink}}[/wpt_events]'));
+		$message = print_r($matcher,false).print_r(do_shortcode('[wpt_events]{{location|permalink}}[/wpt_events]'),false);
+		
+        $this->assertTag($matcher, do_shortcode('[wpt_events]{{location|permalink}}[/wpt_events]'),$message);
 	}
 
 	// Test event features

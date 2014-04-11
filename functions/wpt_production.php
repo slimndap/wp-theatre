@@ -461,7 +461,16 @@ class WPT_Production {
 		preg_match_all('~{{(.*?)}}~', $html, $placeholders);
 		foreach($placeholders[1] as $placeholder) {
 
-			list($field,$filter) = explode('|',$placeholder);
+			$field = '';
+			$filter = '';
+
+			$placeholder_parts = explode('|',$placeholder);
+			if (!empty($placeholder_parts[0])) {
+				$field = $placeholder_parts[0];
+			}
+			if (!empty($placeholder_parts[1])) {
+				$filter = $placeholder_parts[1];
+			}
 
 			switch($field) {
 				case 'title':
