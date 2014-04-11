@@ -518,7 +518,7 @@ class WPT_Event {
 	 */
 	function html($args=array()) {
 		$defaults = array(
-			'template' => '{{thumbnail}} {{title}} {{remark}} {{datetime}} {{location}} {{tickets}}'
+			'template' => '{{thumbnail|permalink}} {{title|permalink}} {{remark}} {{datetime}} {{location}} {{tickets}}'
 		);
 		$args = wp_parse_args( $args, $defaults );
 
@@ -527,29 +527,49 @@ class WPT_Event {
 
 		$html = $args['template'];
 
-		// Thumbnail
-		if (strpos($html,'{{thumbnail}}')!==false) { 
-			$thumbnail_args = array(
-				'html'=>true
-			);
-			$thumbnail = $this->production()->thumbnail($thumbnail_args);
-			$html = str_replace('{{thumbnail}}', $thumbnail, $html);
-		}
-		if (empty($thumbnail)) {
-			$classes[] = self::post_type_name.'_without_thumbnail';
+		// Parse template
+		$placeholders = array();
+		preg_match_all('~{{(.*?)}}~', $html, $placeholders);
+		foreach($placeholders[1] as $placeholder) {
+
+			list($field,$filter) = explode('|',$placeholder);
+
+			switch($field) {
+				case 'date':
+				case 'datetime':
+				case 'duration':
+				case 'location':
+				case 'remark':
+				case 'time':
+				case 'tickets':
+					$replacement = $this->{$field}(array('html'=>true));
+					break;
+				case 'title':
+				case 'categories':
+				case 'thumbnail':
+					$replacement = $this->production()->{$field}(array('html'=>true));
+					break;
+				default: 
+					$replacement = $field;
+			}
+			
+			switch($filter) {
+				case 'permalink':
+					if (!empty($replacement)) {
+						$args = array(
+							'html'=>true,
+							'text'=> $replacement,
+							'inside'=>true
+						);
+						$replacement = $this->production()->permalink($args);
+					}
+					break;
+				default:
+					$replacement = $replacement;
+			}
+			$html = str_replace('{{'.$placeholder.'}}', $replacement, $html);
 		}
 
-		$field_args = array(
-			'html'=>true
-		);
-		if (strpos($html,'{{date}}')!==false) { $html = str_replace('{{date}}', $this->date($field_args), $html); }
-		if (strpos($html,'{{datetime}}')!==false) { $html = str_replace('{{datetime}}', $this->datetime($field_args), $html); }
-		if (strpos($html,'{{duration}}')!==false) { $html = str_replace('{{duration}}', $this->duration($field_args), $html); }
-		if (strpos($html,'{{location}}')!==false) { $html = str_replace('{{location}}', $this->location($field_args), $html); }
-		if (strpos($html,'{{remark}}')!==false) { $html = str_replace('{{remark}}', $this->remark($field_args), $html); }
-		if (strpos($html,'{{time}}')!==false) { $html = str_replace('{{time}}', $this->time($field_args), $html); }
-		if (strpos($html,'{{title}}')!==false) { $html = str_replace('{{title}}', $this->production()->title($field_args), $html); }
-		if (strpos($html,'{{categories}}')!==false) { $html = str_replace('{{categories}}', $this->production()->categories($field_args), $html); }
 
 		// Tickets
 		if (strpos($html,'{{tickets}}')!==false) { 

@@ -238,13 +238,15 @@ class WPT_Production {
 	 * @param array $args {
 	 *     @type bool $html Return HTML? Default <false>.
 	 *     @type string $text Display text for HTML version. Defaults to the title of the production.
+	 *     @type bool $inside Try to place de link inside the surrounding div. Default <false>.
 	 * }
 	 * @return string URL or HTML.
 	 */
 	function permalink($args=array()) {
 		$defaults = array(
 			'html' => false,
-			'text' => $this->post()->post_title
+			'text' => $this->post()->post_title,
+			'inside' => false
 		);
 
 		$args = wp_parse_args( $args, $defaults );
@@ -255,9 +257,37 @@ class WPT_Production {
 
 		if ($args['html']) {
 			$html = '';
-			$html.= '<a href="'.get_permalink($this->ID).'">';
-			$html.= $args['text'];
-			$html.= '</a>';
+
+			if ($args['inside']) {
+				$text_sanitized = trim($args['text']);
+
+				$before = '';
+				$after = '';
+				$text = $args['text'];				
+				
+				$elements = array('div','figure');
+				foreach ($elements as $element) {
+					if (
+						$args['inside'] &&
+						strpos($text_sanitized, '<'.$element) === 0 &&
+						strrpos($text_sanitized, '</'.$element) === strlen($text_sanitized) - strlen($element) - 3
+					) {
+						$before = substr($args['text'], 0, strpos($args['text'], '>') + 1);
+						$after = '</'.$element.'>';
+						$text = substr($args['text'], strpos($args['text'], '>') + 1, strrpos($args['text'],'<') - strpos($args['text'], '>') - 1);
+						continue;
+					}					
+				}
+				$inside_args = array(
+					'html'=>true,
+					'text'=>$text
+				);					
+				return $before.$this->permalink($inside_args).$after;
+			} else {
+				$html.= '<a href="'.get_permalink($this->ID).'">';
+				$html.= $args['text'];
+				$html.= '</a>';				
+			}
 			return apply_filters('wpt_event_permalink_html', $html, $this);				
 		} else {
 			return $this->permalink;				
@@ -352,11 +382,7 @@ class WPT_Production {
 			$html = '';
 			$thumbnail = get_the_post_thumbnail($this->ID,$args['size']);					
 			if (!empty($thumbnail)) {
-				$html.= '<figure>';
-				$permalink_args = $args;
-				$permalink_args['text'] = $thumbnail;
-				$html.= $this->permalink($permalink_args);
-				$html.= '</figure>';
+				$html.= '<figure>'.$thumbnail.'</figure>';
 			}
 			return apply_filters('wpt_production_thumbnail_html', $html, $this);
 		} else {
@@ -387,11 +413,7 @@ class WPT_Production {
 		}	
 		if ($args['html']) {
 			$html = '';
-			$html.= '<div class="'.self::post_type_name.'_title">';
-			$permalink_args = $args;
-			$permalink_args['text'] = $this->title;
-			$html.= $this->permalink($permalink_args);
-			$html.= '</div>'; //.title								
+			$html.= '<div class="'.self::post_type_name.'_title">'.$this->title.'</div>';
 			return apply_filters('wpt_event_title_html', $html, $this);
 		} else {
 			return $this->title;			
@@ -426,7 +448,7 @@ class WPT_Production {
 		global $wp_theatre;
 		
 		$defaults = array(
-			'template' => '{{thumbnail}} {{title}} {{dates}} {{cities}}'
+			'template' => '{{thumbnail|permalink}} {{title|permalink}} {{dates}} {{cities}}'
 		);
 		$args = wp_parse_args( $args, $defaults );
 		$html = $args['template'];
@@ -434,27 +456,44 @@ class WPT_Production {
 		$classes = array();
 		$classes[] = self::post_type_name;
 
-		// Thumbnail
-		if (strpos($html,'{{thumbnail}}')!==false) { 
-			$thumbnail_args = array(
-				'html'=>true
-			);
-			$thumbnail = $this->thumbnail($thumbnail_args);
-			$html = str_replace('{{thumbnail}}', $thumbnail, $html);
-		}
-		if (empty($thumbnail)) {
-			$classes[] = self::post_type_name.'_without_thumbnail';
+		// Parse template
+		$placeholders = array();
+		preg_match_all('~{{(.*?)}}~', $html, $placeholders);
+		foreach($placeholders[1] as $placeholder) {
+
+			list($field,$filter) = explode('|',$placeholder);
+
+			switch($field) {
+				case 'title':
+				case 'dates':
+				case 'cities':
+				case 'excerpt':
+				case 'summary':
+				case 'categorie':
+				case 'thumbnail':
+					$replacement = $this->{$field}(array('html'=>true));
+					break;
+				default: 
+					$replacement = $field;
+			}
+			
+			switch($filter) {
+				case 'permalink':
+					if (!empty($replacement)) {
+						$args = array(
+							'html'=>true,
+							'text'=> $replacement,
+							'inside'=>true
+						);
+						$replacement = $this->permalink($args);
+					}
+					break;
+				default:
+					$replacement = $replacement;
+			}
+			$html = str_replace('{{'.$placeholder.'}}', $replacement, $html);
 		}
 
-		$field_args = array(
-			'html'=>true
-		);
-		if (strpos($html,'{{title}}')!==false) { $html = str_replace('{{title}}', $this->title($field_args), $html); }
-		if (strpos($html,'{{dates}}')!==false) { $html = str_replace('{{dates}}', $this->dates($field_args), $html); }
-		if (strpos($html,'{{cities}}')!==false) { $html = str_replace('{{cities}}', $this->cities($field_args), $html); }
-		if (strpos($html,'{{excerpt}}')!==false) { $html = str_replace('{{excerpt}}', $this->excerpt($field_args), $html); }
-		if (strpos($html,'{{summary}}')!==false) { $html = str_replace('{{summary}}', $this->title($field_args), $html); }
-		if (strpos($html,'{{categories}}')!==false) { $html = str_replace('{{categories}}', $this->categories($field_args), $html); }
 
 		// Microdata for events
 		if (!is_singular(WPT_Production::post_type_name)) {		

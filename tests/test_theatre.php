@@ -187,6 +187,22 @@ class WPT_Test extends WP_UnitTestCase {
 		$season = get_post($this->season2);
 	}
 	
+	// Test templates
+	
+	function test_wpt_events_template_permalink() {
+		$matcher = array(
+			'tag' => 'a',
+			'attributes' => array('href' => get_permalink($this->upcoming_event_with_prices)),
+			'parent' => array(
+				'tag' => 'div',
+				'attributes' => array(
+					'class' => 'wp_theatre_event_location'
+				)
+			)	
+		);
+        $this->asserTag($matcher, do_shortcode('[wpt_events]{{location|permalink}}[/wpt_events]'));
+	}
+
 	// Test event features
 	function test_wpt_event_tickets_status_cancelled() {
 		$xml = new DomDocument;
@@ -207,6 +223,7 @@ class WPT_Test extends WP_UnitTestCase {
 		);
 		$this->assertContains('8.50', $event->prices($args));
 	}
+	
 	
 	// Test order
 	function test_order_productions() {
