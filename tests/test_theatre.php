@@ -29,10 +29,10 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->production_with_upcoming_event = $this->factory->post->create($production_args);
 		add_post_meta($this->production_with_upcoming_event, WPT_Season::post_type_name, $this->season1);
 		$this->upcoming_event_with_prices = $this->factory->post->create($event_args);
-		add_post_meta($upcoming_event, WPT_Production::post_type_name, $this->production_with_upcoming_event);
-		add_post_meta($upcoming_event, 'event_date', date('Y-m-d H:i:s', time() + (2 * DAY_IN_SECONDS)));
-		add_post_meta($upcoming_event, '_wpt_event_tickets_price', 12);
-		add_post_meta($upcoming_event, '_wpt_event_tickets_price', 8.5);
+		add_post_meta($this->upcoming_event_with_prices, WPT_Production::post_type_name, $this->production_with_upcoming_event);
+		add_post_meta($this->upcoming_event_with_prices, 'event_date', date('Y-m-d H:i:s', time() + (2 * DAY_IN_SECONDS)));
+		add_post_meta($this->upcoming_event_with_prices, '_wpt_event_tickets_price', 12);
+		add_post_meta($this->upcoming_event_with_prices, '_wpt_event_tickets_price', 8.5);
 		
 		// create production with 2 upcoming events
 		$this->production_with_upcoming_events = $this->factory->post->create($production_args);
