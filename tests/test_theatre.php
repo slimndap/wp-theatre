@@ -196,7 +196,7 @@ class WPT_Test extends WP_UnitTestCase {
 				'tag' => 'div',
 				'attributes' => array(
 					'class' => 'wp_theatre_event_location'
-				)
+				),
 				'child' => array(
 					'tag' => 'a',
 					'attributes' => array(
