@@ -193,7 +193,7 @@ class WPT_Test extends WP_UnitTestCase {
 		$matcher = array(
 			'tag' => 'a',
 			'attributes' => array(
-				'href' => get_permalink($this->upcoming_event_with_prices)
+				'href' => get_permalink($this->production_with_upcoming_event)
 			),
 			'parent' => array(
 				'tag' => 'div',
@@ -202,8 +202,6 @@ class WPT_Test extends WP_UnitTestCase {
 				)
 			)	
 		);
-		$message = print_r($matcher,false).print_r(do_shortcode('[wpt_events]{{location|permalink}}[/wpt_events]'),false);
-		
         $this->assertTag($matcher, do_shortcode('[wpt_events]{{location|permalink}}[/wpt_events]'),$message);
 	}
 
