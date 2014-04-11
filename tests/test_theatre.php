@@ -28,9 +28,11 @@ class WPT_Test extends WP_UnitTestCase {
 		// create production with upcoming event
 		$this->production_with_upcoming_event = $this->factory->post->create($production_args);
 		add_post_meta($this->production_with_upcoming_event, WPT_Season::post_type_name, $this->season1);
-		$upcoming_event = $this->factory->post->create($event_args);
+		$this->upcoming_event_with_prices = $this->factory->post->create($event_args);
 		add_post_meta($upcoming_event, WPT_Production::post_type_name, $this->production_with_upcoming_event);
 		add_post_meta($upcoming_event, 'event_date', date('Y-m-d H:i:s', time() + (2 * DAY_IN_SECONDS)));
+		add_post_meta($upcoming_event, '_wpt_event_tickets_price', 12);
+		add_post_meta($upcoming_event, '_wpt_event_tickets_price', 8.5);
 		
 		// create production with 2 upcoming events
 		$this->production_with_upcoming_events = $this->factory->post->create($production_args);
@@ -190,6 +192,20 @@ class WPT_Test extends WP_UnitTestCase {
 		$xml = new DomDocument;
         $xml->loadHTML(do_shortcode('[wpt_events]'));
         $this->assertSelectCount('.wpt_events .wp_theatre_event .wp_theatre_event_tickets_status_cancelled', 1, $xml);			
+	}
+	
+	function test_wpt_event_tickets_prices() {
+		$xml = new DomDocument;
+        $xml->loadHTML(do_shortcode('[wpt_events]'));
+        $this->assertSelectCount('.wpt_events .wp_theatre_event .wp_theatre_event_prices', 1, $xml);		
+	}
+	
+	function test_wpt_event_tickets_prices_summary() {
+		$event = new WPT_Event($this->upcoming_event_with_prices);
+		$args = array(
+			'summary'=>true
+		);
+		$this->assertContains('8.50', $event->prices($args));
 	}
 	
 	// Test order

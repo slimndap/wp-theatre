@@ -285,9 +285,9 @@ class WPT_Event {
 		$args = wp_parse_args( $args, $defaults );
 
 		if (!isset($this->prices)) {
-			$this->prices = apply_filters('wpt_event_prices',get_post_meta($this->ID,'price',false), $this);
+			$this->prices = apply_filters('wpt_event_tickets_prices',get_post_meta($this->ID,'_wpt_event_tickets_price'), $this);
 		}
-		
+
 		if ($args['html']) {
 			$html = '';
 			$html.= '<div class="'.self::post_type_name.'_prices">';
@@ -296,18 +296,18 @@ class WPT_Event {
 			);
 			$html.= $this->prices($prices_args);
 			$html.= '</div>';
-			return apply_filters('wpt_event_prices_html', $html, $this);				
+			return apply_filters('wpt_event_tickets_prices_html', $html, $this);				
 		} else {
 			if ($args['summary']) {
 				$summary = '';
 				if (count($this->prices)>0) {
 					if (count($this->prices)==1) {
-						$summary = $wp_theatre->options['currencysymbol'].'&nbsp;'.number_format_i18n($this->prices[0]->price,2);
+						$summary = $wp_theatre->options['currencysymbol'].'&nbsp;'.number_format_i18n($this->prices[0],2);
 					} else {
-						$lowest = $this->prices[0]->price;
+						$lowest = $this->prices[0];
 						for($p=1;$p<count($this->prices);$p++) {
-							if ($lowest > $this->prices[$p]->price) {
-								$lowest = $this->prices[$p]->price;
+							if ($lowest > $this->prices[$p]) {
+								$lowest = $this->prices[$p];
 							}
 						}
 						$summary = __('from','wp_theatre').' '.$wp_theatre->options['currencysymbol'].'&nbsp;'.number_format_i18n($lowest,2);

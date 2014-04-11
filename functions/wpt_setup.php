@@ -101,6 +101,7 @@
 				'show_in_menu'  => 'theatre',
 				)
 			);
+
 		}	
 	
 		function activate() {

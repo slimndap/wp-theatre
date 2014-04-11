@@ -419,6 +419,22 @@ class WPT_Admin {
  		echo '</td>';
 		echo '</tr>';
        
+       
+       
+  		// Prices
+  		$label = __('Prices','wp_theatre');
+  		if (!empty($this->options['currencysymbol'])) {
+	  		$label.= ' ('.$this->options['currencysymbol'].')';
+  		}
+  		echo '<tr>';
+		echo '<th><label>'.$label.'</label></th>';	
+		echo '<td>';
+						
+		echo '<input type="text" name="_wpt_event_tickets_prices"';
+        echo ' value="' . implode(', ',get_post_meta($event->ID,'_wpt_event_tickets_price')) . '" />';
+ 		echo '</td>';
+		echo '</tr>';
+       
         echo '</tbody>';
         echo '</table>';		
 	}
@@ -512,6 +528,15 @@ class WPT_Admin {
 		update_post_meta( $post_id, 'tickets_url', $tickets_url );
 		update_post_meta( $post_id, 'tickets_status', $tickets_status );
 		update_post_meta( $post_id, 'tickets_button', $tickets_button );
+		update_post_meta( $post_id, '_wpt_tickets_prices', $prices );
+		
+		// Prices
+		delete_post_meta($post_id, '_wpt_event_tickets_prices');
+
+		$prices = explode(',',$_POST['_wpt_event_tickets_prices']);
+		for ($p=0;$p<count($prices);$p++) {
+			add_post_meta($post_id,'_wpt_event_tickets_price', (float) $prices[$p]);
+		}
 		
 	}
 	
