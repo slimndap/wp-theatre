@@ -191,14 +191,11 @@ class WPT_Test extends WP_UnitTestCase {
 	
 	function test_wpt_events_template_permalink() {
 		$matcher = array(
-			'tag' => 'a',
-			'attributes' => array(
-				'href' => get_permalink($this->production_with_upcoming_event)
-			),
-			'parent' => array(
-				'tag' => 'div',
+			'tag' => 'div',
+			'descendant' => array(
+				'tag' => 'a',
 				'attributes' => array(
-					'class' => 'wp_theatre_event_location'
+					'href' => get_permalink($this->production_with_upcoming_event)
 				)
 			)	
 		);
