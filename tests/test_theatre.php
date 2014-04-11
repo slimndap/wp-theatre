@@ -193,9 +193,15 @@ class WPT_Test extends WP_UnitTestCase {
 		$matcher = array(
 			'tag' => 'div',
 			'descendant' => array(
-				'tag' => 'a',
+				'tag' => 'div',
 				'attributes' => array(
-					'href' => get_permalink($this->production_with_upcoming_event)
+					'class' => 'wp_theatre_event_location'
+				)
+				'child' => array(
+					'tag' => 'a',
+					'attributes' => array(
+						'href' => get_permalink($this->production_with_upcoming_event)
+					)
 				)
 			)	
 		);
