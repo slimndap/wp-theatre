@@ -289,13 +289,15 @@ class WPT_Event {
 		}
 
 		if ($args['html']) {
-			$html = '';
-			$html.= '<div class="'.self::post_type_name.'_prices">';
 			$prices_args = array(
 				'summary' => $args['summary']
 			);
-			$html.= $this->prices($prices_args);
-			$html.= '</div>';
+			$html = $this->prices($prices_args);
+			
+			if (!empty($html)) {
+				$html= '<div class="'.self::post_type_name.'_prices">'.$html.'</div>';
+				
+			}
 			return apply_filters('wpt_event_tickets_prices_html', $html, $this);				
 		} else {
 			if ($args['summary']) {
