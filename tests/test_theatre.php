@@ -202,7 +202,9 @@ class WPT_Test extends WP_UnitTestCase {
 				)
 			)	
 		);
-        $this->assertTag($matcher, do_shortcode('[wpt_events]{{location|permalink}}[/wpt_events]'));
+		$message = print_r($matcher,false).print_r(do_shortcode('[wpt_events]{{location|permalink}}[/wpt_events]'),false);
+		
+        $this->assertTag($matcher, do_shortcode('[wpt_events]{{location|permalink}}[/wpt_events]'),$message);
 	}
 
 	// Test event features
