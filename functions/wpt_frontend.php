@@ -10,7 +10,12 @@ class WPT_Frontend {
 		add_shortcode('wpt_productions', array($this,'wpt_productions'));
 		add_shortcode('wpt_seasons', array($this,'wpt_productions'));
 		add_shortcode('wp_theatre_iframe', array($this,'wp_theatre_iframe'));
+
 		add_shortcode('wpt_production_events', array($this,'wpt_production_events'));
+
+		add_shortcode('wpt_season_productions', array($this,'wpt_season_productions'));
+		add_shortcode('wpt_season_events', array($this,'wpt_season_events'));
+
 		add_shortcode('wpt_event_ticket_button', array($this,'wpt_event_ticket_button'));
 
 		$this->options = get_option( 'wp_theatre' );
@@ -93,6 +98,40 @@ class WPT_Frontend {
 				}
 			}
 		}
+		
+		if (is_singular(WPT_Production::post_type_name)) {
+			if (
+				isset( $wp_theatre->options['show_season_events'] ) &&
+				in_array($wp_theatre->options['show_season_events'], array('above','below'))
+			) {
+				$events_html = '<h3>'.__('Events','wp_theatre').'</h3>';
+				$events_html.= '[wpt_season_events]';
+				
+				switch ($wp_theatre->options['show_season_events']) {
+					case 'above' :
+						$content = $events_html.$content;
+						break;
+					case 'below' :
+						$content.= $events_html;
+				}
+			}
+			if (
+				isset( $wp_theatre->options['show_season_productions'] ) &&
+				in_array($wp_theatre->options['show_season_productions'], array('above','below'))
+			) {
+				$productions_html = '<h3>'.__('Productions','wp_theatre').'</h3>';
+				$productions_html.= '[wpt_season_productions]';
+				
+				switch ($wp_theatre->options['show_season_productions']) {
+					case 'above' :
+						$content = $productions_html.$content;
+						break;
+					case 'below' :
+						$content.= $productions_html;
+				}
+			}
+		}
+		
 		return $content;
 	}
 
@@ -195,6 +234,67 @@ class WPT_Frontend {
 		
 		$wp_theatre->seasons->filters['upcoming'] = $atts['upcoming'];
 		return $wp_theatre->seasons->html($atts);
+	}
+	
+	function wpt_season_events($atts, $content=null) {
+		global $wp_theatre;
+
+		$atts = shortcode_atts( array(
+			'upcoming' => true,
+			'past' => false,
+			'paginateby'=>array(),
+			'season'=> false,
+			'groupby'=>false,
+			'limit'=>false
+		), $atts);
+		
+		if (is_singular(WPT_Season::post_type_name)) {
+			$atts['season'] = get_the_ID();
+		
+			if (!is_null($content) && !empty($content)) {
+				$atts['template'] = html_entity_decode($content);
+			}
+
+			if (!empty($atts['paginateby'])) {
+				$fields = explode(',',$atts['paginateby']);
+				for ($i=0;$i<count($fields);$i++) {
+					$fields[$i] = trim($fields[$i]);
+				}
+				$atts['paginateby'] = $fields;
+			}
+
+			return $wp_theatre->events->html($atts);
+		}
+	}
+	
+	function wpt_season_productions($atts, $content=null) {
+		global $wp_theatre;
+
+		$atts = shortcode_atts( array(
+			'paginateby' => array(),
+			'upcoming' => false,
+			'season'=> false,
+			'groupby'=>false,
+			'limit'=>false
+		), $atts);
+		
+		if (is_singular(WPT_Season::post_type_name)) {
+			$atts['season'] = get_the_ID();
+		
+			if (!is_null($content) && !empty($content)) {
+				$atts['template'] = html_entity_decode($content);
+			}
+
+			if (!empty($atts['paginateby'])) {
+				$fields = explode(',',$atts['paginateby']);
+				for ($i=0;$i<count($fields);$i++) {
+					$fields[$i] = trim($fields[$i]);
+				}
+				$atts['paginateby'] = $fields;
+			}
+
+			return $wp_theatre->productions->html($atts);
+		}
 	}
 	
 	function wp_theatre_iframe($atts, $content=null) {

@@ -101,6 +101,10 @@ class WPT_Test extends WP_UnitTestCase {
 	function test_productions_are_loaded() {
 		$this->assertCount(4, $this->wp_theatre->productions());		
 	}
+	
+	function test_seasons_are_loaded() {
+		$this->assertCount(2, $this->wp_theatre->get_seasons());
+	}
 
 
 	function test_upcoming_productions() {
@@ -171,6 +175,14 @@ class WPT_Test extends WP_UnitTestCase {
 		$xml = new DomDocument;
         $xml->loadHTML(do_shortcode('[wpt_events season="'.$this->season2.'"]'));
         $this->assertSelectCount('.wpt_events .wp_theatre_event', 2, $xml);		
+	}
+	
+	function test_shortcode_wpt_season_production() {
+		$season = get_post($this->season1);
+	}
+	
+	function test_shortcode_wpt_season_events() {
+		$season = get_post($this->season2);
 	}
 	
 	// Test event features
