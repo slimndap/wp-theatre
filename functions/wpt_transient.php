@@ -8,7 +8,7 @@
 	 * @since 0.7
 	 *
 	 */	
-	 class WPT_Transient {
+	class WPT_Transient {
 
 		function __construct() {
 			add_action('save_post', array($this,'save_post'));
@@ -29,6 +29,16 @@
 			return get_transient($key);
 		}
 		
+		/**
+		 * Empty all Theatre transients.
+		 *
+		 * Empty all Theatre transients by removing them from the DB.
+		 * Major flaw: this is useless if transients are not stored in the DB (eg. with memcached).
+		 * See: http://wordpress.org/ideas/topic/transient-api-should-allow-delete-by-prefix
+		 *
+		 * @since 0.7
+		 *
+		 */	
 		function reset() {
 			global $wpdb;
 			$query = "DELETE FROM $wpdb->options WHERE option_name LIKE '\_transient\_wpt\_%'";
