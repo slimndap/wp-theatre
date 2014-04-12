@@ -316,6 +316,11 @@ class WPT_Test extends WP_UnitTestCase {
 			do_shortcode('[wpt_productions]');
 			
 			$this->factory->post->create(); // trigger save_post hook
+
+			$transients = $wpdb->get_results(
+				"SELECT option_name AS name, option_value AS value FROM $wpdb->options WHERE option_name LIKE '_transient_%'"
+			);
+			$message = print_r($transients,false);
 			
 			$args = array(
 				'paginateby' => array(),
@@ -325,7 +330,7 @@ class WPT_Test extends WP_UnitTestCase {
 				'groupby'=>false,
 				'limit'=>false
 			);
-			$this->assertFalse($this->wp_theatre->transient('prods',$args));					
+			$this->assertFalse($this->wp_theatre->transient('prods',$args),$message);					
 		}
 	}
 	
