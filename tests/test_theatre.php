@@ -273,7 +273,7 @@ class WPT_Test extends WP_UnitTestCase {
 	}
 	
 	// Test transients
-	function test_wpt_productions_transient() {
+	function test_wpt_transient_productions() {
 		do_shortcode('[wpt_productions]');
 		
 		$args = array(
@@ -289,6 +289,38 @@ class WPT_Test extends WP_UnitTestCase {
         $xml->loadHTML($this->wp_theatre->transient('prods',$args));
         $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 4, $xml);		
 		
+	}
+	
+	function test_wpt_transient_events() {
+		do_shortcode('[wpt_events]');
+		
+		$args = array(
+			'upcoming' => true,
+			'past' => false,
+			'paginateby'=>array(),
+			'category'=> false,
+			'season'=> false,
+			'groupby'=>false,
+			'limit'=>false
+		);
+		
+		$xml = new DomDocument;
+        $xml->loadHTML($this->wp_theatre->transient('events',$args));
+        $this->assertSelectCount('.wpt_events .wp_theatre_event', 4, $xml);				
+	}
+	
+	function test_wpt_transient_reset() {
+		do_shortcode('[wpt_productions]');
+		
+		$args = array(
+			'paginateby' => array(),
+			'upcoming' => false,
+			'season'=> false,
+			'category'=> false,
+			'groupby'=>false,
+			'limit'=>false
+		);
+		$this->assertFalse($this->wp_theatre->transient('prods',$args));		
 	}
 	
 	// Test RSS feeds
