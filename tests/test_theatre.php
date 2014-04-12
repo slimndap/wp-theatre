@@ -32,7 +32,7 @@ class WPT_Test extends WP_UnitTestCase {
 		// create production with upcoming event
 		$this->production_with_upcoming_event = $this->factory->post->create($production_args);
 		add_post_meta($this->production_with_upcoming_event, WPT_Season::post_type_name, $this->season1);
-		wp_set_post_categories($this->production_with_upcoming_event, array('muziek'));
+		wp_set_post_categories($this->production_with_upcoming_event, array($this->category_muziek));
 
 		$this->upcoming_event_with_prices = $this->factory->post->create($event_args);
 		add_post_meta($this->upcoming_event_with_prices, WPT_Production::post_type_name, $this->production_with_upcoming_event);
@@ -43,7 +43,7 @@ class WPT_Test extends WP_UnitTestCase {
 		// create production with 2 upcoming events
 		$this->production_with_upcoming_events = $this->factory->post->create($production_args);
 		add_post_meta($this->production_with_upcoming_events, WPT_Season::post_type_name, $this->season2);
-		wp_set_post_categories($this->production_with_upcoming_event, array('muziek','film'));
+		wp_set_post_categories($this->production_with_upcoming_event, array($this->category_muziek,$this->category_film));
 
 		$upcoming_event = $this->factory->post->create($event_args);
 		add_post_meta($upcoming_event, WPT_Production::post_type_name, $this->production_with_upcoming_events);

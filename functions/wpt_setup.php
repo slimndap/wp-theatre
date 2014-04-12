@@ -292,10 +292,15 @@
 				remove_action('updated_post_meta', array($this,'updated_post_meta'), 20 ,4);
 				remove_action('added_post_meta', array($this,'updated_post_meta'), 20 ,4);
 				
+				// inherit season from production
 				if ($season = $event->production()->season()) {
 					update_post_meta($event->ID, WPT_Season::post_type_name, $season->ID);				
 				}
 				
+				// inherit categories from production
+				$categories = wp_get_post_categories($meta_value);
+				wp_set_post_categories($event->ID, $categories);
+
 				add_action('updated_post_meta', array($this,'updated_post_meta'), 20 ,4);
 				add_action('added_post_meta', array($this,'updated_post_meta'), 20 ,4);
 			}
