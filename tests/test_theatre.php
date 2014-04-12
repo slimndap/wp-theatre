@@ -310,6 +310,7 @@ class WPT_Test extends WP_UnitTestCase {
 	}
 	
 	function test_wpt_transient_reset() {
+		global $wpdb;
 		if (wp_using_ext_object_cache()) {
 			
 		} else {
