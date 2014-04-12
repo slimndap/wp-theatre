@@ -312,7 +312,9 @@ class WPT_Test extends WP_UnitTestCase {
 	function test_wpt_transient_reset() {
 		do_shortcode('[wpt_productions]');
 		
-		$this->factory->post->create(); // trigger save_post hook
+		// trigger save_post hook
+		$post = array();
+		wp_insert_post($post);
 		
 		$args = array(
 			'paginateby' => array(),
