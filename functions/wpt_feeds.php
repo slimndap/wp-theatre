@@ -51,6 +51,7 @@
 				$item.= '<title>'.$production->title().'</title>';
 				$item.= '<link>'.get_permalink($production->ID).'</link>';
 				$item.= '<description><![CDATA['.$production->summary().']]></description>';
+				$item.= '<content:encoded><![CDATA['.strip_shortcodes($production->post()->post_content).']]></content:encoded>';
 				$item.= '</item>';
 
 				$items.=$item;				
@@ -58,7 +59,7 @@
 			
 			
 			$feed = '';
-			$feed.=	'<rss version="2.0">';
+			$feed.=	'<rss version="2.0"	xmlns:content="http://purl.org/rss/1.0/modules/content/">';
 
 			$feed.= '<channel>';
 			$feed.= '<title>'.get_bloginfo_rss('name').' '.__('Upcoming productions','wp_theatre').'</title>';
@@ -78,7 +79,7 @@
 		function upcoming_events() {
 			header('Content-Type: ' . feed_content_type('rss-http') . '; charset=' . get_option('blog_charset'), true);
 			$xml = new DomDocument;
-			$xml->loadXML($this->get_upcoming_productions());
+			$xml->loadXML($this->get_upcoming_events());
 			echo $xml->saveXML();
 		}
 		
@@ -97,13 +98,14 @@
 				$item.= '<title>'.$event->production()->title().'</title>';
 				$item.= '<link>'.get_permalink($event->production()->ID).'</link>';
 				$item.= '<description><![CDATA['.$event->production()->summary().']]></description>';
+				$item.= '<content:encoded><![CDATA['.strip_shortcodes($event->production()->post()->post_content).']]></content:encoded>';
 				$item.= '</item>';
 
 				$items.=$item;				
 			}
 			
 			$feed = '';
-			$feed.=	'<rss version="2.0">';
+			$feed.=	'<rss version="2.0"	xmlns:content="http://purl.org/rss/1.0/modules/content/">';
 
 			$feed.= '<channel>';
 			$feed.= '<title>'.get_bloginfo_rss('name').' '.__('Upcoming events','wp_theatre').'</title>';

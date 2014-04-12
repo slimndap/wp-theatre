@@ -178,10 +178,9 @@ class WPT_Frontend {
 
 		$wp_theatre->events->filters['upcoming'] = true;
 		
-		$transient_key = 'wpt_events_'.md5(serialize(array_merge($atts, $_GET)));
-		if ( ! ( $html = get_transient($transient_key) ) ) {
+		if ( ! ( $html = $wp_theatre->transient('events', array_merge($atts, $_GET)) ) ) {
 			$html = $wp_theatre->events->html($atts);
-			set_transient($transient_key, $html, 4 * MINUTE_IN_SECONDS );
+			$wp_theatre->transient('events', array_merge($atts, $_GET), $html);
 		}
 
 		return $html;
@@ -229,11 +228,9 @@ class WPT_Frontend {
 			$atts['template'] = html_entity_decode($content);
 		}
 
-
-		$transient_key = 'wpt_prod_'.md5(serialize(array_merge($atts, $_GET)));
-		if ( ! ( $html = get_transient($transient_key) ) ) {
+		if ( ! ( $html = $wp_theatre->transient('prods', array_merge($atts, $_GET)) ) ) {
 			$html = $wp_theatre->productions->html($atts);
-			set_transient($transient_key, $html, 4 * MINUTE_IN_SECONDS );
+			$wp_theatre->transient('prods', array_merge($atts, $_GET), $html);
 		}
 
 		return $html;
@@ -361,7 +358,12 @@ class WPT_Frontend {
 				$args['template'] = '{{remark}} {{datetime}} {{location}} {{tickets}}';
 			}
 			
-			return $wp_theatre->events->html($args);
+			if ( ! ( $html = $wp_theatre->transient('events', array_merge($args, $_GET)) ) ) {
+				$html = $wp_theatre->events->html($args);
+				$wp_theatre->transient('events', array_merge($args, $_GET), $html);
+			}
+
+			return $html;
 		}
 	}
 	

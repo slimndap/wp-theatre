@@ -199,9 +199,9 @@ class WPT_Production {
 		$args = wp_parse_args( $args, $defaults );
 
 		if (!isset($this->excerpt)) {
-			$excerpt = apply_filters('get_the_excerpt', $this->post()->post_excerpt);
+			$excerpt = $this->post()->post_excerpt;
 			if (empty($excerpt)) {
-				 $excerpt = wp_trim_words($this->post()->post_content, $args['words']);
+				 $excerpt = wp_trim_words(strip_shortcodes($this->post()->post_content), $args['words']);
 			}
 			$this->excerpt = apply_filters('wpt_production_excerpt',$excerpt, $this);
 
@@ -210,7 +210,7 @@ class WPT_Production {
 		if ($args['html']) {
 			$html = '';
 			$html.= '<p class="'.self::post_type_name.'_excerpt">'.$this->excerpt.'</p>';
-			return apply_filters('wpt_event_excerpt_html', $html, $this);				
+			return apply_filters('wpt_production_excerpt_html', $html, $this);				
 		} else {
 			return $this->excerpt;				
 		}
@@ -342,7 +342,7 @@ class WPT_Production {
 				}
 				$short.='.';
 			}
-			$this->summary = $short.' '.$this->excerpt();
+			$this->summary = ucfirst($short).' '.$this->excerpt();
 		}
 		
 		if ($args['html']) {

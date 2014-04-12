@@ -225,9 +225,7 @@ class WPT_Test extends WP_UnitTestCase {
 				)
 			)	
 		);
-		$message = print_r($matcher,false).print_r(do_shortcode('[wpt_events]{{location|permalink}}[/wpt_events]'),false);
-		
-        $this->assertTag($matcher, do_shortcode('[wpt_events]{{location|permalink}}[/wpt_events]'),$message);
+        $this->assertTag($matcher, do_shortcode('[wpt_events]{{location|permalink}}[/wpt_events]'));
 	}
 
 	// Test event features
@@ -272,6 +270,25 @@ class WPT_Test extends WP_UnitTestCase {
 	 
 	function test_order_events() {
 					
+	}
+	
+	// Test transients
+	function test_wpt_productions_transient() {
+		do_shortcode('[wpt_productions]');
+		
+		$args = array(
+			'paginateby' => array(),
+			'upcoming' => false,
+			'season'=> false,
+			'category'=> false,
+			'groupby'=>false,
+			'limit'=>false
+		);
+		
+		$xml = new DomDocument;
+        $xml->loadHTML($this->wp_theatre->transient('prods',$args));
+        $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 4, $xml);		
+		
 	}
 	
 	// Test RSS feeds
