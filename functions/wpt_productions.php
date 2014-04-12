@@ -70,6 +70,7 @@ class WPT_Productions extends WPT_Listing {
 		$defaults = array(
 			'limit' => false,
 			'upcoming' => false,
+			'category' => false,
 			'season' => false,
 			'paginateby' => array(),
 			'groupby' => false,
@@ -79,6 +80,7 @@ class WPT_Productions extends WPT_Listing {
 		$args = wp_parse_args( $args, $defaults );
 		
 		$filters = array(
+			'category' => $args['category'],
 			'season' => $args['season'],
 			'limit' => $args['limit'],
 			'upcoming' => $args['upcoming']

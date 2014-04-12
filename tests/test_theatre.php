@@ -25,9 +25,15 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->season1 = $this->factory->post->create($season_args);
 		$this->season2 = $this->factory->post->create($season_args);
 		
+		//create categories
+		$this->category_muziek = wp_create_category('muziek');
+		$this->category_film = wp_create_category('film');
+		
 		// create production with upcoming event
 		$this->production_with_upcoming_event = $this->factory->post->create($production_args);
 		add_post_meta($this->production_with_upcoming_event, WPT_Season::post_type_name, $this->season1);
+		wp_set_post_categories($this->production_with_upcoming_event, array('muziek'));
+
 		$this->upcoming_event_with_prices = $this->factory->post->create($event_args);
 		add_post_meta($this->upcoming_event_with_prices, WPT_Production::post_type_name, $this->production_with_upcoming_event);
 		add_post_meta($this->upcoming_event_with_prices, 'event_date', date('Y-m-d H:i:s', time() + (2 * DAY_IN_SECONDS)));
@@ -37,6 +43,7 @@ class WPT_Test extends WP_UnitTestCase {
 		// create production with 2 upcoming events
 		$this->production_with_upcoming_events = $this->factory->post->create($production_args);
 		add_post_meta($this->production_with_upcoming_events, WPT_Season::post_type_name, $this->season2);
+		wp_set_post_categories($this->production_with_upcoming_event, array('muziek','film'));
 
 		$upcoming_event = $this->factory->post->create($event_args);
 		add_post_meta($upcoming_event, WPT_Production::post_type_name, $this->production_with_upcoming_events);
@@ -161,12 +168,19 @@ class WPT_Test extends WP_UnitTestCase {
         $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 4, $xml);		
 	}
 	
-	function test_shortcode_wpt_production_filter_season() {
+	function test_shortcode_wpt_productions_filter_season() {
 		$xml = new DomDocument;
         $xml->loadHTML(do_shortcode('[wpt_productions season="'.$this->season1.'"]'));
         $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 1, $xml);				
 	}
 
+	function test_shortcode_wpt_productions_filter_category() {
+		// test with mixed category-slug and category-id
+		$xml = new DomDocument;
+        $xml->loadHTML(do_shortcode('[wpt_productions category="muziek,'.$this->category_film.'"]'));
+        $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 2, $xml);				
+	}
+	
 	function test_shortcode_wpt_events() {
 		$xml = new DomDocument;
         $xml->loadHTML(do_shortcode('[wpt_events]'));
@@ -177,6 +191,12 @@ class WPT_Test extends WP_UnitTestCase {
 		$xml = new DomDocument;
         $xml->loadHTML(do_shortcode('[wpt_events season="'.$this->season2.'"]'));
         $this->assertSelectCount('.wpt_events .wp_theatre_event', 2, $xml);		
+	}
+	
+	function test_shortcode_wpt_events_filter_category() {
+		$xml = new DomDocument;
+        $xml->loadHTML(do_shortcode('[wpt_events category="muziek"]'));
+        $this->assertSelectCount('.wpt_events .wp_theatre_event', 3, $xml);		
 	}
 	
 	function test_shortcode_wpt_season_production() {

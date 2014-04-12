@@ -142,6 +142,7 @@ class WPT_Frontend {
 			'upcoming' => true,
 			'past' => false,
 			'paginateby'=>array(),
+			'category'=> false,
 			'season'=> false,
 			'groupby'=>false,
 			'limit'=>false
@@ -153,6 +154,22 @@ class WPT_Frontend {
 				$fields[$i] = trim($fields[$i]);
 			}
 			$atts['paginateby'] = $fields;
+		}
+		
+		if (!empty($atts['category'])) {
+			$categories = array();
+			$fields = explode(',',$atts['category']);
+			for ($i=0;$i<count($fields);$i++) {
+				$category_id = trim($fields[$i]);
+				if (is_numeric($category_id)) {
+					$categories[] = trim($fields[$i]);
+				} else {
+					if ($category = get_category_by_slug($category_id)) {
+						$categories[] = $category->term_id;
+					}
+				}
+			}
+			$atts['category'] = implode(',',$categories);
 		}
 		
 		if (!is_null($content) && !empty($content)) {
@@ -177,6 +194,7 @@ class WPT_Frontend {
 			'paginateby' => array(),
 			'upcoming' => false,
 			'season'=> false,
+			'category'=> false,
 			'groupby'=>false,
 			'limit'=>false
 		), $atts );
@@ -189,9 +207,28 @@ class WPT_Frontend {
 			$atts['paginateby'] = $fields;
 		}
 
+		if (!empty($atts['category'])) {
+			$categories = array();
+			$fields = explode(',',$atts['category']);
+			for ($i=0;$i<count($fields);$i++) {
+				$category_id = trim($fields[$i]);
+				if (is_numeric($category_id)) {
+					$categories[] = trim($fields[$i]);
+				} else {
+					if ($category = get_category_by_slug($category_id)) {
+						$categories[] = $category->term_id;
+					}
+				}
+			}
+			$atts['category'] = implode(',',$categories);
+		}
+		
+		
+		
 		if (!is_null($content) && !empty($content)) {
 			$atts['template'] = html_entity_decode($content);
 		}
+
 
 		$transient_key = 'wpt_prod_'.md5(serialize(array_merge($atts, $_GET)));
 		if ( ! ( $html = get_transient($transient_key) ) ) {

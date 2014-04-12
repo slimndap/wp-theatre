@@ -63,6 +63,7 @@ class WPT_Events extends WPT_Listing {
 			'groupby'=>false,
 			'production' => false,
 			'limit' => false,
+			'category' => false,
 			'template' => NULL
 		);
 		$args = wp_parse_args( $args, $defaults );
@@ -81,6 +82,7 @@ class WPT_Events extends WPT_Listing {
 			'upcoming' => true,
 			'production' => $args['production'],
 			'limit' => $args['limit'],
+			'category' => $args['category'],
 			'season' => $args['season']
 		);
 
