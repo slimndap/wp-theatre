@@ -313,7 +313,9 @@ class WPT_Test extends WP_UnitTestCase {
 		do_shortcode('[wpt_productions]');
 		
 		// trigger save_post hook
-		$post = array();
+		$post = array(
+			'post_title'=>'dummy'
+		);
 		wp_insert_post($post);
 		
 		$args = array(
