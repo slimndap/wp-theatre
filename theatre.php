@@ -117,7 +117,7 @@ class WP_Theatre {
 	
 	function deactivate() {
 		wp_clear_scheduled_hook('wpt_cron');
-		delete_post_meta_by_key('wpt_order');
+		delete_post_meta_by_key($this->order->meta_key);
 		flush_rewrite_rules();		
 	}
 
