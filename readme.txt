@@ -62,6 +62,13 @@ Make sure that you checked the 'Enable built-in Theatre stylesheet'-option in th
 
 == Changelog ==
 
+= 0.7 =
+* Support for tickets prices, cancelled events.
+* Filter listings by season or categories.
+* A new German translation (by Gregory Fischer).
+* Wordpress SEO by Yoats support.
+* Jetpack Featured Content slider support.
+
 = 0.6 =
 * Added support for templates and placeholders in the [wpt_events], [wpt_productions] and [wpt_production_events] shortcodes. See the [documentation](https://github.com/slimndap/wp-theatre/wiki/Shortcodes).
 * Sort your productions by date on the production admin page.
