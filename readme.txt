@@ -64,10 +64,11 @@ Make sure that you checked the 'Enable built-in Theatre stylesheet'-option in th
 
 = 0.7 =
 * Support for tickets prices, cancelled events.
-* Filter listings by season or categories.
+* Filter listings by season or categories. See the [documentation](https://github.com/slimndap/wp-theatre/wiki/Shortcodes).
 * A new German translation (by Gregory Fischer).
-* Wordpress SEO by Yoats support.
+* Wordpress SEO by Yoast support.
 * Jetpack Featured Content slider support.
+* And [more...](http://slimndap.com/theatre-for-wordpress-0-7-prices-and-categories)
 
 = 0.6 =
 * Added support for templates and placeholders in the [wpt_events], [wpt_productions] and [wpt_production_events] shortcodes. See the [documentation](https://github.com/slimndap/wp-theatre/wiki/Shortcodes).
