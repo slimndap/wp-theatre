@@ -2,7 +2,7 @@
 Contributors: slimndap
 Tags: theatre, stage, venue, events, shows, concerts, tickets, ticketing, sports, performances, calendar, workshops, theater, cinema
 Requires at least: 3.5
-Tested up to: 3.8.1
+Tested up to: 3.8.3
 Stable tag: trunk
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -47,7 +47,7 @@ Each production has it's own page and can have one or more events.
 
 Events don't have their own pages. They only appear on pages with event listings.
 
-So if you run a theatre then 'The Sound Of Music' is a _production_ and the show this weekend is an _event_.
+So if you run a theater then 'The Sound Of Music' is a _production_ and the show this weekend is an _event_.
 
 If you are a musician then your band is a _production_ and your gigs are the _events_.
 
