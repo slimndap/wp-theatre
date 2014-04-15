@@ -4,8 +4,6 @@
 	
 			$this->options = get_option( 'wp_theatre' );
 	
-			// Installation
-	
 			// Hooks
 			add_action( 'init', array($this,'init'));
 			add_filter( 'gettext', array($this,'gettext'), 20, 3 );
@@ -103,11 +101,6 @@
 			);
 
 		}	
-	
-		function activate() {
-			$this->init();
-			flush_rewrite_rules();
-		}
 	
 		function cron_schedules( $schedules ) {
 			// Adds once weekly to the existing schedules.

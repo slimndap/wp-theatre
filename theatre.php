@@ -4,7 +4,7 @@ Plugin Name: Theatre
 Plugin URI: http://wordpress.org/plugins/theatre/
 Description: Turn your Wordpress website into a theatre website.
 Author: Jeroen Schmit, Slim & Dapper
-Version: 0.7
+Version: 0.7.1
 Author URI: http://slimndap.com/
 Text Domain: wp_theatre
 Domain Path: /lang
@@ -25,10 +25,15 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *	echo $wp_theatre->events->html_listing($args); // a list of all upcoming events, paginated by month
  */
 
-$wpt_version = '0.7';
+$wpt_version = '0.7.1';
 
 class WP_Theatre {
 	function __construct() {
+
+		// Set version
+		global $wpt_version;
+		$this->wpt_version = $wpt_version;
+	
 		// Includes
 		$this->includes();
 	
@@ -56,7 +61,13 @@ class WP_Theatre {
 
 		// Plugin (de)activation hooks
 		register_activation_hook( __FILE__, array($this, 'activate' ));		
-		register_deactivation_hook( __FILE__, array($this, 'deactivate' ));		
+		register_deactivation_hook( __FILE__, array($this, 'deactivate' ));	
+		
+		// Plugin update hooks
+		if ($wpt_version!=get_option('wpt_version')) {
+			update_option('wpt_version', $wpt_version);
+			add_action('admin_init',array($this,'update'));
+		}
 		
 		// Loaded action
 		do_action( 'wpt_loaded' );
@@ -112,6 +123,11 @@ class WP_Theatre {
 
 	function activate() {
 		wp_schedule_event( time(), 'wpt_schedule', 'wpt_cron');
+
+		//defines the post types so the rules can be flushed.
+		$this->setup->init();
+
+		//and flush the rules.
 		flush_rewrite_rules();		
 	}
 	
@@ -119,6 +135,10 @@ class WP_Theatre {
 		wp_clear_scheduled_hook('wpt_cron');
 		delete_post_meta_by_key($this->order->meta_key);
 		flush_rewrite_rules();		
+	}
+
+	function update() {
+		$this->activate();
 	}
 
 	/*
