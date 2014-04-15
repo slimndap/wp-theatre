@@ -156,6 +156,8 @@ Make sure that you checked the 'Enable built-in Theatre stylesheet'-option in th
 * Basic version of the plugin.
 
 == Upgrade Notice ==
+= 0.7.2 =
+* Sticky productions were not showing in production listings.
 
 = 0.6.2 =
 * Important: Please deactivate and then reactivate this plugin after the update.
