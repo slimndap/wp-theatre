@@ -245,14 +245,6 @@ class WPT_Productions extends WPT_Listing {
 			'order' => 'asc'
 		);
 		
-		if ($filters['upcoming']) {
-			$args['meta_query'][] = array (
-				'key' => $wp_theatre->order->meta_key,
-				'value' => time(),
-				'compare' => '>='
-			);
-		}
-
 		if ($filters['season']) {
 			$args['meta_query'][] = array (
 				'key' => WPT_Season::post_type_name,
@@ -272,17 +264,46 @@ class WPT_Productions extends WPT_Listing {
 			
 		}
 
+		if ($filters['upcoming']) {
+			$args['meta_query'][] = array (
+				'key' => $wp_theatre->order->meta_key,
+				'value' => time(),
+				'compare' => '>='
+			);
+		}
 		$posts = get_posts($args);
 
+		// don't forget the stickies!
+		$sticky_posts = get_option( 'sticky_posts' );
+		
+		if (!empty($sticky_posts)) {
+			$sticky_offset = 0;
+
+			foreach($posts as $post) {
+				if (in_array($post->ID,$sticky_posts)) {
+					$offset = array_search($post->ID, $sticky_posts);
+					unset($sticky_posts[$offset]);
+				}
+			}
+
+			if (!empty($sticky_posts)) {
+				$stickies = get_posts( array(
+					'post__in' => $sticky_posts,
+					'post_type' => WPT_Production::post_type_name,
+					'post_status' => 'publish',
+					'nopaging' => true
+				) );
+				foreach ( $stickies as $sticky_post ) {
+					array_splice( $posts, $sticky_offset, 0, array( $sticky_post ) );
+					$sticky_offset++;
+				}			                              
+			}
+		}
+		
 		$productions = array();
 		for ($i=0;$i<count($posts);$i++) {
 			$key = $posts[$i]->ID;
-			$production = wp_cache_get($key,'wp_theatre');
-			if ( false === $production ) {
-				$production = new WPT_Production($posts[$i]->ID);
-				wp_cache_set($key,$production,'wp_theatre');
-			}
-			$productions[] = $production;
+			$productions[] = new WPT_Production($posts[$i]->ID);
 		}
 		return $productions;
 	}

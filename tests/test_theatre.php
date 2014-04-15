@@ -59,8 +59,15 @@ class WPT_Test extends WP_UnitTestCase {
 		$event_id = $this->factory->post->create($event_args);
 		add_post_meta($event_id, WPT_Production::post_type_name, $this->production_with_historic_event);
 		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() - DAY_IN_SECONDS));
+
+		// create sticky production with a historic event
+		$this->production_with_historic_event_sticky = $this->factory->post->create($production_args);
+		$event_id = $this->factory->post->create($event_args);
+		add_post_meta($event_id, WPT_Production::post_type_name, $this->production_with_historic_event_sticky);
+		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() - YEAR_IN_SECONDS));
+		stick_post($this->production_with_historic_event_sticky);
 		
-		// create production with an upcoming and a historic event
+		// create sticky production with an upcoming and a historic event
 		$this->production_with_upcoming_and_historic_events = $this->factory->post->create($production_args);
 		$event_id = $this->factory->post->create($event_args);
 		add_post_meta($event_id, WPT_Production::post_type_name, $this->production_with_upcoming_and_historic_events);
@@ -68,6 +75,7 @@ class WPT_Test extends WP_UnitTestCase {
 		$event_id = $this->factory->post->create($event_args);
 		add_post_meta($event_id, WPT_Production::post_type_name, $this->production_with_upcoming_and_historic_events);
 		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() + WEEK_IN_SECONDS));
+		stick_post($this->production_with_upcoming_and_historic_events);
 		
 	}
 
@@ -108,7 +116,7 @@ class WPT_Test extends WP_UnitTestCase {
 	}
 
 	function test_productions_are_loaded() {
-		$this->assertCount(4, $this->wp_theatre->productions());		
+		$this->assertCount(5, $this->wp_theatre->productions());		
 	}
 	
 	function test_seasons_are_loaded() {
@@ -120,7 +128,7 @@ class WPT_Test extends WP_UnitTestCase {
 		$args = array(
 			'upcoming' => TRUE
 		);
-		$this->assertCount(3, $this->wp_theatre->productions($args));		
+		$this->assertCount(4, $this->wp_theatre->productions($args));		
 		
 	}
 
@@ -165,20 +173,20 @@ class WPT_Test extends WP_UnitTestCase {
 	function test_shortcode_wpt_productions() {
 		$xml = new DomDocument;
         $xml->loadHTML(do_shortcode('[wpt_productions]'));
-        $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 4, $xml);		
+        $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 5, $xml);		
 	}
 	
 	function test_shortcode_wpt_productions_filter_season() {
 		$xml = new DomDocument;
         $xml->loadHTML(do_shortcode('[wpt_productions season="'.$this->season1.'"]'));
-        $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 1, $xml);				
+        $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 2, $xml);				
 	}
 
 	function test_shortcode_wpt_productions_filter_category() {
 		// test with mixed category-slug and category-id
 		$xml = new DomDocument;
         $xml->loadHTML(do_shortcode('[wpt_productions category="muziek,'.$this->category_film.'"]'));
-        $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 2, $xml);				
+        $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 3, $xml);				
 	}
 	
 	function test_shortcode_wpt_events() {
@@ -259,6 +267,7 @@ class WPT_Test extends WP_UnitTestCase {
 		}
 		
 		$expected = array(
+			$this->production_with_historic_event_sticky,
 			$this->production_with_historic_event,
 			$this->production_with_upcoming_events,
 			$this->production_with_upcoming_event,
@@ -287,7 +296,7 @@ class WPT_Test extends WP_UnitTestCase {
 		
 		$xml = new DomDocument;
         $xml->loadHTML($this->wp_theatre->transient('prods',$args));
-        $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 4, $xml);		
+        $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 5, $xml);		
 		
 	}
 	
@@ -337,7 +346,7 @@ class WPT_Test extends WP_UnitTestCase {
 	function test_upcoming_productions_feed() {
 		$xml = new DomDocument;
         $xml->loadXML($this->wp_theatre->feeds->get_upcoming_productions());
-        $this->assertSelectCount('rss channel item', 3, $xml);
+        $this->assertSelectCount('rss channel item', 4, $xml);
 	}
 	
 	function test_upcoming_events_feed() {

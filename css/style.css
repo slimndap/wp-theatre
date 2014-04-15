@@ -53,6 +53,10 @@
 .wpt_events .wp_theatre_prod > * {
   margin: 0 0 0 25%;
 }
+.wpt_productions .wp_theatre_prod span,
+.wpt_events .wp_theatre_prod span {
+  margin-left: 0;
+}
 .wpt_productions .wp_theatre_event > *,
 .wpt_events .wp_theatre_event > * {
   margin: 0 25%;

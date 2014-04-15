@@ -571,11 +571,6 @@ class WPT_Admin {
 		// Sanitize the user input.
 		$season = sanitize_text_field( $_POST[WPT_Season::post_type_name] );
 		
-		$sticky = '';
-		if (isset($_POST['sticky'])) {
-			$sticky = sanitize_text_field( $_POST['sticky'] );
-		}
-
 		// Update the meta field.
 		update_post_meta( $post_id, WPT_Season::post_type_name, $season );
 		update_post_meta( $post_id, 'sticky', $sticky );
