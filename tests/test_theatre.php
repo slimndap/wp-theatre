@@ -150,7 +150,7 @@ class WPT_Test extends WP_UnitTestCase {
 			wp_trash_post($production->ID);
 			wp_untrash_post($production->ID);
 		}
-		$this->assertCount(6, $this->wp_theatre->events());		
+		$this->assertCount(7, $this->wp_theatre->events());		
 		
 	}
 	
