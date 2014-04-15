@@ -112,7 +112,7 @@ class WPT_Test extends WP_UnitTestCase {
 	}
 
 	function test_events_are_loaded() {
-		$this->assertCount(6, $this->wp_theatre->events());		
+		$this->assertCount(7, $this->wp_theatre->events());		
 	}
 
 	function test_productions_are_loaded() {
@@ -142,7 +142,7 @@ class WPT_Test extends WP_UnitTestCase {
 			'post_status'=>'trash',
 			'posts_per_page'=>-1
 		);
-		$this->assertCount(6, get_posts($args));		
+		$this->assertCount(7, get_posts($args));		
 	}
 	
 	function test_connected_events_are_untrashed_when_production_is_untrashed() {
@@ -179,14 +179,14 @@ class WPT_Test extends WP_UnitTestCase {
 	function test_shortcode_wpt_productions_filter_season() {
 		$xml = new DomDocument;
         $xml->loadHTML(do_shortcode('[wpt_productions season="'.$this->season1.'"]'));
-        $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 2, $xml);				
+        $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 3, $xml);				
 	}
 
 	function test_shortcode_wpt_productions_filter_category() {
 		// test with mixed category-slug and category-id
 		$xml = new DomDocument;
         $xml->loadHTML(do_shortcode('[wpt_productions category="muziek,'.$this->category_film.'"]'));
-        $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 3, $xml);				
+        $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 4, $xml);				
 	}
 	
 	function test_shortcode_wpt_events() {
@@ -267,8 +267,8 @@ class WPT_Test extends WP_UnitTestCase {
 		}
 		
 		$expected = array(
-			$this->production_with_historic_event_sticky,
 			$this->production_with_historic_event,
+			$this->production_with_historic_event_sticky,
 			$this->production_with_upcoming_events,
 			$this->production_with_upcoming_event,
 			$this->production_with_upcoming_and_historic_events
