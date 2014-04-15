@@ -340,9 +340,10 @@ class WPT_Production {
 				if ($this->cities()!='') {
 					$short .= ' '.__('in','wp_theatre').' '.$this->cities();
 				}
-				$short.='.';
+				$short.='. ';
+				$this->summary .= ucfirst($short);
 			}
-			$this->summary = ucfirst($short).' '.$this->excerpt();
+			$this->summary .= $this->excerpt();
 		}
 		
 		if ($args['html']) {
