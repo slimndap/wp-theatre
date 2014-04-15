@@ -342,20 +342,6 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertFalse($this->wp_theatre->transient('prods',$args));					
 	}
 	
-	// Test RSS feeds
-	function test_upcoming_productions_feed() {
-		$xml = new DomDocument;
-        $xml->loadXML($this->wp_theatre->feeds->get_upcoming_productions());
-        $this->assertSelectCount('rss channel item', 4, $xml);
-	}
-	
-	function test_upcoming_events_feed() {
-		$xml = new DomDocument;
-        $xml->loadXML($this->wp_theatre->feeds->get_upcoming_events());
-        $this->assertSelectCount('rss channel item', 4, $xml);
-		
-	}
-	
 	function test_theatre_class_is_global() {
 		global $wp_theatre;
 		$this->assertTrue( 
