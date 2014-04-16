@@ -378,34 +378,38 @@ class WPT_Admin {
 		echo '<th><label>'.__('Status','wp_theatre').'</label></th>';	
 		echo '<td>';
 				
-		$status = get_post_meta($event->ID,'tickets_status',true);
-		
-		echo '<label>';
-		echo '<input type="radio" name="tickets_status" value=""';
-		if ($status=='') {
-			echo ' checked="checked"';
+		$current_status = get_post_meta($event->ID,'tickets_status',true);
+		if (empty($current_status)) {
+			$current_status=WPT_Event::tickets_status_onsale;
 		}
-		echo '> ';
-		echo '<span>'.__('On sale','wp_theatre').'</span>';
-		echo '</label><br />';
-		
-		echo '<label>';
-		echo '<input type="radio" name="tickets_status" value="soldout"';
-		if ($status=='soldout') {
-			echo ' checked="checked"';
+		$statusses = array(
+			WPT_Event::tickets_status_onsale => __('On sale','wp_theatre'),
+			WPT_Event::tickets_status_soldout => __('Sold Out','wp_theatre'),
+			WPT_Event::tickets_status_cancelled => __('Cancelled','wp_theatre'),
+			WPT_Event::tickets_status_hidden => __('Hidden','wp_theatre'),	
+		);
+		foreach ($statusses as $status=>$name) {
+			echo '<label>';
+			echo '<input type="radio" name="tickets_status" value="'.$status.'"';
+			if ($current_status==$status) {
+				echo ' checked="checked"';
+			}
+			echo '>';
+			echo '<span>'.$name.'</span>';
+			echo '</label><br />	';
 		}
-		echo '> ';
-		echo '<span>'.__('Sold out','wp_theatre').'</span>';
-		echo '</label><br />';
-		
+				
 		echo '<label>';
-		echo '<input type="radio" name="tickets_status" value="cancelled"';
-		if ($status=='cancelled') {
-			echo ' checked="checked"';
+		
+		$checked = '';
+		$value = '';
+		if (!in_array($current_status, array_keys($statusses))) {
+			$checked = ' checked="checked"';
+			$value = $current_status;
 		}
-		echo '> ';
-		echo '<span>'.__('Cancelled','wp_theatre').'</span>';
-		echo '</label><br />';
+		echo '<input type="radio" name="tickets_status" value="'.WPT_Event::tickets_status_other.'" '.$checked.' />';
+		echo '<span>'.__('Other','wp_theatre').': </span>';
+		echo '</label><input type="text" name="tickets_status_other" value="'.$value.'" /><br />';
 		
  		echo '</td>';
 		echo '</tr>';
@@ -516,7 +520,6 @@ class WPT_Admin {
 		$remark = sanitize_text_field( $_POST['remark'] );
 		$tickets_url = esc_url( $_POST['tickets_url'] );
 		$tickets_button = sanitize_text_field( $_POST['tickets_button'] );
-		$tickets_status = $_POST['tickets_status'];
 		
 		// Update the meta field.
 		update_post_meta( $post_id, WPT_Production::post_type_name, $production );
@@ -526,7 +529,6 @@ class WPT_Admin {
 		update_post_meta( $post_id, 'city', $city );
 		update_post_meta( $post_id, 'remark', $remark );
 		update_post_meta( $post_id, 'tickets_url', $tickets_url );
-		update_post_meta( $post_id, 'tickets_status', $tickets_status );
 		update_post_meta( $post_id, 'tickets_button', $tickets_button );
 		update_post_meta( $post_id, '_wpt_tickets_prices', $prices );
 		
@@ -537,6 +539,13 @@ class WPT_Admin {
 		for ($p=0;$p<count($prices);$p++) {
 			add_post_meta($post_id,'_wpt_event_tickets_price', (float) $prices[$p]);
 		}
+		
+		// Tickets status
+		$tickets_status = $_POST['tickets_status'];
+		if ($tickets_status==WPT_Event::tickets_status_other) {
+			$tickets_status = sanitize_text_field($_POST['tickets_status_other']);
+		}
+		update_post_meta( $post_id, 'tickets_status', $tickets_status );
 		
 	}
 	

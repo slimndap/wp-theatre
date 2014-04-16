@@ -48,11 +48,12 @@ class WPT_Test extends WP_UnitTestCase {
 		$upcoming_event = $this->factory->post->create($event_args);
 		add_post_meta($upcoming_event, WPT_Production::post_type_name, $this->production_with_upcoming_events);
 		add_post_meta($upcoming_event, 'event_date', date('Y-m-d H:i:s', time() + DAY_IN_SECONDS));
+		add_post_meta($upcoming_event, 'tickets_status', 'other tickets status' );
 
 		$upcoming_event = $this->factory->post->create($event_args);
 		add_post_meta($upcoming_event, WPT_Production::post_type_name, $this->production_with_upcoming_events);
 		add_post_meta($upcoming_event, 'event_date', date('Y-m-d H:i:s', time() + (3 * DAY_IN_SECONDS)));
-		add_post_meta($upcoming_event, 'tickets_status', 'cancelled' );
+		add_post_meta($upcoming_event, 'tickets_status', WPT_Event::tickets_status_cancelled );
 		
 		// create production with a historic event
 		$this->production_with_historic_event = $this->factory->post->create($production_args);
@@ -76,6 +77,8 @@ class WPT_Test extends WP_UnitTestCase {
 		add_post_meta($event_id, WPT_Production::post_type_name, $this->production_with_upcoming_and_historic_events);
 		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() + WEEK_IN_SECONDS));
 		stick_post($this->production_with_upcoming_and_historic_events);
+		add_post_meta($this->upcoming_event_with_prices, '_wpt_event_tickets_price', 12);
+		add_post_meta($upcoming_event, 'tickets_status', WPT_Event::tickets_status_hidden );
 		
 	}
 
@@ -241,6 +244,18 @@ class WPT_Test extends WP_UnitTestCase {
 		$xml = new DomDocument;
         $xml->loadHTML(do_shortcode('[wpt_events]'));
         $this->assertSelectCount('.wpt_events .wp_theatre_event .wp_theatre_event_tickets_status_cancelled', 1, $xml);			
+	}
+	
+	function test_wpt_event_tickets_status_hidden() {
+		$xml = new DomDocument;
+        $xml->loadHTML(do_shortcode('[wpt_events]'));
+        $this->assertSelectCount('.wpt_events .wp_theatre_event .wp_theatre_event_tickets_status', 2, $xml);			
+	}
+	
+	function test_wpt_event_tickets_status_other() {
+		$xml = new DomDocument;
+        $xml->loadHTML(do_shortcode('[wpt_events]'));
+        $this->assertSelectCount('.wpt_events .wp_theatre_event .wp_theatre_event_tickets_status_other', 1, $xml);			
 	}
 	
 	function test_wpt_event_tickets_prices() {

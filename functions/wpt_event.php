@@ -19,6 +19,12 @@ class WPT_Event {
 
 	const post_type_name = 'wp_theatre_event';
 	
+	const tickets_status_onsale = '_onsale';
+	const tickets_status_hidden = '_hidden';
+	const tickets_status_cancelled = '_cancelled';
+	const tickets_status_soldout = '_soldout';
+	const tickets_status_other = '_other';
+	
 	function __construct($ID=false, $PostClass=false) {
 		$this->PostClass = $PostClass;
 	
@@ -412,10 +418,7 @@ class WPT_Event {
 			$html = '<div class="'.self::post_type_name.'_tickets">';
 			
 			$status = get_post_meta($this->ID,'tickets_status',true);
-			if (!empty($status)) {
-				$html.= '<span class="'.self::post_type_name.'_tickets_status '.self::post_type_name.'_tickets_status_'.$status.'">'.__($status, 'wp_theatre').'</span>';
-				
-			} else {
+			if (empty($status) || $status==self::tickets_status_onsale) {
 				if (!empty($this->tickets)) {
 					$html.= '<a href="'.$this->tickets.'" rel="nofollow"';
 					
@@ -442,9 +445,27 @@ class WPT_Event {
 					'html'=>true,
 					'summary'=>true
 				);
-				$html.= $this->prices($prices_args);
+				$html.= $this->prices($prices_args);				
+			} else {
+				switch ($status) {
+					case self::tickets_status_soldout :
+						$label = __('Sold out','wp_theatre');
+						break;
+					case self::tickets_status_cancelled :
+						$label = __('Cancelled','wp_theatre');
+						break;
+					case self::tickets_status_hidden :
+						$label = '';
+						$status = 'other';
+						break;
+					default :
+						$label = $status;
+				}
+				if (!empty($label)) {
+					$html.= '<span class="'.self::post_type_name.'_tickets_status '.self::post_type_name.'_tickets_status_'.$status.'">'.$label.'</span>';
+				}
 			}
-	
+			
 			$html.= '</div>'; // .tickets		
 			return apply_filters('wpt_event_tickets_html', $html, $this);
 		} else {
