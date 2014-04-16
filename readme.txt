@@ -156,6 +156,9 @@ Make sure that you checked the 'Enable built-in Theatre stylesheet'-option in th
 * Basic version of the plugin.
 
 == Upgrade Notice ==
+= 0.7.3 =
+* Added support for hidden and custom event tickets statusses.
+
 = 0.7.2 =
 * Sticky productions were not showing in production listings.
 

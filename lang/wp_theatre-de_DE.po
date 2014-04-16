@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Theatre v0.7\n"
+"Project-Id-Version: Theatre v0.7.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-04-10 10:27+0100\n"
-"PO-Revision-Date: 2014-04-13 07:34:54+0000\n"
+"PO-Revision-Date: 2014-04-16 12:56:14+0000\n"
 "Last-Translator: pixelfis.ch <office@pixelfis.ch>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -74,15 +74,15 @@ msgstr "iframe"
 
 #: functions/wpt_admin.php:137
 #: functions/wpt_admin.php:187
-#: functions/wpt_admin.php:682
-#: functions/wpt_event.php:435
+#: functions/wpt_admin.php:686
+#: functions/wpt_event.php:438
 #@ wp_theatre
 msgid "Tickets"
 msgstr "Tickets"
 
 #: functions/wpt_admin.php:145
 #: functions/wpt_frontend.php:107
-#: functions/wpt_setup.php:77
+#: functions/wpt_setup.php:75
 #@ wp_theatre
 msgid "Events"
 msgstr "Aufführungen"
@@ -94,16 +94,16 @@ msgstr "Kategorien"
 
 #. translators: plugin header field 'Name'
 #: functions/wpt_admin.php:165
-#: functions/wpt_admin.php:622
-#: functions/wpt_admin.php:809
+#: functions/wpt_admin.php:626
+#: functions/wpt_admin.php:813
 #: theatre.php:0
 #@ wp_theatre
 msgid "Theatre"
 msgstr "Theater"
 
 #: functions/wpt_admin.php:166
-#: functions/wpt_admin.php:809
-#: functions/wpt_setup.php:44
+#: functions/wpt_admin.php:813
+#: functions/wpt_setup.php:42
 #@ default
 msgid "Settings"
 msgstr "Einstellungen"
@@ -163,130 +163,130 @@ msgstr "URL des Ticket-Service"
 msgid "Status"
 msgstr "Status"
 
-#: functions/wpt_admin.php:389
+#: functions/wpt_admin.php:386
 #@ wp_theatre
 msgid "On sale"
 msgstr "Karten vorrätig"
 
-#: functions/wpt_admin.php:398
+#: functions/wpt_event.php:452
 #@ wp_theatre
 msgid "Sold out"
 msgstr "Ausverkauft"
 
-#: functions/wpt_admin.php:414
+#: functions/wpt_admin.php:418
 #@ wp_theatre
 msgid "Text on button"
 msgstr "Bezeichnung auf dem Ticket-Button"
 
-#: functions/wpt_admin.php:734
+#: functions/wpt_admin.php:738
 #@ wp_theatre
 msgid "Thumbnail"
 msgstr "Miniaturbild"
 
-#: functions/wpt_admin.php:736
+#: functions/wpt_admin.php:740
 #@ wp_theatre
 msgid "Dates"
 msgstr "Datum/Zeit"
 
-#: functions/wpt_admin.php:752
-#: functions/wpt_event.php:402
+#: functions/wpt_admin.php:756
+#: functions/wpt_event.php:408
 #: functions/wpt_frontend.php:336
 #: functions/wpt_frontend.php:337
-#: functions/wpt_setup.php:78
+#: functions/wpt_setup.php:76
 #@ wp_theatre
 msgid "Event"
 msgstr "Aufführung"
 
-#: functions/wpt_admin.php:831
+#: functions/wpt_admin.php:835
 #@ wp_theatre
 msgid "show above content"
 msgstr "Oberhalb des Inhalts zeigen"
 
-#: functions/wpt_admin.php:832
+#: functions/wpt_admin.php:836
 #@ wp_theatre
 msgid "show below content"
 msgstr "Unterhalb des Inhalts zeigen"
 
-#: functions/wpt_admin.php:833
+#: functions/wpt_admin.php:837
 #@ wp_theatre
 msgid "don't show (use <code>[wpt_production_events]</code> shortcode instead)"
 msgstr "Keine Anzeige (nutzen Sie statt dessen den Shortcode <code>[wpt_production_events]</code>)"
 
-#: functions/wpt_admin.php:864
+#: functions/wpt_admin.php:868
 #@ wp_theatre
 msgid "Enable built-in Theatre stylesheet"
 msgstr "Integriertes Theater-CSS verwenden"
 
-#: functions/wpt_admin.php:871
+#: functions/wpt_admin.php:875
 #@ wp_theatre
 msgid "Displayed on ticket buttons."
 msgstr "Dieser Begriff wird auf den Ticket-Buttons angezeigt."
 
-#: functions/wpt_admin.php:872
+#: functions/wpt_admin.php:876
 #@ wp_theatre
 msgid "Can be overruled on a per-event basis."
 msgstr "Kann in den Einstellungen des betreffenden Aufführungs überschrieben werden."
 
-#: functions/wpt_admin.php:879
+#: functions/wpt_admin.php:883
 #@ wp_theatre
 msgid "Displayed above event listings."
 msgstr "Wird als Überschrift bei den Aufführungsterminen angezeigt."
 
-#: functions/wpt_admin.php:886
+#: functions/wpt_admin.php:890
 #@ wp_theatre
 msgid "Displayed in category listings."
 msgstr "Wird als Überschrift bei den Kategorien-Listen angezeigt."
 
-#: functions/wpt_admin.php:892
+#: functions/wpt_admin.php:896
 #@ wp_theatre
 msgid "same window"
 msgstr "im gleichen Fenster (_self)"
 
-#: functions/wpt_admin.php:893
+#: functions/wpt_admin.php:897
 #@ wp_theatre
 msgid "iframe"
 msgstr "eingebettetem iframe"
 
-#: functions/wpt_admin.php:894
+#: functions/wpt_admin.php:898
 #@ wp_theatre
 msgid "new window"
 msgstr "im neuen Fenster (_blank)"
 
-#: functions/wpt_admin.php:895
+#: functions/wpt_admin.php:899
 #@ wp_theatre
 msgid "lightbox"
 msgstr "lightbox"
 
-#: functions/wpt_admin.php:924
+#: functions/wpt_admin.php:928
 #@ wp_theatre
 msgid "Select the page that embeds all Ticketmatic iframes."
 msgstr "Die Seite (page) wählen, wo Ticketmatic-iframes eingebettet werden"
 
-#: functions/wpt_admin.php:925
+#: functions/wpt_admin.php:929
 #@ wp_theatre
 msgid "The page must contain the following shortcode:"
 msgstr "Die Seite (page) muss folgenden Shortcode verwenden:"
 
-#: functions/wpt_admin.php:963
-#: functions/wpt_admin.php:971
+#: functions/wpt_admin.php:967
+#: functions/wpt_admin.php:975
 #@ default
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: functions/wpt_admin.php:964
-#: functions/wpt_admin.php:972
+#: functions/wpt_admin.php:968
+#: functions/wpt_admin.php:976
 #@ default
 msgid "Trash"
 msgstr "Papierkorb"
 
-#: functions/wpt_event.php:159
+#: functions/wpt_event.php:165
 #@ wp_theatre
 msgid "minute"
 msgid_plural "minutes"
 msgstr[0] "Minute"
 msgstr[1] "Minuten"
 
-#: functions/wpt_event.php:315
+#: functions/wpt_event.php:321
 #@ wp_theatre
 msgid "from"
 msgstr "von"
@@ -372,75 +372,75 @@ msgstr "in"
 msgid "season"
 msgstr "Saison"
 
-#: functions/wpt_setup.php:45
+#: functions/wpt_setup.php:43
 #@ wp_theatre
 msgid "Docs"
 msgstr "Dokumentation"
 
 #: functions/wpt_frontend.php:122
-#: functions/wpt_setup.php:55
+#: functions/wpt_setup.php:53
 #@ wp_theatre
 msgid "Productions"
 msgstr "Produktionen"
 
-#: functions/wpt_setup.php:56
+#: functions/wpt_setup.php:54
 #@ wp_theatre
 msgid "Production"
 msgstr "Produktion"
 
-#: functions/wpt_setup.php:57
+#: functions/wpt_setup.php:55
 #@ wp_theatre
 msgctxt "production"
 msgid "Add New"
 msgstr "Erstellen"
 
-#: functions/wpt_setup.php:58
+#: functions/wpt_setup.php:56
 #@ wp_theatre
 msgid "New production"
 msgstr "Neue Produktion"
 
-#: functions/wpt_setup.php:59
+#: functions/wpt_setup.php:57
 #@ default
 msgid "Add new"
 msgstr "Erstellen"
 
-#: functions/wpt_setup.php:59
-#: functions/wpt_setup.php:69
+#: functions/wpt_setup.php:57
+#: functions/wpt_setup.php:67
 #@ wp_theatre
 msgid "production"
 msgstr "Produktion"
 
-#: functions/wpt_setup.php:60
+#: functions/wpt_setup.php:58
 #@ wp_theatre
 msgid "Edit production"
 msgstr "Produktion bearbeiten"
 
-#: functions/wpt_setup.php:79
+#: functions/wpt_setup.php:77
 #@ wp_theatre
 msgid "New event"
 msgstr "Neuer Aufführung"
 
-#: functions/wpt_setup.php:80
+#: functions/wpt_setup.php:78
 #@ wp_theatre
 msgid "Add new event"
 msgstr "Aufführung erstellen"
 
-#: functions/wpt_setup.php:81
+#: functions/wpt_setup.php:79
 #@ wp_theatre
 msgid "Edit event"
 msgstr "Aufführung bearbeiten"
 
-#: functions/wpt_setup.php:95
+#: functions/wpt_setup.php:93
 #@ wp_theatre
 msgid "Seasons"
 msgstr "Saisons"
 
-#: functions/wpt_setup.php:96
+#: functions/wpt_setup.php:94
 #@ wp_theatre
 msgid "Season"
 msgstr "Saison"
 
-#: functions/wpt_setup.php:116
+#: functions/wpt_setup.php:109
 #@ wp_theatre
 msgid "Every 5 minutes"
 msgstr "Alle fünf Minuten"
@@ -535,12 +535,13 @@ msgstr ""
 msgid "http://slimndap.com/"
 msgstr ""
 
-#: functions/wpt_admin.php:407
+#: functions/wpt_admin.php:388
+#: functions/wpt_event.php:455
 #@ wp_theatre
 msgid "Cancelled"
 msgstr "Annuliert"
 
-#: functions/wpt_admin.php:425
+#: functions/wpt_admin.php:429
 #@ wp_theatre
 msgid "Prices"
 msgstr "Preisen"
@@ -548,11 +549,26 @@ msgstr "Preisen"
 #: functions/wpt_feeds.php:26
 #@ wp_theatre
 msgid "New productions"
-msgstr ""
+msgstr "Neue Produktionen"
+
+#: functions/wpt_admin.php:387
+#@ wp_theatre
+msgid "Sold Out"
+msgstr "Ausverkauft"
+
+#: functions/wpt_admin.php:389
+#@ wp_theatre
+msgid "Hidden"
+msgstr "Versteckt"
+
+#: functions/wpt_admin.php:411
+#@ wp_theatre
+msgid "Other"
+msgstr "Anders"
 
 #. translators: plugin header field 'Version'
 #: theatre.php:0
 #@ wp_theatre
-msgid "0.7"
+msgid "0.7.2"
 msgstr ""
 
