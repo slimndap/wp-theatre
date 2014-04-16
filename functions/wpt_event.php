@@ -462,7 +462,7 @@ class WPT_Event {
 						$status = self::tickets_status_other;
 				}
 				if (!empty($label)) {
-					$html.= '<span class="'.self::post_type_name.'_tickets_status '.self::post_type_name.'_tickets_status	'.$status.'">'.$label.'</span>';
+					$html.= '<span class="'.self::post_type_name.'_tickets_status '.self::post_type_name.'_tickets_status'.$status.'">'.$label.'</span>';
 				}
 			}
 			
