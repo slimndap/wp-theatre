@@ -137,10 +137,10 @@ class WPT_Production {
 			
 			$upcoming = $this->upcoming();
 			if (is_array($upcoming) && (count($upcoming)>0)) {
-				$args = array(
+				$event_args = array(
 					'status' => $this->post()->post_status
 				);
-				$events = $this->events($args);
+				$events = $this->events($event_args);
 				$first = $events[0];
 				$next = $upcoming[0];
 				$last = $events[count($events)-1];
