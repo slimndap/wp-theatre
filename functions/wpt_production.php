@@ -137,7 +137,10 @@ class WPT_Production {
 			
 			$upcoming = $this->upcoming();
 			if (is_array($upcoming) && (count($upcoming)>0)) {
-				$events = $this->events();
+				$args = array(
+					'status' => $this->post()->post_status
+				);
+				$events = $this->events($args);
 				$first = $events[0];
 				$next = $upcoming[0];
 				$last = $events[count($events)-1];
@@ -171,7 +174,8 @@ class WPT_Production {
 		global $wp_theatre;
 		if (!isset($this->events)) {
 			$filters = array(
-				'production'=>$this->ID
+				'production'=>$this->ID,
+				'status'=>$this->post()->post_type
 			);			
 			$this->events = $wp_theatre->events($filters);
 		}
@@ -426,7 +430,8 @@ class WPT_Production {
 		if (!isset($this->upcoming)) {
 			$filters = array(
 				'production' => $this->ID,
-				'upcoming' => true
+				'upcoming' => true,
+				'status' => $this->post()->post_status
 			);
 			$this->upcoming = $wp_theatre->events($filters);
 		}

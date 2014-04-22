@@ -239,7 +239,6 @@ class WPT_Events extends WPT_Listing {
 		global $wp_theatre;
 		
 		$filters = wp_parse_args( $filters, $this->defaults() );
-
 		$args = array(
 			'post_type' => WPT_Event::post_type_name,
 			'post_status' => $filters['status'],
@@ -290,16 +289,14 @@ class WPT_Events extends WPT_Listing {
 			
 		}
 
-
 		$posts = get_posts($args);
-		
 		$events = array();
 		for ($i=0;$i<count($posts);$i++) {
 			$key = $posts[$i]->ID;
 			$event = new WPT_Event($posts[$i]->ID);
 			$events[] = $event;
 		}
-		
+
 		return $events;
 	}
 
