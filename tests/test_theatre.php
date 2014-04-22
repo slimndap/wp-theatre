@@ -362,6 +362,7 @@ class WPT_Test extends WP_UnitTestCase {
 	
 	// Tags
 	function test_tag_archive() {
+		new WPT_Frontend();
 		$args = array(
 			'tag' => 'historic',
 			'posts_per_page' => -1
