@@ -942,16 +942,17 @@ class WPT_Admin {
 	}
 
 	function request($vars) {
+		global $wp_theatre;
 		if ( isset( $vars['orderby'] ) && 'dates' == $vars['orderby'] ) {
 		    $vars = array_merge( $vars, array(
-		        'meta_key' => 'wpt_order',
+		        'meta_key' => $wp_theatre->order->meta_key,
 		        'orderby' => 'meta_value_num'
 		    ) );
 		}
 		if (!empty($_GET['upcoming'])) {
 			$vars['meta_query'] = array(
 				array(
-					'key' => 'wpt_order',
+					'key' => $wp_theatre->order->meta_key,
 					'value' => time(),
 					'compare' => '>=',
 					'type' => 'numeric'

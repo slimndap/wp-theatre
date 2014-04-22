@@ -89,11 +89,7 @@
 			switch ($post->post_type) {
 				case WPT_Production::post_type_name:
 					$production = new WPT_Production($post->ID);
-					$args = array(
-						'production' => $production->ID,
-						'upcoming' => TRUE
-					);
-					$events = $wp_theatre->events($args);
+					$events = $production->upcoming();
 					if (!empty($events[0])) {
 						$wpt_order = strtotime(get_post_meta($events[0]->ID, 'event_date',TRUE));
 						break;
