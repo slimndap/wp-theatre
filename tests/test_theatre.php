@@ -362,9 +362,11 @@ class WPT_Test extends WP_UnitTestCase {
 	
 	// Tags
 	function test_tag_archive() {
-		$tag = get_term_by('name','historic','post_tag');
-		$tag_link = get_tag_link($tag->term_id);
-		echo $tag_link;
+		$args = array(
+			'tag' => 'historic',
+			'posts_per_page' => -1
+		);
+		$this->assertCount(2,get_posts($args));
 	}
 	
 	// Test RSS feeds
