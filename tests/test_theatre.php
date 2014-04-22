@@ -33,6 +33,7 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->production_with_upcoming_event = $this->factory->post->create($production_args);
 		add_post_meta($this->production_with_upcoming_event, WPT_Season::post_type_name, $this->season1);
 		wp_set_post_categories($this->production_with_upcoming_event, array($this->category_muziek));
+		wp_set_post_tags($this->production_with_upcoming_event,array('upcoming'));
 
 		$this->upcoming_event_with_prices = $this->factory->post->create($event_args);
 		add_post_meta($this->upcoming_event_with_prices, WPT_Production::post_type_name, $this->production_with_upcoming_event);
@@ -60,6 +61,7 @@ class WPT_Test extends WP_UnitTestCase {
 		$event_id = $this->factory->post->create($event_args);
 		add_post_meta($event_id, WPT_Production::post_type_name, $this->production_with_historic_event);
 		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() - DAY_IN_SECONDS));
+		wp_set_post_tags($this->production_with_historic_event,array('historic'));
 
 		// create sticky production with a historic event
 		$this->production_with_historic_event_sticky = $this->factory->post->create($production_args);
@@ -67,6 +69,7 @@ class WPT_Test extends WP_UnitTestCase {
 		add_post_meta($event_id, WPT_Production::post_type_name, $this->production_with_historic_event_sticky);
 		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() - YEAR_IN_SECONDS));
 		stick_post($this->production_with_historic_event_sticky);
+		wp_set_post_tags($this->production_with_historic_event_sticky,array('historic'));
 		
 		// create sticky production with an upcoming and a historic event
 		$this->production_with_upcoming_and_historic_events = $this->factory->post->create($production_args);
@@ -355,6 +358,13 @@ class WPT_Test extends WP_UnitTestCase {
 			'limit'=>false
 		);
 		$this->assertFalse($this->wp_theatre->transient('prods',$args));					
+	}
+	
+	// Tags
+	function test_tag_archive() {
+		$tag = get_term_by('name','historic','post_tag');
+		$tag_link = get_tag_link($tag->term_id);
+		echo $tag_link;
 	}
 	
 	// Test RSS feeds

@@ -5,6 +5,7 @@ class WPT_Frontend {
 		add_action('wp_head', array($this,'wp_head'));
 
 		add_action('the_content', array($this, 'the_content'));
+		add_filter('pre_get_posts', array($this,'pre_get_posts') );
 
 		add_shortcode('wpt_events', array($this,'wpt_events'));
 		add_shortcode('wpt_productions', array($this,'wpt_productions'));
