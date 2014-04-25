@@ -72,22 +72,7 @@ class WP_Theatre {
 		// Loaded action
 		do_action( 'wpt_loaded' );
 	}
-	
-	/**
-	 * Enable magic __invoke function in child classes.
-	 * See: http://stackoverflow.com/a/3108130/1153764
-	 *
-	 * Example:
-	 * $events = $wp_theatre->events();
-	 *
-	 */
-	public function __call($method, $args) {
-		if(property_exists($this, $method)) {
-		    $prop = $this->$method;
-		    return call_user_func_array($this->$method,$args);
-		}
-	}
-	
+		
 	/**
 	 * Include required core files used in admin and on the frontend.
 	 *

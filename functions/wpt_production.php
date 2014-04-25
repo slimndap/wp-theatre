@@ -179,7 +179,7 @@ class WPT_Production {
 		$filters = wp_parse_args( $filters, $defaults );
 
 		if (!isset($this->events)) {
-			$this->events = $wp_theatre->events($filters);
+			$this->events = $wp_theatre->events->load($filters);
 			
 		}
 		return $this->events;
@@ -230,7 +230,7 @@ class WPT_Production {
 				'production' => $this->ID,
 				'past' => true
 			);
-			$this->past = $wp_theatre->events($filters);
+			$this->past = $wp_theatre->events->load($filters);
 		}
 		return $this->past;
 	}

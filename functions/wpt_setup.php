@@ -206,7 +206,7 @@
 					'status' => 'any',
 					'production' => $post_id
 				);
-				$events = $wp_theatre->events($args);
+				$events = $wp_theatre->events->load($args);
 				foreach ($events as $event) {
 					wp_trash_post($event->ID);
 				}							
@@ -269,7 +269,7 @@
 					$args = array(
 						'production'=>$post->ID
 					);
-					$events = $wp_theatre->events($args);
+					$events = $wp_theatre->events->load($args);
 					foreach($events as $event) {
 						update_post_meta($event->ID, WPT_Season::post_type_name, $meta_value);
 					}

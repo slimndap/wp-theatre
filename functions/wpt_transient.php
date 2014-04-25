@@ -16,14 +16,6 @@
 			add_action('updated_post_meta', array($this,'updated_post_meta'), 20 ,4);
 		}
 		
-		public function __invoke($name, $args, $value=false) {
-			if ($value) {
-				return $this->set($name, $args, $value);
-			} else {
-				return $this->get($name, $args);
-			}
-		}
-
 		function get($name, $args) {
 			$key = 'wpt_'.$name.'_'.md5(serialize($args));
 			return get_transient($key);

@@ -118,11 +118,11 @@ class WPT_Test extends WP_UnitTestCase {
 	}
 
 	function test_events_are_loaded() {
-		$this->assertCount(7, $this->wp_theatre->events());		
+		$this->assertCount(7, $this->wp_theatre->events->load());		
 	}
 
 	function test_productions_are_loaded() {
-		$this->assertCount(5, $this->wp_theatre->productions());		
+		$this->assertCount(5, $this->wp_theatre->productions->load());		
 	}
 	
 	function test_seasons_are_loaded() {
@@ -134,13 +134,13 @@ class WPT_Test extends WP_UnitTestCase {
 		$args = array(
 			'upcoming' => TRUE
 		);
-		$this->assertCount(4, $this->wp_theatre->productions($args));		
+		$this->assertCount(4, $this->wp_theatre->productions->load($args));		
 		
 	}
 
 	// Test sync between productions and connected events
 	function test_connected_events_are_trashed_when_production_is_trashed() {
-		foreach($this->wp_theatre->productions() as $production) {
+		foreach($this->wp_theatre->productions->load() as $production) {
 			wp_trash_post($production->ID);
 		}
 		$args = array(
@@ -152,19 +152,19 @@ class WPT_Test extends WP_UnitTestCase {
 	}
 	
 	function test_connected_events_are_untrashed_when_production_is_untrashed() {
-		foreach($this->wp_theatre->productions() as $production) {
+		foreach($this->wp_theatre->productions->load() as $production) {
 			wp_trash_post($production->ID);
 			wp_untrash_post($production->ID);
 		}
-		$this->assertCount(7, $this->wp_theatre->events());		
+		$this->assertCount(7, $this->wp_theatre->events->load());		
 		
 	}
 	
 	function test_connected_events_are_deleted_when_production_is_deleted() {
-		foreach($this->wp_theatre->productions() as $production) {
+		foreach($this->wp_theatre->productions->load() as $production) {
 			wp_delete_post($production->ID);
 		}
-		$this->assertCount(0, $this->wp_theatre->events());
+		$this->assertCount(0, $this->wp_theatre->events->load());
 	}
 	
 	function test_event_inherits_categories_from_production() {
@@ -279,7 +279,7 @@ class WPT_Test extends WP_UnitTestCase {
 	// Test order
 	function test_order_productions() {
 		$actual = array();
-		$productions = $this->wp_theatre->productions();
+		$productions = $this->wp_theatre->productions->load();
 		foreach($productions as $production) {
 			$actual[] = $production->ID;
 		}
@@ -313,7 +313,7 @@ class WPT_Test extends WP_UnitTestCase {
 		);
 		
 		$xml = new DomDocument;
-        $xml->loadHTML($this->wp_theatre->transient('prods',$args));
+        $xml->loadHTML($this->wp_theatre->transient->get('prods',$args));
         $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 5, $xml);		
 		
 	}
@@ -332,7 +332,7 @@ class WPT_Test extends WP_UnitTestCase {
 		);
 		
 		$xml = new DomDocument;
-        $xml->loadHTML($this->wp_theatre->transient('events',$args));
+        $xml->loadHTML($this->wp_theatre->transient->get('events',$args));
         $this->assertSelectCount('.wpt_events .wp_theatre_event', 4, $xml);				
 	}
 	
@@ -357,7 +357,7 @@ class WPT_Test extends WP_UnitTestCase {
 			'groupby'=>false,
 			'limit'=>false
 		);
-		$this->assertFalse($this->wp_theatre->transient('prods',$args));					
+		$this->assertFalse($this->wp_theatre->transient->get('prods',$args));					
 	}
 	
 	// Tags
