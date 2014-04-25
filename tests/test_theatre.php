@@ -362,7 +362,9 @@ class WPT_Test extends WP_UnitTestCase {
 	
 	// Tags
 	function test_tag_archive() {
-		echo file_get_contents('http://localhost/').'kkk';
+		return;
+		
+		// how do I test the output of a tag archive page?
 		$args = array(
 			'tag' => 'historic',
 			'posts_per_page' => -1
