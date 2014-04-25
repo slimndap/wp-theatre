@@ -530,7 +530,6 @@ class WPT_Admin {
 		update_post_meta( $post_id, 'remark', $remark );
 		update_post_meta( $post_id, 'tickets_url', $tickets_url );
 		update_post_meta( $post_id, 'tickets_button', $tickets_button );
-		update_post_meta( $post_id, '_wpt_tickets_prices', $prices );
 		
 		// Prices
 		delete_post_meta($post_id, '_wpt_event_tickets_price');
@@ -585,7 +584,6 @@ class WPT_Admin {
 		
 		// Update the meta field.
 		update_post_meta( $post_id, WPT_Season::post_type_name, $season );
-		update_post_meta( $post_id, 'sticky', $sticky );
 		
 		/*
 		 *	 Update connected Events
