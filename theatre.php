@@ -95,25 +95,25 @@ class WP_Theatre {
 	 * @return void
 	 */
 	function includes() {
-		require_once(__DIR__ . '/functions/wpt_listing.php');
-		require_once(__DIR__ . '/functions/wpt_production.php');
-		require_once(__DIR__ . '/functions/wpt_productions.php');
-		require_once(__DIR__ . '/functions/wpt_event.php');
-		require_once(__DIR__ . '/functions/wpt_events.php');
-		require_once(__DIR__ . '/functions/wpt_setup.php');
-		require_once(__DIR__ . '/functions/wpt_season.php');
-		require_once(__DIR__ . '/functions/wpt_widget.php');
-		require_once(__DIR__ . '/functions/wpt_admin.php');
-		require_once(__DIR__ . '/functions/wpt_order.php');
-		require_once(__DIR__ . '/functions/wpt_feeds.php');	
-		require_once(__DIR__ . '/functions/wpt_transient.php');	
+		require_once(dirname(__FILE__) . '/functions/wpt_listing.php');
+		require_once(dirname(__FILE__) . '/functions/wpt_production.php');
+		require_once(dirname(__FILE__) . '/functions/wpt_productions.php');
+		require_once(dirname(__FILE__) . '/functions/wpt_event.php');
+		require_once(dirname(__FILE__) . '/functions/wpt_events.php');
+		require_once(dirname(__FILE__) . '/functions/wpt_setup.php');
+		require_once(dirname(__FILE__) . '/functions/wpt_season.php');
+		require_once(dirname(__FILE__) . '/functions/wpt_widget.php');
+		require_once(dirname(__FILE__) . '/functions/wpt_admin.php');
+		require_once(dirname(__FILE__) . '/functions/wpt_order.php');
+		require_once(dirname(__FILE__) . '/functions/wpt_feeds.php');	
+		require_once(dirname(__FILE__) . '/functions/wpt_transient.php');	
 		if (is_admin()) {
 		} else {
-			require_once(__DIR__ . '/functions/wpt_frontend.php');
-			require_once(__DIR__ . '/functions/wpt_cart.php');	
+			require_once(dirname(__FILE__) . '/functions/wpt_frontend.php');
+			require_once(dirname(__FILE__) . '/functions/wpt_cart.php');	
 		}
-		require_once(__DIR__ . '/integrations/wordpress-seo.php');
-		require_once(__DIR__ . '/integrations/jetpack-featured-content.php');
+		require_once(dirname(__FILE__) . '/integrations/wordpress-seo.php');
+		require_once(dirname(__FILE__) . '/integrations/jetpack-featured-content.php');
 		
 	}
 	
