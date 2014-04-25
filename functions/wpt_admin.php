@@ -672,32 +672,6 @@ class WPT_Admin {
 
 		$html.= '</div>'; //.content
 
-		$html.= '<div class="tickets">';
-		$status = get_post_meta($event->ID,'tickets_status',true);
-		if (!empty($status)) {
-			$html.= '<span class="'.WPT_Event::post_type_name.'_tickets_status '.WPT_Event::post_type_name.'_tickets_status_'.$status.'">'.__($status, 'wp_theatre').'</span>';
-		} else {
-			$url = get_post_meta($event->ID,'tickets_url',true);
-			if ($url!='') {
-				$html.= '<a href="'.get_post_meta($event->ID,'tickets_url',true).'" class="button">';
-				$button_text = get_post_meta($event->ID,'tickets_button',true);
-				if ($button_text!='') {
-					$html.= $button_text;
-				} else {
-					$html.= __('Tickets','wp_theatre');			
-				}
-				$html.= '</a>';
-				
-			}
-		}
-
-		$summary = $event->summary();
-		if ($summary['prices']!='') {
-			$html.= '<div class="prices">'.$summary['prices'].'</div>';
-		}
-		
-		$html.= '</div>'; //.tickets
-		
 		$html.='</div>'; // .event
 		
 		return $html;	
