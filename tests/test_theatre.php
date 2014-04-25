@@ -50,7 +50,6 @@ class WPT_Test extends WP_UnitTestCase {
 		add_post_meta($upcoming_event, WPT_Production::post_type_name, $this->production_with_upcoming_events);
 		add_post_meta($upcoming_event, 'event_date', date('Y-m-d H:i:s', time() + DAY_IN_SECONDS));
 		add_post_meta($upcoming_event, 'tickets_status', 'other tickets status' );
-		add_post_meta($upcoming_event, '_wpt_event_tickets_price', '');
 
 		$upcoming_event = $this->factory->post->create($event_args);
 		add_post_meta($upcoming_event, WPT_Production::post_type_name, $this->production_with_upcoming_events);
