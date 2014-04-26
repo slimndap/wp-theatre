@@ -1,4 +1,7 @@
+[![Build Status](https://travis-ci.org/slimndap/wp-theatre.svg?branch=master)](https://travis-ci.org/slimndap/wp-theatre)
+
 #Theatre for Wordpress
+
 
 ## Events vs. productions
 
