@@ -14,7 +14,7 @@ This plugin gives you the ability to manage seasons, productions and events in W
 
 __Shortcodes__
 
-Theatre comes with several shortcodes and widgets to show off your events. See the [documentation](https://github.com/slimndap/wp-theatre/wiki/Shortcodes) for an overview.
+Theater comes with several shortcodes and widgets to show off your events. See the [documentation](https://github.com/slimndap/wp-theatre/wiki/Shortcodes) for an overview.
 
 __Available add-ons__
 
@@ -37,11 +37,11 @@ __Author__
 This section describes how to install the plugin and get it working.
 
 1. Install the plugin.
-1. Start adding your productions and events using the Theatre-menu or the Theatre dashboard widget.
+1. Start adding your productions and events using the Theater-menu or the Theater dashboard widget.
 
 __Productions and events__
 
-Theatre uses _productions_ to group your _events_. 
+Theater uses _productions_ to group your _events_. 
 
 Each production has it's own page and can have one or more events. 
 
@@ -58,7 +58,7 @@ For a sports club your teams are the _productions_ and the games are the _events
 
 __All event listings look really weird!__
 
-Make sure that you checked the 'Enable built-in Theatre stylesheet'-option in the Theatre plugin settings.
+Make sure that you checked the 'Enable built-in Theater stylesheet'-option in the Theater plugin settings.
 
 == Changelog ==
 
@@ -145,7 +145,7 @@ Make sure that you checked the 'Enable built-in Theatre stylesheet'-option in th
 * Support for Dutch language.
 
 = 0.2.1 =
-* Theatre now has it's own admin menu.
+* Theater now has it's own admin menu.
 * New settings page.
 
 = 0.2 =
@@ -156,6 +156,10 @@ Make sure that you checked the 'Enable built-in Theatre stylesheet'-option in th
 * Basic version of the plugin.
 
 == Upgrade Notice ==
+= 0.7.4 =
+* Fixed some PHP 5.2 issues that prevented the plugin from activating.
+* Small bugfixes.
+
 = 0.7.3 =
 * Added support for hidden and custom event tickets statusses.
 
@@ -166,7 +170,7 @@ Make sure that you checked the 'Enable built-in Theatre stylesheet'-option in th
 * Important: Please deactivate and then reactivate this plugin after the update.
 
 = 0.6.1 =
-* Fix: Theatre was messing up the admin listings of other post types.
+* Fix: Theater was messing up the admin listings of other post types.
 
 = 0.6 =
 * v0.6 requires you to update your shortcodes. Please check the [documentation](https://github.com/slimndap/wp-theatre/wiki/Shortcodes) for the details.
