@@ -327,7 +327,7 @@ class WPT_Test extends WP_UnitTestCase {
 	function test_wpt_events_categories() {
 		$xml = new DomDocument;
         $xml->loadHTML(do_shortcode('[wpt_events]{{title}}{{categories}}[/wpt_events]'));
-        $this->assertSelectCount('.wpt_events .wp_theatre_event .wpt_production_categories .wpt_production_category', 3, $xml);		
+        $this->assertSelectCount('.wpt_events .wp_theatre_event .wpt_production_categories .wpt_production_category', 5, $xml);		
 	}
 	
 	function test_wpt_productions_categories() {
