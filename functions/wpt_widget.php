@@ -20,48 +20,44 @@
 				'limit'=>$instance['limit']
 			);
 			
+			if (!empty($instance['template'])) {
+				$filters['template'] = $instance['template'];
+			}
+
 			$transient_key = 'wpt_events_'.md5(serialize($filters));
 			if ( ! ( $html = get_transient($transient_key) ) ) {
 				$html = $wp_theatre->events->html($filters);
 				set_transient($transient_key, $html, 4 * MINUTE_IN_SECONDS );
 			}
-			echo  $html;
+			echo $html;
 
 			echo $args['after_widget'];
 
 		}
 
 		public function form( $instance ) {
-			if ( isset( $instance[ 'title' ] ) ) {
-				$title = $instance[ 'title' ];
-			}
-			else {
-				$title = __( 'Upcoming events', 'wp_theatre' );
-			}
-			if ( isset( $instance[ 'limit' ] ) ) {
-				$limit = $instance[ 'limit' ];
-			}
-			else {
-				$limit = 5;
-			}
+			$defaults = array(
+				'title' => __( 'Upcoming events', 'wp_theatre' ),
+				'limit' => 5,
+				'template' => ''
+			);
+			$values = wp_parse_args( $instance, $defaults );
+
 			?>
 			<p>
-			<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label> 
-			<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>">
+			<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title' ); ?>:</label> 
+			<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $values['title'] ); ?>">
 			</p>
 			<p>
-			<label for="<?php echo $this->get_field_id( 'limit' ); ?>"><?php _e( 'Number of events to show:', 'wp_theatre' ); ?></label> 
-			<input id="<?php echo $this->get_field_id( 'limit' ); ?>" name="<?php echo $this->get_field_name( 'limit' ); ?>" size="3" type="text" value="<?php echo esc_attr( $limit ); ?>">
+			<label for="<?php echo $this->get_field_id( 'limit' ); ?>"><?php _e( 'Number of events to show', 'wp_theatre' ); ?>:</label> 
+			<input id="<?php echo $this->get_field_id( 'limit' ); ?>" name="<?php echo $this->get_field_name( 'limit' ); ?>" size="3" type="text" value="<?php echo esc_attr( $values['limit'] ); ?>">
+			</p>
+			<p class="wpt_widget_template">
+			<label for="<?php echo $this->get_field_id( 'template' ); ?>"><?php _e( 'Template','wp_theatre' ); ?>:</label> 
+			<textarea class="widefat" id="<?php echo $this->get_field_id( 'template' ); ?>" name="<?php echo $this->get_field_name( 'template' ); ?>"><?php echo esc_attr( $values['template'] ); ?></textarea>
+			<em><?php _e('Optional, see <a href="https://github.com/slimndap/wp-theatre/wiki/Shortcodes#template" target="_blank">documentation</a>.','wp_theatre');?></em>
 			</p>
 			<?php 
-		}
-		
-		public function update( $new_instance, $old_instance ) {
-			$instance = array();
-			$instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
-			$instance['limit'] = ( ! empty( $new_instance['limit'] ) ) ? strip_tags( $new_instance['limit'] ) : '';
-	
-			return $instance;
 		}
 	}
 
@@ -76,6 +72,7 @@
 	
 		public function widget( $args, $instance ) {
 			global $wp_theatre;
+
 			$title = apply_filters( 'widget_title', $instance['title'] );
 			
 			echo $args['before_widget'];
@@ -87,37 +84,41 @@
 				'upcoming' => true
 			);
 
+			if (!empty($instance['template'])) {
+				$filters['template'] = $instance['template'];
+			}
+
 			$transient_key = 'wpt_prods_'.md5(serialize($filters));
 			if ( ! ( $html = get_transient($transient_key) ) ) {
 				$html = $wp_theatre->productions->html($filters);
 				set_transient($transient_key, $html, 4 * MINUTE_IN_SECONDS );
 			}
-			echo  $html;
+			echo $html;
 			echo $args['after_widget'];
 
 		}
 
 		public function form( $instance ) {
-			if ( isset( $instance[ 'title' ] ) ) {
-				$title = $instance[ 'title' ];
-			}
-			else {
-				$title = __( 'Upcoming productions', 'wp_theatre' );
-			}
-			if ( isset( $instance[ 'limit' ] ) ) {
-				$limit = $instance[ 'limit' ];
-			}
-			else {
-				$limit = 5;
-			}
+			$defaults = array(
+				'title' => __( 'Upcoming productions', 'wp_theatre' ),
+				'limit' => 5,
+				'template' => ''
+			);
+			$values = wp_parse_args( $instance, $defaults );
+
 			?>
 			<p>
-			<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label> 
-			<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>">
+			<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title' ); ?>:</label> 
+			<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $values['title'] ); ?>">
 			</p>
 			<p>
-			<label for="<?php echo $this->get_field_id( 'limit' ); ?>"><?php _e( 'Number of productions to show:', 'wp_theatre' ); ?></label> 
-			<input id="<?php echo $this->get_field_id( 'limit' ); ?>" name="<?php echo $this->get_field_name( 'limit' ); ?>" size="3" type="text" value="<?php echo esc_attr( $limit ); ?>">
+			<label for="<?php echo $this->get_field_id( 'limit' ); ?>"><?php _e( 'Number of productions to show', 'wp_theatre' ); ?>:</label> 
+			<input id="<?php echo $this->get_field_id( 'limit' ); ?>" name="<?php echo $this->get_field_name( 'limit' ); ?>" size="3" type="text" value="<?php echo esc_attr( $values['limit'] ); ?>">
+			</p>
+			<p class="wpt_widget_template">
+			<label for="<?php echo $this->get_field_id( 'template' ); ?>"><?php _e( 'Template','wp_theatre' ); ?>:</label> 
+			<textarea class="widefat" id="<?php echo $this->get_field_id( 'template' ); ?>" name="<?php echo $this->get_field_name( 'template' ); ?>"><?php echo esc_attr( $values['template'] ); ?></textarea><br />
+			<em><?php _e('Optional, see <a href="https://github.com/slimndap/wp-theatre/wiki/Shortcodes#template-2" target="_blank">documentation</a>.','wp_theatre');?></em>
 			</p>
 			<?php 
 		}
