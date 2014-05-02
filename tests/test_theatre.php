@@ -276,6 +276,30 @@ class WPT_Test extends WP_UnitTestCase {
 	}
 	
 	
+	function test_wpt_events_content() {
+		$my_post = array(
+			'ID'           => $this->production_with_upcoming_events,
+			'post_content' => 'This is the updated content.'
+		);
+		wp_update_post( $my_post );
+
+		$xml = new DomDocument;
+        $xml->loadHTML(do_shortcode('[wpt_events]{{title}}{{content}}[/wpt_events]'));
+        $this->assertSelectCount('.wpt_events .wp_theatre_event .wp_theatre_prod_content', 1, $xml);		
+	}
+	
+	function test_wpt_productions_content() {
+		$my_post = array(
+			'ID'           => $this->production_with_upcoming_events,
+			'post_content' => 'This is the updated content.'
+		);
+		wp_update_post( $my_post );
+
+		$xml = new DomDocument;
+        $xml->loadHTML(do_shortcode('[wpt_productions]{{title}}{{content}}[/wpt_productions]'));
+        $this->assertSelectCount('.wpt_productions .wp_theatre_prod .wp_theatre_prod_content', 1, $xml);		
+	}
+	
 	// Test order
 	function test_order_productions() {
 		$actual = array();

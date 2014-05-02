@@ -576,6 +576,7 @@ class WPT_Event {
 					break;
 				case 'title':
 				case 'categories':
+				case 'content':
 				case 'thumbnail':
 					$replacement = $this->production()->{$field}(array('html'=>true));
 					break;

@@ -112,6 +112,37 @@ class WPT_Production {
 		}
 	}
 
+	function content($args = array()) {
+		global $wp_theatre;
+		$defaults = array(
+			'html' => false
+		);
+
+		$args = wp_parse_args( $args, $defaults );
+
+		if (!isset($this->content)) {
+			$content = $this->post()->post_content;
+			$this->content = apply_filters('wpt_production_content',$content, $this);
+
+		}
+
+		if ($args['html']) {
+			remove_action('the_content', array($wp_theatre->frontend, 'the_content'));
+
+			$html = '';
+			$html.= '<div class="'.self::post_type_name.'_content">';
+			$html.= apply_filters('the_content',$this->content);
+			$html.= '</div>';
+			
+			add_action('the_content', array($wp_theatre->frontend, 'the_content'));
+
+			return apply_filters('wpt_production_content_html', $html, $this);				
+		} else {
+			return $this->content;				
+		}
+		
+	}
+
 	/**
 	 * Production dates.
 	 * 
@@ -483,6 +514,7 @@ class WPT_Production {
 				case 'title':
 				case 'dates':
 				case 'cities':
+				case 'content':
 				case 'excerpt':
 				case 'summary':
 				case 'categorie':
