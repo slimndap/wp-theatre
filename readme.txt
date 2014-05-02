@@ -156,6 +156,12 @@ Make sure that you checked the 'Enable built-in Theater stylesheet'-option in th
 * Basic version of the plugin.
 
 == Upgrade Notice ==
+= 0.7.5 =
+* Added {{content}} and {{excerpt}} template placeholders for event-listings.
+* Added {{content}} template placeholder for production-listings.
+* Fixed {{categories}} template placeholder for production-listings.
+* Added a template setting to productions and events widgets.
+
 = 0.7.4 =
 * Fixed some PHP 5.2 issues that prevented the plugin from activating.
 * Small bugfixes.
