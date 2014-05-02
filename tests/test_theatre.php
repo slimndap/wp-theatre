@@ -327,13 +327,13 @@ class WPT_Test extends WP_UnitTestCase {
 	function test_wpt_events_categories() {
 		$xml = new DomDocument;
         $xml->loadHTML(do_shortcode('[wpt_events]{{title}}{{categories}}[/wpt_events]'));
-        $this->assertSelectCount('.wpt_events .wp_theatre_event .wpt_production_categories li', 3, $xml);		
+        $this->assertSelectCount('.wpt_events .wp_theatre_event .wpt_production_categories .wpt_production_category', 3, $xml);		
 	}
 	
-	function test_wpt_productions_content() {
+	function test_wpt_productions_categories() {
 		$xml = new DomDocument;
         $xml->loadHTML(do_shortcode('[wpt_productions]{{title}}{{categories}}[/wpt_productions]'));
-        $this->assertSelectCount('.wpt_productions .wp_theatre_prod .wpt_production_categories li', 3, $xml);		
+        $this->assertSelectCount('.wpt_productions .wp_theatre_prod .wpt_production_categories .wpt_production_category_muziek', 2, $xml);		
 	}
 	
 	// Test order
