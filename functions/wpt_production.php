@@ -41,7 +41,7 @@ class WPT_Production {
 				$html.= '<ul class="wpt_production_categories">';
 				foreach ($this->categories as $category_id) {
 					$category = get_category( $category_id );
-					$html.= '<li>'.$category->name.'</li>';
+					$html.= '<li class="wpt_production_category wpt_production_category_'.$category->slug.'">'.$category->name.'</li>';
 				}
 				$html.= '</ul>';
 				return apply_filters('wpt_production_categories_html', $html, $this);
@@ -517,7 +517,7 @@ class WPT_Production {
 				case 'content':
 				case 'excerpt':
 				case 'summary':
-				case 'categorie':
+				case 'categories':
 				case 'thumbnail':
 					$replacement = $this->{$field}(array('html'=>true));
 					break;

@@ -324,6 +324,18 @@ class WPT_Test extends WP_UnitTestCase {
         $this->assertSelectCount('.wpt_productions .wp_theatre_prod .wp_theatre_prod_excerpt', 5, $xml);		
 	}
 	
+	function test_wpt_events_categories() {
+		$xml = new DomDocument;
+        $xml->loadHTML(do_shortcode('[wpt_events]{{title}}{{categories}}[/wpt_events]'));
+        $this->assertSelectCount('.wpt_events .wp_theatre_event .wpt_production_categories li', 3, $xml);		
+	}
+	
+	function test_wpt_productions_content() {
+		$xml = new DomDocument;
+        $xml->loadHTML(do_shortcode('[wpt_productions]{{title}}{{categories}}[/wpt_productions]'));
+        $this->assertSelectCount('.wpt_productions .wp_theatre_prod .wpt_production_categories li', 3, $xml);		
+	}
+	
 	// Test order
 	function test_order_productions() {
 		$actual = array();
