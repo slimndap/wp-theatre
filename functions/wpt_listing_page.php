@@ -114,8 +114,8 @@
 	 	
 	 	function page() {
 		 	if (!isset($this->page)) {
+			 	$this->page = false;
 			 	if (!empty($this->options['listing_page_post_id'])) {
-				 	$this->page = false;
 				 	$page = get_post($this->options['listing_page_post_id']);
 				 	if (!is_null($page)) {
 				 		$this->page = $page;
