@@ -35,10 +35,6 @@ class WPT_Admin {
 		$this->options = get_option( 'wp_theatre' );
 		
 		// Tabs on settings screens
-		$this->tabs = array(
-			'wp_theatre'=>__('General'),
-			'wpt_language'=>__('Language','wp_theatre')
-		);
 		$this->tab = isset( $_GET['tab'] ) ? $_GET['tab'] : 'wp_theatre';
 	}	
 
@@ -782,12 +778,19 @@ class WPT_Admin {
 	 */
 
 	public function admin_page() {
+		$tabs = array(
+			'wp_theatre'=>__('General'),
+			'wpt_language'=>__('Language','wp_theatre')
+		);	
+		$tabs = apply_filters('wpt_admin_page_tabs',$tabs);
+	
+		
         ?>
         <div class="wrap">
             <?php screen_icon(); ?>
        		<h2><?php echo __('Theatre','wp_theatre').' '.__('Settings');?></h2>
             <h2 class="nav-tab-wrapper">
-            <?php foreach ($this->tabs as $key=>$val) { ?>
+            <?php foreach ($tabs as $key=>$val) { ?>
             	<a class="nav-tab <?php echo $key==$this->tab?'nav-tab-active':'';?>" href="?page=wpt_admin&tab=<?php echo $key;?>">
             		<?php echo $val;?>
             	</a>

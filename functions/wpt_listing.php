@@ -24,6 +24,5 @@ class WPT_Listing {
 	function load() {
 		return array();
 	}
-	
 }
 ?>
