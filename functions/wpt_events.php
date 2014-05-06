@@ -28,6 +28,7 @@ class WPT_Events extends WPT_Listing {
 			'limit' => false,
 			'upcoming' => false,
 			'past' => false,
+			'day' => false,
 			'month' => false,
 			'category' => false,
 			'season' => false,
