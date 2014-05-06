@@ -87,6 +87,35 @@ class WPT_Events extends WPT_Listing {
 			'season' => $args['season']
 		);
 
+		if (in_array('day',$args['paginateby'])) {
+			$days = $this->days($filters);
+			if (!empty($days)) {
+				if (!empty($_GET[__('day','wp_theatre')])) {
+					$filters['day'] = $_GET[__('day','wp_theatre')];
+				} else {
+					$filters['day'] = $days[0];
+				}				
+			}
+
+			$html.= '<nav class="wpt_event_days">';
+			foreach($days as $day) {
+				$url = remove_query_arg(__('day','wp_theatre'));
+				$url = add_query_arg( __('day','wp_theatre'), sanitize_title($day) , $url);
+				$html.= '<span>';
+				
+				$title = date_i18n('D d M',strtotime($day));
+				if (sanitize_title($day) != $filters['day']) {
+					$html.= '<a href="'.$url.'">'.$title.'</a>';
+				} else {
+					$html.= $title;
+					
+				}
+				$html.= '</span>';
+			}
+			$html.= '</nav>';
+		}
+	
+
 		if (in_array('month',$args['paginateby'])) {
 			$months = $this->months($filters);
 			if (!empty($months)) {
@@ -272,6 +301,14 @@ class WPT_Events extends WPT_Listing {
 			);
 		}
 
+		if ($filters['day']) {
+			$args['meta_query'][] = array (
+				'key' => 'event_date',
+				'value' => $filters['day'],
+				'compare' => 'LIKE'
+			);
+		}
+
 		if ($filters['season']) {
 			$args['meta_query'][] = array (
 				'key' => WPT_Season::post_type_name,
@@ -302,6 +339,24 @@ class WPT_Events extends WPT_Listing {
 		return $events;
 	}
 
+	/**
+	 * An array of all days with upcoming events.
+	 * @since 0.8
+	 */
+	function days($filters=array()) {
+		// get all event according to remaining filters
+		$filters['day'] = false;
+		$events = $this->load($filters);		
+		$days = array();
+		foreach ($events as $event) {
+			$days[] = date('Y-m-d',$event->datetime());
+		}
+		$days = array_unique($days);
+		sort($days);
+
+		return $days;
+	}
+	
 	/**
 	 * An array of all months with upcoming events.
 	 * @since 0.5
