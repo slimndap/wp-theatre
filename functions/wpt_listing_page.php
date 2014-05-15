@@ -15,13 +15,27 @@
 				add_action('the_content', array($this, 'the_content'));			
 			}
 
+			add_action('init',array($this,'rewrite_rules'));
+
 			$this->options = get_option('wpt_listing_page');
+
 	 	}
 	 	
 	 	function admin_init() {
+
+		 	/*
+		 	 * Flush rewrite rules after option's values have been updated.
+		 	 * @see sanitize_option_values()
+		 	 */
+		 	 
+		 	if (delete_transient('wpt_listing_page_flush_rules')) {
+		 		flush_rewrite_rules();
+		 	}
+
 	        register_setting(
 	            'wpt_listing_page', // Option group
-	            'wpt_listing_page' // Option name
+	            'wpt_listing_page', // The name of an option to sanitize and save.
+	            array($this,'sanitize_option_values') // A callback function that sanitizes the option's value.
 	        );
 	        
 	 		if (!empty($_GET['tab']) && $_GET['tab']=='wpt_listing_page') {    
@@ -84,6 +98,54 @@
 		 	
 	 	}
 	 	
+	 	function rewrite_rules() {
+		 	
+		 	/*
+		 	 * Update the rewrite rules for the listings pages.
+		 	 * events
+		 	 * events/today
+		 	 * events/tomorrow
+		 	 * events/yesterday
+		 	 * events/2014/05
+		 	 * events/2014/05/23
+		 	 * events/comedy
+		 	 * events/comedy/2014/05
+		 	 * events/comedy/2014/05/23
+		 	 */
+
+		 	global $wp;
+
+			if ($this->page()) {
+				$post_name = $this->page->post_name;
+			
+				add_rewrite_tag('%'.__('month','wp_theatre').'%', '.*');
+				add_rewrite_rule(
+					$post_name.'/([0-9]{4})/([0-9]{2})$', 
+					'index.php?pagename='.$post_name.'&'.__('month','wp_theatre').'=$matches[1]-$matches[2]',
+					'top'
+				);
+			
+				add_rewrite_tag('%'.__('day','wp_theatre').'%', '.*');
+				add_rewrite_rule(
+					$post_name.'/([0-9]{4})/([0-9]{2})/([0-9]{2})$', 
+					'index.php?pagename='.$post_name.'&'.__('day','wp_theatre').'=$matches[1]-$matches[2]-$matches[3]',
+					'top'
+				);	 	 
+
+				add_rewrite_tag('%'.__('category','wp_theatre').'%', '.*');
+				add_rewrite_rule(
+					$post_name.'/[a-z0-9-]+$', 
+					'index.php?pagename='.$post_name.'&'.__('category','wp_theatre').'=$matches[1]',
+					'top'
+				);	 	 
+			}
+			
+			global $wp_rewrite;
+			$wp_rewrite->flush_rules();
+
+			
+	 	}
+	 	
 	 	function shortcode($args) {
 	 		global $wp_theatre;
 	 	
@@ -123,6 +185,17 @@
 			 	}
 		 	}		 	
 		 	return $this->page;
+	 	}
+	 	
+	 	/*
+	 	 * Set a transient every time the option's values are updated, 
+	 	 * so the rewrite rules can be flushed on the next page load.
+	 	 * @see admin_init()
+	 	 */
+	 	 
+	 	function sanitize_option_values($input) {
+		 	set_transient('wpt_listing_page_flush_rules');
+		 	return $input;
 	 	}
 	 	
 	 	function settings_field_wpt_listing_page_post_id() {

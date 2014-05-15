@@ -57,7 +57,8 @@ class WPT_Events extends WPT_Listing {
 	 */
 	public function html($args=array()) {
 		global $wp_theatre;
-	
+		global $wp_query;
+
 		$defaults = array(
 			'paginateby' => array(),
 			'groupby'=>false,
@@ -87,39 +88,58 @@ class WPT_Events extends WPT_Listing {
 			'season' => $args['season']
 		);
 
-		if (in_array('month',$args['paginateby'])) {
-			$months = $this->months($filters);
+		$html.= $this->get_filter_navigation('month',$args);
+		//$html.= $this->get_filter_navigation('categories');
+		//$html.= $this->get_filter_navigation('seasons');
+
+		/*
+		if (
+			false &&
+			in_array('month',$args['paginateby']) ||
+			!empty($wp_query->query_vars[__('month','wp_theatre')])
+		) {
+			$months = $this->get_month_options($filters);
+
 			if (!empty($months)) {
-				if (!empty($_GET[__('month','wp_theatre')])) {
-					$filters['month'] = $_GET[__('month','wp_theatre')];
+
+				if (!empty($wp_query->query_vars[__('month','wp_theatre')])) {
+					$filters['month'] = $wp_query->query_vars[__('month','wp_theatre')];
 				} else {
 					$filters['month'] = $months[0];
 				}				
+
+				$html.= '<nav class="wpt_event_months">';
+				if (in_array('month',$args['paginateby'])) {
+					foreach($months as $month) {
+						$url = remove_query_arg(__('month','wp_theatre'));
+						$url = add_query_arg( __('month','wp_theatre'), sanitize_title($month) , $url);
+						$html.= '<span>';
+						
+						$title = date_i18n('M Y',strtotime($month));
+						if (sanitize_title($month) != $filters['month']) {
+							$html.= '<a href="'.$url.'">'.$title.'</a>';
+						} else {
+							$html.= $title;
+							
+						}
+						$html.= '</span>';
+					}
+				} else {
+					$html.= '<span>';
+					$title = date_i18n('M Y',strtotime($month));
+					$html.= $title;
+					$html.= '</span>';
+				}
+				$html.= '</nav>';
 			}
 
-			$html.= '<nav class="wpt_event_months">';
-			foreach($months as $month) {
-				$url = remove_query_arg(__('month','wp_theatre'));
-				$url = add_query_arg( __('month','wp_theatre'), sanitize_title($month) , $url);
-				$html.= '<span>';
-				
-				$title = date_i18n('M Y',strtotime($month));
-				if (sanitize_title($month) != $filters['month']) {
-					$html.= '<a href="'.$url.'">'.$title.'</a>';
-				} else {
-					$html.= $title;
-					
-				}
-				$html.= '</span>';
-			}
-			$html.= '</nav>';
 		}
-	
+		*/
 		if (in_array('category',$args['paginateby'])) {
 			$categories = $this->categories($filters);
 
-			if (!empty($_GET[__('category','wp_theatre')])) {
-				if ($category = get_category_by_slug($_GET[__('category','wp_theatre')])) {
+			if (!empty($wp_query->query_vars[__('category','wp_theatre')])) {
+				if ($category = get_category_by_slug($wp_query->query_vars[__('category','wp_theatre')])) {
 		  			$filters['category'] = $category->term_id;				
 				}
 			}
@@ -139,7 +159,7 @@ class WPT_Events extends WPT_Listing {
 				$url = remove_query_arg(__('category','wp_theatre'));
 				$url = add_query_arg( __('category','wp_theatre'), $slug , $url);
 				$html.= '<span>';
-				if (empty($_GET[__('category','wp_theatre')]) || $slug != $_GET[__('category','wp_theatre')]) {
+				if (empty($wp_query->query_vars[__('category','wp_theatre')]) || $slug != $wp_query->query_vars[__('category','wp_theatre')]) {
 					$html.= '<a href="'.$url.'">'.$name.'</a>';
 				} else {
 					$html.= $name;
@@ -306,7 +326,7 @@ class WPT_Events extends WPT_Listing {
 	 * An array of all months with upcoming events.
 	 * @since 0.5
 	 */
-	function months($filters=array()) {
+	function get_month_options($filters=array()) {
 		// get all event according to remaining filters
 		$filters['month'] = false;
 		$events = $this->load($filters);		

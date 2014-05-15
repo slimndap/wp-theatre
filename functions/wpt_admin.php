@@ -784,7 +784,6 @@ class WPT_Admin {
 		);	
 		$tabs = apply_filters('wpt_admin_page_tabs',$tabs);
 	
-		
         ?>
         <div class="wrap">
             <?php screen_icon(); ?>

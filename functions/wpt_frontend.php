@@ -179,11 +179,13 @@ class WPT_Frontend {
 
 		$wp_theatre->events->filters['upcoming'] = true;
 		
+		/*
 		if ( ! ( $html = $wp_theatre->transient->get('events', array_merge($atts, $_GET)) ) ) {
 			$html = $wp_theatre->events->html($atts);
 			$wp_theatre->transient->set('events', array_merge($atts, $_GET), $html);
 		}
-
+		*/
+		$html = $wp_theatre->events->html($atts);
 		return $html;
 	}
 
