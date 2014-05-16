@@ -17,7 +17,39 @@ class WPT_Listing {
 		return $this->load($filters);				
 	}
 	
-	function get_filter_navigation($filter,$args) {
+	/*
+	 * Generate a month, category or season filter navigation for listings.
+	 */
+	
+	function filter_navigation($args=array()) {
+
+		$defaults = array(
+			'paginateby' => array(),
+			'production' => false,
+			'season' => false,
+			'limit' => false,
+			'category' => false,
+			'template' => NULL
+		);
+		$args = wp_parse_args( $args, $defaults );
+
+		$filters = array(
+			'upcoming' => true,
+			'production' => $args['production'],
+			'limit' => $args['limit'],
+			'category' => $args['category'],
+			'season' => $args['season']
+		);
+
+		// Months
+		if (in_array('month',$args['paginateby'])) {
+			$months = $this->months($filters);
+		}
+		if (in_array('month',$args['paginateby'])) {
+			$months = $this->categories($filters);
+		}
+		
+		
 		global $wp_query;
 		$html = '';
 		
@@ -25,7 +57,7 @@ class WPT_Listing {
 			in_array($filter,$args['paginateby']) ||
 			!empty($wp_query->query_vars[__($filter,'wp_theatre')])
 		) {
-			$get_options = 'get_'.$filter.'_options';
+			$get_options = $filter.'_options';
 			$options = call_user_func(array($this, $get_options ));
 
 			if (!empty($options)) {
@@ -73,6 +105,35 @@ class WPT_Listing {
 
 	function load() {
 		return array();
+	}
+	
+	/*
+	 * Generate a link to the filtered results of a listing.
+	 * Supports month, category and season filters.
+	 */
+	
+	function filter_link($filter, $base=false) {
+		global $wp_query;
+
+		$defaults = array(
+			'month'=>false,
+			'category'=>false,
+			'season'=>false
+		);
+		
+		$filter = wp_parse_args( $filter, $defaults );
+		
+		foreach ($defaults as $key=>$value) {
+			if ($filter[$key]) {
+				$url = remove_query_arg(__($key,'wp_theatre'));
+				$url = add_query_arg( __($key,'wp_theatre'), sanitize_title($option) , $url);	
+			}
+		}
+		
+		if ($filter['month']) {
+			
+		}
+		
 	}
 }
 ?>

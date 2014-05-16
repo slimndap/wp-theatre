@@ -12,7 +12,8 @@
 				add_action('admin_init', array($this,'admin_init'));
 				add_filter('wpt_admin_page_tabs', array($this,'wpt_admin_page_tabs'));
 			} else {
-				add_action('the_content', array($this, 'the_content'));			
+				add_action('the_content', array($this, 'the_content'));
+				add_filter('wpt_events_paginate_url', array($this,'wpt_events_paginate_url'));	
 			}
 
 			add_action('init',array($this,'rewrite_rules'));
@@ -118,10 +119,10 @@
 			if ($this->page()) {
 				$post_name = $this->page->post_name;
 			
-				add_rewrite_tag('%'.__('month','wp_theatre').'%', '.*');
+				add_rewrite_tag('%wpt_month%', '.*');
 				add_rewrite_rule(
 					$post_name.'/([0-9]{4})/([0-9]{2})$', 
-					'index.php?pagename='.$post_name.'&'.__('month','wp_theatre').'=$matches[1]-$matches[2]',
+					'index.php?pagename='.$post_name.'&wpt_month=$matches[1]-$matches[2]',
 					'top'
 				);
 			
@@ -132,10 +133,10 @@
 					'top'
 				);	 	 
 
-				add_rewrite_tag('%'.__('category','wp_theatre').'%', '.*');
+				add_rewrite_tag('%wpt_category%', '.*');
 				add_rewrite_rule(
-					$post_name.'/[a-z0-9-]+$', 
-					'index.php?pagename='.$post_name.'&'.__('category','wp_theatre').'=$matches[1]',
+					$post_name.'/([a-z0-9-]+)$', 
+					'index.php?pagename='.$post_name.'&wpt_category=$matches[1]',
 					'top'
 				);	 	 
 			}
@@ -309,10 +310,56 @@
 		 	return $content;
 	 	}
 	 	
+	 	/*
+	 	 * Get the URL for the listing page
+	 	 */
+	 	
+	 	function url($args) {
+	 		if (
+	 			get_option('permalink_structure') &&
+	 			$this->page()
+	 		) {
+		 		$defaults = array(
+		 			'wpt_month' => false,
+		 			'wpt_day' => false,
+		 			'wpt_category' => false
+		 		);
+		 		$args = wp_parse_args($args, $defaults);
+
+		 		$url = trailingslashit(get_permalink($this->page->ID));
+
+		 		if ($args['wpt_category']) {
+			 		$url.= $args['wpt_category'].'/';
+		 		}
+		 		
+		 		if ($args['wpt_month']) {
+			 		$url.= substr($args['wpt_month'],0,4).'/'.substr($args['wpt_month'],5,6);
+		 		}
+		 		
+		 		return $url;	 		
+	 			
+			} else {
+				return false;
+			}		 	
+	 	}
+	 	
 	 	function wpt_admin_page_tabs($tabs) {
 			$tabs['wpt_listing_page'] = __('Upcoming events','wp_theatre');
 			return $tabs;
 	 	}
+	 	
+	 	function wpt_events_paginate_url($url) {
+	 		if (
+	 			get_option('permalink_structure') &&
+	 			$this->page() &&
+	 			is_page($this->page->ID)
+	 		) {
+		 		$url_parts = parse_url($url);
+		 		$url = $this->url($url_parts['query']);
+	 		}
+		 	return $url;
+	 	}
+	 	
 	 	
  	}
 ?>
