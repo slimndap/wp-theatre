@@ -138,12 +138,14 @@ class WPT_Frontend {
 
 	function wpt_events($atts, $content=null) {
 		global $wp_theatre;
+		global $wp_query;
 		
 		$atts = shortcode_atts( array(
 			'upcoming' => true,
 			'past' => false,
 			'paginateby'=>array(),
-			'category'=> false,
+			'category'=> $wp_query->query_vars['wpt_category'],
+			'month' => $wp_query->query_vars['wpt_month'],
 			'season'=> false,
 			'groupby'=>false,
 			'limit'=>false
@@ -178,25 +180,23 @@ class WPT_Frontend {
 		}
 
 		$wp_theatre->events->filters['upcoming'] = true;
-		
-		/*
+
 		if ( ! ( $html = $wp_theatre->transient->get('events', array_merge($atts, $_GET)) ) ) {
 			$html = $wp_theatre->events->html($atts);
 			$wp_theatre->transient->set('events', array_merge($atts, $_GET), $html);
 		}
-		*/
-		$html = $wp_theatre->events->html($atts);
 		return $html;
 	}
 
 	function wpt_productions($atts, $content=null) {
 		global $wp_theatre;
+		global $wp_query;
 		
 		$atts = shortcode_atts( array(
 			'paginateby' => array(),
 			'upcoming' => false,
 			'season'=> false,
-			'category'=> false,
+			'category'=> $wp_query->query_vars['wpt_category'],
 			'groupby'=>false,
 			'limit'=>false
 		), $atts );
@@ -224,8 +224,6 @@ class WPT_Frontend {
 			}
 			$atts['category'] = implode(',',$categories);
 		}
-		
-		
 		
 		if (!is_null($content) && !empty($content)) {
 			$atts['template'] = html_entity_decode($content);

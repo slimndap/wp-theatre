@@ -13,7 +13,7 @@
 				add_filter('wpt_admin_page_tabs', array($this,'wpt_admin_page_tabs'));
 			} else {
 				add_action('the_content', array($this, 'the_content'));
-				add_filter('wpt_events_paginate_url', array($this,'wpt_events_paginate_url'));	
+				add_filter('wpt_listing_filter_pagination_url', array($this,'wpt_listing_filter_pagination_url'));	
 			}
 
 			add_action('init',array($this,'rewrite_rules'));
@@ -149,6 +149,7 @@
 	 	
 	 	function shortcode($args) {
 	 		global $wp_theatre;
+	 		global $wp_query;
 	 	
  			$defaults = array(
  				'listing_page_type' => WPT_Production::post_type_name,
@@ -164,6 +165,10 @@
 			 	if ($args['listing_page_nav']=='paginated') {
 				 	$shortcode_args.= ' paginateby="'.$args['listing_page_groupby'].'"';
 			 	}
+		 	}
+
+		 	if (!empty($wp_query->query_vars['wpt_category'])) {
+			 	$shortcode_args.= ' category="'.$wp_query->query_vars['wpt_category'].'"';
 		 	}
 
 		 	if ($args['listing_page_type']==WPT_Production::post_type_name) {
@@ -327,7 +332,9 @@
 		 		$url = trailingslashit(get_permalink($this->page->ID));
 
 		 		if ($args['wpt_category']) {
-			 		$url.= $args['wpt_category'].'/';
+		 			if ($category=get_category($args['wpt_category'])) {
+				 		$url.= $category->slug.'/';
+		 			}
 		 		}
 		 		
 		 		if ($args['wpt_month']) {
@@ -346,7 +353,7 @@
 			return $tabs;
 	 	}
 	 	
-	 	function wpt_events_paginate_url($url) {
+	 	function wpt_listing_filter_pagination_url($url) {
 	 		if (
 	 			get_option('permalink_structure') &&
 	 			$this->page() &&

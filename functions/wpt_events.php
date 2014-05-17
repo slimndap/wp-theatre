@@ -14,7 +14,7 @@ class WPT_Events extends WPT_Listing {
 			$post_categories = wp_get_post_categories( $event->production()->ID );
 			foreach($post_categories as $c){
 				$cat = get_category( $c );
-				$categories[$cat->slug] = $cat->name;
+				$categories[$cat->term_id] = $cat->name;
 			}
 		}
 		asort($categories);
@@ -35,6 +35,7 @@ class WPT_Events extends WPT_Listing {
 			'status' => array('publish')
 		);
 	}
+	
 	
 	/**
 	 * A list of upcoming events in HTML.
@@ -66,9 +67,10 @@ class WPT_Events extends WPT_Listing {
 			'season' => false,
 			'limit' => false,
 			'category' => false,
+			'month' => false,
 			'template' => NULL
 		);
-		$args = wp_parse_args( $args, $defaults );
+		$args = wp_parse_args($args, $defaults );
 
 		$classes = array();
 		$classes[] = "wpt_events";
@@ -78,121 +80,30 @@ class WPT_Events extends WPT_Listing {
 			$classes[] = 'wpt_events_without_thumbnail';
 		}
 
-		$current_url = add_query_arg(
-			array(
-				'wpt_month' => $wp_query->query_vars['wpt_month'],
-				'wpt_category' => $wp_query->query_vars['wpt_category'],
-				'wpt_season', $wp_query->query_vars['wpt_season']
-			)
-		);
-
-		$html = '';
-
 		$filters = array(
 			'upcoming' => true,
 			'production' => $args['production'],
 			'limit' => $args['limit'],
 			'category' => $args['category'],
+			'month' => $args['month'],
 			'season' => $args['season']
 		);
 
-		if ($category = get_category_by_slug($wp_query->query_vars['wpt_category'])) {
-  			$filters['category'] = $category->term_id;				
-		}
-
-		if (!empty($wp_query->query_vars['wpt_month'])) {
-			$filters['month'] = $wp_query->query_vars['wpt_month'];
-		}			
-
+		$html = '';
 
 		/*
 		 * Months navigation
 		 */
-		if (
-			in_array('month',$args['paginateby']) ||
-			!empty($wp_query->query_vars['wpt_month'])
-		) {
-			$html_filter_months = '';
-
-			foreach($this->months($filters) as $month) {
-				$url = remove_query_arg('wpt_month', $current_url);
-				if (sanitize_title($month) != $wp_query->query_vars['wpt_month']) {
-					if (!in_array('month',$args['paginateby'])) {
-						continue;
-					}
-					$url = add_query_arg('wpt_month', sanitize_title($month) , $url);
-				}
-				
-				$url = apply_filters('wpt_events_paginate_url', $url);
-				$html_filter_months.= '<span><a href="'.$url.'">'.date_i18n('M Y',strtotime($month)).'</a></span>';
-			}
-
-			$html.= '<nav class="wpt_events_months">'.$html_filter_months.'</nav>';
-
-		}
+		$html.= $this->filter_pagination('month', $this->months($filters), $args);
 
 		/*
 		 * Categories navigation
 		 */
-		if (
-			in_array('category',$args['paginateby']) ||
-			!empty($wp_query->query_vars['wpt_category'])
-		) {
-			$html_filter_categories = '';		
+		$html.= $this->filter_pagination('category', $this->categories($filters), $args);
 
-			foreach($this->categories($filters) as $slug=>$name) {
-				$url = remove_query_arg('wpt_category', $current_url);
-				if ($slug != $wp_query->query_vars['wpt_category']) {
-					if (!in_array('category',$args['paginateby'])) {
-						continue;
-					}
-					$url = add_query_arg('wpt_category', $slug , $url);										
-				}
-
-				$url = apply_filters('wpt_events_paginate_url', $url);
-				$html_filter_categories.= '<span><a href="'.$url.'">'.$name.'</a></span>';
-			}
-			
-			$html.= '<nav class="wpt_events_categories">'.$html_filter_categories.'</nav>';
-		}
-
-		/*
-		 * Seasons navigation
-		 */
-		if (in_array('season',$args['paginateby'])) {
-			$seasons = $wp_theatre->productions->seasons();
-
-			if (!empty($_GET[__('season','wp_theatre')])) {
-				$filters['season'] = $_GET[__('season','wp_theatre')];
-			} else {
-				$slugs = array_keys($seasons);
-				$filters['season'] = $slugs[0];				
-			}
-
-			$html.= '<nav>';
-			foreach($seasons as $slug=>$season) {
-
-				$url = remove_query_arg(__('season','wp_theatre'));
-				$url = add_query_arg( __('season','wp_theatre'), $slug , $url);
-				$html.= '<span>';
-
-				$title = $season->title();
-				if ($slug == $filters['season']) {
-					$html.= $title;
-				} else {
-					$html.= '<a href="'.$url.'">'.$title.'</a>';					
-				}
-				$html.= '</span>';
-			}
-			$html.= '</nav>';
-		}
-
-
-		$event_args = array();
-		if (isset($args['template'])) { 
+		if (!empty($args['template'])) {
 			$event_args['template'] = $args['template']; 
 		}
-
 		
 		switch ($args['groupby']) {
 			case 'month':
@@ -299,10 +210,10 @@ class WPT_Events extends WPT_Listing {
 			$args['posts_per_page'] = $filters['limit'];
 		} else {
 			$args['posts_per_page'] = -1;
-			
 		}
 
 		$posts = get_posts($args);
+
 		$events = array();
 		for ($i=0;$i<count($posts);$i++) {
 			$key = $posts[$i]->ID;
@@ -323,10 +234,9 @@ class WPT_Events extends WPT_Listing {
 		$events = $this->load($filters);		
 		$months = array();
 		foreach ($events as $event) {
-			$months[] = date('Y-m',$event->datetime());
+			$months[date('Y-m',$event->datetime())] = date_i18n('M Y',$event->datetime());
 		}
-		$months = array_unique($months);
-		sort($months);
+		ksort($months);
 
 		return $months;
 	}
