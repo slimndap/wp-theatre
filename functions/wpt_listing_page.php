@@ -293,19 +293,17 @@
 	    
 	 	function the_content($content) {
 	 		global $wp_theatre;
-	 		if ($this->page()) {
-		 		if (is_page($this->page())) {
-		 			if (!empty($this->options['listing_page_position'])) {
-			 			switch($this->options['listing_page_position']) {
-				 			case 'above':
-				 				$content = $this->shortcode($this->options).$content;
-				 				break;
-				 			case 'below':
-				 				$content.= $this->shortcode($this->options);
-				 				break;
-			 			}
+	 		if ($this->page() && is_page($this->page->ID)) {
+	 			if (!empty($this->options['listing_page_position'])) {
+		 			switch($this->options['listing_page_position']) {
+			 			case 'above':
+			 				$content = $this->shortcode($this->options).$content;
+			 				break;
+			 			case 'below':
+			 				$content.= $this->shortcode($this->options);
+			 				break;
 		 			}
-		 		}
+	 			}
 	 		}
 		 	return $content;
 	 	}
