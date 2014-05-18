@@ -140,16 +140,26 @@ class WPT_Frontend {
 		global $wp_theatre;
 		global $wp_query;
 		
-		$atts = shortcode_atts( array(
+		$defaults = array(
 			'upcoming' => true,
 			'past' => false,
 			'paginateby'=>array(),
-			'category'=> $wp_query->query_vars['wpt_category'],
-			'month' => $wp_query->query_vars['wpt_month'],
+			'category'=> false,
+			'month' => false,
 			'season'=> false,
 			'groupby'=>false,
 			'limit'=>false
-		), $atts );
+		);
+		
+		if (!empty($wp_query->query_vars['wpt_category'])) {
+			$defaults['category']=$wp_query->query_vars['wpt_category'];
+		}
+
+		if (!empty($wp_query->query_vars['wpt_month'])) {
+			$defaults['month']=$wp_query->query_vars['wpt_month'];
+		}
+
+		$atts = shortcode_atts( $defaults, $atts );
 				
 		if (!empty($atts['paginateby'])) {
 			$fields = explode(',',$atts['paginateby']);
@@ -192,14 +202,20 @@ class WPT_Frontend {
 		global $wp_theatre;
 		global $wp_query;
 		
-		$atts = shortcode_atts( array(
+		$adefaults = array(
 			'paginateby' => array(),
 			'upcoming' => false,
 			'season'=> false,
 			'category'=> $wp_query->query_vars['wpt_category'],
 			'groupby'=>false,
 			'limit'=>false
-		), $atts );
+		);
+				
+		if (!empty($wp_query->query_vars['wpt_category'])) {
+			$defaults['category']=$wp_query->query_vars['wpt_category'];
+		}
+
+		$atts = shortcode_atts($defaults,$atts);
 				
 		if (!empty($atts['paginateby'])) {
 			$fields = explode(',',$atts['paginateby']);

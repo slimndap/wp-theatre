@@ -9,8 +9,8 @@ class WPT_Listing {
 		
 		$current_url = add_query_arg(
 			array(
-				'wpt_month' => $wp_query->query_vars['wpt_month'],
-				'wpt_category' => $wp_query->query_vars['wpt_category']
+				'wpt_month' => $args['month'],
+				'wpt_category' => $args['category']
 			)
 		);
 

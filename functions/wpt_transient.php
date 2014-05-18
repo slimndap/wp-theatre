@@ -17,9 +17,6 @@
 		}
 		
 		function get($name, $args) {
-			if (WP_DEBUG) {
-				return false;
-			}
 			$key = 'wpt_'.$name.'_'.md5(serialize($args));
 			return get_transient($key);
 		}

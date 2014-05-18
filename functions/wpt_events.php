@@ -72,8 +72,7 @@ class WPT_Events extends WPT_Listing {
 		);
 		$args = wp_parse_args($args, $defaults );
 
-		$classes = array();
-		$classes[] = "wpt_events";
+		$classes = array('wpt_listing','wpt_events');
 
 		// Thumbnail
 		if (!empty($args['template']) && strpos($args['template'],'{{thumbnail}}')===false) { 

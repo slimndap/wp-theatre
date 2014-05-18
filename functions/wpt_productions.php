@@ -86,8 +86,7 @@ class WPT_Productions extends WPT_Listing {
 			'upcoming' => $args['upcoming']
 		);
 
-		$classes = array();
-		$classes[] = "wpt_productions";
+		$classes = array('wpt_listing','wpt_productions');
 
 		// Thumbnail
 		if (!empty($args['template']) && strpos($args['template'],'{{thumbnail}}')===false) { 
