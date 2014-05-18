@@ -206,7 +206,7 @@ class WPT_Frontend {
 			'paginateby' => array(),
 			'upcoming' => false,
 			'season'=> false,
-			'category'=> $wp_query->query_vars['wpt_category'],
+			'category'=> false,
 			'groupby'=>false,
 			'limit'=>false
 		);
