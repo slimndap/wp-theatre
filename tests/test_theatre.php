@@ -382,13 +382,14 @@ class WPT_Test extends WP_UnitTestCase {
 		do_shortcode('[wpt_events]');
 		
 		$args = array(
-			'upcoming' => true,
-			'past' => false,
-			'paginateby'=>array(),
-			'category'=> false,
-			'season'=> false,
+			'paginateby' => array(),
 			'groupby'=>false,
-			'limit'=>false
+			'production' => false,
+			'season' => false,
+			'limit' => false,
+			'category' => false,
+			'month' => false,
+			'template' => NULL
 		);
 		
 		$xml = new DomDocument;
