@@ -114,31 +114,38 @@
 		 	 * events/comedy/2014/05/23
 		 	 */
 
-		 	global $wp;
-
 			if ($this->page()) {
 				$post_name = $this->page->post_name;
 			
 				add_rewrite_tag('%wpt_month%', '.*');
+				add_rewrite_tag('%wpt_day%', '.*');
+				add_rewrite_tag('%wpt_category%', '.*');
+
 				add_rewrite_rule(
 					$post_name.'/([0-9]{4})/([0-9]{2})$', 
 					'index.php?pagename='.$post_name.'&wpt_month=$matches[1]-$matches[2]',
 					'top'
 				);
 			
-				add_rewrite_tag('%'.__('day','wp_theatre').'%', '.*');
 				add_rewrite_rule(
 					$post_name.'/([0-9]{4})/([0-9]{2})/([0-9]{2})$', 
-					'index.php?pagename='.$post_name.'&'.__('day','wp_theatre').'=$matches[1]-$matches[2]-$matches[3]',
+					'index.php?pagename='.$post_name.'&wpt_day=$matches[1]-$matches[2]-$matches[3]',
 					'top'
 				);	 	 
 
-				add_rewrite_tag('%wpt_category%', '.*');
 				add_rewrite_rule(
 					$post_name.'/([a-z0-9-]+)$', 
 					'index.php?pagename='.$post_name.'&wpt_category=$matches[1]',
 					'top'
 				);	 	 
+
+				add_rewrite_rule(
+					$post_name.'/([a-z0-9-]+)/([0-9]{4})/([0-9]{2})$', 
+					'index.php?pagename='.$post_name.'&wpt_category=$matches[1]&wpt_month=$matches[2]-$matches[3]',
+					'top'
+				);
+			
+
 			}
 			
 			global $wp_rewrite;
@@ -328,7 +335,7 @@
 		 			'wpt_category' => false
 		 		);
 		 		$args = wp_parse_args($args, $defaults);
-
+		 		
 		 		$url = trailingslashit(get_permalink($this->page->ID));
 
 		 		if ($args['wpt_category']) {
