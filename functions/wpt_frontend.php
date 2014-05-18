@@ -202,7 +202,7 @@ class WPT_Frontend {
 		global $wp_theatre;
 		global $wp_query;
 		
-		$adefaults = array(
+		$defaults = array(
 			'paginateby' => array(),
 			'upcoming' => false,
 			'season'=> false,

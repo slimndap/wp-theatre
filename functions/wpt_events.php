@@ -100,6 +100,7 @@ class WPT_Events extends WPT_Listing {
 		 */
 		$html.= $this->filter_pagination('category', $this->categories($filters), $args);
 
+		$event_args = array();
 		if (!empty($args['template'])) {
 			$event_args['template'] = $args['template']; 
 		}
