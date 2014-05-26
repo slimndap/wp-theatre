@@ -170,8 +170,8 @@ class WPT_Productions extends WPT_Listing {
 				if (!in_array('season', $args['paginateby'])) {
 					$seasons = $this->seasons();
 					$filters['ignore_sticky_posts'] = true;
-					foreach($seasons as  $slug=>$season) {
-						$filters['season'] = $slug;
+					foreach($seasons as  $title=>$season) {
+						$filters['season'] = $season->ID;
 						$productions = $this->get($filters);
 						if (!empty($productions)) {
 							$html.= '<h3>'.$season->title().'</h3>';
@@ -276,7 +276,7 @@ class WPT_Productions extends WPT_Listing {
 		$posts = get_posts($args);
 
 		// don't forget the stickies!
-		if (!$filter['ignore_sticky_posts']) {
+		if (!$filters['ignore_sticky_posts']) {
 			$sticky_posts = get_option( 'sticky_posts' );
 			
 			if (!empty($sticky_posts)) {
@@ -317,8 +317,7 @@ class WPT_Productions extends WPT_Listing {
 		$seasons = array();
 		foreach ($productions as $production) {
 			if ($production->season()) {
-				$seasons[$production->season()->ID] = $production->season();
-				
+				$seasons[$production->season()->title()] = $production->season();
 			}
 		}
 		krsort($seasons);
