@@ -36,7 +36,8 @@ class WPT_Productions extends WPT_Listing {
 			'limit' => false,
 			'upcoming' => false,
 			'category' => false,
-			'season' => false
+			'season' => false,
+			'ignore_sticky_posts' => false
 		);
 
 	}
@@ -168,7 +169,7 @@ class WPT_Productions extends WPT_Listing {
 			case 'season':
 				if (!in_array('season', $args['paginateby'])) {
 					$seasons = $this->seasons();
-					
+					$filters['ignore_sticky_posts'] = true;
 					foreach($seasons as  $slug=>$season) {
 						$filters['season'] = $slug;
 						$productions = $this->get($filters);
@@ -184,6 +185,7 @@ class WPT_Productions extends WPT_Listing {
 			case 'category':
 				if (!in_array('category', $args['paginateby'])) {
 					$categories = $this->categories();
+					$filters['ignore_sticky_posts'] = true;
 					foreach($categories as $slug=>$name) {
 						if ($category = get_category_by_slug($slug)) {
 				  			$filters['category'] = $category->term_id;				
@@ -274,29 +276,31 @@ class WPT_Productions extends WPT_Listing {
 		$posts = get_posts($args);
 
 		// don't forget the stickies!
-		$sticky_posts = get_option( 'sticky_posts' );
-		
-		if (!empty($sticky_posts)) {
-			$sticky_offset = 0;
-
-			foreach($posts as $post) {
-				if (in_array($post->ID,$sticky_posts)) {
-					$offset = array_search($post->ID, $sticky_posts);
-					unset($sticky_posts[$offset]);
-				}
-			}
-
+		if (!$filter['ignore_sticky_posts']) {
+			$sticky_posts = get_option( 'sticky_posts' );
+			
 			if (!empty($sticky_posts)) {
-				$stickies = get_posts( array(
-					'post__in' => $sticky_posts,
-					'post_type' => WPT_Production::post_type_name,
-					'post_status' => 'publish',
-					'nopaging' => true
-				) );
-				foreach ( $stickies as $sticky_post ) {
-					array_splice( $posts, $sticky_offset, 0, array( $sticky_post ) );
-					$sticky_offset++;
-				}			                              
+				$sticky_offset = 0;
+	
+				foreach($posts as $post) {
+					if (in_array($post->ID,$sticky_posts)) {
+						$offset = array_search($post->ID, $sticky_posts);
+						unset($sticky_posts[$offset]);
+					}
+				}
+	
+				if (!empty($sticky_posts)) {
+					$stickies = get_posts( array(
+						'post__in' => $sticky_posts,
+						'post_type' => WPT_Production::post_type_name,
+						'post_status' => 'publish',
+						'nopaging' => true
+					) );
+					foreach ( $stickies as $sticky_post ) {
+						array_splice( $posts, $sticky_offset, 0, array( $sticky_post ) );
+						$sticky_offset++;
+					}			                              
+				}
 			}
 		}
 		
