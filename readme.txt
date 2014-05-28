@@ -60,12 +60,22 @@ __All event listings look really weird!__
 
 Make sure that you checked the 'Enable built-in Theater stylesheet'-option in the Theater plugin settings.
 
+__I really need feature X. Can you add it?__
+
+If you are missing a feature that you really need for your website you can:
+
+1. submit a feature request on the [forum](http://wordpress.org/support/plugin/theatre) or
+1. add it yourself and submit a pull request on [GitHub](https://github.com/slimndap/wp-theatre) or
+1. [hire me](mailto:jeroen@slimndap.com).
+
+The new feature may be added directly to the Theater plugin or as an extension so that others may benefit from this as well.
+
 == Changelog ==
 
 = 0.7 =
 * Support for tickets prices, cancelled events.
 * Filter listings by season or categories. See the [documentation](https://github.com/slimndap/wp-theatre/wiki/Shortcodes).
-* A new German translation (by Gregory Fischer).
+* A new German translation (by [pixelfis.ch](http://pixelfis.ch)).
 * Wordpress SEO by Yoast support.
 * Jetpack Featured Content slider support.
 * And [more...](http://slimndap.com/theatre-for-wordpress-0-7-prices-and-categories)
