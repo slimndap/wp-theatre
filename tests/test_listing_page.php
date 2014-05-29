@@ -120,4 +120,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		
 	}
 	
+	/* 
+	 * Test backwards compatibility
+	 */
 }

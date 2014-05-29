@@ -1,5 +1,5 @@
 <?php
-include_once('test_helper.php');
+include_once('wpt_test_helper.php');
 
 class WPT_Test extends WP_UnitTestCase {
 
