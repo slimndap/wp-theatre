@@ -3,7 +3,7 @@ class WPT_Production {
 
 	const post_type_name = 'wp_theatre_prod';
 	
-	function __construct($ID=false) {	
+	function __construct($ID=false) {
 		if ($ID instanceof WP_Post) {
 			// $ID is a WP_Post object
 			$this->post = $ID;
@@ -459,6 +459,24 @@ class WPT_Production {
 		}
 	}
 
+    /**
+     * Returns value of a custom field.
+     * If there is no value, just return the field expression.
+     *
+     * @since 0.4
+     *
+     * @param array $args {
+     *     @type string $field custom field name.
+     * }
+     * @return string HTML.
+     */
+	function get_custom_field($field) {
+        $custom_field = get_post_meta($this->post()->ID, $field, true);
+        if (!$custom_field) $custom_field = $field;
+        return $custom_field;
+
+	}
+
 	function upcoming() {
 		global $wp_theatre;
 		if (!isset($this->upcoming)) {
@@ -521,8 +539,8 @@ class WPT_Production {
 				case 'thumbnail':
 					$replacement = $this->{$field}(array('html'=>true));
 					break;
-				default: 
-					$replacement = $field;
+				default:
+					$replacement = $this->get_custom_field($field);
 			}
 			
 			switch($filter) {
