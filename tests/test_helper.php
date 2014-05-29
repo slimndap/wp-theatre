@@ -1,7 +1,7 @@
 <?php
 
 class WPT_Test_Helper {
-	create_test_content() {
+	function create_test_content() {
 		global $wp_theatre;
 		$this->wp_theatre = $wp_theatre;
 		
