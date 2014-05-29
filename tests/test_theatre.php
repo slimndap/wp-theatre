@@ -373,6 +373,17 @@ class WPT_Test extends WP_UnitTestCase {
 		
 	}
 	
+	// Sticky posts
+	
+	function test_ignore_sticky_posts() {
+		$args = array(
+			'upcoming' => TRUE,
+			'ignore_sticky_posts' => TRUE
+		);
+		$this->assertCount(3, $this->wp_theatre->productions->load($args));		
+		
+	}
+	
 	function test_theatre_class_is_global() {
 		global $wp_theatre;
 		$this->assertTrue( 
