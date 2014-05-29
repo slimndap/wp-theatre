@@ -110,7 +110,8 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 	
 		$this->assertInstanceOf(
 			'WP_Post',
-			$page
+			$page,
+			$message
 		);
 	}
 	
