@@ -31,7 +31,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		);
 	}
 	
-	function test_listing_appears_on_page() {
+	function test_listing_appears_on_listing_page() {
 		$content = $this->wp_theatre->listing_page->page()->post_content;
 		$this->assertContains(
 			'<div class="wpt_listing wpt_productions">',
@@ -48,75 +48,75 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 	 * template 
 	 */
 
-	function test_listing_productions() {
+	function test_listing_productions_on_listing_page() {
 		
 	}
 	
-	function test_listing_productions_are_paginated_by_day() {
+	function test_listing_productions_are_paginated_by_day_on_listing_page() {
 		
 	}
 	
-	function test_listing_productions_are_paginated_by_week() {
+	function test_listing_productions_are_paginated_by_week_on_listing_page() {
 		
 	}
 	
-	function test_listing_productions_are_paginated_by_month() {
+	function test_listing_productions_are_paginated_by_month_on_listing_page() {
 		
 	}
 	
-	function test_listing_productions_are_paginated_by_year() {
+	function test_listing_productions_are_paginated_by_year_on_listing_page() {
 		
 	}
 	
-	function test_listing_productions_are_paginated_by_season() {
+	function test_listing_productions_are_paginated_by_season_on_listing_page() {
 		
 	}
 	
-	function test_listing_productions_are_paginated_by_category() {
+	function test_listing_productions_are_paginated_by_category_on_listing_page() {
 		
 	}
 
-	function test_listing_productions_are_grouped_by_day() {
+	function test_listing_productions_are_grouped_by_day_on_listing_page() {
 		
 	}
 	
-	function test_listing_productions_are_grouped_by_week() {
+	function test_listing_productions_are_grouped_by_week_on_listing_page() {
 		
 	}
 	
-	function test_listing_productions_are_grouped_by_month() {
+	function test_listing_productions_are_grouped_by_month_on_listing_page() {
 		
 	}
 	
-	function test_listing_productions_are_grouped_by_year() {
+	function test_listing_productions_are_grouped_by_year_on_listing_page() {
 		
 	}
 	
-	function test_listing_productions_are_grouped_by_category() {
+	function test_listing_productions_are_grouped_by_category_on_listing_page() {
 		
 	}
 	
-	function test_listing_productions_are_filtered_by_day() {
+	function test_listing_productions_are_filtered_by_day_on_listing_page() {
 		
 	}
 	
-	function test_listing_productions_are_filtered_by_week() {
+	function test_listing_productions_are_filtered_by_week_on_listing_page() {
 		
 	}
 	
-	function test_listing_productions_are_filtered_by_month() {
+	function test_listing_productions_are_filtered_by_month_on_listing_page() {
 		
 	}
 	
-	function test_listing_productions_are_filtered_by_year() {
+	function test_listing_productions_are_filtered_by_year_on_listing_page() {
 		
 	}
 	
-	function test_listing_productions_are_filtered_by_season() {
+	function test_listing_productions_are_filtered_by_season_on_listing_page() {
 		
 	}
 	
-	function test_listing_productions_are_filtered_by_category() {
+	function test_listing_productions_are_filtered_by_category_on_listing_page() {
 		
 	}
 	
