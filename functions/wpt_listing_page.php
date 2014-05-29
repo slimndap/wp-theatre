@@ -18,8 +18,6 @@
 
 			add_action('wpt_rewrite_rules',array($this,'wpt_rewrite_rules'));
 
-			$this->options = get_option('wpt_listing_page');
-
 	 	}
 	 	
 	 	function admin_init() {
@@ -97,6 +95,10 @@
 		        
 			}
 		 	
+	 	}
+	 	
+	 	function options() {
+		 	return get_option('wpt_listing_page');
 	 	}
 	 	
 	 	function wpt_rewrite_rules() {
@@ -184,8 +186,9 @@
 	 	function page() {
 		 	if (!isset($this->page)) {
 			 	$this->page = false;
-			 	if (!empty($this->options['listing_page_post_id'])) {
-				 	$page = get_post($this->options['listing_page_post_id']);
+			 	$options = $this->options();
+			 	if (!empty($options['listing_page_post_id'])) {
+				 	$page = get_post($options['listing_page_post_id']);
 				 	if (!is_null($page)) {
 				 		$this->page = $page;
 				 	}
@@ -208,12 +211,13 @@
 	 	function settings_field_wpt_listing_page_post_id() {
 	 		global $wp_theatre;
 			$pages = get_pages();
+			$options = $this->options();
 
 			echo '<select id="wpt_listing_page_post_id" name="wpt_listing_page[listing_page_post_id]">';
 			echo '<option></option>';
 			foreach($pages as $page) {
 				echo '<option value="'.$page->ID.'"';
-				if ($page->ID==$this->options['listing_page_post_id']) {
+				if ($page->ID==$options['listing_page_post_id']) {
 					echo ' selected="selected"';
 				}
 				echo '>'.$page->post_title.'</option>';
@@ -223,16 +227,18 @@
 	 	}
 	 	
 	    public function settings_field_wpt_listing_page_position() {
-			$options = array(
+	    	$options = $this->options();
+	    	
+			$radio_options = array(
 				'above' => __('above content','wp_theatre'),
 				'below' => __('below content','wp_theatre'),
-				'not' => __('manually, using <code>'.$this->shortcode($this->options).'</code> shortcode','wp_theatre')
+				'not' => __('manually, using <code>'.$this->shortcode($this->options()).'</code> shortcode','wp_theatre')
 			);
 			
-			foreach($options as $key=>$value) {
+			foreach($radio_options as $key=>$value) {
 				echo '<label>';
 				echo '<input type="radio" name="wpt_listing_page[listing_page_position]" value="'.$key.'"';
-				if (!empty($this->options['listing_page_position']) && $key==$this->options['listing_page_position']) {
+				if (!empty($options['listing_page_position']) && $key==$options['listing_page_position']) {
 					echo ' checked="checked"';
 				}
 				echo '>'.$value.'</option>';
@@ -242,15 +248,17 @@
 	    }
 	    
 	    public function settings_field_wpt_listing_page_type() {
-			$options = array(
+	    	$options = $this->options();
+
+			$radio_options = array(
 				WPT_Production::post_type_name => __('productions','wp_theatre'),
 				WPT_Event::post_type_name => __('events','wp_theatre')
 			);
 			
-			foreach($options as $key=>$value) {
+			foreach($radio_options as $key=>$value) {
 				echo '<label>';
 				echo '<input type="radio" name="wpt_listing_page[listing_page_type]" value="'.$key.'"';
-				if (!empty($this->options['listing_page_type']) && $key==$this->options['listing_page_type']) {
+				if (!empty($options['listing_page_type']) && $key==$options['listing_page_type']) {
 					echo ' checked="checked"';
 				}
 				echo '>'.$value.'</option>';
@@ -260,16 +268,18 @@
 	    }
 	    
 	    public function settings_field_wpt_listing_page_nav() {
-			$options = array(
+	    	$options = $this->options();
+
+			$radio_options = array(
 				'plain' => __('a plain list','wp_theatre'),
 				'grouped' => __('a grouped list','wp_theatre'),
 				'paginated' => __('a paginated list','wp_theatre')
 			);
 			
-			foreach($options as $key=>$value) {
+			foreach($radio_options as $key=>$value) {
 				echo '<label>';
 				echo '<input type="radio" name="wpt_listing_page[listing_page_nav]" value="'.$key.'"';
-				if (!empty($this->options['listing_page_nav']) && $key==$this->options['listing_page_nav']) {
+				if (!empty($options['listing_page_nav']) && $key==$options['listing_page_nav']) {
 					echo ' checked="checked"';
 				}
 				echo '>'.$value.'</option>';
@@ -279,16 +289,18 @@
 	    }
 	    
 	    public function settings_field_wpt_listing_page_groupby() {
-			$options = array(
+	    	$options = $this->options();
+
+			$radio_options = array(
 				'month' => __('month','wp_theatre'),
 				'category' => __('category','wp_theatre'),
 				'season' => __('season','wp_theatre')
 			);
 			
-			foreach($options as $key=>$value) {
+			foreach($radio_options as $key=>$value) {
 				echo '<label>';
 				echo '<input type="radio" name="wpt_listing_page[listing_page_groupby]" value="'.$key.'"';
-				if (!empty($this->options['listing_page_groupby']) && $key==$this->options['listing_page_groupby']) {
+				if (!empty($options['listing_page_groupby']) && $key==$options['listing_page_groupby']) {
 					echo ' checked="checked"';
 				}
 				echo '>'.$value.'</option>';
@@ -299,14 +311,17 @@
 	    
 	 	function the_content($content) {
 	 		global $wp_theatre;
+
+	    	$options = $this->options();
+
 	 		if ($this->page() && is_page($this->page->ID)) {
-	 			if (!empty($this->options['listing_page_position'])) {
-		 			switch($this->options['listing_page_position']) {
+	 			if (!empty($options['listing_page_position'])) {
+		 			switch($options['listing_page_position']) {
 			 			case 'above':
-			 				$content = $this->shortcode($this->options).$content;
+			 				$content = $this->shortcode($options).$content;
 			 				break;
 			 			case 'below':
-			 				$content.= $this->shortcode($this->options);
+			 				$content.= $this->shortcode($options);
 			 				break;
 		 			}
 	 			}
