@@ -15,7 +15,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		);
 		
 		$wpt_listing_page = array(
-			'listing_page_post_id' => $this->factory->post->create($args)
+			'listing_page_post_id' => $this->factory->post->create($args),
 			'listing_page_position' => 'above'
 		);	
 		update_option('wpt_listing_page', $wpt_listing_page);
