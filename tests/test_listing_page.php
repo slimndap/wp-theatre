@@ -34,7 +34,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 	function test_listing_appears_on_listing_page() {
 		$content = $this->wp_theatre->listing_page->page()->post_content;
 		$this->assertContains(
-			'<div class="wpt_listing wpt_productions">',
+			'<div class="wpt_listing">',
 			$content
 		);
 	}
