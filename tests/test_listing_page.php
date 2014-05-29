@@ -19,6 +19,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 			'listing_page_position' => 'above'
 		);	
 		update_option('wpt_listing_page', $wpt_listing_page);
+		$this->wp_theatre->listing_page->options = get_option('wpt_listing_page');
 
 		$season_args = array(
 			'post_type'=>WPT_Season::post_type_name
