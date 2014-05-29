@@ -109,7 +109,7 @@ class WPT_Events extends WPT_Listing {
 			case 'month':
 				if (!in_array('month', $args['paginateby'])) {
 					$months = $this->months($filters);
-					foreach($months as $month) {
+					foreach($months as $month=>$name) {
 						$filters['month'] = $month;
 						$events = $this->get($filters);
 						if (!empty($events)) {

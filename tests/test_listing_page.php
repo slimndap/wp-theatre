@@ -13,20 +13,30 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		$args = array(
 			'post_type'=>'page'
 		);
-		$this->listing_page = $this->factory->post->create($args);		
-		update_option('wpt_listing_page', $this->listing_page);
-				
+		
+		$wpt_listing_page = array(
+			'listing_page_post_id' => $this->factory->post->create($args)
+			'listing_page_position' => 'above'
+		);	
+		update_option('wpt_listing_page', $wpt_listing_page);
 	}
 
 
 	/* Test the basics */
 
 	function test_dedicated_listing_page_is_set() {
-		
+		$this->assertInstanceOf(
+			'WP_Post',
+			$this->wp_theatre->listing_page->page()
+		);
 	}
 	
 	function test_listing_appears_on_page() {
-		
+		$content = $this->wp_theatre->listing_page->page()->post_content;
+		$this->assertContains(
+			'<div class="wpt_listing wpt_productions">',
+			$content
+		);
 	}
 		
 	/* 

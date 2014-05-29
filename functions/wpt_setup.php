@@ -96,6 +96,16 @@
 				)
 			);
 
+			/*
+			 * Add custom querystring variables and rewrite rules
+			 */
+
+			add_rewrite_tag('%wpt_month%', '.*');
+			add_rewrite_tag('%wpt_day%', '.*');
+			add_rewrite_tag('%wpt_category%', '.*');
+
+			do_action('wpt_rewrite_rules');
+
 		}	
 	
 		function cron_schedules( $schedules ) {

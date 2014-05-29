@@ -158,7 +158,7 @@ class WPT_Frontend {
 		if (!empty($wp_query->query_vars['wpt_month'])) {
 			$defaults['month']=$wp_query->query_vars['wpt_month'];
 		}
-
+		
 		$atts = shortcode_atts( $defaults, $atts );
 				
 		if (!empty($atts['paginateby'])) {
