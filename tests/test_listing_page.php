@@ -106,7 +106,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 
 	function test_dedicated_listing_page_is_set() {
 		$page = $this->wp_theatre->listing_page->page();
-		$message = print_r($page, true);
+		$message = print_r(get_option('wpt_listing_page'), true);
 	
 		$this->assertInstanceOf(
 			'WP_Post',
