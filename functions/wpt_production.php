@@ -3,7 +3,7 @@ class WPT_Production {
 
 	const post_type_name = 'wp_theatre_prod';
 	
-	function __construct($ID=false) {	
+	function __construct($ID=false) {
 		if ($ID instanceof WP_Post) {
 			// $ID is a WP_Post object
 			$this->post = $ID;
@@ -17,7 +17,7 @@ class WPT_Production {
 			}
 		}		
 
-		$this->ID = $ID;		
+		$this->ID = $ID;
 	}
 
 	function post_type() {
@@ -448,14 +448,46 @@ class WPT_Production {
 		$args = wp_parse_args( $args, $defaults );
 
 		if (!isset($this->title)) {
-			$this->title = apply_filters('wpt_event_title',$this->post()->post_title,$this);
+			$this->title = apply_filters('wpt_production_title',$this->post()->post_title,$this);
 		}	
 		if ($args['html']) {
 			$html = '';
 			$html.= '<div class="'.self::post_type_name.'_title">'.$this->title.'</div>';
-			return apply_filters('wpt_event_title_html', $html, $this);
+			return apply_filters('wpt_production_title_html', $html, $this);
 		} else {
 			return $this->title;			
+		}
+	}
+
+    /**
+     * Returns value of a custom field.
+     *
+     * @since 0.8
+     *
+     * @param array $args {
+     *     @type string $field custom field name.
+     * }
+     * @return string.
+     */
+	function custom($field, $args=array()) {
+		$defaults = array(
+			'html' => false
+		);
+		$args = wp_parse_args( $args, $defaults );
+
+		if (!isset($this->{$field})) {
+			$this->{$field} = apply_filters(
+				'wpt_production_'.$field, 
+				get_post_meta($this->post()->ID, $field, true)
+			);
+		}
+
+		if ($args['html']) {
+			$html = '';
+			$html.= '<div class="'.self::post_type_name.'_'.$field.'">'.$this->{$field}.'</div>';
+			return apply_filters('wpt_production_'.$field.'_html', $html, $this);
+		} else {
+			return $this->{$field};
 		}
 	}
 
@@ -521,8 +553,8 @@ class WPT_Production {
 				case 'thumbnail':
 					$replacement = $this->{$field}(array('html'=>true));
 					break;
-				default: 
-					$replacement = $field;
+				default:
+					$replacement = $this->custom($field,array('html'=>true));
 			}
 			
 			switch($filter) {
