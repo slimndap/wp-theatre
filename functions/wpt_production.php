@@ -17,7 +17,7 @@ class WPT_Production {
 			}
 		}		
 
-		$this->ID = $ID;		
+		$this->ID = $ID;
 	}
 
 	function post_type() {
@@ -463,7 +463,7 @@ class WPT_Production {
      * Returns value of a custom field.
      * If there is no value, just return the field expression.
      *
-     * @since 0.4
+     * @since 0.7.5
      *
      * @param array $args {
      *     @type string $field custom field name.
