@@ -18,7 +18,8 @@
 
 			add_action('wpt_rewrite_rules',array($this,'wpt_rewrite_rules'));
 			
-			add_action( "update_option_wpt_listing_page", array($this,'update_option_wpt_listing_page'), 10 , 2);
+			add_action( "add_option_wpt_listing_page", array($this,'reset'));
+			add_action( "update_option_wpt_listing_page", array($this,'reset'));
 
 			$this->options = get_option('wpt_listing_page');
 
@@ -358,7 +359,7 @@
 	 	 * @since 0.8
 	 	 */
 	 	
-	 	function update_option_wpt_listing_page($old_value, $value) {
+	 	function reset($old_value, $value) {
 	 		$this->options = get_option('wpt_listing_page');
 	 		unset($this->page);
 	 	}
