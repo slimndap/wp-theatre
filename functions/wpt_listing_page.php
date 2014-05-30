@@ -359,7 +359,7 @@
 	 	 * @since 0.8
 	 	 */
 	 	
-	 	function reset($old_value, $value) {
+	 	function reset() {
 	 		$this->options = get_option('wpt_listing_page');
 	 		unset($this->page);
 	 	}
