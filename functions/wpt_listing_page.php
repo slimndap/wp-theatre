@@ -17,6 +17,8 @@
 			}
 
 			add_action('wpt_rewrite_rules',array($this,'wpt_rewrite_rules'));
+			
+			add_action( "update_option_wpt_listing_page", array($this,'update_option_wpt_listing_page'), 10 , 2);
 
 			$this->options = get_option('wpt_listing_page');
 
@@ -347,6 +349,18 @@
 			} else {
 				return false;
 			}		 	
+	 	}
+	 	
+	 	/*
+	 	 * Reset the options and the page.
+	 	 * Needed for automatic tests that update the 'wpt_listing_page' option during runtime.
+	 	 * @see tests/test_listing_page.php
+	 	 * @since 0.8
+	 	 */
+	 	
+	 	function update_option_wpt_listing_page($old_value, $value) {
+	 		$this->options = get_option('wpt_listing_page');
+	 		unset($this->page);
 	 	}
 	 	
 	 	function wpt_admin_page_tabs($tabs) {
