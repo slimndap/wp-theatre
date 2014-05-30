@@ -582,7 +582,7 @@ class WPT_Event {
 					$replacement = $this->production()->{$field}(array('html'=>true));
 					break;
 				default: 
-					$replacement = $field;
+					$replacement = $this->production()->custom($field,array('html'=>true));
 			}
 			
 			switch($filter) {

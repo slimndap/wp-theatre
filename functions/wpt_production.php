@@ -448,12 +448,12 @@ class WPT_Production {
 		$args = wp_parse_args( $args, $defaults );
 
 		if (!isset($this->title)) {
-			$this->title = apply_filters('wpt_event_title',$this->post()->post_title,$this);
+			$this->title = apply_filters('wpt_production_title',$this->post()->post_title,$this);
 		}	
 		if ($args['html']) {
 			$html = '';
 			$html.= '<div class="'.self::post_type_name.'_title">'.$this->title.'</div>';
-			return apply_filters('wpt_event_title_html', $html, $this);
+			return apply_filters('wpt_production_title_html', $html, $this);
 		} else {
 			return $this->title;			
 		}
@@ -461,20 +461,34 @@ class WPT_Production {
 
     /**
      * Returns value of a custom field.
-     * If there is no value, just return the field expression.
      *
-     * @since 0.7.5
+     * @since 0.8
      *
      * @param array $args {
      *     @type string $field custom field name.
      * }
-     * @return string HTML.
+     * @return string.
      */
-	function get_custom_field($field) {
-        $custom_field = get_post_meta($this->post()->ID, $field, true);
-        if (!$custom_field) $custom_field = $field;
-        return $custom_field;
+	function custom($field, $args=array()) {
+		$defaults = array(
+			'html' => false
+		);
+		$args = wp_parse_args( $args, $defaults );
 
+		if (!isset($this->{$field})) {
+			$this->{$field} = apply_filters(
+				'wpt_production_'.$field, 
+				get_post_meta($this->post()->ID, $field, true)
+			);
+		}
+
+		if ($args['html']) {
+			$html = '';
+			$html.= '<div class="'.self::post_type_name.'_'.$field.'">'.$this->{$field}.'</div>';
+			return apply_filters('wpt_production_'.$field.'_html', $html, $this);
+		} else {
+			return $this->{$field};
+		}
 	}
 
 	function upcoming() {
@@ -540,7 +554,7 @@ class WPT_Production {
 					$replacement = $this->{$field}(array('html'=>true));
 					break;
 				default:
-					$replacement = $this->get_custom_field($field);
+					$replacement = $this->custom($field,array('html'=>true));
 			}
 			
 			switch($filter) {
