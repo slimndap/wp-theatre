@@ -118,6 +118,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 	
 	function test_listing_appears_on_listing_page() {
 		$content = $this->wp_theatre->listing_page->page()->post_content;
+		$content = apply_filters('the_content',$content);
 		$this->assertContains(
 			'<div class="wpt_listing">',
 			$content
