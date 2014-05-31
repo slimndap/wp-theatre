@@ -123,10 +123,10 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 	
 		$content = $page->post_content;
 		$content = apply_filters('the_content',$content);
-		$this->assertContains(
-			'<div class="wpt_listing">',
-			$content
-		);
+		
+		$xml = new DomDocument;
+		$xml->loadHTML($html);
+		$this->assertSelectCount('.wpt_listing', 1, $xml);		
 	}
 		
 	/* 
