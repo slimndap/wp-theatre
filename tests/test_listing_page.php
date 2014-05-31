@@ -14,11 +14,11 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 			'post_type'=>'page'
 		);
 		
-		$wpt_listing_page = array(
+		$this->options = array(
 			'listing_page_post_id' => $this->factory->post->create($args),
 			'listing_page_position' => 'above'
 		);	
-		update_option('wpt_listing_page', $wpt_listing_page);
+		update_option('wpt_listing_page', $this->options);
 
 		$season_args = array(
 			'post_type'=>WPT_Season::post_type_name
@@ -99,32 +99,22 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		add_post_meta($upcoming_event, 'tickets_status', WPT_Event::tickets_status_hidden );
 
 
+
+
 	}
 
 
 	/* Test the basics */
 
 	function test_dedicated_listing_page_is_set() {
-		$page = $this->wp_theatre->listing_page->page();
-		$message = print_r(get_option('wpt_listing_page'), true);
-		$message.= print_r($this->wp_theatre->listing_page->options, true);
-	
-		$this->assertInstanceOf(
-			'WP_Post',
-			$page,
-			$message
-		);
+		$this->assertInstanceOf('WP_Post',$this->wp_theatre->listing_page->page());
 	}
 	
 	function test_listing_appears_on_listing_page() {
-		$page = $this->wp_theatre->listing_page->page();
-	
-		$this->go_to( get_permalink( $page ) );
-	
-		$html = apply_filters('the_content',$page->post_content);
-		
+		$this->go_to( get_permalink( $this->wp_theatre->listing_page->page() ) );
+
 		$xml = new DomDocument;
-		$xml->loadHTML($html);
+		$xml->loadHTML( get_echo( 'the_content' ) );
 		$this->assertSelectCount('.wpt_listing', 1, $xml);		
 	}
 		
@@ -137,7 +127,23 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 	 * template 
 	 */
 
-	function test_listing_productions_on_listing_page() {
+	function test_productions_on_listing_page() {
+		$this->go_to( get_permalink( $this->wp_theatre->listing_page->page() ) );
+
+		$xml = new DomDocument;
+        $xml->loadHTML( get_echo( 'the_content' ) );
+        $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 5, $xml);		
+	}
+	
+	function test_events_on_listing_page() {
+		$this->options['listing_page_type'] = WPT_Event::post_type_name;
+		update_option('wpt_listing_page', $this->options);
+		
+		$this->go_to( get_permalink( $this->wp_theatre->listing_page->page() ) );
+
+		$xml = new DomDocument;
+        $xml->loadHTML( get_echo( 'the_content' ) );
+        $this->assertSelectCount('.wpt_events .wp_theatre_event', 4, $xml);		
 		
 	}
 	
