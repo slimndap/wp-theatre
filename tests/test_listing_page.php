@@ -170,7 +170,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		
 		$url = add_query_arg(
 			'wpt_month',
-			$months[0]
+			$months[0],
 			get_permalink( $this->wp_theatre->listing_page->page()
 		);
 		
