@@ -176,10 +176,17 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		
 		$this->go_to($url);
 		
-		$xml = new DomDocument;
-        $xml->loadHTML( get_echo( 'the_content' ) );
-        $this->assertSelectCount('.wpt_listing_filter_pagination.month', 1, $xml);
-        $this->assertSelectCount('.wp_theatre_event', true, $xml);
+        $matcher = array(
+			'tag'        => 'nav',
+			'attributes' => array('class' => 'wpt_listing_filter_pagination month')
+		);
+        $this->assertTag($matcher,  get_echo( 'the_content' ) );
+        
+        $matcher = array(
+			'tag'        => 'div',
+			'attributes' => array('class' => 'wp_theatre_event')
+		);
+        $this->assertTag($matcher,  get_echo( 'the_content' ) );
         
         	
 	}
