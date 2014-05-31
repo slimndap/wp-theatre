@@ -242,7 +242,7 @@ class WPT_Test extends WP_UnitTestCase {
         $this->assertTag($matcher, do_shortcode('[wpt_events]{{location|permalink}}[/wpt_events]'));
 	}
 
-	function test_shortcode_wpt_productions_with_custom_field() {
+	function test_wpt_productions_template_with_custom_field() {
 		$director = 'Steven Spielberg';
 	
 		update_post_meta(
@@ -256,8 +256,8 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertContains($director,$html);
 
 		$xml = new DomDocument;
-        $xml->loadHTML($html);
-        $this->assertSelectCount('.wpt_productions .wp_theatre_prod_director', 5, $xml);		
+		$xml->loadHTML($html);
+		$this->assertSelectCount('.wpt_productions .wp_theatre_prod_director', 5, $xml);		
 	}
 	
 	// Test event features
