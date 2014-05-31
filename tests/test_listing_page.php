@@ -132,7 +132,12 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 
 		$xml = new DomDocument;
         $xml->loadHTML( get_echo( 'the_content' ) );
-        $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 5, $xml);		
+
+		/*
+		 * Unlike [wpt_productions], listing page only shows productions with upcoming events.
+		 * Expected: 3 productions with upcoming events + 1 sticky production
+		 */
+        $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 4, $xml);		
 	}
 	
 	function test_events_on_listing_page() {
@@ -143,8 +148,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 
 		$xml = new DomDocument;
         $xml->loadHTML( get_echo( 'the_content' ) );
-        $this->assertSelectCount('.wpt_events .wp_theatre_event', 4, $xml);		
-		
+        $this->assertSelectCount('.wpt_events .wp_theatre_event', 4, $xml);			
 	}
 	
 	function test_listing_productions_are_paginated_by_day_on_listing_page() {
@@ -155,8 +159,29 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		
 	}
 	
-	function test_listing_productions_are_paginated_by_month_on_listing_page() {
+	function test_events_are_paginated_by_month_on_listing_page() {
+		$this->options['listing_page_type'] = WPT_Event::post_type_name;
+		$this->options['listing_page_nav'] = 'paginated';
+		$this->options['listing_page_groupby'] = 'month';
+		update_option('wpt_listing_page', $this->options);
+
+		$months = $this->wp_theatre->events->months();
+		$months = array_keys($months);
 		
+		$url = add_query_arg(
+			'wpt_month',
+			$months[0]
+			get_permalink( $this->wp_theatre->listing_page->page()
+		);
+		
+		$this->goto($url);
+		
+		$xml = new DomDocument;
+        $xml->loadHTML( get_echo( 'the_content' ) );
+        $this->assertSelectCount('.wpt_listing_filter_pagination.month', 1, $xml);
+        $this->assertSelectCount('.wp_theatre_event', true, $xml);
+        
+        	
 	}
 	
 	function test_listing_productions_are_paginated_by_year_on_listing_page() {
