@@ -174,7 +174,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 			get_permalink( $this->wp_theatre->listing_page->page() )
 		);
 		
-		$this->goto($url);
+		$this->go_to($url);
 		
 		$xml = new DomDocument;
         $xml->loadHTML( get_echo( 'the_content' ) );
