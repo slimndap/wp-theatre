@@ -121,8 +121,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 	
 		$this->go_to( get_permalink( $page ) );
 	
-		$content = $page->post_content;
-		$content = apply_filters('the_content',$content);
+		$html = apply_filters('the_content',$page->post_content);
 		
 		$xml = new DomDocument;
 		$xml->loadHTML($html);
