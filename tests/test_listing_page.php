@@ -195,7 +195,6 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 	
 	function test_productions_are_paginated_by_category_on_listing_page() {
 		flush_rewrite_rules();
-		if ( isset( $GLOBALS['wpt_category'] ) ) unset( $GLOBALS['wpt_category'] );
 		
 		$this->options['listing_page_nav'] = 'paginated';
 		$this->options['listing_page_groupby'] = 'category';
@@ -208,6 +207,9 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		);
 
 		$this->go_to($url);
+		
+
+		assertNotEmpty( get_query_var( 'wpt_category' ) );
 		
 		print_r($_GET);
 		
