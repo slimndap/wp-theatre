@@ -209,6 +209,8 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 
 		$this->go_to($url);
 		
+		print_r($_GET);
+		
 		$message = $url.get_echo( 'the_content' );
 		
         $matcher = array(
