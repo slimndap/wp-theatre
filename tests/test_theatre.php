@@ -180,9 +180,11 @@ class WPT_Test extends WP_UnitTestCase {
 	
 	// Test shortcodes
 	function test_shortcode_wpt_productions() {
+		$content = do_shortcode('[wpt_productions]');
+	
 		$xml = new DomDocument;
-        $xml->loadHTML(do_shortcode('[wpt_productions]'));
-        $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 5, $xml);		
+        $xml->loadHTML($content);
+        $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 5, $xml, $content);		
 	}
 	
 	function test_shortcode_wpt_productions_filter_season() {
