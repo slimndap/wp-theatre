@@ -165,7 +165,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		$this->options['listing_page_groupby'] = 'month';
 		update_option('wpt_listing_page', $this->options);
 
-		$months = $this->wp_theatre->events->months();
+		$months = $this->wp_theatre->events->months(array('upcoming' => true));
 		$months = array_keys($months);
 		
 		$url = add_query_arg(
