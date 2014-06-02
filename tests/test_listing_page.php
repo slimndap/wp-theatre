@@ -194,6 +194,8 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 	}
 	
 	function test_productions_are_paginated_by_category_on_listing_page() {
+		flush_rewrite_rules();
+		
 		$this->options['listing_page_nav'] = 'paginated';
 		$this->options['listing_page_groupby'] = 'category';
 		update_option('wpt_listing_page', $this->options);
