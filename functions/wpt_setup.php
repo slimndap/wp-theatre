@@ -178,8 +178,8 @@
 		}
 		
 		function query_vars( $vars ){
-			$vars[] = 'wpt_month';
-			$vars[] = 'wpt_category';
+			//$vars[] = 'wpt_month';
+			//$vars[] = 'wpt_category';
 			return $vars;
 		}
 
