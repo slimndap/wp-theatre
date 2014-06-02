@@ -82,6 +82,9 @@ class WPT_Test extends WP_UnitTestCase {
 		stick_post($this->production_with_upcoming_and_historic_events);
 		add_post_meta($this->upcoming_event_with_prices, '_wpt_event_tickets_price', 12);
 		add_post_meta($upcoming_event, 'tickets_status', WPT_Event::tickets_status_hidden );
+
+		unset( $GLOBALS['wpt_month'] );
+		unset( $GLOBALS['wpt_category'] );
 		
 	}
 

@@ -245,7 +245,7 @@ class WPT_Productions extends WPT_Listing {
 				'compare' => '>='
 			);
 		}
-		print_r($args);
+
 		$posts = get_posts($args);
 
 		// don't forget the stickies!
