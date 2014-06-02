@@ -186,7 +186,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 			'tag'        => 'div',
 			'attributes' => array('class' => 'wp_theatre_event')
 		);
-        $this->assertTag($matcher,  get_echo( 'the_content' ) );
+        $this->assertTag($matcher,  get_echo( 'the_content' ) , get_echo( 'the_content' ));
 	}
 	
 	function test_events_are_paginated_by_year_on_listing_page() {
@@ -208,24 +208,22 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 
 		$this->go_to($url);
 		
-
 		$this->assertNotEmpty( get_query_var( 'wpt_category' ) );
 		
-		$message = $url.get_echo( 'the_content' );
-		
+		$content = get_echo( 'the_content' );
+		$message = $content;
         $matcher = array(
 			'tag'        => 'div',
 			'attributes' => array('class' => 'wpt_listing wpt_productions'),
 			'children' => array(
 				'count' => 1,
 				'only' => array(
-					'attributes' => array(
-						'class' => 'wp_theatre_prod'
-					)
+					'tag' => 'div',
+					'attributes' => array('class' => 'wp_theatre_prod')
 				)
 			)
 		);
-        $this->assertTag($matcher,  get_echo( 'the_content' ), $message );
+        $this->assertTag($matcher,  $content, $message );
         
 	}
 
