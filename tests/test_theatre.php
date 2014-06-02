@@ -181,6 +181,7 @@ class WPT_Test extends WP_UnitTestCase {
 	// Test shortcodes
 	function test_shortcode_wpt_productions() {
 		$content = do_shortcode('[wpt_productions]');
+		print_r($content);
 	
 		$xml = new DomDocument;
         $xml->loadHTML($content);
