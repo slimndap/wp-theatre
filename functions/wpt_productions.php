@@ -132,6 +132,8 @@ class WPT_Productions extends WPT_Listing {
 		$production_args = array();
 		if (isset($args['template'])) { $production_args['template'] = $args['template']; }
 
+		print_r($filters);
+
 		switch ($args['groupby']) {
 			case 'season':
 				if (!in_array('season', $args['paginateby'])) {

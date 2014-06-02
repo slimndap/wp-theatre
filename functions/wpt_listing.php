@@ -29,7 +29,7 @@ class WPT_Listing {
 			
 				$url = remove_query_arg($query_var, $current_url);
 				$classes = array('wpt_listing_filter');
-				if ($slug != $args[$field]) {
+				if ($slug != $wp_query->query_vars[$query_var]) {
 					if (!$paginate) {
 						continue;
 					}
