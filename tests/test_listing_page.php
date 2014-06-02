@@ -211,8 +211,10 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 			'attributes' => array('class' => 'wpt_listing_filter_pagination category'),
 			'children' => array(
 				'count' => 1,
-				'attributes' => array(
-					'class' => 'wp_theatre_prod'
+				'only' => array(
+					'attributes' => array(
+						'class' => 'wp_theatre_prod'
+					)
 				)
 			)
 		);
