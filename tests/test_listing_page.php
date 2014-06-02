@@ -209,7 +209,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		$this->go_to($url);
 		
 
-		assertNotEmpty( get_query_var( 'wpt_category' ) );
+		$this->assertNotEmpty( get_query_var( 'wpt_category' ) );
 		
 		print_r($_GET);
 		
