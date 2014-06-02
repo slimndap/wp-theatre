@@ -206,6 +206,8 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 
 		$this->go_to($url);
 		
+		$message = $url.get_echo( 'the_content' );
+		
         $matcher = array(
 			'tag'        => 'div',
 			'attributes' => array('class' => 'wpt_listing wpt_productions'),
@@ -218,7 +220,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 				)
 			)
 		);
-        $this->assertTag($matcher,  get_echo( 'the_content' ) );
+        $this->assertTag($matcher,  get_echo( 'the_content' ), $message );
         
 	}
 
