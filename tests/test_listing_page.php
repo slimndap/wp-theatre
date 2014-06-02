@@ -160,8 +160,6 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 	}
 	
 	function test_events_are_paginated_by_month_on_listing_page() {
-		flush_rewrite_rules();
-
 		$this->options['listing_page_type'] = WPT_Event::post_type_name;
 		$this->options['listing_page_nav'] = 'paginated';
 		$this->options['listing_page_groupby'] = 'month';
@@ -178,17 +176,21 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		
 		$this->go_to($url);
 		
+		$content = get_echo( 'the_content' );
+		
+		$messgae = $url.$content;
+		
         $matcher = array(
 			'tag'        => 'nav',
 			'attributes' => array('class' => 'wpt_listing_filter_pagination month')
 		);
-        $this->assertTag($matcher,  get_echo( 'the_content' ) );
+        $this->assertTag($matcher,  $content, $message );
         
         $matcher = array(
 			'tag'        => 'div',
 			'attributes' => array('class' => 'wp_theatre_event')
 		);
-        $this->assertTag($matcher,  get_echo( 'the_content' ) , get_echo( 'the_content' ));
+        $this->assertTag($matcher,  $content , $message);
 	}
 	
 	function test_events_are_paginated_by_year_on_listing_page() {
@@ -196,8 +198,6 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 	}
 	
 	function test_productions_are_paginated_by_category_on_listing_page() {
-		flush_rewrite_rules();
-		
 		$this->options['listing_page_nav'] = 'paginated';
 		$this->options['listing_page_groupby'] = 'category';
 		update_option('wpt_listing_page', $this->options);

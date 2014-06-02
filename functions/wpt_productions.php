@@ -132,7 +132,6 @@ class WPT_Productions extends WPT_Listing {
 		/*
 		 * No stickies in paginated or grouped views
 		 */
-		
 		if (!empty($args['paginateby']) || !empty($args['groupby'])) {
 			$filters['ignore_sticky_posts'] = true;	
 		}
