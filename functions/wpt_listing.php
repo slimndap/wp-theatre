@@ -6,7 +6,7 @@ class WPT_Listing {
 
 	function filter_pagination($field, $options, $args=array()) {
 		global $wp_query;
-		
+		print_r($wp_query);		
 		$current_url = $_SERVER['REQUEST_URI'];
 		if (!empty($args['month'])) {
 			$current_url = add_query_arg('wpt_month',$args['month']);
