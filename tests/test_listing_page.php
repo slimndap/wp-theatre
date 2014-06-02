@@ -178,7 +178,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		
 		$content = get_echo( 'the_content' );
 		
-		$messgae = $url.$content;
+		$message = $url.$content;
 		
         $matcher = array(
 			'tag'        => 'nav',
