@@ -207,7 +207,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		$this->go_to($url);
 		
         $matcher = array(
-			'div'        => 'nav',
+			'tag'        => 'div',
 			'attributes' => array('class' => 'wpt_listing wpt_productions'),
 			'children' => array(
 				'count' => 1,
