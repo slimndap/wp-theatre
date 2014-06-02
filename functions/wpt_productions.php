@@ -129,16 +129,21 @@ class WPT_Productions extends WPT_Listing {
 		 */
 		$html.= $this->filter_pagination('category', $this->categories($filters), $args);
 		
+		/*
+		 * No stickies in paginated or grouped views
+		 */
+		
+		if (!empty($args['paginateby']) || !empty($args['groupby'])) {
+			$filters['ignore_sticky_posts'] = true;	
+		}
+		
 		$production_args = array();
 		if (isset($args['template'])) { $production_args['template'] = $args['template']; }
-
-		print_r($filters);
 
 		switch ($args['groupby']) {
 			case 'season':
 				if (!in_array('season', $args['paginateby'])) {
 					$seasons = $this->seasons();
-					$filters['ignore_sticky_posts'] = true;
 					foreach($seasons as  $title=>$season) {
 						$filters['season'] = $season->ID;
 						$productions = $this->get($filters);
@@ -154,7 +159,6 @@ class WPT_Productions extends WPT_Listing {
 			case 'category':
 				if (!in_array('category', $args['paginateby'])) {
 					$categories = $this->categories();
-					$filters['ignore_sticky_posts'] = true;
 					foreach($categories as $slug=>$name) {
 						if ($category = get_category_by_slug($slug)) {
 				  			$filters['category'] = $category->term_id;				
@@ -242,6 +246,7 @@ class WPT_Productions extends WPT_Listing {
 				'compare' => '>='
 			);
 		}
+		print_r($args);
 		$posts = get_posts($args);
 
 		// don't forget the stickies!

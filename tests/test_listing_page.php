@@ -211,8 +211,6 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 
 		$this->assertNotEmpty( get_query_var( 'wpt_category' ) );
 		
-		print_r($_GET);
-		
 		$message = $url.get_echo( 'the_content' );
 		
         $matcher = array(
