@@ -130,9 +130,14 @@ class WPT_Productions extends WPT_Listing {
 		$html.= $this->filter_pagination('category', $this->categories($filters), $args);
 		
 		/*
-		 * No stickies in paginated or grouped views
+		 * No stickies in filtered, paginated or grouped views
 		 */
-		if (!empty($args['paginateby']) || !empty($args['groupby'])) {
+		if (
+			!empty($args['paginateby']) || 
+			!empty($args['groupby']) ||
+			!empty($args['category']) ||
+			!empty($args['season'])
+		) {
 			$filters['ignore_sticky_posts'] = true;	
 		}
 		
@@ -147,7 +152,7 @@ class WPT_Productions extends WPT_Listing {
 						$filters['season'] = $season->ID;
 						$productions = $this->get($filters);
 						if (!empty($productions)) {
-							$html.= '<h3>'.$season->title().'</h3>';
+							$html.= '<h3 class="wpt_listing_group season">'.$season->title().'</h3>';
 							foreach ($productions as $production) {
 								$html.=$production->html($production_args);							
 							}
@@ -164,7 +169,7 @@ class WPT_Productions extends WPT_Listing {
 						}
 						$productions = $this->get($filters);
 						if (!empty($productions)) {
-							$html.= '<h3>'.$name.'</h3>';
+							$html.= '<h3 class="wpt_listing_group category">'.$name.'</h3>';
 							foreach ($productions as $production) {
 								$html.=$production->html($production_args);							
 							}							

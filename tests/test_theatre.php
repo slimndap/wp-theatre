@@ -7,7 +7,7 @@ class WPT_Test extends WP_UnitTestCase {
 		
 		parent::setUp();
 		
-		$this->wp_theatre = $wp_theatre;
+		$this->wp_theatre = new WP_Theatre();
 		
 		$season_args = array(
 			'post_type'=>WPT_Season::post_type_name
@@ -82,7 +82,7 @@ class WPT_Test extends WP_UnitTestCase {
 		stick_post($this->production_with_upcoming_and_historic_events);
 		add_post_meta($this->upcoming_event_with_prices, '_wpt_event_tickets_price', 12);
 		add_post_meta($upcoming_event, 'tickets_status', WPT_Event::tickets_status_hidden );
-
+		
 	}
 
 	function dump_events() {
@@ -177,27 +177,22 @@ class WPT_Test extends WP_UnitTestCase {
 	
 	// Test shortcodes
 	function test_shortcode_wpt_productions() {
-		global $wp_query;
-		$content = do_shortcode('[wpt_productions]');
-		print_r($wp_query->query_vars);
-		print_r($content);
-	
 		$xml = new DomDocument;
-        $xml->loadHTML($content);
-        $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 5, $xml, $content);		
+        $xml->loadHTML(do_shortcode('[wpt_productions]'));
+        $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 5, $xml);		
 	}
 	
 	function test_shortcode_wpt_productions_filter_season() {
 		$xml = new DomDocument;
         $xml->loadHTML(do_shortcode('[wpt_productions season="'.$this->season1.'"]'));
-        $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 3, $xml);				
+        $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 1, $xml);				
 	}
 
 	function test_shortcode_wpt_productions_filter_category() {
 		// test with mixed category-slug and category-id
 		$xml = new DomDocument;
         $xml->loadHTML(do_shortcode('[wpt_productions category="muziek,'.$this->category_film.'"]'));
-        $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 4, $xml);				
+        $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 2, $xml);				
 	}
 	
 	function test_shortcode_wpt_events() {
@@ -247,7 +242,7 @@ class WPT_Test extends WP_UnitTestCase {
         $this->assertTag($matcher, do_shortcode('[wpt_events]{{location|permalink}}[/wpt_events]'));
 	}
 
-	function test_wpt_productions_template_with_custom_field() {
+	function test_shortcode_wpt_productions_with_custom_field() {
 		$director = 'Steven Spielberg';
 	
 		update_post_meta(
@@ -261,8 +256,8 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertContains($director,$html);
 
 		$xml = new DomDocument;
-		$xml->loadHTML($html);
-		$this->assertSelectCount('.wpt_productions .wp_theatre_prod_director', 5, $xml);		
+        $xml->loadHTML($html);
+        $this->assertSelectCount('.wpt_productions .wp_theatre_prod_director', 5, $xml);		
 	}
 	
 	// Test event features
@@ -396,7 +391,7 @@ class WPT_Test extends WP_UnitTestCase {
 		);
 		
 		$xml = new DomDocument;
-        $xml->loadHTML($this->wp_theatre->transient->get('prods',$args));
+        $xml->loadHTML($this->wp_theatre->transient->get('p',$args));
         $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 5, $xml);		
 		
 	}
@@ -409,14 +404,14 @@ class WPT_Test extends WP_UnitTestCase {
 			'past' => false,
 			'paginateby'=>array(),
 			'category'=> false,
-			'month' => false,
+			'month'=> false,
 			'season'=> false,
 			'groupby'=>false,
 			'limit'=>false
 		);
 		
 		$xml = new DomDocument;
-        $xml->loadHTML($this->wp_theatre->transient->get('events',$args));
+        $xml->loadHTML($this->wp_theatre->transient->get('e',$args));
         $this->assertSelectCount('.wpt_events .wp_theatre_event', 4, $xml);				
 	}
 	
@@ -467,6 +462,17 @@ class WPT_Test extends WP_UnitTestCase {
 		$xml = new DomDocument;
         $xml->loadXML($this->wp_theatre->feeds->get_upcoming_events());
         $this->assertSelectCount('rss channel item', 4, $xml);
+		
+	}
+	
+	// Sticky posts
+	
+	function test_ignore_sticky_posts() {
+		$args = array(
+			'upcoming' => TRUE,
+			'ignore_sticky_posts' => TRUE
+		);
+		$this->assertCount(3, $this->wp_theatre->productions->load($args));		
 		
 	}
 	

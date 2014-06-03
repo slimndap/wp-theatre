@@ -373,6 +373,7 @@ class WPT_Production {
 		$args = wp_parse_args( $args, $defaults );
 
 		if (!isset($this->summary)) {
+			$this->summary = '';
 			if ($this->dates()!='') {
 				$short = $this->dates();
 				if ($this->cities()!='') {

@@ -191,9 +191,9 @@ class WPT_Frontend {
 
 		$wp_theatre->events->filters['upcoming'] = true;
 
-		if ( ! ( $html = $wp_theatre->transient->get('events', array_merge($atts, $_GET)) ) ) {
+		if ( ! ( $html = $wp_theatre->transient->get('e', array_merge($atts, $_GET)) ) ) {
 			$html = $wp_theatre->events->html($atts);
-			$wp_theatre->transient->set('events', array_merge($atts, $_GET), $html);
+			$wp_theatre->transient->set('e', array_merge($atts, $_GET), $html);
 		}
 		return $html;
 	}
@@ -245,9 +245,9 @@ class WPT_Frontend {
 			$atts['template'] = html_entity_decode($content);
 		}
 
-		if ( ! ( $html = $wp_theatre->transient->get('prods', array_merge($atts, $_GET)) ) ) {
+		if ( ! ( $html = $wp_theatre->transient->get('p', array_merge($atts, $_GET)) ) ) {
 			$html = $wp_theatre->productions->html($atts);
-			$wp_theatre->transient->set('prods', array_merge($atts, $_GET), $html);
+			$wp_theatre->transient->set('p', array_merge($atts, $_GET), $html);
 		}
 
 		return $html;

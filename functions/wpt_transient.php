@@ -17,7 +17,7 @@
 		}
 		
 		function get($name, $args) {
-			$key = 'wpt_'.$name.'_'.md5(serialize($args));
+			$key = 'wpt'.$name.md5(serialize($args));
 			return get_transient($key);
 		}
 		
@@ -43,7 +43,7 @@
 		}
 
 		function set($name, $args, $value) {
-			$key = 'wpt_'.$name.'_'.md5(serialize($args));
+			$key = 'wpt'.$name.md5(serialize($args));
 			set_transient($key, $value, 10 * MINUTE_IN_SECONDS );
 		}
 		

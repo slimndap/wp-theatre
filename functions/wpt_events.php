@@ -113,7 +113,7 @@ class WPT_Events extends WPT_Listing {
 						$filters['month'] = $month;
 						$events = $this->get($filters);
 						if (!empty($events)) {
-							$html.= '<h3>'.date_i18n('F',strtotime($month)).'</h3>';
+							$html.= '<h3 class="wpt_listing_group month">'.date_i18n('F',strtotime($month)).'</h3>';
 							foreach ($events as $event) {
 								$html.=$event->html($event_args);							
 							}
@@ -130,7 +130,7 @@ class WPT_Events extends WPT_Listing {
 						}
 						$events = $this->get($filters);
 						if (!empty($events)) {
-							$html.= '<h3>'.$name.'</h3>';
+							$html.= '<h3 class="wpt_listing_group category">'.$name.'</h3>';
 							foreach ($events as $event) {
 								$html.=$event->html($event_args);							
 							}							

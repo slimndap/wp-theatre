@@ -176,21 +176,11 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		
 		$this->go_to($url);
 		
-		$content = get_echo( 'the_content' );
-		
-		$message = $url.$content;
-		
-        $matcher = array(
-			'tag'        => 'nav',
-			'attributes' => array('class' => 'wpt_listing_filter_pagination month')
-		);
-        $this->assertTag($matcher,  $content, $message );
-        
-        $matcher = array(
-			'tag'        => 'div',
-			'attributes' => array('class' => 'wp_theatre_event')
-		);
-        $this->assertTag($matcher,  $content , $message);
+		$xml = new DomDocument();
+		libxml_use_internal_errors(true);
+		$xml->loadHTML(get_echo( 'the_content' ));
+        $this->assertSelectCount('.wpt_listing_filter_pagination.month', 1, $xml);			
+        $this->assertSelectCount('.wpt_events .wp_theatre_event', true, $xml);			
 	}
 	
 	function test_events_are_paginated_by_year_on_listing_page() {
@@ -210,25 +200,32 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 
 		$this->go_to($url);
 		
-		$this->assertNotEmpty( get_query_var( 'wpt_category' ) );
-		
-		$content = get_echo( 'the_content' );
-		$message = $content;
-		
-        $matcher = array(
-			'tag'        => 'div',
-			'attributes' => array('class' => 'wpt_listing wpt_productions')
-		);
-        $this->assertTag($matcher,  $content, $message );
-        
-        $matcher = array(
-			'tag'        => 'div',
-			'attributes' => array('class' => 'wp_theatre_prod')
-		);
-        $this->assertTag($matcher,  $content , $message);
+		$xml = new DomDocument();
+		libxml_use_internal_errors(true);
+		$xml->loadHTML(get_echo( 'the_content' ));
+        $this->assertSelectCount('.wpt_listing_filter_pagination.category', 1, $xml);			
+        $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 1, $xml);			
 	}
 
 	function test_events_are_paginated_by_category_on_listing_page() {
+		$this->options['listing_page_type'] = WPT_Event::post_type_name;
+		$this->options['listing_page_nav'] = 'paginated';
+		$this->options['listing_page_groupby'] = 'category';
+		update_option('wpt_listing_page', $this->options);
+
+		$url = add_query_arg(
+			'wpt_category',
+			$this->category_film,
+			get_permalink( $this->wp_theatre->listing_page->page() )
+		);
+
+		$this->go_to($url);
+		
+		$xml = new DomDocument();
+		libxml_use_internal_errors(true);
+		$xml->loadHTML(get_echo( 'the_content' ));
+        $this->assertSelectCount('.wpt_listing_filter_pagination.category', 1, $xml);			
+        $this->assertSelectCount('.wpt_events .wp_theatre_event', 2, $xml);			
 		
 	}
 
@@ -241,19 +238,73 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 	}
 	
 	function test_events_are_grouped_by_month_on_listing_page() {
-		
+		$this->options['listing_page_type'] = WPT_Event::post_type_name;
+		$this->options['listing_page_nav'] = 'grouped';
+		$this->options['listing_page_groupby'] = 'month';
+		update_option('wpt_listing_page', $this->options);
+
+		$this->go_to(
+			get_permalink($this->wp_theatre->listing_page->page())
+		);
+
+		$xml = new DomDocument();
+		libxml_use_internal_errors(true);
+		$xml->loadHTML(get_echo( 'the_content' ));
+
+        $this->assertSelectCount('.wpt_listing_group.month', true, $xml);					
 	}
 	
 	function test_events_are_grouped_by_year_on_listing_page() {
 		
 	}
 	
+	function test_productions_are_grouped_by_season_on_listing_page() {
+		$this->options['listing_page_nav'] = 'grouped';
+		$this->options['listing_page_groupby'] = 'season';
+		update_option('wpt_listing_page', $this->options);
+
+		$this->go_to(
+			get_permalink($this->wp_theatre->listing_page->page())
+		);
+
+		$xml = new DomDocument();
+		libxml_use_internal_errors(true);
+		$xml->loadHTML(get_echo( 'the_content' ));
+
+        $this->assertSelectCount('.wpt_listing_group.season', 2, $xml);							
+	}
+	
 	function test_productions_are_grouped_by_category_on_listing_page() {
-		
+		$this->options['listing_page_nav'] = 'grouped';
+		$this->options['listing_page_groupby'] = 'category';
+		update_option('wpt_listing_page', $this->options);
+
+		$this->go_to(
+			get_permalink($this->wp_theatre->listing_page->page())
+		);
+
+		$xml = new DomDocument();
+		libxml_use_internal_errors(true);
+		$xml->loadHTML(get_echo( 'the_content' ));
+
+        $this->assertSelectCount('.wpt_listing_group.category', 2, $xml);							
 	}
 	
 	function test_events_are_grouped_by_category_on_listing_page() {
-		
+		$this->options['listing_page_type'] = WPT_Event::post_type_name;
+		$this->options['listing_page_nav'] = 'grouped';
+		$this->options['listing_page_groupby'] = 'category';
+		update_option('wpt_listing_page', $this->options);
+
+		$this->go_to(
+			get_permalink($this->wp_theatre->listing_page->page())
+		);
+
+		$xml = new DomDocument();
+		libxml_use_internal_errors(true);
+		$xml->loadHTML(get_echo( 'the_content' ));
+
+        $this->assertSelectCount('.wpt_listing_group.category', 2, $xml);					
 	}
 	
 	function test_events_are_filtered_by_day_on_listing_page() {
@@ -265,7 +316,29 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 	}
 	
 	function test_events_are_filtered_by_month_on_listing_page() {
+		$this->options['listing_page_type'] = WPT_Event::post_type_name;
+		update_option('wpt_listing_page', $this->options);
+
+		$months = $this->wp_theatre->events->months(array('upcoming' => true));
+		$months = array_keys($months);
 		
+		$url = add_query_arg(
+			'wpt_month',
+			$months[0],
+			get_permalink( $this->wp_theatre->listing_page->page() )
+		);
+		
+		$this->go_to($url);
+
+		$xml = new DomDocument();
+		libxml_use_internal_errors(true);
+		$xml->loadHTML(get_echo( 'the_content' ));
+		
+		// Is the active filter shown?
+        $this->assertSelectCount('.wpt_listing_filter_active a', 1, $xml);			
+        
+		// Are the filtered events shown?
+        $this->assertSelectCount('.wpt_listing.wpt_events .wp_theatre_event', true, $xml);			
 	}
 	
 	function test_events_are_filtered_by_year_on_listing_page() {
@@ -273,10 +346,49 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 	}
 	
 	function test_productions_are_filtered_by_category_on_listing_page() {
+		update_option('wpt_listing_page', $this->options);
+
+		$url = add_query_arg(
+			'wpt_category',
+			$this->category_film,
+			get_permalink( $this->wp_theatre->listing_page->page() )
+		);
+
+		$this->go_to($url);
+		
+		$xml = new DomDocument();
+		libxml_use_internal_errors(true);
+		$xml->loadHTML(get_echo( 'the_content' ));
+
+		// Is the active filter shown?
+        $this->assertSelectCount('.wpt_listing_filter_active a', 1, $xml);			
+        
+		// Are the filtered events shown?
+        $this->assertSelectCount('.wpt_listing.wpt_productions .wp_theatre_prod', 1, $xml);			
 		
 	}
 	
 	function test_events_are_filtered_by_category_on_listing_page() {
+		$this->options['listing_page_type'] = WPT_Event::post_type_name;
+		update_option('wpt_listing_page', $this->options);
+
+		$url = add_query_arg(
+			'wpt_category',
+			$this->category_film,
+			get_permalink( $this->wp_theatre->listing_page->page() )
+		);
+
+		$this->go_to($url);
+		
+		$xml = new DomDocument();
+		libxml_use_internal_errors(true);
+		$xml->loadHTML(get_echo( 'the_content' ));
+
+		// Is the active filter shown?
+        $this->assertSelectCount('.wpt_listing_filter_active a', 1, $xml);			
+        
+		// Are the filtered events shown?
+        $this->assertSelectCount('.wpt_listing.wpt_events .wp_theatre_event', 2, $xml);			
 		
 	}
 	
