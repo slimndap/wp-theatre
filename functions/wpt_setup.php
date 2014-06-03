@@ -177,9 +177,14 @@
 			load_plugin_textdomain('wp_theatre', false, dirname( plugin_basename( __FILE__ ) ) . '/../lang/' );
 		}
 		
+		/* 
+		 * Add listing filters to public query vars
+		 * Eg. $wp_query->query_vars['wpt_category']
+		 */
+		
 		function query_vars( $vars ){
-			//$vars[] = 'wpt_month';
-			//$vars[] = 'wpt_category';
+			$vars[] = 'wpt_month';
+			$vars[] = 'wpt_category';
 			return $vars;
 		}
 
