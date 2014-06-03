@@ -29,7 +29,7 @@ class WPT_Listing {
 			
 				$url = remove_query_arg($query_var, $current_url);
 				$classes = array('wpt_listing_filter');
-				if ($slug != $wp_query->query_vars[$query_var]) {
+				if ($slug != $args[$field]) {
 					if (!$paginate) {
 						continue;
 					}
@@ -42,7 +42,7 @@ class WPT_Listing {
 				$html.= '<span class="'.implode(' ',$classes).'"><a href="'.$url.'">'.$name.'</a></span>';
 			}
 
-			$html = '<nav class="wpt_listing_filter_pagination '.$field.'">'.$html.'</nav>';
+			$html = '<div class="wpt_listing_filter_pagination '.$field.'">'.$html.'</div>';
 
 		}
 		
