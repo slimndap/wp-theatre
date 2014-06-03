@@ -1,7 +1,6 @@
 language: php
 
 php:
-    - 5.2
     - 5.3
     - 5.4
 
@@ -12,8 +11,6 @@ env:
     - WP_VERSION=3.8 WP_MULTISITE=1
 
 before_script:
-    - mysql -u root --password=root -e "CREATE DATABASE IF NOT EXISTS wpt_test"
-    - mysql -u root --password=root -e "GRANT ALL PRIVILEGES ON wpt_test.* TO wp@localhost IDENTIFIED BY 'wp';"
-    - bash bin/install-wp-tests.sh wpt_test wp 'wp' localhost $WP_VERSION 
+    - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION 
 
 script: phpunit
