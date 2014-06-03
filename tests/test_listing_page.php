@@ -176,11 +176,13 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		
 		$this->go_to($url);
 		
+		$html = get_echo( 'the_content' );
+		
 		$xml = new DomDocument();
 		libxml_use_internal_errors(true);
-		$xml->loadHTML(get_echo( 'the_content' ));
-        $this->assertSelectCount('.wpt_listing_filter_pagination.month', 1, $xml);			
-        $this->assertSelectCount('.wpt_events .wp_theatre_event', true, $xml);			
+		$xml->loadHTML($html);
+        $this->assertSelectCount('.wpt_listing_filter_pagination.month', 1, $xml, $html);			
+        $this->assertSelectCount('.wpt_events .wp_theatre_event', true, $xml, $html);			
 	}
 	
 	function test_events_are_paginated_by_year_on_listing_page() {
