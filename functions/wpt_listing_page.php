@@ -376,7 +376,9 @@
 	 			is_page($this->page->ID)
 	 		) {
 		 		$url_parts = parse_url($url);
-		 		$url = $this->url($url_parts['query']);
+		 		if (!empty($url_parts['query'])) {
+			 		$url = $this->url($url_parts['query']);		 		
+		 		}
 	 		}
 		 	return $url;
 	 	}
