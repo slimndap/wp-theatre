@@ -181,7 +181,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		$xml = new DomDocument();
 		libxml_use_internal_errors(true);
 		$xml->loadHTML($html);
-        $this->assertSelectCount('.wpt_listing_filter_pagination.month', 1, $xml, $html);			
+        $this->assertSelectCount('.wpt_listing_filter_pagination', 1, $xml, $html);			
         $this->assertSelectCount('.wpt_events .wp_theatre_event', true, $xml, $html);			
 	}
 	
@@ -205,7 +205,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		$xml = new DomDocument();
 		libxml_use_internal_errors(true);
 		$xml->loadHTML(get_echo( 'the_content' ));
-        $this->assertSelectCount('.wpt_listing_filter_pagination.category', 1, $xml);			
+        $this->assertSelectCount('.wpt_listing_filter_pagination', 1, $xml);			
         $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 1, $xml);			
 	}
 
@@ -226,7 +226,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		$xml = new DomDocument();
 		libxml_use_internal_errors(true);
 		$xml->loadHTML(get_echo( 'the_content' ));
-        $this->assertSelectCount('.wpt_listing_filter_pagination.category', 1, $xml);			
+        $this->assertSelectCount('.wpt_listing_filter_pagination', 1, $xml);			
         $this->assertSelectCount('.wpt_events .wp_theatre_event', 2, $xml);			
 		
 	}
