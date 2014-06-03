@@ -39,7 +39,7 @@ class WPT_Listing {
 				}
 				
 				$url = apply_filters('wpt_listing_filter_pagination_url', $url);
-				$html.= '<span class="'.implode(' ',$classes).'"><a href="'.$url.'">'.$name.'</a></span>';
+				$html.= '<span class="'.implode(' ',$classes).'"><a href="'.htmlentities($url).'">'.$name.'</a></span> ';
 			}
 
 			$html = '<div class="wpt_listing_filter_pagination '.$field.'">'.$html.'</div>';
