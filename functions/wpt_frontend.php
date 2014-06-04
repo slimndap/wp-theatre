@@ -83,25 +83,6 @@ class WPT_Frontend {
 		
 		if (is_singular(WPT_Production::post_type_name)) {
 			if (
-				isset( $wp_theatre->options['show_events'] ) &&
-				in_array($wp_theatre->options['show_events'], array('above','below'))
-			) {
-				$production = new WPT_Production();			
-				$events_html = '<h3>'.WPT_Event::post_type()->labels->name.'</h3>';
-				$events_html.= '[wpt_production_events]{{remark}} {{datetime}} {{location}} {{tickets}}[/wpt_production_events]';
-				
-				switch ($wp_theatre->options['show_events']) {
-					case 'above' :
-						$content = $events_html.$content;
-						break;
-					case 'below' :
-						$content.= $events_html;
-				}
-			}
-		}
-		
-		if (is_singular(WPT_Production::post_type_name)) {
-			if (
 				isset( $wp_theatre->options['show_season_events'] ) &&
 				in_array($wp_theatre->options['show_season_events'], array('above','below'))
 			) {

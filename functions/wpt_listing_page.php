@@ -22,10 +22,10 @@
 			add_action( "update_option_wpt_listing_page", array($this,'reset'));
 
 			$this->options = get_option('wpt_listing_page');
-
 	 	}
 	 	
 	 	function admin_init() {
+	 		global $wp_theatre;
 
 		 	/*
 		 	 * Flush rewrite rules after option's values have been updated.
@@ -42,62 +42,69 @@
 	            array($this,'sanitize_option_values') // A callback function that sanitizes the option's value.
 	        );
 	        
-	 		if (!empty($_GET['tab']) && $_GET['tab']=='wpt_listing_page') {    
+	 		if ($wp_theatre->admin->tab=='wpt_listing_page') {    
 
 		        add_settings_section(
 		            'wpt_listing_page_page', // ID
-		            __('Page'), // Title
+		            __('Upcoming events','wp_theatre'), // Title
 		            '', // Callback
 		            'wpt_listing_page' // Page
 		        );  
 
 		        add_settings_field(
 		            'wpt_listing_page_post_id', // ID
-		            __('Upcoming events page','wp_theatre'), // Title 
+		            __('Page to show upcoming events on','wp_theatre'), // Title 
 		            array( $this, 'settings_field_wpt_listing_page_post_id' ), // Callback
 		            'wpt_listing_page', // Page
 		            'wpt_listing_page_page' // Section           
 		        );
 
-		        add_settings_section(
-		            'wpt_listing_page_display', // ID
-		            __('Display options','wp_theatre'), // Title
-		            '', // Callback
-		            'wpt_listing_page' // Page
-		        );  
-
 		        add_settings_field(
 		            'wpt_listing_page_position', // ID
-		            __('Insert listing','wp_theatre'), // Title 
+		            __('Position on page','wp_theatre'), // Title 
 		            array( $this, 'settings_field_wpt_listing_page_position' ), // Callback
 		            'wpt_listing_page', // Page
-		            'wpt_listing_page_display' // Section           
+		            'wpt_listing_page_page' // Section           
 		        );
 		        
 		        add_settings_field(
 		            'wpt_listing_page_type', // ID
-		            __('Show events as','wp_theatre'), // Title 
+		            __('Show as','wp_theatre'), // Title 
 		            array( $this, 'settings_field_wpt_listing_page_type' ), // Callback
 		            'wpt_listing_page', // Page
-		            'wpt_listing_page_display' // Section           
+		            'wpt_listing_page_page' // Section           
 		        );
 		        
 		        add_settings_field(
-		            'wpt_listing_page_nav', // ID
-		            __('Arrange events as','wp_theatre'), // Title 
-		            array( $this, 'settings_field_wpt_listing_page_nav' ), // Callback
+		            'wpt_listing_page_nav_events', // ID
+		            __('Arrange the events','wp_theatre'), // Title 
+		            array( $this, 'settings_field_wpt_listing_page_nav_events' ), // Callback
 		            'wpt_listing_page', // Page
-		            'wpt_listing_page_display' // Section           
+		            'wpt_listing_page_page' // Section           
 		        );
 		        
 		        add_settings_field(
-		            'wpt_listing_page_groupby', // ID
-		            __('Group/paginate events by','wp_theatre'), // Title 
-		            array( $this, 'settings_field_wpt_listing_page_groupby' ), // Callback
+		            'wpt_listing_page_nav_productions', // ID
+		            __('Arrange the productions','wp_theatre'), // Title 
+		            array( $this, 'settings_field_wpt_listing_page_nav_productions' ), // Callback
 		            'wpt_listing_page', // Page
-		            'wpt_listing_page_display' // Section           
+		            'wpt_listing_page_page' // Section           
 		        );
 		        
+		        add_settings_section(
+		            'wpt_listing_production_page', // ID
+		            __('Events on production pages','wp_theatre'), // Title
+		            '', // Callback
+		            'wpt_listing_page' // Page
+		        );  
+		
+		        add_settings_field(
+		            'settings_field_show_events', // ID
+		            __('Position on page','wp_theatre'), // Title 
+		            array( $this, 'settings_field_wpt_listing_page_position_on_production_page' ), // Callback
+		            'wpt_listing_page', // Page
+		            'wpt_listing_production_page' // Section           
+		        );
 			}
 		 	
 	 	}
@@ -144,10 +151,6 @@
 					'top'
 				);
 			}
-			
-			global $wp_rewrite;
-			$wp_rewrite->flush_rules();
-
 			
 	 	}
 	 	
@@ -197,14 +200,80 @@
 		 	return $this->page;
 	 	}
 	 	
-	 	/*
-	 	 * Set a transient every time the option's values are updated, 
-	 	 * so the rewrite rules can be flushed on the next page load.
-	 	 * @see admin_init()
-	 	 */
 	 	 
 	 	function sanitize_option_values($input) {
+
+		 	/*
+		 	 * Set a transient every time the option's values are updated, 
+		 	 * so the rewrite rules can be flushed on the next page load.
+		 	 * @see admin_init()
+		 	 */
 		 	set_transient('wpt_listing_page_flush_rules');
+		 	
+		 	// listing page nav
+		 	if (!empty($input['listing_page_type']) && $input['listing_page_type']==WPT_Production::post_type_name) {
+			 	// Show as productions
+			 	$valid = false;
+			 	
+			 	if (
+			 		!empty($input['listing_page_nav_productions']) &&
+			 		$input['listing_page_nav_productions'] == 'grouped' &&
+			 		!empty($input['listing_page_nav_productions_grouped'])
+			 	) {
+				 	$input['listing_page_nav'] = 'grouped';
+				 	$input['listing_page_groupby'] = $input['listing_page_nav_productions_grouped'];
+				 	$valid = true;
+			 	}
+			 	
+			 	if (
+			 		!empty($input['listing_page_nav_productions']) &&
+			 		$input['listing_page_nav_productions'] == 'paginated' &&
+			 		!empty($input['listing_page_nav_productions_paginated'])
+			 	) {
+				 	$input['listing_page_nav'] = 'paginated';
+				 	$input['listing_page_groupby'] = $input['listing_page_nav_productions_paginated'];
+				 	$valid = true;
+			 	}
+			 	
+			 	if (!$valid) {
+				 	unset($input['listing_page_nav_productions']);
+				 	unset($input['listing_page_nav_productions_grouped']);
+				 	unset($input['listing_page_nav_productions_paginated']);
+				}
+			 	
+		 	} else {
+			 	// Show as events
+			 	$input['listing_page_type'] = WPT_Event::post_type_name;
+			 	
+			 	$valid = false;
+			 	
+			 	if (
+			 		!empty($input['listing_page_nav_events']) &&
+			 		$input['listing_page_nav_events'] == 'grouped' &&
+			 		!empty($input['listing_page_nav_events_grouped'])
+			 	) {
+				 	$input['listing_page_nav'] = 'grouped';
+				 	$input['listing_page_groupby'] = $input['listing_page_nav_events_grouped'];
+				 	$valid = true;
+			 	}
+			 	
+			 	if (
+			 		!empty($input['listing_page_nav_events']) &&
+			 		$input['listing_page_nav_events'] == 'paginated' &&
+			 		!empty($input['listing_page_nav_events_paginated'])
+			 	) {
+				 	$input['listing_page_nav'] = 'paginated';
+				 	$input['listing_page_groupby'] = $input['listing_page_nav_events_paginated'];
+				 	$valid = true;
+			 	}
+			 	
+			 	if (!$valid) {
+				 	unset($input['listing_page_nav_events']);
+				 	unset($input['listing_page_nav_events_grouped']);
+				 	unset($input['listing_page_nav_events_paginated']);
+				}
+		 	}
+
 		 	return $input;
 	 	}
 	 	
@@ -222,13 +291,12 @@
 				echo '>'.$page->post_title.'</option>';
 			}
 			echo '</select>';
-			echo '<p class="description">'.__('Select the page that shows your upcoming productions or events.','wp_theatre').'</p>';
 	 	}
 	 	
 	    public function settings_field_wpt_listing_page_position() {
 			$options = array(
-				'above' => __('above content','wp_theatre'),
-				'below' => __('below content','wp_theatre'),
+				'above' => __('show above content','wp_theatre'),
+				'below' => __('show below content','wp_theatre'),
 				'not' => __('manually, using <code>'.$this->shortcode($this->options).'</code> shortcode','wp_theatre')
 			);
 			
@@ -236,6 +304,29 @@
 				echo '<label>';
 				echo '<input type="radio" name="wpt_listing_page[listing_page_position]" value="'.$key.'"';
 				if (!empty($this->options['listing_page_position']) && $key==$this->options['listing_page_position']) {
+					echo ' checked="checked"';
+				}
+				echo '>'.$value.'</option>';
+				echo '</label>';
+				echo '<br />';
+			}
+	    }
+	    
+	    public function settings_field_wpt_listing_page_position_on_production_page() {
+			$options = array(
+				'above' => __('show above content','wp_theatre'),
+				'below' => __('show below content','wp_theatre'),
+				'' => __('manually, using <code>[wpt_production_events]</code> shortcode','wp_theatre')
+			);
+			
+			foreach($options as $key=>$value) {
+				$checked = 
+					(!empty($this->options['listing_page_position_on_production_page']) && $key==$this->options['listing_page_position_on_production_page']) ||
+					(empty($this->options['listing_page_position_on_production_page']) && empty($key));
+			
+				echo '<label>';
+				echo '<input type="radio" name="wpt_listing_page[listing_page_position_on_production_page]" value="'.$key.'"';
+				if ($checked) {
 					echo ' checked="checked"';
 				}
 				echo '>'.$value.'</option>';
@@ -262,23 +353,100 @@
 			}
 	    }
 	    
-	    public function settings_field_wpt_listing_page_nav() {
-			$options = array(
-				'plain' => __('a plain list','wp_theatre'),
-				'grouped' => __('a grouped list','wp_theatre'),
-				'paginated' => __('a paginated list','wp_theatre')
+	    public function settings_field_wpt_listing_page_nav_events() {
+			$options_groupby = array(
+				'month' => __('month','wp_theatre'),
+				'category' => __('category','wp_theatre')
 			);
 			
+			$options = array(
+				'' => __('as a plain list','wp_theatre'),
+				'grouped' => __('grouped by','wp_theatre'),
+				'paginated' => __('paginate by','wp_theatre')
+			);
+			
+			echo '<div id="listing_page_nav_events" class="wpt_settings_radio_with_selects">';
+			
 			foreach($options as $key=>$value) {
-				echo '<label>';
-				echo '<input type="radio" name="wpt_listing_page[listing_page_nav]" value="'.$key.'"';
-				if (!empty($this->options['listing_page_nav']) && $key==$this->options['listing_page_nav']) {
+
+				$checked = 
+					(!empty($this->options['listing_page_nav_events']) && $key==$this->options['listing_page_nav_events']) ||
+					(empty($this->options['listing_page_nav_events']) && empty($key));
+				
+				
+				echo '<input type="radio" id="listing_page_nav_events_'.$key.'" name="wpt_listing_page[listing_page_nav_events]" value="'.$key.'"';
+				if ($checked) {
 					echo ' checked="checked"';
 				}
-				echo '>'.$value.'</option>';
-				echo '</label>';
+				echo '>';
+				
+				echo '<label for="listing_page_nav_events_'.$key.'">'.$value.'</label>';
+				if (!empty($key)) {
+					echo ' <select name="wpt_listing_page[listing_page_nav_events_'.$key.']"><option />';
+					foreach($options_groupby as $groupby_key=>$groupby_value) {
+						echo '<option value="'.$groupby_key.'"';
+						if ($checked) {
+							if (!empty($this->options['listing_page_groupby']) && $groupby_key==$this->options['listing_page_groupby']) {
+								echo ' selected="selected"';
+							}
+						}
+						echo '>';
+						echo $groupby_value;
+						echo '</option>';
+					}
+					echo '</select>';
+				}
 				echo '<br />';
 			}
+			
+			echo '</div>';
+	    }
+	    
+	    public function settings_field_wpt_listing_page_nav_productions() {
+			$options_groupby = array(
+				'category' => __('category','wp_theatre')
+			);
+			
+			$options = array(
+				'' => __('as a plain list','wp_theatre'),
+				'grouped' => __('grouped by','wp_theatre'),
+				'paginated' => __('paginate by','wp_theatre')
+			);
+			
+			echo '<div id="listing_page_nav_productions" class="wpt_settings_radio_with_selects">';
+
+			foreach($options as $key=>$value) {
+
+				$checked = 
+					(!empty($this->options['listing_page_nav_productions']) && $key==$this->options['listing_page_nav_productions']) ||
+					(empty($this->options['listing_page_nav_productions']) && empty($key));
+				
+				
+				echo '<input type="radio" id="listing_page_nav_productions_'.$key.'" name="wpt_listing_page[listing_page_nav_productions]" value="'.$key.'"';
+				if ($checked) {
+					echo ' checked="checked"';
+				}
+				echo '>';
+				
+				echo '<label for="listing_page_nav_productions_'.$key.'">'.$value.'</label>';
+				if (!empty($key)) {
+					echo ' <select name="wpt_listing_page[listing_page_nav_productions_'.$key.']"><option />';
+					foreach($options_groupby as $groupby_key=>$groupby_value) {
+						echo '<option value="'.$groupby_key.'"';
+						if ($checked) {
+							if (!empty($this->options['listing_page_groupby']) && $groupby_key==$this->options['listing_page_groupby']) {
+								echo ' selected="selected"';
+							}
+						}
+						echo '>';
+						echo $groupby_value;
+						echo '</option>';
+					}
+					echo '</select>';
+				}
+				echo '<br />';
+			}
+			echo '</div>';
 	    }
 	    
 	    public function settings_field_wpt_listing_page_groupby() {
@@ -302,6 +470,7 @@
 	    
 	 	function the_content($content) {
 	 		global $wp_theatre;
+	 		
 	 		if ($this->page() && is_page($this->page->ID)) {
 	 			if (!empty($this->options['listing_page_position'])) {
 		 			switch($this->options['listing_page_position']) {
@@ -314,6 +483,26 @@
 		 			}
 	 			}
 	 		}
+	 		
+			if (is_singular(WPT_Production::post_type_name)) {
+				if (
+					isset( $this->options['listing_page_position_on_production_page'] ) &&
+					in_array($this->options['listing_page_position_on_production_page'], array('above','below'))
+				) {
+					$production = new WPT_Production();			
+					$events_html = '<h3>'.WPT_Event::post_type()->labels->name.'</h3>';
+					$events_html.= '[wpt_production_events]{{remark}} {{datetime}} {{location}} {{tickets}}[/wpt_production_events]';
+					
+					switch ($this->options['listing_page_position_on_production_page']) {
+						case 'above' :
+							$content = $events_html.$content;
+							break;
+						case 'below' :
+							$content.= $events_html;
+					}
+				}
+			}
+		
 		 	return $content;
 	 	}
 	 	
@@ -365,7 +554,10 @@
 	 	}
 	 	
 	 	function wpt_admin_page_tabs($tabs) {
-			$tabs['wpt_listing_page'] = __('Upcoming events','wp_theatre');
+			$tabs = array_merge(
+				array('wpt_listing_page'=>__('Display','wp_theatre')),
+				$tabs
+			);
 			return $tabs;
 	 	}
 	 	

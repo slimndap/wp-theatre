@@ -29,9 +29,6 @@
 #poststuff .wp_theatre_event > div.content .title {
   display: none;
 }
-.wpt_settings_radio_with_selects {
-  line-height: 2em;
-}
 @font-face {
   font-family: "theatre-webfont";
   src: url("../font/theatre-webfont.eot");

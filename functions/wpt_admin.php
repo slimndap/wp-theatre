@@ -34,8 +34,6 @@ class WPT_Admin {
 		// Options
 		$this->options = get_option( 'wp_theatre' );
 		
-		// Tabs on settings screens
-		$this->tab = isset( $_GET['tab'] ) ? $_GET['tab'] : 'wp_theatre';
 	}	
 
 	function admin_init() {
@@ -46,6 +44,20 @@ class WPT_Admin {
 		wp_enqueue_style( 'wp_theatre', plugins_url( '../css/style.css', __FILE__ ) );
 
 
+		$this->tabs = array(
+			'wp_theatre'=>__('General','wp_theatre'),
+			'wpt_language'=>__('Language','wp_theatre')
+		);	
+		$this->tabs = apply_filters('wpt_admin_page_tabs',$this->tabs);
+	
+		// Tabs on settings screens
+		if (!empty($_GET['tab'])) {
+			$this->tab = $_GET['tab'];
+		} else {
+			$tab_keys = array_keys($this->tabs);
+			$this->tab = $tab_keys[0];
+		}
+
         register_setting(
             'wp_theatre', // Option group
             'wp_theatre' // Option name
@@ -55,19 +67,11 @@ class WPT_Admin {
 
 	        add_settings_section(
 	            'display_section_id', // ID
-	            __('Display','wp_theatre'), // Title
+	            __('Design','wp_theatre'), // Title
 	            '', // Callback
 	            'wp_theatre' // Page
 	        );  
 	
-	        add_settings_field(
-	            'settings_field_show_events', // ID
-	            __('Event listings on production page','wp_theatre'), // Title 
-	            array( $this, 'settings_field_show_events' ), // Callback
-	            'wp_theatre', // Page
-	            'display_section_id' // Section           
-	        );
-
 	        add_settings_field(
 	            'stylesheet', // ID
 	            __('Stylesheet','wp_theatre'), // Title 
@@ -778,18 +782,12 @@ class WPT_Admin {
 	 */
 
 	public function admin_page() {
-		$tabs = array(
-			'wp_theatre'=>__('General'),
-			'wpt_language'=>__('Language','wp_theatre')
-		);	
-		$tabs = apply_filters('wpt_admin_page_tabs',$tabs);
-	
         ?>
         <div class="wrap">
             <?php screen_icon(); ?>
        		<h2><?php echo __('Theatre','wp_theatre').' '.__('Settings');?></h2>
             <h2 class="nav-tab-wrapper">
-            <?php foreach ($tabs as $key=>$val) { ?>
+            <?php foreach ($this->tabs as $key=>$val) { ?>
             	<a class="nav-tab <?php echo $key==$this->tab?'nav-tab-active':'';?>" href="?page=wpt_admin&tab=<?php echo $key;?>">
             		<?php echo $val;?>
             	</a>
@@ -807,25 +805,6 @@ class WPT_Admin {
         <?php
     }
     
-    public function settings_field_show_events() {
-		$options = array(
-			'above' => __('show above content','wp_theatre'),
-			'below' => __('show below content','wp_theatre'),
-			'not' => __('don\'t show (use <code>[wpt_production_events]</code> shortcode instead)','wp_theatre')
-		);
-		
-		foreach($options as $key=>$value) {
-			echo '<label>';
-			echo '<input type="radio" name="wp_theatre[show_events]" value="'.$key.'"';
-			if (!empty($this->options['show_events']) && $key==$this->options['show_events']) {
-				echo ' checked="checked"';
-			}
-			echo '>'.$value.'</option>';
-			echo '</label>';
-			echo '<br />';
-		}
-    }
-
     public function settings_field_css() {
 		echo '<p>';
 		echo '<textarea id="wpt_custom_css" name="wp_theatre[custom_css]">';

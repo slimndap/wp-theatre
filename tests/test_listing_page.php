@@ -180,7 +180,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 
 		$xml = new DomDocument();
 		$xml->loadHTML($html);
-        $this->assertSelectCount('.wpt_listing_filter_pagination', 1, $xml, $html);			
+        $this->assertSelectCount('.wpt_listing_filter_pagination.month', 1, $xml, $html);			
         $this->assertSelectCount('.wpt_events .wp_theatre_event', true, $xml, $html);			
 	}
 	
