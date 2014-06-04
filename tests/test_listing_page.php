@@ -391,6 +391,37 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
         $this->assertSelectCount('.wpt_listing.wpt_events .wp_theatre_event', 2, $xml);			
 		
 	}
+
+	function test_events_on_production_page() {
+		$this->options['listing_page_position_on_production_page'] = 'below';
+		update_option('wpt_listing_page', $this->options);
+
+		$this->go_to(
+			get_permalink($this->production_with_upcoming_events)
+		);
+
+		$html = get_echo( 'the_content' );
+
+		$xml = new DomDocument();
+		$xml->loadHTML(get_echo( 'the_content' ));
+        $this->assertSelectCount('.wpt_listing.wpt_events .wp_theatre_event', 2, $xml, $html);			
+	}
+	
+	function test_events_with_template_on_production_page() {
+		$this->options['listing_page_position_on_production_page'] = 'below';
+		$this->options['listing_page_template_on_production_page'] = 'template!';
+		update_option('wpt_listing_page', $this->options);
+
+		$this->go_to(
+			get_permalink($this->production_with_upcoming_events)
+		);
+
+		$html = get_echo( 'the_content' );
+
+        $this->assertContains('template!', $html, $html);			
+	}
+	
+	
 	
 	/* 
 	 * Test backwards compatibility

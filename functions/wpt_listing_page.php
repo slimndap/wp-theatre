@@ -536,7 +536,7 @@
 					in_array($this->options['listing_page_position_on_production_page'], array('above','below'))
 				) {
 					$production = new WPT_Production();			
-					$events_html = '<h3>'.WPT_Event::post_type()->labels->name.'</h3>';
+					$events_html = '<h3>'.__('Events','wp_theatre').'</h3>';
 
 					$template = '{{remark}} {{datetime}} {{location}} {{tickets}}';
 					if (!empty($this->options['listing_page_template_on_production_page'])) {
