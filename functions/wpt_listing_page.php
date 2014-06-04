@@ -21,6 +21,8 @@
 			add_action( "add_option_wpt_listing_page", array($this,'reset'));
 			add_action( "update_option_wpt_listing_page", array($this,'reset'));
 
+			add_action('init',array($this,'deprecated'));
+
 			$this->options = get_option('wpt_listing_page');
 	 	}
 	 	
@@ -624,6 +626,19 @@
 		 	return $url;
 	 	}
 	 	
+	 	/*
+	 	 * For backward compatibility purposes
+	 	 * Use old 'show_events' setting to display events on prodcution pages.
+	 	 * As of v0.8 'listing_page_position_on_production_page' is used.
+	 	 */
+	 	
+	 	function deprecated() {
+		 	global $wp_theatre;
+		 	
+		 	if (empty($this->options['listing_page_position_on_production_page']) && !empty($wp_theatre->options['show_events'])) {
+			 	$this->options['listing_page_position_on_production_page'] = $wp_theatre->options['show_events'];			 	
+		 	}
+	 	}
 	 	
  	}
 ?>

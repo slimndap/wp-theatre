@@ -134,10 +134,26 @@ class WPT_Frontend {
 		
 		if (!empty($wp_query->query_vars['wpt_category'])) {
 			$defaults['category']=$wp_query->query_vars['wpt_category'];
+		} else {
+			/*
+			 * For backward compatibility purposes.
+			 * Before v0.8 $_GET[__('category','wp_theatre')] was used for the category filter.
+			 */
+			if(!empty($_GET[__('category','wp_theatre')])) {
+				$defaults['category']=$_GET[__('category','wp_theatre')];
+			}
 		}
 
 		if (!empty($wp_query->query_vars['wpt_month'])) {
 			$defaults['month']=$wp_query->query_vars['wpt_month'];
+		} else {
+			/*
+			 * For backward compatibility purposes.
+			 * Before v0.8 $_GET[__('month','wp_theatre')] was used for the category filter.
+			 */
+			if(!empty($_GET[__('month','wp_theatre')])) {
+				$defaults['month']=$_GET[__('month','wp_theatre')];
+			}
 		}
 		
 		$atts = shortcode_atts( $defaults, $atts );
@@ -194,6 +210,14 @@ class WPT_Frontend {
 				
 		if (!empty($wp_query->query_vars['wpt_category'])) {
 			$defaults['category']=$wp_query->query_vars['wpt_category'];
+		} else {
+			/*
+			 * For backward compatibility purposes.
+			 * Before v0.8 $_GET[__('category','wp_theatre')] was used for the category filter.
+			 */
+			if(!empty($_GET[__('category','wp_theatre')])) {
+				$defaults['category']=$_GET[__('category','wp_theatre')];
+			}
 		}
 
 		$atts = shortcode_atts($defaults,$atts);
