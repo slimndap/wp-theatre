@@ -91,6 +91,14 @@
 		            'wpt_listing_page_page' // Section           
 		        );
 		        
+		        add_settings_field(
+		            'wpt_listing_page_template', // ID
+		            __('Template','wp_theatre'), // Title 
+		            array( $this, 'settings_field_wpt_listing_template' ), // Callback
+		            'wpt_listing_page', // Page
+		            'wpt_listing_page_page' // Section           
+		        );
+		        
 		        add_settings_section(
 		            'wpt_listing_production_page', // ID
 		            __('Events on production pages','wp_theatre'), // Title
@@ -99,12 +107,21 @@
 		        );  
 		
 		        add_settings_field(
-		            'settings_field_show_events', // ID
+		            'wpt_listing_page_position_on_production_page', // ID
 		            __('Position on page','wp_theatre'), // Title 
 		            array( $this, 'settings_field_wpt_listing_page_position_on_production_page' ), // Callback
 		            'wpt_listing_page', // Page
 		            'wpt_listing_production_page' // Section           
 		        );
+
+		        add_settings_field(
+		            'wpt_listing_page_template_on_production_page', // ID
+		            __('Template','wp_theatre'), // Title 
+		            array( $this, 'settings_field_wpt_listing_template_on_production_page' ), // Callback
+		            'wpt_listing_page', // Page
+		            'wpt_listing_production_page' // Section           
+		        );
+		        
 			}
 		 	
 	 	}
@@ -178,13 +195,17 @@
 			 	$shortcode_args.= ' category="'.$wp_query->query_vars['wpt_category'].'"';
 		 	}
 
+		 	$template = '';
+			if (!empty($this->options['listing_page_template'])) {
+				$template = $this->options['listing_page_template'];
+			}
+
 		 	if ($args['listing_page_type']==WPT_Production::post_type_name) {
 			 	$shortcode_args.= ' upcoming="1"';
-				return '[wpt_productions'.$shortcode_args.'][/wpt_productions]';
+				return '[wpt_productions'.$shortcode_args.']'.$template.'[/wpt_productions]';
  			} else {
-				return '[wpt_events'.$shortcode_args.'][/wpt_events]';
+				return '[wpt_events'.$shortcode_args.']'.$template.'[/wpt_events]';
  			}
-
 	 	}
 	 	
 	 	function page() {
@@ -468,6 +489,29 @@
 			}
 	    }
 	    
+	    public function settings_field_wpt_listing_template() {
+			echo '<p>';
+			echo '<textarea id="wpt_custom_css" name="wpt_listing_page[listing_page_template]">';
+			if (!empty($this->options['listing_page_template'])) {
+				echo $this->options['listing_page_template'];
+			}
+			echo '</textarea>';
+			echo '</p>';
+			echo '<p class="description">Optional, see <a href="https://github.com/slimndap/wp-theatre/wiki/Shortcodes">documentation</a>.</p>';
+	    }
+
+	    public function settings_field_wpt_listing_template_on_production_page() {
+			echo '<p>';
+			echo '<textarea id="wpt_custom_css" name="wpt_listing_page[listing_page_template_on_production_page]">';
+			if (!empty($this->options['listing_page_template_on_production_page'])) {
+				echo $this->options['listing_page_template_on_production_page'];
+			}
+			echo '</textarea>';
+			echo '</p>';
+			echo '<p class="description">Optional, see <a href="https://github.com/slimndap/wp-theatre/wiki/Shortcodes">documentation</a>.</p>';
+	    }
+
+
 	 	function the_content($content) {
 	 		global $wp_theatre;
 	 		
@@ -491,7 +535,12 @@
 				) {
 					$production = new WPT_Production();			
 					$events_html = '<h3>'.WPT_Event::post_type()->labels->name.'</h3>';
-					$events_html.= '[wpt_production_events]{{remark}} {{datetime}} {{location}} {{tickets}}[/wpt_production_events]';
+
+					$template = '{{remark}} {{datetime}} {{location}} {{tickets}}';
+					if (!empty($this->options['listing_page_template_on_production_page'])) {
+						$template = $this->options['listing_page_template_on_production_page'];
+					}
+					$events_html.= '[wpt_production_events]'.$template.'[/wpt_production_events]';
 					
 					switch ($this->options['listing_page_position_on_production_page']) {
 						case 'above' :
