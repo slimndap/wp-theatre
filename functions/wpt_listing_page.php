@@ -16,7 +16,7 @@
 				add_filter('wpt_listing_filter_pagination_url', array($this,'wpt_listing_filter_pagination_url'));	
 			}
 
-			add_action('wpt_rewrite_rules',array($this,'wpt_rewrite_rules'));
+			add_action('init',array($this,'init'));
 			
 			add_action( "add_option_wpt_listing_page", array($this,'reset'));
 			add_action( "update_option_wpt_listing_page", array($this,'reset'));
@@ -128,8 +128,17 @@
 		 	
 	 	}
 	 	
-	 	function wpt_rewrite_rules() {
+
+	 	function init() {
 		 	
+			/*
+			 * Add custom querystring variables and rewrite rules
+			 */
+
+			add_rewrite_tag('%wpt_month%', '.*');
+			add_rewrite_tag('%wpt_day%', '.*');
+			add_rewrite_tag('%wpt_category%', '.*');
+
 		 	/*
 		 	 * Update the rewrite rules for the listings pages.
 		 	 * events
@@ -169,6 +178,7 @@
 					'index.php?pagename='.$post_name.'&wpt_category=$matches[1]&wpt_month=$matches[2]-$matches[3]',
 					'top'
 				);
+
 			}
 			
 	 	}
