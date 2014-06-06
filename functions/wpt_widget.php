@@ -25,9 +25,9 @@
 				$filters['template'] = $instance['template'];
 			}
 
-			if ( ! ( $html = $wp_theatre->transient->get('events', array_merge($filters)) ) ) {
+			if ( ! ( $html = $wp_theatre->transient->get('e', array_merge($filters)) ) ) {
 				$html = $wp_theatre->events->html($filters);
-				$wp_theatre->transient->set('events', array_merge($filters), $html);
+				$wp_theatre->transient->set('e', array_merge($filters), $html);
 			}
 
 			echo $html;

@@ -4,16 +4,26 @@ class WPT_Listing {
 		return array();
 	}
 
+	/*
+	 * Generate navigation for a listing filter.
+	 * @see WPT_Productions::html()
+	 * @see WPT_Events::html()
+	 * @since 0.8
+	 */
+
 	function filter_pagination($field, $options, $args=array()) {
 		global $wp_query;
 
+		/*
+		 * Build the base url for all filters
+		 */
 		$current_url = $_SERVER['REQUEST_URI'];
 		if (!empty($args['month'])) {
 			$current_url = add_query_arg('wpt_month',$args['month']);
 		}
 		if (!empty($args['category'])) {
 			$current_url = add_query_arg('wpt_category',$args['category']);
-		}
+		}		
 
 		$query_var = 'wpt_'.$field;
 
