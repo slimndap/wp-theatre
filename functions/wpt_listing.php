@@ -18,11 +18,14 @@ class WPT_Listing {
 		 * Build the base url for all filters
 		 */
 		$current_url = $_SERVER['REQUEST_URI'];
+		if (!empty($args['day'])) {
+			$current_url = add_query_arg('wpt_day',$args['day'],$current_url);
+		}
 		if (!empty($args['month'])) {
-			$current_url = add_query_arg('wpt_month',$args['month']);
+			$current_url = add_query_arg('wpt_month',$args['month'],$current_url);
 		}
 		if (!empty($args['category'])) {
-			$current_url = add_query_arg('wpt_category',$args['category']);
+			$current_url = add_query_arg('wpt_category',$args['category'],$current_url);
 		}		
 
 		$query_var = 'wpt_'.$field;

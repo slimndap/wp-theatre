@@ -28,6 +28,7 @@ class WPT_Events extends WPT_Listing {
 			'limit' => false,
 			'upcoming' => false,
 			'past' => false,
+			'day' => false,
 			'month' => false,
 			'category' => false,
 			'season' => false,
@@ -68,6 +69,7 @@ class WPT_Events extends WPT_Listing {
 			'limit' => false,
 			'category' => false,
 			'month' => false,
+			'day' => false,
 			'template' => NULL
 		);
 		$args = wp_parse_args($args, $defaults );
@@ -85,10 +87,16 @@ class WPT_Events extends WPT_Listing {
 			'limit' => $args['limit'],
 			'category' => $args['category'],
 			'month' => $args['month'],
+			'day' => $args['day'],
 			'season' => $args['season']
 		);
 
 		$html = '';
+
+		/*
+		 * Days navigation
+		 */
+		$html.= $this->filter_pagination('day', $this->days($filters), $args);
 
 		/*
 		 * Months navigation
@@ -106,6 +114,21 @@ class WPT_Events extends WPT_Listing {
 		}
 		
 		switch ($args['groupby']) {
+			case 'day':
+				if (!in_array('day', $args['paginateby'])) {
+					$days = $this->days($filters);
+					foreach($days as $day=>$name) {
+						$filters['day'] = $day;
+						$events = $this->get($filters);
+						if (!empty($events)) {
+							$html.= '<h3 class="wpt_listing_group day">'.date_i18n('l d F',strtotime($day)).'</h3>';
+							foreach ($events as $event) {
+								$html.=$event->html($event_args);							
+							}
+						}
+					}
+					break;					
+				}
 			case 'month':
 				if (!in_array('month', $args['paginateby'])) {
 					$months = $this->months($filters);
@@ -194,6 +217,14 @@ class WPT_Events extends WPT_Listing {
 			);
 		}
 
+		if ($filters['day']) {
+			$args['meta_query'][] = array (
+				'key' => 'event_date',
+				'value' => $filters['day'],
+				'compare' => 'LIKE'
+			);
+		}
+
 		if ($filters['season']) {
 			$args['meta_query'][] = array (
 				'key' => WPT_Season::post_type_name,
@@ -224,6 +255,23 @@ class WPT_Events extends WPT_Listing {
 		return $events;
 	}
 
+	/**
+	 * An array of all days with upcoming events.
+	 * @since 0.8
+	 */
+	function days($filters=array()) {
+		// get all event according to remaining filters
+		$filters['day'] = false;
+		$events = $this->load($filters);		
+		$days = array();
+		foreach ($events as $event) {
+			$days[date('Y-m-d',$event->datetime())] = date_i18n('D j M',$event->datetime());
+		}
+		ksort($days);
+
+		return $days;
+	}
+	
 	/**
 	 * An array of all months with upcoming events.
 	 * @since 0.5

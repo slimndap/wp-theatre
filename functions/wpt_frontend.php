@@ -126,6 +126,7 @@ class WPT_Frontend {
 			'past' => false,
 			'paginateby'=>array(),
 			'category'=> false,
+			'day' => false,
 			'month' => false,
 			'season'=> false,
 			'groupby'=>false,
@@ -144,6 +145,10 @@ class WPT_Frontend {
 			}
 		}
 
+		if (!empty($wp_query->query_vars['wpt_day'])) {
+			$defaults['day']=$wp_query->query_vars['wpt_day'];
+		}
+		
 		if (!empty($wp_query->query_vars['wpt_month'])) {
 			$defaults['month']=$wp_query->query_vars['wpt_month'];
 		} else {

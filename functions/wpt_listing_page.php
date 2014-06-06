@@ -149,39 +149,45 @@
 		 	 * {listing_page}/today 
 		 	 * {listing_page}/tomorrow
 		 	 * {listing_page}/yesterday
-		 	 * {listing_page}/2014/05
-		 	 * {listing_page}/2014/05/23
-		 	 * {listing_page}/comedy
-		 	 * {listing_page}/comedy/2014/05
-		 	 * {listing_page}/comedy/2014/05/23
 		 	 */
 
 			if ($this->page()) {
 				$post_name = $this->page->post_name;
 			
+				// <listing_page>/2014/05
 				add_rewrite_rule(
 					$post_name.'/([0-9]{4})/([0-9]{2})$', 
 					'index.php?pagename='.$post_name.'&wpt_month=$matches[1]-$matches[2]',
 					'top'
 				);
-			
+				
+				// <listing_page>/2014/05/06
 				add_rewrite_rule(
 					$post_name.'/([0-9]{4})/([0-9]{2})/([0-9]{2})$', 
 					'index.php?pagename='.$post_name.'&wpt_day=$matches[1]-$matches[2]-$matches[3]',
 					'top'
 				);	 	 
 
+				// <listing_page>/comedy
 				add_rewrite_rule(
 					$post_name.'/([a-z0-9-]+)$', 
 					'index.php?pagename='.$post_name.'&wpt_category=$matches[1]',
 					'top'
 				);	 	 
 
+				// <listing_page>/comedy/2014/05
 				add_rewrite_rule(
 					$post_name.'/([a-z0-9-]+)/([0-9]{4})/([0-9]{2})$', 
 					'index.php?pagename='.$post_name.'&wpt_category=$matches[1]&wpt_month=$matches[2]-$matches[3]',
 					'top'
 				);
+
+				// <listing_page>/comedy/2014/05/06
+				add_rewrite_rule(
+					$post_name.'/([a-z0-9-]+)/([0-9]{4})/([0-9]{2})/([0-9]{2})$', 
+					'index.php?pagename='.$post_name.'&wpt_category=$matches[1]&wpt_day=$matches[2]-$matches[3]-$matches[4]',
+					'top'
+				);	 	 
 
 			}
 	 	}
@@ -444,6 +450,7 @@
 	 	
 	    public function settings_field_wpt_listing_page_nav_events() {
 			$options_groupby = array(
+				'day' => __('day','wp_theatre'),
 				'month' => __('month','wp_theatre'),
 				'category' => __('category','wp_theatre')
 			);
@@ -671,7 +678,6 @@
 		 			'wpt_category' => false
 		 		);
 		 		$args = wp_parse_args($args, $defaults);
-		 		
 		 		$url = trailingslashit(get_permalink($this->page->ID));
 
 		 		if ($args['wpt_category']) {
@@ -681,9 +687,13 @@
 		 		}
 		 		
 		 		if ($args['wpt_month']) {
-			 		$url.= substr($args['wpt_month'],0,4).'/'.substr($args['wpt_month'],5,6);
+			 		$url.= substr($args['wpt_month'],0,4).'/'.substr($args['wpt_month'],5,2);
 		 		}
 		 		
+		 		if ($args['wpt_day']) {
+			 		$url.= substr($args['wpt_day'],0,4).'/'.substr($args['wpt_day'],5,2).'/'.substr($args['wpt_day'],8,2);
+		 		}
+
 		 		return $url;	 		
 	 			
 			} else {
@@ -732,7 +742,9 @@
 	 			is_page($this->page->ID)
 	 		) {
 		 		$url_parts = parse_url($url);
-		 		if (!empty($url_parts['query'])) {
+		 		if (empty($url_parts['query'])) {
+			 		$url = $this->url();		 		
+		 		} else {
 			 		$url = $this->url($url_parts['query']);		 		
 		 		}
 	 		}

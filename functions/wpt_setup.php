@@ -176,6 +176,7 @@
 		 */
 		
 		function query_vars( $vars ){
+			$vars[] = 'wpt_day';
 			$vars[] = 'wpt_month';
 			$vars[] = 'wpt_category';
 			return $vars;
