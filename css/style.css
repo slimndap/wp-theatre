@@ -2,12 +2,14 @@
   margin-bottom: 1em;
 }
 .wpt_listing_filter_pagination .wpt_listing_filter {
-  padding: 0 0.5em;
-  font-size: 0.875em;
+  padding: 0;
+  margin-right: .25em;
+  white-space: nowrap;
 }
 .wpt_listing_filter_pagination .wpt_listing_filter.wpt_listing_filter_active {
   background-color: #eee;
   font-weight: bold;
+  padding: 0 .5em;
 }
 .wpt_listing_filter_pagination .wpt_listing_filter.wpt_listing_filter_active a {
   color: inherit;
@@ -16,7 +18,7 @@
 .wpt_listing_filter_pagination .wpt_listing_filter.wpt_listing_filter_active a:after {
   content: '\00D7';
   padding: 0 0 0 0.5em;
-  opacity: 0;
+  opacity: .5;
 }
 .wpt_listing_filter_pagination .wpt_listing_filter.wpt_listing_filter_active a:hover:after {
   opacity: 1;

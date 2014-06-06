@@ -23,6 +23,23 @@ class WPT_Events extends WPT_Listing {
 		
 	}
 	
+	/**
+	 * An array of all days with upcoming events.
+	 * @since 0.8
+	 */
+	function days($filters=array()) {
+		// get all event according to remaining filters
+		$filters['day'] = false;
+		$events = $this->load($filters);		
+		$days = array();
+		foreach ($events as $event) {
+			$days[date('Y-m-d',$event->datetime())] = date_i18n('D j M',$event->datetime());
+		}
+		ksort($days);
+
+		return $days;
+	}
+	
 	function defaults() {
 		return array(
 			'limit' => false,
@@ -255,23 +272,6 @@ class WPT_Events extends WPT_Listing {
 		return $events;
 	}
 
-	/**
-	 * An array of all days with upcoming events.
-	 * @since 0.8
-	 */
-	function days($filters=array()) {
-		// get all event according to remaining filters
-		$filters['day'] = false;
-		$events = $this->load($filters);		
-		$days = array();
-		foreach ($events as $event) {
-			$days[date('Y-m-d',$event->datetime())] = date_i18n('D j M',$event->datetime());
-		}
-		ksort($days);
-
-		return $days;
-	}
-	
 	/**
 	 * An array of all months with upcoming events.
 	 * @since 0.5

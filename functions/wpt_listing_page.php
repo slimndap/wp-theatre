@@ -278,7 +278,7 @@
 		 	 * so the rewrite rules can be flushed on the next page load.
 		 	 * @see admin_init()
 		 	 */
-		 	set_transient('wpt_listing_page_flush_rules');
+		 	set_transient('wpt_listing_page_flush_rules', true);
 		 	
 
 		 	/*
@@ -667,7 +667,7 @@
 	     * @return string URL.
 	 	 */
 	 	
-	 	function url($args) {
+	 	function url($args=array()) {
 	 		if (
 	 			get_option('permalink_structure') &&
 	 			$this->page()
