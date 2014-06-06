@@ -1,8 +1,8 @@
 <?php
 
 /*
- * Manages the dedicated listing page
- *
+ * Manages events listings on the dedicated listing page and the production pages.
+ * @since: 0.8 
  */
 
  	class WPT_Listing_Page {
@@ -37,6 +37,10 @@
 		 	if (delete_transient('wpt_listing_page_flush_rules')) {
 		 		flush_rewrite_rules();
 		 	}
+
+		 	/*
+		 	 * Create a new tab on the settings page.
+		 	 */
 
 	        register_setting(
 	            'wpt_listing_page', // Option group
@@ -132,7 +136,8 @@
 	 	function init() {
 		 	
 			/*
-			 * Add custom querystring variables and rewrite rules
+			 * Add custom querystring variables and rewrite rules.
+			 * @todo: is this really necessary?
 			 */
 
 			add_rewrite_tag('%wpt_month%', '.*');
@@ -141,15 +146,14 @@
 
 		 	/*
 		 	 * Update the rewrite rules for the listings pages.
-		 	 * events
-		 	 * events/today
-		 	 * events/tomorrow
-		 	 * events/yesterday
-		 	 * events/2014/05
-		 	 * events/2014/05/23
-		 	 * events/comedy
-		 	 * events/comedy/2014/05
-		 	 * events/comedy/2014/05/23
+		 	 * {listing_page}/today 
+		 	 * {listing_page}/tomorrow
+		 	 * {listing_page}/yesterday
+		 	 * {listing_page}/2014/05
+		 	 * {listing_page}/2014/05/23
+		 	 * {listing_page}/comedy
+		 	 * {listing_page}/comedy/2014/05
+		 	 * {listing_page}/comedy/2014/05/23
 		 	 */
 
 			if ($this->page()) {
@@ -180,10 +184,31 @@
 				);
 
 			}
-			
 	 	}
 	 	
-	 	function shortcode($args) {
+	 	/*
+	 	 * Generate a shortcode for upcoming events.
+	 	 * @since 0.8
+	 	 * 
+	     * @param array $args {
+	     *     An array of arguments. Optional.
+	     *
+	     *     @type string $listing_page_type    Show events as production or a seperate events? 
+	     *                                        Accepts <WPT_Production::post_type_name>, <WPT_Eventn::post_type_name>.
+	     *                                        Default <WPT_Production::post_type_name>.
+	     *     @type string $listing_page_nav     Show a plain, grouped or paginated list?
+	     *                                        Accepts <plain>, <grouped>, <paginated>.
+	     *                                        Default <plain>.
+	     *     @type string $listing_page_groupby Field to group/paginate the list by.
+	     *                                        If set to <false> then $listing_page_nav is ignored.
+	     *                                        Default <false>.
+	     * }
+	     * @return string Shortcode
+	 	 * 
+	 	 * 
+	 	 */
+	 	
+	 	function shortcode($args=array()) {
 	 		global $wp_theatre;
 	 		global $wp_query;
 	 	
@@ -220,6 +245,12 @@
  			}
 	 	}
 	 	
+	 	/*
+	 	 * Get the page with upcoming events.
+	 	 * @return WP_Post Page if page is set and if page exists.
+	 	 * @retrun false otherwise. 
+	 	 */
+	 	
 	 	function page() {
 		 	if (!isset($this->page)) {
 			 	$this->page = false;
@@ -243,7 +274,12 @@
 		 	 */
 		 	set_transient('wpt_listing_page_flush_rules');
 		 	
-		 	// listing page nav
+
+		 	/*
+		 	 * Set the options that are used to generate the shortcodes.
+		 	 * Based on the options set in the settings form.
+		 	 */
+
 		 	if (!empty($input['listing_page_type']) && $input['listing_page_type']==WPT_Production::post_type_name) {
 			 	// Show as productions
 			 	$valid = false;
@@ -310,6 +346,10 @@
 		 	return $input;
 	 	}
 	 	
+	 	/*
+	 	 * Show input to select listing page in settings form.
+	 	 */
+	 	
 	 	function settings_field_wpt_listing_page_post_id() {
 	 		global $wp_theatre;
 			$pages = get_pages();
@@ -325,6 +365,10 @@
 			}
 			echo '</select>';
 	 	}
+	 	
+	 	/*
+	 	 * Show input to set position of upcoming events on listing page.
+	 	 */
 	 	
 	    public function settings_field_wpt_listing_page_position() {
 			$options = array(
@@ -345,6 +389,10 @@
 			}
 	    }
 	    
+	 	/*
+	 	 * Show input to set position of upcoming events on production page.
+	 	 */
+	 	
 	    public function settings_field_wpt_listing_page_position_on_production_page() {
 			$options = array(
 				'above' => __('show above content','wp_theatre'),
@@ -368,6 +416,10 @@
 			}
 	    }
 	    
+	 	/*
+	 	 * Show input to choose whether to show events or productions on the listing page..
+	 	 */
+	 	
 	    public function settings_field_wpt_listing_page_type() {
 			$options = array(
 				WPT_Production::post_type_name => __('productions','wp_theatre'),
@@ -386,6 +438,10 @@
 			}
 	    }
 	    
+	 	/*
+	 	 * Show input to set the type of navigation used on the listing page.
+	 	 */
+	 	
 	    public function settings_field_wpt_listing_page_nav_events() {
 			$options_groupby = array(
 				'month' => __('month','wp_theatre'),
@@ -435,6 +491,10 @@
 			echo '</div>';
 	    }
 	    
+	 	/*
+	 	 * Show input to set the type of navigation used on a production page.
+	 	 */
+	 	
 	    public function settings_field_wpt_listing_page_nav_productions() {
 			$options_groupby = array(
 				'category' => __('category','wp_theatre')
@@ -482,6 +542,10 @@
 			echo '</div>';
 	    }
 	    
+	 	/*
+	 	 * Show input to set the field that is used for the navigation on the listing page.
+	 	 */
+	 	
 	    public function settings_field_wpt_listing_page_groupby() {
 			$options = array(
 				'month' => __('month','wp_theatre'),
@@ -501,6 +565,10 @@
 			}
 	    }
 	    
+	 	/*
+	 	 * Show input to enter a template for upcoming events on the listing page.
+	 	 */
+	 	
 	    public function settings_field_wpt_listing_template() {
 			echo '<p>';
 			echo '<textarea id="wpt_custom_css" name="wpt_listing_page[listing_page_template]">';
@@ -512,6 +580,10 @@
 			echo '<p class="description">Optional, see <a href="https://github.com/slimndap/wp-theatre/wiki/Shortcodes">documentation</a>.</p>';
 	    }
 
+	 	/*
+	 	 * Show input to enter a template for upcoming events on a production page.
+	 	 */
+	 	 
 	    public function settings_field_wpt_listing_template_on_production_page() {
 			echo '<p>';
 			echo '<textarea id="wpt_custom_css" name="wpt_listing_page[listing_page_template_on_production_page]">';
@@ -523,6 +595,11 @@
 			echo '<p class="description">Optional, see <a href="https://github.com/slimndap/wp-theatre/wiki/Shortcodes">documentation</a>.</p>';
 	    }
 
+
+		/*
+		 * Add a listing of upcoming events to the listing page and to the production pages.
+		 * @see WPT_Page_Listing::shortcode()
+		 */
 
 	 	function the_content($content) {
 	 		global $wp_theatre;
@@ -568,7 +645,19 @@
 	 	}
 	 	
 	 	/*
-	 	 * Get the URL for the listing page
+	 	 * Get the URL for the listing page.
+	 	 * @since 0.8
+	 	 * 
+	     * @param array $args {
+	     *     An array of arguments. Optional.
+	     *
+	     *     @type string $wpt_month     Month to filter on. No month-filter when set to <false>. 
+	     *                                 Accepts <yyyy-mm> or <false>.
+	     *                                 Default <false>.
+	     *     @type integer $wpt_category Category to filter on. No category-filter when set to <false>.
+	     *                                 Default <false>.
+	     * }
+	     * @return string URL.
 	 	 */
 	 	
 	 	function url($args) {
@@ -605,6 +694,7 @@
 	 	/*
 	 	 * Reset the options and the page.
 	 	 * Needed for automatic tests that update the 'wpt_listing_page' option during runtime.
+	 	 *
 	 	 * @see tests/test_listing_page.php
 	 	 * @since 0.8
 	 	 */
@@ -614,6 +704,13 @@
 	 		unset($this->page);
 	 	}
 	 	
+	 	/*
+	 	 * Add a new tab to the tabs navigation on the settings page.
+	 	 *
+	 	 * @see WPT_Admin::admin_init()
+	 	 * @since 0.8
+	 	 */
+	 	
 	 	function wpt_admin_page_tabs($tabs) {
 			$tabs = array_merge(
 				array('wpt_listing_page'=>__('Display','wp_theatre')),
@@ -621,6 +718,12 @@
 			);
 			return $tabs;
 	 	}
+	 	
+	 	/*
+	 	 * Turn the filter navigation links into pretty URLs when displayed on the listing page.
+	 	 *
+	 	 * @see WPT_Listing::filter_pagination()
+	 	 */
 	 	
 	 	function wpt_listing_filter_pagination_url($url) {
 	 		if (
