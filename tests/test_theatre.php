@@ -404,6 +404,7 @@ class WPT_Test extends WP_UnitTestCase {
 			'past' => false,
 			'paginateby'=>array(),
 			'category'=> false,
+			'day'=> false,
 			'month'=> false,
 			'season'=> false,
 			'groupby'=>false,
