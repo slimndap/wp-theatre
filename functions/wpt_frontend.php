@@ -373,10 +373,18 @@ class WPT_Frontend {
 	function wpt_production_events($atts, $content=null) {
 		global $wp_theatre;
 
-		if (is_singular(WPT_Production::post_type_name)) {
+		$atts = shortcode_atts( array(
+			'production' => false
+		), $atts );
+		extract($atts);
+
+		if (!$production && is_singular(WPT_Production::post_type_name)) {
+			$production = get_the_ID();
+		}
+
+		if ($production) {			
 			$args = array(
-				'production' => get_the_ID(),
-				'status' => get_post_status()
+				'production' => $production
 			);
 		
 			if (!is_null($content) && !empty($content)) {
@@ -385,9 +393,9 @@ class WPT_Frontend {
 				$args['template'] = '{{remark}} {{datetime}} {{location}} {{tickets}}';
 			}
 			
-			if ( ! ( $html = $wp_theatre->transient->get('events', array_merge($args, $_GET)) ) ) {
+			if ( ! ( $html = $wp_theatre->transient->get('e', array_merge($args, $_GET)) ) ) {
 				$html = $wp_theatre->events->html($args);
-				$wp_theatre->transient->set('events', array_merge($args, $_GET), $html);
+				$wp_theatre->transient->set('e', array_merge($args, $_GET), $html);
 			}
 
 			return $html;
