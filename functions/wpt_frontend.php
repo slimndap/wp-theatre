@@ -370,6 +370,19 @@ class WPT_Frontend {
 		return $html;
 	}
 	
+	/* 
+	 * Shortcode to display the upcoming events of a production.
+	 *
+	 * Examples: 
+	 *     [wpt_production_events production=123]
+	 *     [wpt_production_events production=123]{{title|permalink}}{{datetime}}{{tickets}}[/wpt_production_events]
+	 *
+	 * On the page of a single production you can leave out the production:
+	 *
+	 *     [wpt_production_events]
+	 *
+	 */
+	
 	function wpt_production_events($atts, $content=null) {
 		global $wp_theatre;
 

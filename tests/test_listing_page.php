@@ -460,8 +460,6 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 			get_permalink($this->production_with_upcoming_events)
 		);
 
-		echo get_permalink($this->production_with_upcoming_events);
-
 		$html = get_echo( 'the_content' );
 
 		$xml = new DomDocument();

@@ -221,6 +221,15 @@ class WPT_Test extends WP_UnitTestCase {
 		$season = get_post($this->season2);
 	}
 	
+	function test_shortcode_wpt_production_events() {
+		$html = do_shortcode('[wpt_production_events production="'.$this->production_with_upcoming_events.'"]');
+	
+		$xml = new DomDocument;
+        $xml->loadHTML($html);
+        $this->assertSelectCount('.wpt_events .wp_theatre_event', 2, $xml, $html);		
+		
+	}
+	
 	// Test templates
 	
 	function test_wpt_events_template_permalink() {
