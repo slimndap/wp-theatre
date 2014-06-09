@@ -214,7 +214,7 @@
 	}
 
 	/*
-	 * The Theater Calendar widget.
+	 * Theater Calendar widget.
 	 * @since 0.8
 	 */
 

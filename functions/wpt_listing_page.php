@@ -23,6 +23,8 @@
 
 			add_action('init',array($this,'deprecated'));
 
+			add_action( 'widgets_init', array($this,'widgets_init'));
+
 			$this->options = get_option('wpt_listing_page');
 	 	}
 	 	
@@ -707,7 +709,22 @@
 	 	}
 	 	
 	 	/*
-	 	 * Add a new tab to the tabs navigation on the settings page.
+	 	 * Register the Theater Categories widget (if a listing page is set).
+	 	 * 
+	 	 * @see WPT_Categories_Widget
+	 	 * @see WPT_Listing_page::page()
+	 	 *
+	 	 * @since 0.8
+	 	 */
+
+		function widgets_init() {
+			if ($this->page()) {
+				register_widget( 'WPT_Categories_Widget' );			
+			}	
+		}
+
+		/*
+		 * Add a new tab to the tabs navigation on the settings page.
 	 	 *
 	 	 * @see WPT_Admin::admin_init()
 	 	 * @since 0.8
@@ -758,4 +775,73 @@
 	 	}
 	 	
  	}
+
+	/*
+	 * The Theater Categories widget.
+	 *
+	 * Display a list of all categories with upcoming events.
+	 *
+	 * @since 0.8
+	 */
+
+	class WPT_Categories_Widget extends WP_Widget {
+		function __construct() {
+			parent::__construct(
+				'wpt_categories_widget',
+				__('Theater Categories','wp_theatre'), // Name
+				array( 'description' => __( 'Categories with upcoming events', 'wp_theatre' ), ) // Args
+			);
+		}
+		
+		public function widget($args,$instance) {
+			global $wp_theatre;
+			
+			$title = apply_filters( 'widget_title', $instance['title'] );
+			
+			echo $args['before_widget'];
+			if ( ! empty( $title ) )
+				echo $args['before_title'] . $title . $args['after_title'];
+			
+			$cat_args = array(
+				'upcoming' => true
+			);
+			
+			if ( ! ( $html = $wp_theatre->transient->get('cat', $cat_args) ) ) {
+				$categories = $wp_theatre->events->categories($cat_args);
+				
+				$html = '';
+				foreach($categories as $id=>$name) {
+					$url = htmlentities($wp_theatre->listing_page->url(array('wpt_category'=>$id)));
+				
+					$html.= '<li class="'.sanitize_title($name).'">';
+					$html.= '<a href="'.$url.'">';
+					$html.= $name;
+					$html.='</a>';
+					$html.= '</li>';
+				}
+				$html = '<ul class="wpt_categories">'.$html.'</li>';
+
+				$wp_theatre->transient->set('cat', array(), $html);
+			}
+
+			echo $html;
+
+			echo $args['after_widget'];
+		}
+		
+		public function form($instance) {
+			$defaults = array(
+				'title' => __( 'Categories', 'wp_theatre' )
+			);
+			$values = wp_parse_args( $instance, $defaults );
+
+			?>
+			<p>
+			<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title' ); ?>:</label> 
+			<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $values['title'] ); ?>">
+			</p>
+			<?php 
+			
+		}
+	}
 ?>
