@@ -3,7 +3,6 @@
 	/*
 	 * A calendar with upcoming events.
 	 * @since 0.8
-	 *
 	 */
 
 	class WPT_Calendar {
@@ -19,6 +18,10 @@
 		*/
 		
 		function html() {
+			if (!$this->check_dependencies()) {
+				return '';
+			}
+		
 			global $wp_theatre;
 			
 			/*
@@ -172,7 +175,14 @@
 		}
 		
 		function check_dependencies() {
-		
+			global $wp_theatre;
+
+			$everything_ok = $wp_theatre->listing_page->page() instanceof WP_Post;
+			
+			if (!$everything_ok) {
+				
+			}
+			return $everything_ok;
 		}
 		
 		/*
@@ -181,18 +191,24 @@
 		 */
 		
 		function shortcode($atts, $content=null) {
-			global $wp_theatre;
-
-			if ( ! ( $html = $wp_theatre->transient->get('c', array()) ) ) {
-				$html = $wp_theatre->calendar->html();
-				$wp_theatre->transient->set('c', array(), $html);
+			$html = '';
+			
+			if ($this->check_dependencies()) {
+				global $wp_theatre;
+	
+				if ( ! ( $html = $wp_theatre->transient->get('c', array()) ) ) {
+					$html = $wp_theatre->calendar->html();
+					$wp_theatre->transient->set('c', array(), $html);
+				}
 			}
-
+			
 			return $html;
 		}
 
 		function widgets_init() {
-		     register_widget( 'WPT_Calendar_Widget' );			
+			if ($this->check_dependencies()) {
+				register_widget( 'WPT_Calendar_Widget' );			
+			}	
 		}
 		
 	}

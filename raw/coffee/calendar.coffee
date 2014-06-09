@@ -1,4 +1,10 @@
 class wpt_calendar
+
+	###
+	Manage the navigation of all WPT_Calendar blocks.
+	@since 0.8
+	###
+
 	constructor: (@calendar) ->
 		@calendar = jQuery @calendar
 		
@@ -7,7 +13,12 @@ class wpt_calendar
 		
 		jQuery(@calendar).find('tfoot a').click (e) =>
 			@.navigate e.currentTarget
-			
+	
+	###
+	Handle prev/next.
+	@since 0.8
+	###
+	
 	navigate: (e) ->
 		href = jQuery(e).attr('href');
 		@calendar.find('.active').removeClass 'active'

@@ -12,25 +12,6 @@ class wpt_admin_ticketspage
 			@.ticketspage.show(1000)
 		else 
 			@.ticketspage.hide(500)
-
-class wpt_admin_ticketspage
-	constructor: ->
-		@.listing_page_type = jQuery "input[name='wpt_listing_page[listing_page_type]']"
-		@.listing_page_nav_events = jQuery('#listing_page_nav_events').parents 'tr'
-		@.listing_page_nav_productions = jQuery('#listing_page_nav_productions').parents 'tr'
-		if @.listing_page_type.length > 0 and @.listing_page_nav_events.length > 0 and @.listing_page_nav_productions.length >0
-			@.update() 
-			@.listing_page_type.click =>
-				@.update()
-	update: ->
-		listing_page_type = jQuery("input[name='wpt_listing_page[listing_page_type]']:checked").val()
-		
-		if listing_page_type == 'wp_theatre_prod'
-			@.listing_page_nav_events.hide()
-			@.listing_page_nav_productions.show()
-		else
-			@.listing_page_nav_events.show()
-			@.listing_page_nav_productions.hide()
 			
 jQuery ->
 	wpt_admin_ticketspage = new wpt_admin_ticketspage

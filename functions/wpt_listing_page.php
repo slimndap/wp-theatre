@@ -74,25 +74,9 @@
 		        );
 		        
 		        add_settings_field(
-		            'wpt_listing_page_type', // ID
-		            __('Show as','wp_theatre'), // Title 
-		            array( $this, 'settings_field_wpt_listing_page_type' ), // Callback
-		            'wpt_listing_page', // Page
-		            'wpt_listing_page_page' // Section           
-		        );
-		        
-		        add_settings_field(
 		            'wpt_listing_page_nav_events', // ID
 		            __('Arrange the events','wp_theatre'), // Title 
 		            array( $this, 'settings_field_wpt_listing_page_nav_events' ), // Callback
-		            'wpt_listing_page', // Page
-		            'wpt_listing_page_page' // Section           
-		        );
-		        
-		        add_settings_field(
-		            'wpt_listing_page_nav_productions', // ID
-		            __('Arrange the productions','wp_theatre'), // Title 
-		            array( $this, 'settings_field_wpt_listing_page_nav_productions' ), // Callback
 		            'wpt_listing_page', // Page
 		            'wpt_listing_page_page' // Section           
 		        );
