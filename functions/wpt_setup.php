@@ -205,7 +205,6 @@
 		     register_widget( 'WPT_Events_Widget' );
 		     register_widget( 'WPT_Productions_Widget' );
 		     register_widget( 'WPT_Cart_Widget' );			
-		     register_widget( 'WPT_Calendar_Widget' );			
 		}
 		
 		/**
