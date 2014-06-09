@@ -57,21 +57,21 @@
 				$last_day = strtotime($month.'-'.$no_of_days);
 	
 				// Month header
-				$month_url = $wp_theatre->listing_page->url(array('wpt_month'=>$month));
+				$month_url = htmlentities($wp_theatre->listing_page->url(array('wpt_month'=>$month)));
 				$month_html.= '<caption><h3><a href="'.$month_url.'">'.date_i18n('F Y',$first_day).'</a></h3></caption>';
 				
 				// Month footer
 				$month_html.= '<tfoot>';
-				$month_html.= '<td id="prev" colspan="3">';
+				$month_html.= '<td class="prev" colspan="3">';
 				if (!empty($months[$m-1])) {
-					$month_url = $wp_theatre->listing_page->url(array('wpt_month'=>$months[$m-1]));
+					$month_url = htmlentities($wp_theatre->listing_page->url(array('wpt_month'=>$months[$m-1])));
 					$month_html.= '<a href="'.$month_url.'">&laquo; '.date_i18n('M',strtotime($months[$m-1].'-01')).'</a>';
 				}
 				$month_html.= '</td>';
 				$month_html.= '<td class="pad"></td>';
-				$month_html.= '<td id="next" colspan="3">';
+				$month_html.= '<td class="next" colspan="3">';
 				if (!empty($months[$m+1])) {
-					$month_url = $wp_theatre->listing_page->url(array('wpt_month'=>$months[$m+1]));
+					$month_url = htmlentities($wp_theatre->listing_page->url(array('wpt_month'=>$months[$m+1])));
 					$month_html.= '<a href="'.$month_url.'">'.date_i18n('M',strtotime($months[$m+1].'-01')).' &raquo;</a>';
 				}
 				$month_html.= '</td>';
@@ -133,9 +133,9 @@
 					} else {
 						
 						if (count($events)==1) {
-							$url = $events[0]->production()->permalink();
+							$url = htmlentities($events[0]->production()->permalink());
 						} else {
-							$url = $wp_theatre->listing_page->url(array('wpt_day'=>$day));
+							$url = htmlentities($wp_theatre->listing_page->url(array('wpt_day'=>$day)));
 						}
 	
 						$day_html.= '<a href="'.$url.'">';

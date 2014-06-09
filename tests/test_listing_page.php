@@ -481,6 +481,16 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
         $this->assertContains('template!', $html, $html);			
 	}
 	
+	function test_shortcode_wpt_calendar() {
+		$html = do_shortcode('[wpt_calendar]');
+
+		$xml = new DomDocument;
+        $xml->loadHTML($html);
+
+        $this->assertSelectCount('.wpt_calendar .wpt_month tr td a', 4, $xml, $html);			
+		
+	}
+	
 	
 	
 	/* 
