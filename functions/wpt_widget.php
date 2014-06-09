@@ -1,4 +1,48 @@
 <?php
+	class WPT_Calendar_Widget extends WP_Widget {
+		function __construct() {
+			parent::__construct(
+				'wpt_calendar_widget',
+				__('Theater Calendar','wp_theatre'), // Name
+				array( 'description' => __( 'Calendar of upcoming events', 'wp_theatre' ), ) // Args
+			);
+		}
+		
+		public function widget($args,$instance) {
+			global $wp_theatre;
+			
+			$title = apply_filters( 'widget_title', $instance['title'] );
+			
+			echo $args['before_widget'];
+			if ( ! empty( $title ) )
+				echo $args['before_title'] . $title . $args['after_title'];
+				
+			if ( ! ( $html = $wp_theatre->transient->get('c', array()) ) ) {
+				$html = $wp_theatre->calendar->html();
+				$wp_theatre->transient->set('c', array(), $html);
+			}
+
+			echo $html;
+
+			echo $args['after_widget'];
+		}
+		
+		public function form($instance) {
+			$defaults = array(
+				'title' => __( 'Upcoming events', 'wp_theatre' )
+			);
+			$values = wp_parse_args( $instance, $defaults );
+
+			?>
+			<p>
+			<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title' ); ?>:</label> 
+			<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $values['title'] ); ?>">
+			</p>
+			<?php 
+			
+		}
+	}
+
 	class WPT_Events_Widget extends WP_Widget {
 		function __construct() {
 			parent::__construct(

@@ -191,6 +191,29 @@ class WPT_Events extends WPT_Listing {
 		return $html;
 	}
 	
+	/* 
+	 * Get the last event.
+	 *
+	 * @since 0.8
+	 */
+	
+	function last() {
+		$args = array(
+			'post_type' => WPT_Event::post_type_name,
+			'post_status' => 'publish',
+			'order' => 'desc',
+			'posts_per_page' => 1
+		);
+		
+		$events = get_posts($args);
+		
+		if (empty($events)) {
+			return false;
+		} else {
+			return new WPT_Event($events[0]);
+		}
+	}
+	
 	/**
 	 * Setup the current selection of events.
 	 * 

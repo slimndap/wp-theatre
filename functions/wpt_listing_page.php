@@ -668,34 +668,42 @@
 	 	 */
 	 	
 	 	function url($args=array()) {
-	 		if (
-	 			get_option('permalink_structure') &&
-	 			$this->page()
-	 		) {
+	 		if ($this->page()) {
+		 		$url = trailingslashit(get_permalink($this->page->ID));
 		 		$defaults = array(
 		 			'wpt_month' => false,
 		 			'wpt_day' => false,
 		 			'wpt_category' => false
 		 		);
 		 		$args = wp_parse_args($args, $defaults);
-		 		$url = trailingslashit(get_permalink($this->page->ID));
 
-		 		if ($args['wpt_category']) {
-		 			if ($category=get_category($args['wpt_category'])) {
-				 		$url.= $category->slug.'/';
-		 			}
-		 		}
-		 		
-		 		if ($args['wpt_month']) {
-			 		$url.= substr($args['wpt_month'],0,4).'/'.substr($args['wpt_month'],5,2);
-		 		}
-		 		
-		 		if ($args['wpt_day']) {
-			 		$url.= substr($args['wpt_day'],0,4).'/'.substr($args['wpt_day'],5,2).'/'.substr($args['wpt_day'],8,2);
-		 		}
-
-		 		return $url;	 		
-	 			
+	 			if (get_option('permalink_structure')) {	
+			 		if ($args['wpt_category']) {
+			 			if ($category=get_category($args['wpt_category'])) {
+					 		$url.= $category->slug.'/';
+			 			}
+			 		}
+			 		
+			 		if ($args['wpt_month']) {
+				 		$url.= substr($args['wpt_month'],0,4).'/'.substr($args['wpt_month'],5,2);
+			 		}
+			 		
+			 		if ($args['wpt_day']) {
+				 		$url.= substr($args['wpt_day'],0,4).'/'.substr($args['wpt_day'],5,2).'/'.substr($args['wpt_day'],8,2);
+			 		}
+	
+	 			} else {
+			 		if ($args['wpt_category']) {
+			 			$url = add_query_arg('wpt_category', $args['wpt_category'], $url);
+			 		}
+			 		if ($args['wpt_month']) {
+			 			$url = add_query_arg('wpt_month', $args['wpt_month'], $url);
+			 		}
+			 		if ($args['wpt_day']) {
+			 			$url = add_query_arg('wpt_day', $args['wpt_day'], $url);
+			 		}
+	 			}
+	 			return $url;
 			} else {
 				return false;
 			}		 	
