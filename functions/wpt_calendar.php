@@ -44,19 +44,29 @@
 
 			$first_day = strtotime($month.'-01');
 			$no_of_days = date('t',$first_day);
+			$last_day = strtotime($month.'-'.$no_of_days);
 
 			// Month header
 			$month_html.= '<h3>'.date_i18n('F Y',$first_day).'</h3>';
 			
-			$first_day_num = date('w',$first_day);
-			if ($first_day_num < $start_of_week) {
-				$leading_days = (7 - $first_day_num) - $start_of_week;
+			// Calculate leading days (of previous month)
+			$first_day_pos = date('w',$first_day) - $start_of_week;
+			if ($first_day_pos < 0) {
+				$leading_days = 7 + $first_day_pos;
 			} else {
-				$leading_days = $first_day_num - $start_of_week;
+				$leading_days = $first_day_pos;
+			}
+			
+			// Calculate trailing days (of next month)
+			$last_day_pos = date('w',$last_day) - $start_of_week;
+			if ($last_day_pos < 0) {
+				$trailing_days = -1 - $last_day_pos;
+			} else {
+				$trailing_days = 6 - $last_day_pos;
 			}
 			
 			$first_day -= $leading_days * 60 * 60 * 24;
-			$no_of_days += $leading_days;
+			$no_of_days += $leading_days + $trailing_days;
 		
 			$days = array();
 			for($i=0;$i<$no_of_days;$i++) {
@@ -79,6 +89,7 @@
 			
 			foreach($days as $day=>$events) {
 				$day_html = '';
+				$classes = array();
 
 				$day_label = (int) substr($day,8,2);
 
@@ -97,7 +108,11 @@
 					$day_html.= '</a>';
 				}
 
-				$month_html.= '<div class="wpt_day">'.$day_html.'</div>';
+					if (date('Y-m',strtotime($day)) != $month) {
+						$classes[] = 'trailing';
+					}
+
+				$month_html.= '<div class="wpt_day '.implode(' ',$classes).'">'.$day_html.'</div>';
 			}
 
 			$month_html.= '</div>';

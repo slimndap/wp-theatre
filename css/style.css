@@ -31,6 +31,9 @@
   width: 14.28571429%;
   text-align: center;
 }
+.wpt_calendar .wpt_days .wpt_day.trailing {
+  opacity: .5;
+}
 .wpt_productions.wpt_events_without_thumbnail .wp_theatre_event > *,
 .wpt_events.wpt_events_without_thumbnail .wp_theatre_event > *,
 .wpt_productions.wpt_productions_without_thumbnail .wp_theatre_event > *,
