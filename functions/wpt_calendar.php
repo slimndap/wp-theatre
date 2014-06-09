@@ -34,20 +34,49 @@
 			$months = array_keys($months);			
 		}
 		
+		
+		$start_of_week = get_option('start_of_week');
+
+		$thead_html = '<thead><tr>';
+		$sunday = strtotime('next Sunday');
+		for($i=0;$i<7;$i++) {
+			$thead_html.= '<th>';
+			$thead_html.= substr(date_i18n('D',$sunday + ($start_of_week * 60 * 60 * 24) + ($i * 60 * 60 * 24)) , 0 , 1);
+			$thead_html.= '</th>';
+		}
+		$thead_html.= '</tr></thead>';
+
 		$html = '';
 		
-		foreach ($months as $month) {
-		
-			$month_html = '';
+		for ($m=0;$m<count($months);$m++) {
+			$month = $months[$m];
 
-			$start_of_week = get_option('start_of_week');
+			$month_html = '';
 
 			$first_day = strtotime($month.'-01');
 			$no_of_days = date('t',$first_day);
 			$last_day = strtotime($month.'-'.$no_of_days);
 
 			// Month header
-			$month_html.= '<h3>'.date_i18n('F Y',$first_day).'</h3>';
+			$month_url = $wp_theatre->listing_page->url(array('wpt_month'=>$month));
+			$month_html.= '<caption><a href="'.$month_url.'">'.date_i18n('F Y',$first_day).'</a></caption>';
+			
+			// Month footer
+			$month_html.= '<tfoot>';
+			$month_html.= '<td id="prev" colspan="3">';
+			if (!empty($months[$m-1])) {
+				$month_url = $wp_theatre->listing_page->url(array('wpt_month'=>$months[$m-1]));
+				$month_html.= '<a href="'.$month_url.'">&laquo; '.date_i18n('M',strtotime($months[$m-1].'-01')).'</a>';
+			}
+			$month_html.= '</td>';
+			$month_html.= '<td class="pad"></td>';
+			$month_html.= '<td id="next" colspan="3">';
+			if (!empty($months[$m+1])) {
+				$month_url = $wp_theatre->listing_page->url(array('wpt_month'=>$months[$m+1]));
+				$month_html.= '<a href="'.$month_url.'">'.date_i18n('M',strtotime($months[$m+1].'-01')).' &raquo;</a>';
+			}
+			$month_html.= '</td>';
+			$month_html.= '</tfoot>';
 			
 			// Calculate leading days (of previous month)
 			$first_day_pos = date('w',$first_day) - $start_of_week;
@@ -85,10 +114,17 @@
 				$days[$date][] = $event;
 			}
 
-			$month_html.= '<div class="wpt_days">';
+			$month_html.= '<tbody>';
+			$month_html.= $thead_html;
 			
+			$day_index = 0;
 			foreach($days as $day=>$events) {
 				$day_html = '';
+				
+				if ($day_index % 7 == 0) {
+					$month_html.= '<tr>';
+				}
+				
 				$classes = array();
 
 				$day_label = (int) substr($day,8,2);
@@ -108,16 +144,30 @@
 					$day_html.= '</a>';
 				}
 
-					if (date('Y-m',strtotime($day)) != $month) {
-						$classes[] = 'trailing';
-					}
+				if (date('Y-m',strtotime($day)) != $month) {
+					$classes[] = 'trailing';
+				}
 
-				$month_html.= '<div class="wpt_day '.implode(' ',$classes).'">'.$day_html.'</div>';
+				if (!empty($classes)) {
+					$day_html = '<td class="'.implode(' ',$classes).'">'.$day_html.'</td>';
+				} else {
+					$day_html = '<td>'.$day_html.'</td>';
+				}
+				
+				$month_html.= $day_html;
+
+				if (($day_index % 7) == 6) {
+					$month_html.= '</tr>';
+				}
+
+
+
+				$day_index++;
 			}
 
-			$month_html.= '</div>';
+			$month_html.= '</tbody>';
 			
-			$html.= $month_html;
+			$html.= '<table class="wpt_month">'.$month_html.'</table>';
 
 		}
 		$html = '<div class="wpt_calendar">'.$html.'</div>';
