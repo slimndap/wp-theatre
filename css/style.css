@@ -43,11 +43,11 @@
   background-color: rgba(0, 0, 0, 0.02);
   text-transform: uppercase;
 }
-.wpt_calendar .wpt_month tfoot tr #prev {
+.wpt_calendar .wpt_month tfoot tr .prev {
   text-align: left;
   padding-left: 5px;
 }
-.wpt_calendar .wpt_month tfoot tr #next {
+.wpt_calendar .wpt_month tfoot tr .next {
   text-align: right;
   padding-right: 5px;
 }
