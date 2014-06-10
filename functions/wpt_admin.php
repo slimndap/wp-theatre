@@ -45,7 +45,8 @@ class WPT_Admin {
 
 
 		$this->tabs = array(
-			'wp_theatre'=>__('General','wp_theatre'),
+			'wpt_style'=>__('Style','wp_theatre'),
+			'wpt_tickets'=>__('Tickets','wp_theatre'),
 			'wpt_language'=>__('Language','wp_theatre')
 		);	
 		$this->tabs = apply_filters('wpt_admin_page_tabs',$this->tabs);
@@ -59,75 +60,24 @@ class WPT_Admin {
 		}
 
         register_setting(
-            'wp_theatre', // Option group
-            'wp_theatre' // Option name
+            'wpt_style', // Option group
+            'wpt_style' // Option name
         );
         
-		if ($this->tab=='wp_theatre') {
-
-	        add_settings_section(
-	            'display_section_id', // ID
-	            __('Design','wp_theatre'), // Title
-	            '', // Callback
-	            'wp_theatre' // Page
-	        );  
-	
-	        add_settings_field(
-	            'stylesheet', // ID
-	            __('Stylesheet','wp_theatre'), // Title 
-	            array( $this, 'settings_field_stylesheet' ), // Callback
-	            'wp_theatre', // Page
-	            'display_section_id' // Section           
-	        );
-
-	        add_settings_field(
-	            'css', // ID
-	            __('Custom CSS','wp_theatre'), // Title 
-	            array( $this, 'settings_field_css' ), // Callback
-	            'wp_theatre', // Page
-	            'display_section_id' // Section           
-	        );
-
-	        add_settings_section(
-	            'tickets_integration', // ID
-	            __('Tickets integration','wp_theatre'), // Title
-	            '', // Callback
-	            'wp_theatre' // Page
-	        );  
-
-	        add_settings_field(
-	            'currenysymbol', // ID
-	            __('Currency symbol','wp_theatre'), // Title 
-	            array( $this, 'settings_field_currencysymbol' ), // Callback
-	            'wp_theatre', // Page
-	            'tickets_integration' // Section           
-	        );      
-	
-	        add_settings_field(
-	            'integrationtype', // ID
-	            __('Open tickets screens in','wp_theatre'), // Title 
-	            array( $this, 'settings_field_integrationtype' ), // Callback
-	            'wp_theatre', // Page
-	            'tickets_integration' // Section           
-	        );      
-	        
-	        add_settings_field(
-	            'iframepage', // ID
-	            __('Iframe page','wp_theatre'), // Title 
-	            array( $this, 'settings_field_iframepage' ), // Callback
-	            'wp_theatre', // Page
-	            'tickets_integration' // Section           
-	        );      
-		}
-
+        register_setting(
+            'wpt_tickets', // Option group
+            'wpt_tickets' // Option name
+        );
+        
         register_setting(
             'wpt_language', // Option group
             'wpt_language' // Option name
         );
+        
 		if ($this->tab=='wpt_language') {
  	        add_settings_section(
 	            'language', // ID
-	            __('Language','wp_theatre'), // Title
+	            '', // Title
 	            '', // Callback
 	            'wpt_language' // Page
 	        );  
@@ -158,7 +108,64 @@ class WPT_Admin {
 	
        
 		}
+
+		if ($this->tab=='wpt_style') {
+	        add_settings_section(
+	            'display_section_id', // ID
+	            '', // Title
+	            '', // Callback
+	            'wpt_style' // Page
+	        );  
+	
+	        add_settings_field(
+	            'stylesheet', // ID
+	            __('Stylesheet','wp_theatre'), // Title 
+	            array( $this, 'settings_field_stylesheet' ), // Callback
+	            'wpt_style', // Page
+	            'display_section_id' // Section           
+	        );
+
+	        add_settings_field(
+	            'css', // ID
+	            __('Custom CSS','wp_theatre'), // Title 
+	            array( $this, 'settings_field_css' ), // Callback
+	            'wpt_style', // Page
+	            'display_section_id' // Section           
+	        );
+		}
 		
+		if ($this->tab=='wpt_tickets') {
+	        add_settings_section(
+	            'tickets_integration', // ID
+	            '', // Title
+	            '', // Callback
+	            'wpt_tickets' // Page
+	        );  
+
+	        add_settings_field(
+	            'currenysymbol', // ID
+	            __('Currency symbol','wp_theatre'), // Title 
+	            array( $this, 'settings_field_currencysymbol' ), // Callback
+	            'wpt_tickets', // Page
+	            'tickets_integration' // Section           
+	        );      
+	
+	        add_settings_field(
+	            'integrationtype', // ID
+	            __('Open tickets screens in','wp_theatre'), // Title 
+	            array( $this, 'settings_field_integrationtype' ), // Callback
+	            'wpt_tickets', // Page
+	            'tickets_integration' // Section           
+	        );      
+	        
+	        add_settings_field(
+	            'iframepage', // ID
+	            __('Iframe page','wp_theatre'), // Title 
+	            array( $this, 'settings_field_iframepage' ), // Callback
+	            'wpt_tickets', // Page
+	            'tickets_integration' // Section           
+	        );      
+		}
 	}
 
 	function admin_menu() {
@@ -806,19 +813,23 @@ class WPT_Admin {
     }
     
     public function settings_field_css() {
+    	global $wp_theatre;
+    	
 		echo '<p>';
-		echo '<textarea id="wpt_custom_css" name="wp_theatre[custom_css]">';
-		if (!empty($this->options['custom_css'])) {
-			echo $this->options['custom_css'];
+		echo '<textarea id="wpt_custom_css" name="wpt_style[custom_css]">';
+		if (!empty($wp_theatre->wpt_style_options['custom_css'])) {
+			echo $wp_theatre->wpt_style_options['custom_css'];
 		}
 		echo '</textarea>';
 		echo '</p>';
     }
 
     public function settings_field_stylesheet() {
+    	global $wp_theatre;
+
 		echo '<label>';
-		echo '<input type="checkbox" name="wp_theatre[stylesheet]"';
-		if (!empty($this->options['stylesheet'])) {
+		echo '<input type="checkbox" name="wpt_style[stylesheet]"';
+		if (!empty($wp_theatre->wpt_style_options['stylesheet'])) {
 			echo ' checked="checked"';
 		}
 		echo '>'.__('Enable built-in Theatre stylesheet','wp_theatre').'</option>';
@@ -848,6 +859,8 @@ class WPT_Admin {
 	}
 
 	function settings_field_integrationtype() {
+		global $wp_theatre;
+
 		$options = array(
 			'self' => __('same window','wp_theatre'),
 			'iframe' => __('iframe','wp_theatre'),
@@ -857,8 +870,8 @@ class WPT_Admin {
 		
 		foreach($options as $key=>$value) {
 			echo '<label>';
-			echo '<input type="radio" name="wp_theatre[integrationtype]" value="'.$key.'"';
-			if ($key==$this->options['integrationtype']) {
+			echo '<input type="radio" name="wpt_tickets[integrationtype]" value="'.$key.'"';
+			if ($key==$wp_theatre->wpt_tickets_options['integrationtype']) {
 				echo ' checked="checked"';
 			}
 			echo '>'.$value.'</option>';
@@ -869,28 +882,31 @@ class WPT_Admin {
 	}
 
 	function settings_field_iframepage() {
+		global $wp_theatre;
+
 		$pages = get_pages();
 
-		echo '<select id="iframepage" name="wp_theatre[iframepage]">';
+		echo '<select id="iframepage" name="wpt_tickets[iframepage]">';
 		echo '<option></option>';
 		foreach($pages as $page) {
 			echo '<option value="'.$page->ID.'"';
-			if ($page->ID==$this->options['iframepage']) {
+			if ($page->ID==$wp_theatre->wpt_tickets_options['iframepage']) {
 				echo ' selected="selected"';
 			}
 			echo '>'.$page->post_title.'</option>';
 		}
 		echo '</select>';
-		echo '<p class="description">'.__('Select the page that embeds all Ticketmatic iframes.','wp_theatre').'</p>';
+		echo '<p class="description">'.__('Select the page that embeds all Ticketing iframes.','wp_theatre').'</p>';
 		echo '<p class="description">'.__('The page must contain the following shortcode:','wp_theatre');
 		echo '<pre>[wp_theatre_iframe]</pre>';
 		echo '</p>';
 	}
 
 	function settings_field_currencysymbol() {
-		echo '<input type="text" id="currencysymbol" name="wp_theatre[currencysymbol]"';
-		if (!empty($this->options['currencysymbol'])) {
-			echo ' value="'.$this->options['currencysymbol'].'"';
+		global $wp_theatre;
+		echo '<input type="text" id="currencysymbol" name="wpt_tickets[currencysymbol]"';
+		if (!empty($wp_theatre->wpt_tickets_options['currencysymbol'])) {
+			echo ' value="'.$wp_theatre->wpt_tickets_options['currencysymbol'].'"';
 			
 		}
 		echo ' />';

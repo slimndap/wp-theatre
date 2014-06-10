@@ -54,9 +54,10 @@ class WP_Theatre {
 		}
 		
 		// Options
-		$this->options = get_option( 'wp_theatre' );
 		$this->wpt_language_options = get_option( 'wpt_language' );
 		$this->wpt_listing_page_options = get_option( 'wpt_listing_page' );
+		$this->wpt_style_options = get_option( 'wpt_style' );
+		$this->wpt_tickets_options = get_option( 'wpt_tickets' );
 
 		// Hooks
 		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this->setup, 'plugin_action_links' ) );

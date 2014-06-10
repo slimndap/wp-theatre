@@ -33,12 +33,15 @@ class WPT_Frontend {
 		wp_enqueue_script( 'wp_theatre_js', plugins_url( '../js/main.js', __FILE__ ), array('jquery'), $wpt_version );
 
 		// Add built-in Theatre stylesheet
-		if (!empty($wp_theatre->options['stylesheet'])) {
+		if (!empty($wp_theatre->wpt_style_options['stylesheet'])) {
 			wp_enqueue_style( 'wp_theatre', plugins_url( '../css/style.css', __FILE__ ), null, $wpt_version );
 		}
 
 		// Add Thickbox files
-		if (!empty($wp_theatre->options['integrationtype']) && $wp_theatre->options['integrationtype']=='lightbox') {
+		if (
+			!empty($wp_theatre->wpt_tickets_options['integrationtype']) && 
+			$wp_theatre->wpt_tickets_options['integrationtype']=='lightbox'
+		) {
 			wp_enqueue_script('thickbox');
 			wp_enqueue_style('thickbox', includes_url('/js/thickbox/thickbox.css'), null, $wpt_version);			
 		}
@@ -50,15 +53,15 @@ class WPT_Frontend {
 		
 		$html = array();
 		
-		$html[] = '<meta name="generator" content="Theatre '.$wpt_version.'" />';
+		$html[] = '<meta name="generator" content="Theater '.$wpt_version.'" />';
 
-		if (!empty($wp_theatre->options['custom_css'])) {
-			$html[].= '<!-- Custom Theatre CSS -->';
+		if (!empty($wp_theatre->wpt_style_options['custom_css'])) {
+			$html[].= '<!-- Custom Theater CSS -->';
 			$html[].= '<style>';
-			$html[].= $wp_theatre->options['custom_css'];
+			$html[].= $wp_theatre->wpt_style_options['custom_css'];
 			$html[].= '</style>';
+		}
 		
-		}		
 		echo implode("\n",$html)."\n";
 	}
 	

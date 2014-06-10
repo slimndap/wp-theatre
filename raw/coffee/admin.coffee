@@ -1,13 +1,13 @@
 class wpt_admin_ticketspage
 	constructor: ->
 		@.ticketspage = jQuery('select#iframepage').parents 'tr'
-		@.integrationstypes = jQuery "input[name='wp_theatre[integrationtype]']"
+		@.integrationstypes = jQuery "input[name='wpt_tickets[integrationtype]']"
 		if @.ticketspage.length > 0 and @.integrationstypes.length > 0
 			@.update() 
 			@.integrationstypes.click =>
 				@.update()
 	update: ->
-		integrationtype = jQuery("input[name='wp_theatre[integrationtype]']:checked").val()
+		integrationtype = jQuery("input[name='wpt_tickets[integrationtype]']:checked").val()
 		if integrationtype == 'iframe'
 			@.ticketspage.show(1000)
 		else 

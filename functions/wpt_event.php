@@ -310,7 +310,7 @@ class WPT_Event {
 				$summary = '';
 				if (count($this->prices)>0) {
 					if (count($this->prices)==1) {
-						$summary = $wp_theatre->options['currencysymbol'].'&nbsp;'.number_format_i18n($this->prices[0],2);
+						$summary = $wp_theatre->wpt_tickets_options['currencysymbol'].'&nbsp;'.number_format_i18n($this->prices[0],2);
 					} else {
 						$lowest = $this->prices[0];
 						for($p=1;$p<count($this->prices);$p++) {
@@ -318,7 +318,8 @@ class WPT_Event {
 								$lowest = $this->prices[$p];
 							}
 						}
-						$summary = __('from','wp_theatre').' '.$wp_theatre->options['currencysymbol'].'&nbsp;'.number_format_i18n($lowest,2);
+						$summary = __('from','wp_theatre').' '.$wp_theatre->wpt_tickets_options['currencysymbol'].
+							'&nbsp;'.number_format_i18n($lowest,2);
 					}
 				}
 				return $summary;
@@ -402,12 +403,16 @@ class WPT_Event {
 		$args = wp_parse_args( $args, $defaults );
 
 		if (!isset($this->tickets)) {
-			if (!empty($wp_theatre->options['integrationtype']) && $wp_theatre->options['integrationtype']=='iframe') {
-				$url = get_permalink($wp_theatre->options['iframepage']);
-				$args = array(
-					__('Event','wp_theatre') => $this->ID
+			if (
+				!empty($wp_theatre->wpt_tickets_options['integrationtype']) && 
+				$wp_theatre->wpt_tickets_options['integrationtype']=='iframe'
+			) {
+				$url = get_permalink($wp_theatre->wpt_tickets_options['iframepage']);
+				$url = add_query_arg(
+					array(
+						__('Event','wp_theatre') => $this->ID
+					) , $url
 				);
-				$url = add_query_arg( $args , $url);
 			} else {
 				$url = get_post_meta($this->ID,'tickets_url',true);
 			}
@@ -425,8 +430,8 @@ class WPT_Event {
 					// Add classes to tickets button
 					$classes = array();
 					$classes[] = self::post_type_name.'_tickets_url';
-					if (!empty($wp_theatre->options['integrationtype'])) {
-						$classes[] = 'wp_theatre_integrationtype_'.$wp_theatre->options['integrationtype'];
+					if (!empty($wp_theatre->wpt_tickets_options['integrationtype'])) {
+						$classes[] = 'wp_theatre_integrationtype_'.$wp_theatre->wpt_tickets_options['integrationtype'];
 					}
 					$classes = apply_filters('wpt_event_tickets_classes',$classes,$this);
 					$html.= ' class="'.implode(' ' ,$classes).'"';

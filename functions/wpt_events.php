@@ -76,7 +76,6 @@ class WPT_Events extends WPT_Listing {
 	 */
 	public function html($args=array()) {
 		global $wp_theatre;
-		global $wp_query;
 
 		$defaults = array(
 			'paginateby' => array(),
