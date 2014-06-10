@@ -169,8 +169,8 @@ class WPT_Admin {
 	}
 
 	function admin_menu() {
-		add_menu_page( __('Theatre','wp_theatre'), __('Theatre','wp_theatre'), 'edit_posts', 'theatre', array(), 'none', 30);
-		add_submenu_page( 'theatre', 'Theatre '.__('Settings'), __('Settings'), 'manage_options', 'wpt_admin', array( $this, 'admin_page' ));
+		add_menu_page( __('Theater','wp_theatre'), __('Theater','wp_theatre'), 'edit_posts', 'theatre', array(), 'none', 30);
+		add_submenu_page( 'theatre',__('Theater','wp_theatre').' '.__('Settings'), __('Settings'), 'manage_options', 'wpt_admin', array( $this, 'admin_page' ));
 	}
 	
 	function add_meta_boxes() {
@@ -792,7 +792,7 @@ class WPT_Admin {
         ?>
         <div class="wrap">
             <?php screen_icon(); ?>
-       		<h2><?php echo __('Theatre','wp_theatre').' '.__('Settings');?></h2>
+       		<h2><?php echo __('Theater','wp_theatre').' '.__('Settings');?></h2>
             <h2 class="nav-tab-wrapper">
             <?php foreach ($this->tabs as $key=>$val) { ?>
             	<a class="nav-tab <?php echo $key==$this->tab?'nav-tab-active':'';?>" href="?page=wpt_admin&tab=<?php echo $key;?>">
