@@ -18,7 +18,7 @@ Theater comes with several shortcodes and widgets to show off your events. See t
 
 __Available add-ons__
 
-* [Ticketmatic](http://slimndap.com/product/ticketmatic-voor-wordpress/)
+* [Ticketmatic](http://slimndap.com/product/ticketmatic-for-wordpress/)
 
 __Missing features?__
 
@@ -60,6 +60,14 @@ __All event listings look really weird!__
 
 Make sure that you checked the 'Enable built-in Theater stylesheet'-option in the Theater plugin settings.
 
+__I don't see the Theater Calendar widget__
+
+Make sure that you select a page to show your event listings on in the Theater plugin settings.
+
+__I don't see the Theater Categories widget__
+
+Make sure that you select a page to show your event listings on in the Theater plugin settings.
+
 __I really need feature X. Can you add it?__
 
 If you are missing a feature that you really need for your website you can:
@@ -71,6 +79,17 @@ If you are missing a feature that you really need for your website you can:
 The new feature may be added directly to the Theater plugin or as an extension so that others may benefit from this as well.
 
 == Changelog ==
+
+= 0.8 =
+* New Theater Calendar widget with upcoming events.
+* New calendar shortcode: [wpt_calendar].
+* New Theater Categories widget with a list of all categories with upcoming events.
+* Dedicated event listing page (with pretty URLs). No shortcode needed!
+* Day grouping and pagination for event listings. Very useful for cinema websites.
+* Support for custom fields in shortcode templates. Thanks [ydbondt](https://github.com/ydbondt).
+* [wpt_production_events] now supports a production ID if used outside of a production detail page: [wpt_production_events production=123].
+* Rearranged settings screen.
+* Updated Dutch and German (by [pixelfis.ch](http://pixelfis.ch)) translations.
 
 = 0.7 =
 * Support for tickets prices, cancelled events.
@@ -166,6 +185,9 @@ The new feature may be added directly to the Theater plugin or as an extension s
 * Basic version of the plugin.
 
 == Upgrade Notice ==
+= 0.8 =
+* Major update. Always backup before you upgrade!
+
 = 0.7.6 =
 * Fixed sticky productions showing up in the wrong places.
 
