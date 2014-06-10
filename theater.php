@@ -58,7 +58,8 @@ class WP_Theatre {
 		$this->wpt_listing_page_options = get_option( 'wpt_listing_page' );
 		$this->wpt_style_options = get_option( 'wpt_style' );
 		$this->wpt_tickets_options = get_option( 'wpt_tickets' );
-
+		$this->deprecated_options();
+		
 		// Hooks
 		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this->setup, 'plugin_action_links' ) );
 
@@ -177,6 +178,20 @@ class WP_Theatre {
 		return $this->productions->html_listing();
 	}
 
+ 	/*
+ 	 * For backward compatibility purposes
+ 	 * Use old theatre options for style options and tickets options.
+ 	 * As of v0.8 style options and tickets options are stored seperately.
+ 	 */
+ 	
+ 	function deprecated_options() {
+	 	if (empty($this->wpt_style_options)) {
+		 	$this->wpt_style_options = get_option( 'wp_theatre' );
+	 	}
+	 	if (empty($this->wpt_tickets_options)) {
+		 	$this->wpt_tickets_options = get_option( 'wp_theatre' );
+	 	}
+ 	}
 }
 
 /**
