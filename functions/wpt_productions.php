@@ -238,9 +238,11 @@ class WPT_Productions extends WPT_Listing {
 		
 		if ($filters['limit']) {
 			$args['posts_per_page'] = $filters['limit'];
-		} else {
+		} elseif (
+			!$filters['season'] &&
+			!$filters['category']
+		) { else {
 			$args['posts_per_page'] = -1;
-			
 		}
 
 		if ($filters['upcoming']) {

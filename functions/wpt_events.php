@@ -220,6 +220,7 @@ class WPT_Events extends WPT_Listing {
 	 *
  	 * @return array Events.
 	 */
+	 
 	function load($filters=array()) {
 		global $wpdb;
 		global $wp_theatre;
@@ -278,7 +279,14 @@ class WPT_Events extends WPT_Listing {
 		
 		if ($filters['limit']) {
 			$args['posts_per_page'] = $filters['limit'];
-		} else {
+		} elseif (
+			!$filters['production'] &&
+			!$filters['month'] &&
+			!$filters['day'] &&
+			!$filters['season']
+		) {
+			$args['posts_per_page'] = get_option('posts_per_page');
+		} else {	
 			$args['posts_per_page'] = -1;
 		}
 

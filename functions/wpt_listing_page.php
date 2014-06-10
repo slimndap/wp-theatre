@@ -210,6 +210,7 @@
 				'listing_page_groupby' => false	
  			);
 		 	$args = wp_parse_args($args, $defaults);
+
 		 	$shortcode_args = '';
 		 	if (!empty($args['listing_page_groupby'])) {
 			 	if ($args['listing_page_nav']=='grouped') {
@@ -218,10 +219,6 @@
 			 	if ($args['listing_page_nav']=='paginated') {
 				 	$shortcode_args.= ' paginateby="'.$args['listing_page_groupby'].'"';
 			 	}
-		 	}
-
-		 	if (!empty($wp_query->query_vars['wpt_category'])) {
-			 	$shortcode_args.= ' category="'.$wp_query->query_vars['wpt_category'].'"';
 		 	}
 
 		 	$template = '';
