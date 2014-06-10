@@ -1,4 +1,4 @@
-=== Theater ===
+=== Theater for WordPress ===
 Contributors: slimndap
 Tags: theatre, stage, venue, events, shows, concerts, tickets, ticketing, sports, performances, calendar, workshops, theater, cinema
 Requires at least: 3.8
@@ -7,10 +7,10 @@ Stable tag: trunk
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Add events to your Wordpress website. Build a website for your theater, music venue, sports team, cinema or your rockband!
+Build a website for your theater, music venue, sports team, cinema or your rockband! Add upcoming events and ticketing to your WordPress website. 
 
 == Description ==
-This plugin gives you the ability to manage seasons, productions and events in Wordpress and comes with all necessary shortcodes and widgets to show your events on your website.
+A WordPress plugin to manage events with all necessary shortcodes and widgets for your theater.
 
 __Shortcodes__
 
