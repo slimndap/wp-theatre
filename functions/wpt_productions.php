@@ -241,7 +241,9 @@ class WPT_Productions extends WPT_Listing {
 		} elseif (
 			!$filters['season'] &&
 			!$filters['category']
-		) { else {
+		) { 
+			$args['posts_per_page'] = get_option('posts_per_page');		
+		} else {
 			$args['posts_per_page'] = -1;
 		}
 
