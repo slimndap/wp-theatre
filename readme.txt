@@ -156,6 +156,9 @@ Make sure that you checked the 'Enable built-in Theater stylesheet'-option in th
 * Basic version of the plugin.
 
 == Upgrade Notice ==
+= 0.7.7 =
+* Bugfix: tickets button was sometimes showing a plain URL.
+
 = 0.7.6 =
 * Fixed sticky productions showing up in the wrong places.
 

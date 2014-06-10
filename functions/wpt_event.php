@@ -404,9 +404,6 @@ class WPT_Event {
 		if (!isset($this->tickets)) {
 			if (!empty($wp_theatre->options['integrationtype']) && $wp_theatre->options['integrationtype']=='iframe') {
 				$url = get_permalink($wp_theatre->options['iframepage']);
-				$args = array(
-					__('Event','wp_theatre') => $this->ID
-				);
 				$url = add_query_arg( $args , $url);
 			} else {
 				$url = get_post_meta($this->ID,'tickets_url',true);
