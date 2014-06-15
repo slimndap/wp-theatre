@@ -143,6 +143,19 @@ class WPT_Production {
 		
 	}
 
+	function to_array() {
+		return array(
+			'title'      => $this->title(),
+			'thumbnail'  => get_the_post_thumbnail($this->ID),
+			'excerpt'    => $this->excerpt(),
+			'dates'      => $this->dates(),
+			'cities'     => $this->cities(),
+			'categories' => $this->categories(),
+			'season'     => $this->season(),
+			'permalink'  => $this->permalink()
+		);
+	}
+
 	/**
 	 * Production dates.
 	 * 

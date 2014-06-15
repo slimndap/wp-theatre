@@ -188,7 +188,7 @@ class WPT_Productions extends WPT_Listing {
 		
 		return $html;
 	}
-	
+
 	/**
 	 * All productions.
 	 *
@@ -196,17 +196,18 @@ class WPT_Productions extends WPT_Listing {
 	 * 
 	 * Example:
 	 *
-	 * $productions = $wp_theatre->productions->all();
+	 * $productions = $wp_theatre->productions->load();
 	 *
 	 * @since 0.4
 	 *
 	 * @param array $args {
 	 *     An array of arguments. Optional.
 	 *
-	 *     @type int $wp_theatre_season Only return production that are linked to season <$wp_theatre_season>. No additional sticky productions get added. Default <false>.
-	 *     @type bool $grouped Order the list by season, so it can be grouped later. Default <false>.
-	 *     @type bool $upcoming Only show productions with upcoming events. Plus sticky productions. Default <false>.
-	 *     @type int $limit Limit the list to $limit productions. Use <false> for an unlimited list. Default <false>.
+	 *     @type int $wp_theatre_season Only return production that are linked to season <$wp_theatre_season>. 
+	 *                                  No additional sticky productions get added. Default <false>.
+	 *     @type bool $grouped          Order the list by season, so it can be grouped later. Default <false>.
+	 *     @type bool $upcoming         Only show productions with upcoming events. Plus sticky productions. Default <false>.
+	 *     @type int $limit             Limit the list to $limit productions. Use <false> for an unlimited list. Default <false>.
 	 * }
 	 * @return mixed An array of WPT_Production objects.
 	 */

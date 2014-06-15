@@ -47,6 +47,7 @@ class WP_Theatre {
 		$this->transient = new WPT_Transient();
 		$this->listing_page = new WPT_Listing_Page();
 		$this->calendar = new WPT_Calendar();
+		$this->editor = new WPT_Editor();
 		if (is_admin()) {
 		} else {
 			$this->frontend = new WPT_Frontend();
@@ -98,6 +99,7 @@ class WP_Theatre {
 		require_once(dirname(__FILE__) . '/functions/wpt_transient.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_listing_page.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_calendar.php');	
+		require_once(dirname(__FILE__) . '/functions/wpt_editor.php');	
 		if (is_admin()) {
 		} else {
 			require_once(dirname(__FILE__) . '/functions/wpt_frontend.php');

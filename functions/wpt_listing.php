@@ -4,6 +4,22 @@ class WPT_Listing {
 		return array();
 	}
 
+	function to_array($filters=array()) {
+		$objects = $this->get($filters);
+		
+		foreach($objects as $object) {
+			$array[] = $object->to_array();
+		}
+		
+		return $array;
+		
+	}
+
+	function json($args=array()) {
+		return json_encode($this->to_array());
+	}
+	
+
 	/*
 	 * Generate navigation for a listing filter.
 	 * @see WPT_Productions::html()
