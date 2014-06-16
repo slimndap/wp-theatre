@@ -281,6 +281,7 @@ class WPT_Events extends WPT_Listing {
 			$args['posts_per_page'] = $filters['limit'];
 		} elseif (
 			!$filters['production'] &&
+			!$filters['category'] &&
 			!$filters['month'] &&
 			!$filters['day'] &&
 			!$filters['season']
