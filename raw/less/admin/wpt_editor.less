@@ -1,0 +1,79 @@
+.wpt_editor {
+	.wpt_editor_productions {
+		margin: 10px 20px 0px 2px;
+		.wpt_editor_production {
+			background-color: white;
+			border: 1px solid #E5E5E5;
+			padding: 10px;
+			margin: 0 0 20px 0;
+			box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.04);
+			line-height: 30px;
+			.wpt_editor_production_actions {
+				float: right;
+				opacity: .1;
+				line-height: 30px;				
+				a {
+					display: inline-block;
+					height: 30px;
+					width: 30px;
+					overflow: hidden;
+					text-decoration: none;
+					&:before {
+						font-family: dashicons;
+						font-size: 20px;
+						display: block;
+					}
+					&.wpt_production_editor_view:before {
+						content: "\f177";
+					} 
+					&.wpt_production_editor_delete:before {
+						content: "\f182";
+					} 
+					&.wpt_production_editor_edit:before {
+						content: "\f464";
+					} 
+				}
+			}
+			&:hover {
+				.wpt_editor_production_actions {
+					opacity: 1;
+				}
+			}
+			.wpt_editor_production_meta {
+				.wpt_editor_production_dates,
+				.wpt_editor_production_cities,
+				.wpt_editor_production_categories,
+				.wpt_editor_production_season {
+					display: inline-block;
+					line-height: 30px;
+				}
+				.wpt_editor_production_dates,
+				.wpt_editor_production_categories,
+				.wpt_editor_production_season {
+					&:before {
+						font-family: dashicons;
+						font-size: 20px;
+					}
+					&:after {
+						content: '\00A0';
+					}
+				}
+				.wpt_editor_production_dates:before {
+					content: "\f469\00A0";
+				}
+				.wpt_editor_production_cities:before {
+					content: 'in\00A0';
+				}
+				.wpt_editor_production_season:before {
+					content: "\f145\00A0";
+				}
+				.wpt_editor_production_categories:before {
+					content: "\f318\00A0";
+				}				
+			}	
+			h2 {
+				margin: 1em 0 0;
+			}
+		}
+	}
+}

@@ -37,7 +37,7 @@ class WPT_Admin {
 	}	
 
 	function admin_init() {
-		wp_enqueue_script( 'wp_theatre_admin', plugins_url( '../js/admin.js', __FILE__ ), array('jquery') );
+		wp_enqueue_script( 'wpt_admin', plugins_url( '../js/admin.js', __FILE__ ), array('jquery') );
 		wp_enqueue_style( 'wp_theatre_admin', plugins_url( '../css/admin.css', __FILE__ ) );
 		wp_enqueue_script( 'jquery-ui-timepicker', plugins_url( '../js/jquery-ui-timepicker-addon.js', __FILE__ ), array('jquery-ui-datepicker','jquery-ui-slider')  );
 		wp_enqueue_style('jquery-style', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css');

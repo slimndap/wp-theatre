@@ -144,7 +144,9 @@ class WPT_Production {
 	}
 
 	function to_array() {
+		global $wp_theatre;
 		return array(
+			'ID'         => $this->ID,
 			'title'      => $this->title(),
 			'thumbnail'  => get_the_post_thumbnail($this->ID),
 			'excerpt'    => $this->excerpt(),
@@ -152,7 +154,10 @@ class WPT_Production {
 			'cities'     => $this->cities(),
 			'categories' => $this->categories(),
 			'season'     => $this->season(),
-			'permalink'  => $this->permalink()
+			'permalink'  => $this->permalink(),
+
+			$wp_theatre->order->meta_key => get_post_meta($this->ID, $wp_theatre->order->meta_key, true)
+
 		);
 	}
 
