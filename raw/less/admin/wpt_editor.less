@@ -1,79 +1,145 @@
-.wpt_editor {
+#wpt_editor {
+	margin: 10px 20px 0px 2px;
 	.wpt_editor_productions {
-		margin: 10px 20px 0px 2px;
-		.wpt_editor_production {
+		.production {
 			background-color: white;
 			border: 1px solid #E5E5E5;
 			padding: 10px;
 			margin: 0 0 20px 0;
 			box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.04);
-			line-height: 30px;
-			.wpt_editor_production_actions {
+			.actions {
 				float: right;
 				opacity: .1;
-				line-height: 30px;				
-				a {
+				line-height: 20px;
+				div {
 					display: inline-block;
-					height: 30px;
-					width: 30px;
-					overflow: hidden;
-					text-decoration: none;
-					&:before {
+					a {
+						display: inline-block;
+						height: 20px;
+						width: 30px;
+						overflow: hidden;
+						text-decoration: none;
+						
+					}
+					a:before {
 						font-family: dashicons;
 						font-size: 20px;
+						display: inline-block;
+						width: 30px;
+						text-align: right;
 						display: block;
 					}
-					&.wpt_production_editor_view:before {
+					&.view_link a:before {
 						content: "\f177";
 					} 
-					&.wpt_production_editor_delete:before {
+					&.delete_link a:before {
 						content: "\f182";
 					} 
-					&.wpt_production_editor_edit:before {
+					&.edit_link a:before {
 						content: "\f464";
 					} 
 				}
 			}
 			&:hover {
-				.wpt_editor_production_actions {
+				.actions {
 					opacity: 1;
 				}
 			}
-			.wpt_editor_production_meta {
-				.wpt_editor_production_dates,
-				.wpt_editor_production_cities,
-				.wpt_editor_production_categories,
-				.wpt_editor_production_season {
+			.meta {
+				color: #bbb;
+				line-height: 18px;
+				.dates,
+				.cities,
+				.categories,
+				.season {
 					display: inline-block;
-					line-height: 30px;
-				}
-				.wpt_editor_production_dates,
-				.wpt_editor_production_categories,
-				.wpt_editor_production_season {
-					&:before {
-						font-family: dashicons;
-						font-size: 20px;
-					}
 					&:after {
 						content: '\00A0';
 					}
+					&:empty {
+						display: none;
+					}
 				}
-				.wpt_editor_production_dates:before {
+				.dates,
+				.categories,
+				.season {
+					&:before {
+						font-family: dashicons;
+						font-size: 20px;
+						display: inline-block;
+						height: 20px;
+						vertical-align: middle;
+					}
+				}
+				.dates:before {
 					content: "\f469\00A0";
 				}
-				.wpt_editor_production_cities:before {
+				.cities:before {
 					content: 'in\00A0';
 				}
-				.wpt_editor_production_season:before {
+				.season:before {
 					content: "\f145\00A0";
 				}
-				.wpt_editor_production_categories:before {
-					content: "\f318\00A0";
+				.categories {
+					&:before {
+						content: "\f318\00A0";
+					}
+					ul {
+						list-style-type: none;
+						margin: 0;
+						padding: 0;
+						display: inline-block;
+						li {
+							display: inline;
+							&:before {
+								content: ', ';
+							}
+							&:first-child:before {
+								content: '';
+							}
+						}
+					}
 				}				
-			}	
-			h2 {
-				margin: 1em 0 0;
 			}
+			.content {
+				margin-top: 1em;
+				overflow: auto;
+				> * {
+					margin-left: 75px + 10px;
+				}
+				.thumbnail {
+					width: 75px;
+					float: left;
+					margin-left: 0;
+					img {
+						width: 100%;
+						height: auto;
+					}
+					&:empty {
+						border: 1px dashed #bbb;
+						height: 75px;
+					}
+				}
+				h2 {
+					margin-top: 0;
+					margin-bottom: 0;
+				}
+				.excerpt {
+					margin-top: 1em;
+				}
+				
+			}	
 		}
+	}
+	&.busy {
+		.spinner {
+			display: block;
+			text-indent: 100%;
+			overflow: hidden;
+			white-space: nowrap;
+		}
+	}
+	.wpt_editor_templates {
+		display: none;
 	}
 }

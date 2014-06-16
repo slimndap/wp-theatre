@@ -145,20 +145,29 @@ class WPT_Production {
 
 	function to_array() {
 		global $wp_theatre;
-		return array(
+		$data = array(
 			'ID'         => $this->ID,
 			'title'      => $this->title(),
 			'thumbnail'  => get_the_post_thumbnail($this->ID),
 			'excerpt'    => $this->excerpt(),
 			'dates'      => $this->dates(),
 			'cities'     => $this->cities(),
-			'categories' => $this->categories(),
-			'season'     => $this->season(),
+			'categories' => $this->categories(array('html'=>true)),
 			'permalink'  => $this->permalink(),
+			
+			'edit_link'  => '<a href="'.get_edit_post_link($this->ID).'">'.__('Edit').'</a>',
+			'delete_link'=> '<a href="'.get_delete_post_link($this->ID).'">'.__('Delete').'</a>',
+			'view_link'  => $this->permalink(array('html'=>true)),
 
 			$wp_theatre->order->meta_key => get_post_meta($this->ID, $wp_theatre->order->meta_key, true)
 
 		);
+		
+		if ($season = $this->season()) {
+			$data['season'] = $season;
+		}
+		
+		return $data;
 	}
 
 	/**

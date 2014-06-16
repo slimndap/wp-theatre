@@ -32,15 +32,44 @@
 		}
 		
 		function admin_page() {
+			global $wp_theatre;
+			echo '<div id="wpt_editor">';
+			
+			echo '<div class="spinner">'.__('Working...','wp_theatre').'</div>';
 		
-			echo '<div class="wpt_editor">';
-		
-			// create event form
+    		// create event form
 			echo $this->production_form();
 			
 			// filters
+			echo '<input class="search" />';
+			echo '<span class="sort" data-sort="title">Sort by name</span>';
+			echo '<span class="sort" data-sort="'.$wp_theatre->order->meta_key.'">Sort by city</span>';
 			
 			// settings
+			
+			echo '<div class="wpt_editor_templates">';
+			
+			echo '<div id="wpt_editor_production_template" class="production">';
+	
+			echo '<div class="actions">';
+			echo '<div class="view_link"></div>';
+			echo '<div class="delete_link"></div>';
+			echo '<div class="edit_link"></div>';
+			echo '</div>';
+			
+			echo '<div class="meta">';
+			echo '<div class="dates"></div><div class="cities"></div><div class="categories"></div><div class="season"></div>';
+			echo '</div>';
+			
+			echo '<div class="content">';
+			echo '<div class="thumbnail"></div>';
+			echo '<h2 class="title"></h2>';
+			echo '<div class="excerpt"></div>';
+			echo '<p></p>';
+			echo '</div>';
+			
+			echo '</div>';
+			echo '</div>';
 			
 			// productions
 			echo '<div class="wpt_editor_productions"></div>';
@@ -51,7 +80,11 @@
 		
 		function ajax_productions() {
 			global $wp_theatre;
-			wp_send_json($wp_theatre->productions->to_array());
+			
+			$args = array(
+				'upcoming' => true
+			);
+			wp_send_json($wp_theatre->productions->to_array($args));
 		}
 		
 		function production_form() {
