@@ -185,6 +185,10 @@ The new feature may be added directly to the Theater plugin or as an extension s
 * Basic version of the plugin.
 
 == Upgrade Notice ==
+
+= 0.8.1 =
+* Event listing sometimes wasn't showing all events.
+
 = 0.8 =
 * Major update. Always backup before you upgrade!
 
