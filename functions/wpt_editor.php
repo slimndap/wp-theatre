@@ -39,20 +39,38 @@
 			global $wp_theatre;
 			echo '<div id="wpt_editor">';
 			
-			echo '<div class="spinner">'.__('Working...','wp_theatre').'</div>';
 		
     		// create event form
 			echo $this->production_form();
 			
 			// sort
-			echo '<div class="wpt_editor_sort"> Sort by:';
+			echo '<div class="wpt_editor_sort"> Sort by: ';
+			echo '<div class="spinner">'.__('Working...','wp_theatre').'</div>';
 			echo '<span class="sort" href="#" data-sort="title">name</span>';
 			echo '<span class="sort" href="#" data-sort="'.$wp_theatre->order->meta_key.'">date</span>';
 			echo '</div>';
 
 			// filters
 			echo '<div class="wpt_editor_filters">';
-			echo '<input class="search" />';
+			echo '<h3>'.__('Filters','wp_theatre').'</h3>';
+			echo '<input type="text" class="wpt_editor_search"  placeholder="'.__('Search by keyword','wp_theatre').'" />';
+			
+			$args = array();
+			$categories = get_categories($args);
+			if (!empty($categories)) {
+				echo '<div class="categories">';
+				echo '<ul>';
+				
+				foreach ($categories as $category) {
+					echo '<li><a href="#'.$category->slug.'">'.$category->name.'</a></li>';
+				}
+				
+				echo '</ul>';
+				echo '</div>';				
+			}
+
+			// echo $wp_theatre->calendar->html();
+
 			echo '</div>';
 			
 			// settings
@@ -61,11 +79,7 @@
 			
 			echo '<div id="wpt_editor_production_template" class="production">';
 	
-			echo '<div class="actions">';
-			echo '<div class="view_link"></div>';
-			echo '<div class="delete_link"></div>';
-			echo '<div class="edit_link"></div>';
-			echo '</div>';
+			echo '<div class="actions"><div class="view_link"></div><div class="delete_link"></div><div class="edit_link"></div></div>';
 			
 			echo '<div class="meta">';
 			echo '<div class="dates"></div><div class="cities"></div><div class="categories"></div><div class="season"></div>';

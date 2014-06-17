@@ -1,1 +1,1683 @@
-(function(){!function(){function e(t,r,n){var i=e.resolve(t);if(null==i){n=n||t,r=r||"root";var s=new Error('Failed to require "'+n+'" from "'+r+'"');throw s.path=n,s.parent=r,s.require=!0,s}var o=e.modules[i];if(!o._resolving&&!o.exports){var a={};a.exports={},a.client=a.component=!0,o._resolving=!0,o.call(this,a.exports,e.relative(i),a),delete o._resolving,o.exports=a.exports}return o.exports}e.modules={},e.aliases={},e.resolve=function(t){"/"===t.charAt(0)&&(t=t.slice(1));for(var r=[t,t+".js",t+".json",t+"/index.js",t+"/index.json"],n=0;n<r.length;n++){var t=r[n];if(e.modules.hasOwnProperty(t))return t;if(e.aliases.hasOwnProperty(t))return e.aliases[t]}},e.normalize=function(e,t){var r=[];if("."!=t.charAt(0))return t;e=e.split("/"),t=t.split("/");for(var n=0;n<t.length;++n)".."==t[n]?e.pop():"."!=t[n]&&""!=t[n]&&r.push(t[n]);return e.concat(r).join("/")},e.register=function(t,r){e.modules[t]=r},e.alias=function(t,r){if(!e.modules.hasOwnProperty(t))throw new Error('Failed to alias "'+t+'", it does not exist');e.aliases[r]=t},e.relative=function(t){function r(e,t){for(var r=e.length;r--;)if(e[r]===t)return r;return-1}function n(r){var i=n.resolve(r);return e(i,t,r)}var i=e.normalize(t,"..");return n.resolve=function(n){var s=n.charAt(0);if("/"==s)return n.slice(1);if("."==s)return e.normalize(i,n);var o=t.split("/"),a=r(o,"deps")+1;return a||(a=0),n=o.slice(0,a+1).join("/")+"/deps/"+n},n.exists=function(t){return e.modules.hasOwnProperty(n.resolve(t))},n},e.register("component-classes/index.js",function(e,t,r){function n(e){if(!e)throw new Error("A DOM element reference is required");this.el=e,this.list=e.classList}var i=t("indexof"),s=/\s+/,o=Object.prototype.toString;r.exports=function(e){return new n(e)},n.prototype.add=function(e){if(this.list)return this.list.add(e),this;var t=this.array(),r=i(t,e);return~r||t.push(e),this.el.className=t.join(" "),this},n.prototype.remove=function(e){if("[object RegExp]"==o.call(e))return this.removeMatching(e);if(this.list)return this.list.remove(e),this;var t=this.array(),r=i(t,e);return~r&&t.splice(r,1),this.el.className=t.join(" "),this},n.prototype.removeMatching=function(e){for(var t=this.array(),r=0;r<t.length;r++)e.test(t[r])&&this.remove(t[r]);return this},n.prototype.toggle=function(e,t){return this.list?("undefined"!=typeof t?t!==this.list.toggle(e,t)&&this.list.toggle(e):this.list.toggle(e),this):("undefined"!=typeof t?t?this.add(e):this.remove(e):this.has(e)?this.remove(e):this.add(e),this)},n.prototype.array=function(){var e=this.el.className.replace(/^\s+|\s+$/g,""),t=e.split(s);return""===t[0]&&t.shift(),t},n.prototype.has=n.prototype.contains=function(e){return this.list?this.list.contains(e):!!~i(this.array(),e)}}),e.register("segmentio-extend/index.js",function(e,t,r){r.exports=function n(e){for(var t=Array.prototype.slice.call(arguments,1),r=0,n;n=t[r];r++)if(n)for(var i in n)e[i]=n[i];return e}}),e.register("component-indexof/index.js",function(e,t,r){r.exports=function(e,t){if(e.indexOf)return e.indexOf(t);for(var r=0;r<e.length;++r)if(e[r]===t)return r;return-1}}),e.register("component-event/index.js",function(e,t,r){var n=window.addEventListener?"addEventListener":"attachEvent",i=window.removeEventListener?"removeEventListener":"detachEvent",s="addEventListener"!==n?"on":"";e.bind=function(e,t,r,i){return e[n](s+t,r,i||!1),r},e.unbind=function(e,t,r,n){return e[i](s+t,r,n||!1),r}}),e.register("timoxley-to-array/index.js",function(e,t,r){function n(e){return"[object Array]"===Object.prototype.toString.call(e)}r.exports=function i(e){if("undefined"==typeof e)return[];if(null===e)return[null];if(e===window)return[window];if("string"==typeof e)return[e];if(n(e))return e;if("number"!=typeof e.length)return[e];if("function"==typeof e&&e instanceof Function)return[e];for(var t=[],r=0;r<e.length;r++)(Object.prototype.hasOwnProperty.call(e,r)||r in e)&&t.push(e[r]);return t.length?t:[]}}),e.register("javve-events/index.js",function(e,t,r){var n=t("event"),i=t("to-array");e.bind=function(e,t,r,s){e=i(e);for(var o=0;o<e.length;o++)n.bind(e[o],t,r,s)},e.unbind=function(e,t,r,s){e=i(e);for(var o=0;o<e.length;o++)n.unbind(e[o],t,r,s)}}),e.register("javve-get-by-class/index.js",function(e,t,r){r.exports=function(){return document.getElementsByClassName?function(e,t,r){return r?e.getElementsByClassName(t)[0]:e.getElementsByClassName(t)}:document.querySelector?function(e,t,r){return t="."+t,r?e.querySelector(t):e.querySelectorAll(t)}:function(e,t,r){var n=[],i="*";null==e&&(e=document);for(var s=e.getElementsByTagName(i),o=s.length,a=new RegExp("(^|\\s)"+t+"(\\s|$)"),l=0,u=0;o>l;l++)if(a.test(s[l].className)){if(r)return s[l];n[u]=s[l],u++}return n}}()}),e.register("javve-get-attribute/index.js",function(e,t,r){r.exports=function(e,t){var r=e.getAttribute&&e.getAttribute(t)||null;if(!r)for(var n=e.attributes,i=n.length,s=0;i>s;s++)void 0!==t[s]&&t[s].nodeName===t&&(r=t[s].nodeValue);return r}}),e.register("javve-natural-sort/index.js",function(e,t,r){r.exports=function(e,t,r){var n=/(^-?[0-9]+(\.?[0-9]*)[df]?e?[0-9]?$|^0x[0-9a-f]+$|[0-9]+)/gi,i=/(^[ ]*|[ ]*$)/g,s=/(^([\w ]+,?[\w ]+)?[\w ]+,?[\w ]+\d+:\d+(:\d+)?[\w ]?|^\d{1,4}[\/\-]\d{1,4}[\/\-]\d{1,4}|^\w+, \w+ \d+, \d{4})/,o=/^0x[0-9a-f]+$/i,a=/^0/,r=r||{},l=function(e){return r.insensitive&&(""+e).toLowerCase()||""+e},u=l(e).replace(i,"")||"",c=l(t).replace(i,"")||"",d=u.replace(n,"\x00$1\x00").replace(/\0$/,"").replace(/^\0/,"").split("\x00"),f=c.replace(n,"\x00$1\x00").replace(/\0$/,"").replace(/^\0/,"").split("\x00"),p=parseInt(u.match(o))||1!=d.length&&u.match(s)&&Date.parse(u),h=parseInt(c.match(o))||p&&c.match(s)&&Date.parse(c)||null,v,m,g=r.desc?-1:1;if(h){if(h>p)return-1*g;if(p>h)return 1*g}for(var j=0,x=Math.max(d.length,f.length);x>j;j++){if(v=!(d[j]||"").match(a)&&parseFloat(d[j])||d[j]||0,m=!(f[j]||"").match(a)&&parseFloat(f[j])||f[j]||0,isNaN(v)!==isNaN(m))return isNaN(v)?1:-1;if(typeof v!=typeof m&&(v+="",m+=""),m>v)return-1*g;if(v>m)return 1*g}return 0}}),e.register("javve-to-string/index.js",function(e,t,r){r.exports=function(e){return e=void 0===e?"":e,e=null===e?"":e,e=e.toString()}}),e.register("component-type/index.js",function(e,t,r){var n=Object.prototype.toString;r.exports=function(e){switch(n.call(e)){case"[object Date]":return"date";case"[object RegExp]":return"regexp";case"[object Arguments]":return"arguments";case"[object Array]":return"array";case"[object Error]":return"error"}return null===e?"null":void 0===e?"undefined":e!==e?"nan":e&&1===e.nodeType?"element":typeof e.valueOf()}}),e.register("list.js/index.js",function(e,t,r){!function(e,n){"use strict";var i=e.document,s=t("get-by-class"),o=t("extend"),a=t("indexof"),l=function(e,r,l){var u=this,c,d=t("./src/item")(u),f=t("./src/add-async")(u),p=t("./src/parse")(u);c={start:function(){u.listClass="list",u.searchClass="search",u.sortClass="sort",u.page=200,u.i=1,u.items=[],u.visibleItems=[],u.matchingItems=[],u.searched=!1,u.filtered=!1,u.handlers={updated:[]},u.plugins={},u.helpers={getByClass:s,extend:o,indexOf:a},o(u,r),u.listContainer="string"==typeof e?i.getElementById(e):e,u.listContainer&&(u.list=s(u.listContainer,u.listClass,!0),u.templater=t("./src/templater")(u),u.search=t("./src/search")(u),u.filter=t("./src/filter")(u),u.sort=t("./src/sort")(u),this.items(),u.update(),this.plugins())},items:function(){p(u.list),l!==n&&u.add(l)},plugins:function(){for(var e=0;e<u.plugins.length;e++){var t=u.plugins[e];u[t.name]=t,t.init(u)}}},this.add=function(e,t){if(t)return void f(e,t);var r=[],i=!1;e[0]===n&&(e=[e]);for(var s=0,o=e.length;o>s;s++){var a=null;e[s]instanceof d?(a=e[s],a.reload()):(i=u.items.length>u.page?!0:!1,a=new d(e[s],n,i)),u.items.push(a),r.push(a)}return u.update(),r},this.show=function(e,t){return this.i=e,this.page=t,u.update(),u},this.remove=function(e,t,r){for(var n=0,i=0,s=u.items.length;s>i;i++)u.items[i].values()[e]==t&&(u.templater.remove(u.items[i],r),u.items.splice(i,1),s--,i--,n++);return u.update(),n},this.get=function(e,t){for(var r=[],n=0,i=u.items.length;i>n;n++){var s=u.items[n];s.values()[e]==t&&r.push(s)}return r},this.size=function(){return u.items.length},this.clear=function(){return u.templater.clear(),u.items=[],u},this.on=function(e,t){return u.handlers[e].push(t),u},this.off=function(e,t){var r=u.handlers[e],n=a(r,t);return n>-1&&r.splice(n,1),u},this.trigger=function(e){for(var t=u.handlers[e].length;t--;)u.handlers[e][t](u);return u},this.reset={filter:function(){for(var e=u.items,t=e.length;t--;)e[t].filtered=!1;return u},search:function(){for(var e=u.items,t=e.length;t--;)e[t].found=!1;return u}},this.update=function(){var e=u.items,t=e.length;u.visibleItems=[],u.matchingItems=[],u.templater.clear();for(var r=0;t>r;r++)e[r].matching()&&u.matchingItems.length+1>=u.i&&u.visibleItems.length<u.page?(e[r].show(),u.visibleItems.push(e[r]),u.matchingItems.push(e[r])):e[r].matching()?(u.matchingItems.push(e[r]),e[r].hide()):e[r].hide();return u.trigger("updated"),u},c.start()};r.exports=l}(window)}),e.register("list.js/src/search.js",function(e,t,r){var n=t("events"),i=t("get-by-class"),s=t("to-string");r.exports=function(e){var t,r,o,a,l,u={resetList:function(){e.i=1,e.templater.clear(),l=void 0},setOptions:function(e){2==e.length&&e[1]instanceof Array?o=e[1]:2==e.length&&"function"==typeof e[1]?l=e[1]:3==e.length&&(o=e[1],l=e[2])},setColumns:function(){o=void 0===o?u.toArray(e.items[0].values()):o},setSearchString:function(e){e=s(e).toLowerCase(),e=e.replace(/[-[\]{}()*+?.,\\^$|#]/g,"\\$&"),a=e},toArray:function(e){var t=[];for(var r in e)t.push(r);return t}},c={list:function(){for(var t=0,r=e.items.length;r>t;t++)c.item(e.items[t])},item:function(e){e.found=!1;for(var t=0,r=o.length;r>t;t++)if(c.values(e.values(),o[t]))return void(e.found=!0)},values:function(e,t){return e.hasOwnProperty(t)&&(r=s(e[t]).toLowerCase(),""!==a&&r.search(a)>-1)?!0:!1},reset:function(){e.reset.search(),e.searched=!1}},d=function(t){return e.trigger("searchStart"),u.resetList(),u.setSearchString(t),u.setOptions(arguments),u.setColumns(),""===a?c.reset():(e.searched=!0,l?l(a,o):c.list()),e.update(),e.trigger("searchComplete"),e.visibleItems};return e.handlers.searchStart=e.handlers.searchStart||[],e.handlers.searchComplete=e.handlers.searchComplete||[],n.bind(i(e.listContainer,e.searchClass),"keyup",function(t){var r=t.target||t.srcElement,n=""===r.value&&!e.searched;n||d(r.value)}),n.bind(i(e.listContainer,e.searchClass),"input",function(e){var t=e.target||e.srcElement;""===t.value&&d("")}),e.helpers.toString=s,d}}),e.register("list.js/src/sort.js",function(e,t,r){var n=t("natural-sort"),i=t("classes"),s=t("events"),o=t("get-by-class"),a=t("get-attribute");r.exports=function(e){e.sortFunction=e.sortFunction||function(e,t,r){return r.desc="desc"==r.order?!0:!1,n(e.values()[r.valueName],t.values()[r.valueName],r)};var t={els:void 0,clear:function(){for(var e=0,r=t.els.length;r>e;e++)i(t.els[e]).remove("asc"),i(t.els[e]).remove("desc")},getOrder:function(e){var t=a(e,"data-order");return"asc"==t||"desc"==t?t:i(e).has("desc")?"asc":i(e).has("asc")?"desc":"asc"},getInSensitive:function(e,t){var r=a(e,"data-insensitive");t.insensitive="true"===r?!0:!1},setOrder:function(e){for(var r=0,n=t.els.length;n>r;r++){var s=t.els[r];if(a(s,"data-sort")===e.valueName){var o=a(s,"data-order");"asc"==o||"desc"==o?o==e.order&&i(s).add(e.order):i(s).add(e.order)}}}},r=function(){e.trigger("sortStart"),options={};var r=arguments[0].currentTarget||arguments[0].srcElement||void 0;r?(options.valueName=a(r,"data-sort"),t.getInSensitive(r,options),options.order=t.getOrder(r)):(options=arguments[1]||options,options.valueName=arguments[0],options.order=options.order||"asc",options.insensitive="undefined"==typeof options.insensitive?!0:options.insensitive),t.clear(),t.setOrder(options),options.sortFunction=options.sortFunction||e.sortFunction,e.items.sort(function(e,t){return options.sortFunction(e,t,options)}),e.update(),e.trigger("sortComplete")};return e.handlers.sortStart=e.handlers.sortStart||[],e.handlers.sortComplete=e.handlers.sortComplete||[],t.els=o(e.listContainer,e.sortClass),s.bind(t.els,"click",r),e.on("searchStart",t.clear),e.on("filterStart",t.clear),e.helpers.classes=i,e.helpers.naturalSort=n,e.helpers.events=s,e.helpers.getAttribute=a,r}}),e.register("list.js/src/item.js",function(e,t,r){r.exports=function(e){return function(t,r,n){var i=this;this._values={},this.found=!1,this.filtered=!1;var s=function(t,r,n){if(void 0===r)n?i.values(t,n):i.values(t);else{i.elm=r;var s=e.templater.get(i,t);i.values(s)}};this.values=function(t,r){if(void 0===t)return i._values;for(var n in t)i._values[n]=t[n];r!==!0&&e.templater.set(i,i.values())},this.show=function(){e.templater.show(i)},this.hide=function(){e.templater.hide(i)},this.matching=function(){return e.filtered&&e.searched&&i.found&&i.filtered||e.filtered&&!e.searched&&i.filtered||!e.filtered&&e.searched&&i.found||!e.filtered&&!e.searched},this.visible=function(){return i.elm.parentNode==e.list?!0:!1},s(t,r,n)}}}),e.register("list.js/src/templater.js",function(e,t,r){var n=t("get-by-class"),i=function(e){function t(t){if(void 0===t){for(var r=e.list.childNodes,n=[],i=0,s=r.length;s>i;i++)if(void 0===r[i].data)return r[i];return null}if(-1!==t.indexOf("<")){var o=document.createElement("div");return o.innerHTML=t,o.firstChild}return document.getElementById(e.item)}var r=t(e.item),i=this;this.get=function(e,t){i.create(e);for(var r={},s=0,o=t.length;o>s;s++){var a=n(e.elm,t[s],!0);r[t[s]]=a?a.innerHTML:""}return r},this.set=function(e,t){if(!i.create(e))for(var r in t)if(t.hasOwnProperty(r)){var s=n(e.elm,r,!0);s&&("IMG"===s.tagName&&""!==t[r]?s.src=t[r]:s.innerHTML=t[r])}},this.create=function(e){if(void 0!==e.elm)return!1;var t=r.cloneNode(!0);return t.removeAttribute("id"),e.elm=t,i.set(e,e.values()),!0},this.remove=function(t){e.list.removeChild(t.elm)},this.show=function(t){i.create(t),e.list.appendChild(t.elm)},this.hide=function(t){void 0!==t.elm&&t.elm.parentNode===e.list&&e.list.removeChild(t.elm)},this.clear=function(){if(e.list.hasChildNodes())for(;e.list.childNodes.length>=1;)e.list.removeChild(e.list.firstChild)}};r.exports=function(e){return new i(e)}}),e.register("list.js/src/filter.js",function(e,t,r){r.exports=function(e){return e.handlers.filterStart=e.handlers.filterStart||[],e.handlers.filterComplete=e.handlers.filterComplete||[],function(t){if(e.trigger("filterStart"),e.i=1,e.reset.filter(),void 0===t)e.filtered=!1;else{e.filtered=!0;for(var r=e.items,n=0,i=r.length;i>n;n++){var s=r[n];s.filtered=t(s)?!0:!1}}return e.update(),e.trigger("filterComplete"),e.visibleItems}}}),e.register("list.js/src/add-async.js",function(e,t,r){r.exports=function(e){return function(t,r,n){var i=t.splice(0,100);n=n||[],n=n.concat(e.add(i)),t.length>0?setTimeout(function(){addAsync(t,r,n)},10):(e.update(),r(n))}}}),e.register("list.js/src/parse.js",function(e,t,r){r.exports=function(e){var r=t("./item")(e),n=function(e){for(var t=e.childNodes,r=[],n=0,i=t.length;i>n;n++)void 0===t[n].data&&r.push(t[n]);return r},i=function(t,n){for(var i=0,s=t.length;s>i;i++)e.items.push(new r(n,t[i]))},s=function(t,r){var n=t.splice(0,100);i(n,r),t.length>0?setTimeout(function(){init.items.indexAsync(t,r)},10):e.update()};return function(){var t=n(e.list),r=e.valueNames;e.indexAsync?s(t,r):i(t,r)}}}),e.alias("component-classes/index.js","list.js/deps/classes/index.js"),e.alias("component-classes/index.js","classes/index.js"),e.alias("component-indexof/index.js","component-classes/deps/indexof/index.js"),e.alias("segmentio-extend/index.js","list.js/deps/extend/index.js"),e.alias("segmentio-extend/index.js","extend/index.js"),e.alias("component-indexof/index.js","list.js/deps/indexof/index.js"),e.alias("component-indexof/index.js","indexof/index.js"),e.alias("javve-events/index.js","list.js/deps/events/index.js"),e.alias("javve-events/index.js","events/index.js"),e.alias("component-event/index.js","javve-events/deps/event/index.js"),e.alias("timoxley-to-array/index.js","javve-events/deps/to-array/index.js"),e.alias("javve-get-by-class/index.js","list.js/deps/get-by-class/index.js"),e.alias("javve-get-by-class/index.js","get-by-class/index.js"),e.alias("javve-get-attribute/index.js","list.js/deps/get-attribute/index.js"),e.alias("javve-get-attribute/index.js","get-attribute/index.js"),e.alias("javve-natural-sort/index.js","list.js/deps/natural-sort/index.js"),e.alias("javve-natural-sort/index.js","natural-sort/index.js"),e.alias("javve-to-string/index.js","list.js/deps/to-string/index.js"),e.alias("javve-to-string/index.js","list.js/deps/to-string/index.js"),e.alias("javve-to-string/index.js","to-string/index.js"),e.alias("javve-to-string/index.js","javve-to-string/index.js"),e.alias("component-type/index.js","list.js/deps/type/index.js"),e.alias("component-type/index.js","type/index.js"),"object"==typeof exports?module.exports=e("list.js"):"function"==typeof define&&define.amd?define(function(){return e("list.js")}):this.List=e("list.js")}();var e,t,r,n;t=function(){function e(e){this.editor=e,this.productions=new n(this.editor)}return e}(),n=function(){function e(e){var t;this.editor=e,t={valueNames:["wpt_editor_production_title","wpt_editor_production_excerpt"],listClass:"wpt_editor_productions",item:"wpt_editor_production_template"},this.list=new List(this.editor.attr("id"),t),this.load()}return e.prototype.load=function(){var e;return e={action:"productions"},this.editor.addClass("busy"),jQuery.post(wpt_editor_ajax.url,e,function(e){return function(t){var n,i,s,o;for(e.list.add(t),o=e.editor.find(".wpt_editor_productions").children(),i=0,s=o.length;s>i;i++)n=o[i],new r(n);return e.editor.removeClass("busy")}}(this))},e}(),r=function(){function e(e){this.production=e}return e.prototype.edit=function(){},e.prototype.save=function(){},e}(),jQuery(function(){return t=new t(jQuery("#wpt_editor"))}),e=function(){function e(){this.ticketspage=jQuery("select#iframepage").parents("tr"),this.integrationstypes=jQuery("input[name='wpt_tickets[integrationtype]']"),this.ticketspage.length>0&&this.integrationstypes.length>0&&(this.update(),this.integrationstypes.click(function(e){return function(){return e.update()}}(this)))}return e.prototype.update=function(){var e;return e=jQuery("input[name='wpt_tickets[integrationtype]']:checked").val(),"iframe"===e?this.ticketspage.show(1e3):this.ticketspage.hide(500)},e}(),jQuery(function(){return e=new e,jQuery(".wp_theatre_datepicker").datetimepicker({dateFormat:"yy-mm-dd",timeFormat:"HH:mm:ss"}),jQuery("#bulk_edit").live("click",function(){var e,t,r;return e=jQuery("#bulk-edit"),t=new Array,e.find("#bulk-titles").children().each(function(){return t.push(jQuery(this).attr("id").replace(/^(ttle)/i,""))}),r=e.find('select[name="_status"]').val(),jQuery.ajax({url:ajaxurl,type:"POST",async:!1,cache:!1,data:{action:"save_bulk_edit_wp_theatre_prod",post_ids:t,post_status:r}})})})}).call(this);
+// Generated by CoffeeScript 1.7.1
+
+/*
+--------------------------------------------
+     Begin list.js
+--------------------------------------------
+ */
+
+(function() {
+  ;(function(){
+
+/**
+ * Require the given path.
+ *
+ * @param {String} path
+ * @return {Object} exports
+ * @api public
+ */
+
+function require(path, parent, orig) {
+  var resolved = require.resolve(path);
+
+  // lookup failed
+  if (null == resolved) {
+    orig = orig || path;
+    parent = parent || 'root';
+    var err = new Error('Failed to require "' + orig + '" from "' + parent + '"');
+    err.path = orig;
+    err.parent = parent;
+    err.require = true;
+    throw err;
+  }
+
+  var module = require.modules[resolved];
+
+  // perform real require()
+  // by invoking the module's
+  // registered function
+  if (!module._resolving && !module.exports) {
+    var mod = {};
+    mod.exports = {};
+    mod.client = mod.component = true;
+    module._resolving = true;
+    module.call(this, mod.exports, require.relative(resolved), mod);
+    delete module._resolving;
+    module.exports = mod.exports;
+  }
+
+  return module.exports;
+}
+
+/**
+ * Registered modules.
+ */
+
+require.modules = {};
+
+/**
+ * Registered aliases.
+ */
+
+require.aliases = {};
+
+/**
+ * Resolve path.
+ *
+ * Lookup:
+ *
+ *   - PATH/index.js
+ *   - PATH.js
+ *   - PATH
+ *
+ * @param {String} path
+ * @return {String} path or null
+ * @api private
+ */
+
+require.resolve = function(path) {
+  if (path.charAt(0) === '/') path = path.slice(1);
+
+  var paths = [
+    path,
+    path + '.js',
+    path + '.json',
+    path + '/index.js',
+    path + '/index.json'
+  ];
+
+  for (var i = 0; i < paths.length; i++) {
+    var path = paths[i];
+    if (require.modules.hasOwnProperty(path)) return path;
+    if (require.aliases.hasOwnProperty(path)) return require.aliases[path];
+  }
+};
+
+/**
+ * Normalize path relative to the current path.
+ *
+ * @param {String} curr
+ * @param {String} path
+ * @return {String}
+ * @api private
+ */
+
+require.normalize = function(curr, path) {
+  var segs = [];
+
+  if ('.' != path.charAt(0)) return path;
+
+  curr = curr.split('/');
+  path = path.split('/');
+
+  for (var i = 0; i < path.length; ++i) {
+    if ('..' == path[i]) {
+      curr.pop();
+    } else if ('.' != path[i] && '' != path[i]) {
+      segs.push(path[i]);
+    }
+  }
+
+  return curr.concat(segs).join('/');
+};
+
+/**
+ * Register module at path with callback definition.
+ *
+ * @param {String} path
+ * @param {Function} definition
+ * @api private
+ */
+
+require.register = function(path, definition) {
+  require.modules[path] = definition;
+};
+
+/**
+ * Alias a module definition.
+ *
+ * @param {String} from
+ * @param {String} to
+ * @api private
+ */
+
+require.alias = function(from, to) {
+  if (!require.modules.hasOwnProperty(from)) {
+    throw new Error('Failed to alias "' + from + '", it does not exist');
+  }
+  require.aliases[to] = from;
+};
+
+/**
+ * Return a require function relative to the parent path.
+ *
+ * @param {String} parent
+ * @return {Function}
+ * @api private
+ */
+
+require.relative = function(parent) {
+  var p = require.normalize(parent, '..');
+
+  /**
+   * lastIndexOf helper.
+   */
+
+  function lastIndexOf(arr, obj) {
+    var i = arr.length;
+    while (i--) {
+      if (arr[i] === obj) return i;
+    }
+    return -1;
+  }
+
+  /**
+   * The relative require() itself.
+   */
+
+  function localRequire(path) {
+    var resolved = localRequire.resolve(path);
+    return require(resolved, parent, path);
+  }
+
+  /**
+   * Resolve relative to the parent.
+   */
+
+  localRequire.resolve = function(path) {
+    var c = path.charAt(0);
+    if ('/' == c) return path.slice(1);
+    if ('.' == c) return require.normalize(p, path);
+
+    // resolve deps by returning
+    // the dep in the nearest "deps"
+    // directory
+    var segs = parent.split('/');
+    var i = lastIndexOf(segs, 'deps') + 1;
+    if (!i) i = 0;
+    path = segs.slice(0, i + 1).join('/') + '/deps/' + path;
+    return path;
+  };
+
+  /**
+   * Check if module is defined at path.
+   */
+
+  localRequire.exists = function(path) {
+    return require.modules.hasOwnProperty(localRequire.resolve(path));
+  };
+
+  return localRequire;
+};
+require.register("component-classes/index.js", function(exports, require, module){
+/**
+ * Module dependencies.
+ */
+
+var index = require('indexof');
+
+/**
+ * Whitespace regexp.
+ */
+
+var re = /\s+/;
+
+/**
+ * toString reference.
+ */
+
+var toString = Object.prototype.toString;
+
+/**
+ * Wrap el in a ClassList.
+ *
+ * @param {Element} el
+ * @return {ClassList}
+ * @api public
+ */
+
+module.exports = function(el){
+  return new ClassList(el);
+};
+
+/**
+ * Initialize a new ClassList for el.
+ *
+ * @param {Element} el
+ * @api private
+ */
+
+function ClassList(el) {
+  if (!el) throw new Error('A DOM element reference is required');
+  this.el = el;
+  this.list = el.classList;
+}
+
+/**
+ * Add class name if not already present.
+ *
+ * @param {String} name
+ * @return {ClassList}
+ * @api public
+ */
+
+ClassList.prototype.add = function(name){
+  // classList
+  if (this.list) {
+    this.list.add(name);
+    return this;
+  }
+
+  // fallback
+  var arr = this.array();
+  var i = index(arr, name);
+  if (!~i) arr.push(name);
+  this.el.className = arr.join(' ');
+  return this;
+};
+
+/**
+ * Remove class name when present, or
+ * pass a regular expression to remove
+ * any which match.
+ *
+ * @param {String|RegExp} name
+ * @return {ClassList}
+ * @api public
+ */
+
+ClassList.prototype.remove = function(name){
+  if ('[object RegExp]' == toString.call(name)) {
+    return this.removeMatching(name);
+  }
+
+  // classList
+  if (this.list) {
+    this.list.remove(name);
+    return this;
+  }
+
+  // fallback
+  var arr = this.array();
+  var i = index(arr, name);
+  if (~i) arr.splice(i, 1);
+  this.el.className = arr.join(' ');
+  return this;
+};
+
+/**
+ * Remove all classes matching re.
+ *
+ * @param {RegExp} re
+ * @return {ClassList}
+ * @api private
+ */
+
+ClassList.prototype.removeMatching = function(re){
+  var arr = this.array();
+  for (var i = 0; i < arr.length; i++) {
+    if (re.test(arr[i])) {
+      this.remove(arr[i]);
+    }
+  }
+  return this;
+};
+
+/**
+ * Toggle class name, can force state via force.
+ *
+ * For browsers that support classList, but do not support force yet,
+ * the mistake will be detected and corrected.
+ *
+ * @param {String} name
+ * @param {Boolean} force
+ * @return {ClassList}
+ * @api public
+ */
+
+ClassList.prototype.toggle = function(name, force){
+  // classList
+  if (this.list) {
+    if ("undefined" !== typeof force) {
+      if (force !== this.list.toggle(name, force)) {
+        this.list.toggle(name); // toggle again to correct
+      }
+    } else {
+      this.list.toggle(name);
+    }
+    return this;
+  }
+
+  // fallback
+  if ("undefined" !== typeof force) {
+    if (!force) {
+      this.remove(name);
+    } else {
+      this.add(name);
+    }
+  } else {
+    if (this.has(name)) {
+      this.remove(name);
+    } else {
+      this.add(name);
+    }
+  }
+
+  return this;
+};
+
+/**
+ * Return an array of classes.
+ *
+ * @return {Array}
+ * @api public
+ */
+
+ClassList.prototype.array = function(){
+  var str = this.el.className.replace(/^\s+|\s+$/g, '');
+  var arr = str.split(re);
+  if ('' === arr[0]) arr.shift();
+  return arr;
+};
+
+/**
+ * Check if class name is present.
+ *
+ * @param {String} name
+ * @return {ClassList}
+ * @api public
+ */
+
+ClassList.prototype.has =
+ClassList.prototype.contains = function(name){
+  return this.list
+    ? this.list.contains(name)
+    : !! ~index(this.array(), name);
+};
+
+});
+require.register("segmentio-extend/index.js", function(exports, require, module){
+
+module.exports = function extend (object) {
+    // Takes an unlimited number of extenders.
+    var args = Array.prototype.slice.call(arguments, 1);
+
+    // For each extender, copy their properties on our object.
+    for (var i = 0, source; source = args[i]; i++) {
+        if (!source) continue;
+        for (var property in source) {
+            object[property] = source[property];
+        }
+    }
+
+    return object;
+};
+});
+require.register("component-indexof/index.js", function(exports, require, module){
+module.exports = function(arr, obj){
+  if (arr.indexOf) return arr.indexOf(obj);
+  for (var i = 0; i < arr.length; ++i) {
+    if (arr[i] === obj) return i;
+  }
+  return -1;
+};
+});
+require.register("component-event/index.js", function(exports, require, module){
+var bind = window.addEventListener ? 'addEventListener' : 'attachEvent',
+    unbind = window.removeEventListener ? 'removeEventListener' : 'detachEvent',
+    prefix = bind !== 'addEventListener' ? 'on' : '';
+
+/**
+ * Bind el event type to fn.
+ *
+ * @param {Element} el
+ * @param {String} type
+ * @param {Function} fn
+ * @param {Boolean} capture
+ * @return {Function}
+ * @api public
+ */
+
+exports.bind = function(el, type, fn, capture){
+  el[bind](prefix + type, fn, capture || false);
+  return fn;
+};
+
+/**
+ * Unbind el event type's callback fn.
+ *
+ * @param {Element} el
+ * @param {String} type
+ * @param {Function} fn
+ * @param {Boolean} capture
+ * @return {Function}
+ * @api public
+ */
+
+exports.unbind = function(el, type, fn, capture){
+  el[unbind](prefix + type, fn, capture || false);
+  return fn;
+};
+});
+require.register("timoxley-to-array/index.js", function(exports, require, module){
+/**
+ * Convert an array-like object into an Array.
+ * If collection is already an Array, then will return a clone of collection.
+ *
+ * @param {Array | Mixed} collection An Array or array-like object to convert e.g. arguments or NodeList
+ * @return {Array} Naive conversion of collection to a new Array.
+ * @api public
+ */
+
+module.exports = function toArray(collection) {
+  if (typeof collection === 'undefined') return []
+  if (collection === null) return [null]
+  if (collection === window) return [window]
+  if (typeof collection === 'string') return [collection]
+  if (isArray(collection)) return collection
+  if (typeof collection.length != 'number') return [collection]
+  if (typeof collection === 'function' && collection instanceof Function) return [collection]
+
+  var arr = []
+  for (var i = 0; i < collection.length; i++) {
+    if (Object.prototype.hasOwnProperty.call(collection, i) || i in collection) {
+      arr.push(collection[i])
+    }
+  }
+  if (!arr.length) return []
+  return arr
+}
+
+function isArray(arr) {
+  return Object.prototype.toString.call(arr) === "[object Array]";
+}
+
+});
+require.register("javve-events/index.js", function(exports, require, module){
+var events = require('event'),
+  toArray = require('to-array');
+
+/**
+ * Bind el event type to fn.
+ *
+ * @param {Element} el, NodeList, HTMLCollection or Array
+ * @param {String} type
+ * @param {Function} fn
+ * @param {Boolean} capture
+ * @api public
+ */
+
+exports.bind = function(el, type, fn, capture){
+  el = toArray(el);
+  for ( var i = 0; i < el.length; i++ ) {
+    events.bind(el[i], type, fn, capture);
+  }
+};
+
+/**
+ * Unbind el event type's callback fn.
+ *
+ * @param {Element} el, NodeList, HTMLCollection or Array
+ * @param {String} type
+ * @param {Function} fn
+ * @param {Boolean} capture
+ * @api public
+ */
+
+exports.unbind = function(el, type, fn, capture){
+  el = toArray(el);
+  for ( var i = 0; i < el.length; i++ ) {
+    events.unbind(el[i], type, fn, capture);
+  }
+};
+
+});
+require.register("javve-get-by-class/index.js", function(exports, require, module){
+/**
+ * Find all elements with class className inside container.
+ * Use single = true to increase performance in older browsers
+ * when only one element is needed.
+ *
+ * @param {String} className
+ * @param {Element} container
+ * @param {Boolean} single
+ * @api public
+ */
+
+module.exports = (function() {
+  if (document.getElementsByClassName) {
+    return function(container, className, single) {
+      if (single) {
+        return container.getElementsByClassName(className)[0];
+      } else {
+        return container.getElementsByClassName(className);
+      }
+    };
+  } else if (document.querySelector) {
+    return function(container, className, single) {
+      className = '.' + className;
+      if (single) {
+        return container.querySelector(className);
+      } else {
+        return container.querySelectorAll(className);
+      }
+    };
+  } else {
+    return function(container, className, single) {
+      var classElements = [],
+        tag = '*';
+      if (container == null) {
+        container = document;
+      }
+      var els = container.getElementsByTagName(tag);
+      var elsLen = els.length;
+      var pattern = new RegExp("(^|\\s)"+className+"(\\s|$)");
+      for (var i = 0, j = 0; i < elsLen; i++) {
+        if ( pattern.test(els[i].className) ) {
+          if (single) {
+            return els[i];
+          } else {
+            classElements[j] = els[i];
+            j++;
+          }
+        }
+      }
+      return classElements;
+    };
+  }
+})();
+
+});
+require.register("javve-get-attribute/index.js", function(exports, require, module){
+/**
+ * Return the value for attr at element.
+ *
+ * @param {Element} el
+ * @param {String} attr
+ * @api public
+ */
+
+module.exports = function(el, attr) {
+  var result = (el.getAttribute && el.getAttribute(attr)) || null;
+  if( !result ) {
+    var attrs = el.attributes;
+    var length = attrs.length;
+    for(var i = 0; i < length; i++) {
+      if (attr[i] !== undefined) {
+        if(attr[i].nodeName === attr) {
+          result = attr[i].nodeValue;
+        }
+      }
+    }
+  }
+  return result;
+}
+});
+require.register("javve-natural-sort/index.js", function(exports, require, module){
+/*
+ * Natural Sort algorithm for Javascript - Version 0.7 - Released under MIT license
+ * Author: Jim Palmer (based on chunking idea from Dave Koelle)
+ */
+
+module.exports = function(a, b, options) {
+  var re = /(^-?[0-9]+(\.?[0-9]*)[df]?e?[0-9]?$|^0x[0-9a-f]+$|[0-9]+)/gi,
+    sre = /(^[ ]*|[ ]*$)/g,
+    dre = /(^([\w ]+,?[\w ]+)?[\w ]+,?[\w ]+\d+:\d+(:\d+)?[\w ]?|^\d{1,4}[\/\-]\d{1,4}[\/\-]\d{1,4}|^\w+, \w+ \d+, \d{4})/,
+    hre = /^0x[0-9a-f]+$/i,
+    ore = /^0/,
+    options = options || {},
+    i = function(s) { return options.insensitive && (''+s).toLowerCase() || ''+s },
+    // convert all to strings strip whitespace
+    x = i(a).replace(sre, '') || '',
+    y = i(b).replace(sre, '') || '',
+    // chunk/tokenize
+    xN = x.replace(re, '\0$1\0').replace(/\0$/,'').replace(/^\0/,'').split('\0'),
+    yN = y.replace(re, '\0$1\0').replace(/\0$/,'').replace(/^\0/,'').split('\0'),
+    // numeric, hex or date detection
+    xD = parseInt(x.match(hre)) || (xN.length != 1 && x.match(dre) && Date.parse(x)),
+    yD = parseInt(y.match(hre)) || xD && y.match(dre) && Date.parse(y) || null,
+    oFxNcL, oFyNcL,
+    mult = options.desc ? -1 : 1;
+  // first try and sort Hex codes or Dates
+  if (yD)
+    if ( xD < yD ) return -1 * mult;
+    else if ( xD > yD ) return 1 * mult;
+  // natural sorting through split numeric strings and default strings
+  for(var cLoc=0, numS=Math.max(xN.length, yN.length); cLoc < numS; cLoc++) {
+    // find floats not starting with '0', string or 0 if not defined (Clint Priest)
+    oFxNcL = !(xN[cLoc] || '').match(ore) && parseFloat(xN[cLoc]) || xN[cLoc] || 0;
+    oFyNcL = !(yN[cLoc] || '').match(ore) && parseFloat(yN[cLoc]) || yN[cLoc] || 0;
+    // handle numeric vs string comparison - number < string - (Kyle Adams)
+    if (isNaN(oFxNcL) !== isNaN(oFyNcL)) { return (isNaN(oFxNcL)) ? 1 : -1; }
+    // rely on string comparison if different types - i.e. '02' < 2 != '02' < '2'
+    else if (typeof oFxNcL !== typeof oFyNcL) {
+      oFxNcL += '';
+      oFyNcL += '';
+    }
+    if (oFxNcL < oFyNcL) return -1 * mult;
+    if (oFxNcL > oFyNcL) return 1 * mult;
+  }
+  return 0;
+};
+
+/*
+var defaultSort = getSortFunction();
+
+module.exports = function(a, b, options) {
+  if (arguments.length == 1) {
+    options = a;
+    return getSortFunction(options);
+  } else {
+    return defaultSort(a,b);
+  }
+}
+*/
+});
+require.register("javve-to-string/index.js", function(exports, require, module){
+module.exports = function(s) {
+    s = (s === undefined) ? "" : s;
+    s = (s === null) ? "" : s;
+    s = s.toString();
+    return s;
+};
+
+});
+require.register("component-type/index.js", function(exports, require, module){
+/**
+ * toString ref.
+ */
+
+var toString = Object.prototype.toString;
+
+/**
+ * Return the type of val.
+ *
+ * @param {Mixed} val
+ * @return {String}
+ * @api public
+ */
+
+module.exports = function(val){
+  switch (toString.call(val)) {
+    case '[object Date]': return 'date';
+    case '[object RegExp]': return 'regexp';
+    case '[object Arguments]': return 'arguments';
+    case '[object Array]': return 'array';
+    case '[object Error]': return 'error';
+  }
+
+  if (val === null) return 'null';
+  if (val === undefined) return 'undefined';
+  if (val !== val) return 'nan';
+  if (val && val.nodeType === 1) return 'element';
+
+  return typeof val.valueOf();
+};
+
+});
+require.register("list.js/index.js", function(exports, require, module){
+/*
+ListJS with beta 1.0.0
+By Jonny Strömberg (www.jonnystromberg.com, www.listjs.com)
+*/
+(function( window, undefined ) {
+"use strict";
+
+var document = window.document,
+    getByClass = require('get-by-class'),
+    extend = require('extend'),
+    indexOf = require('indexof');
+
+var List = function(id, options, values) {
+
+    var self = this,
+		init,
+        Item = require('./src/item')(self),
+        addAsync = require('./src/add-async')(self),
+        parse = require('./src/parse')(self);
+
+    init = {
+        start: function() {
+            self.listClass      = "list";
+            self.searchClass    = "search";
+            self.sortClass      = "sort";
+            self.page           = 200;
+            self.i              = 1;
+            self.items          = [];
+            self.visibleItems   = [];
+            self.matchingItems  = [];
+            self.searched       = false;
+            self.filtered       = false;
+            self.handlers       = { 'updated': [] };
+            self.plugins        = {};
+            self.helpers        = {
+                getByClass: getByClass,
+                extend: extend,
+                indexOf: indexOf
+            };
+
+            extend(self, options);
+
+            self.listContainer = (typeof(id) === 'string') ? document.getElementById(id) : id;
+            if (!self.listContainer) { return; }
+            self.list           = getByClass(self.listContainer, self.listClass, true);
+
+            self.templater      = require('./src/templater')(self);
+            self.search         = require('./src/search')(self);
+            self.filter         = require('./src/filter')(self);
+            self.sort           = require('./src/sort')(self);
+
+            this.items();
+            self.update();
+            this.plugins();
+        },
+        items: function() {
+            parse(self.list);
+            if (values !== undefined) {
+                self.add(values);
+            }
+        },
+        plugins: function() {
+            for (var i = 0; i < self.plugins.length; i++) {
+                var plugin = self.plugins[i];
+                self[plugin.name] = plugin;
+                plugin.init(self);
+            }
+        }
+    };
+
+
+    /*
+    * Add object to list
+    */
+    this.add = function(values, callback) {
+        if (callback) {
+            addAsync(values, callback);
+            return;
+        }
+        var added = [],
+            notCreate = false;
+        if (values[0] === undefined){
+            values = [values];
+        }
+        for (var i = 0, il = values.length; i < il; i++) {
+            var item = null;
+            if (values[i] instanceof Item) {
+                item = values[i];
+                item.reload();
+            } else {
+                notCreate = (self.items.length > self.page) ? true : false;
+                item = new Item(values[i], undefined, notCreate);
+            }
+            self.items.push(item);
+            added.push(item);
+        }
+        self.update();
+        return added;
+    };
+
+	this.show = function(i, page) {
+		this.i = i;
+		this.page = page;
+		self.update();
+        return self;
+	};
+
+    /* Removes object from list.
+    * Loops through the list and removes objects where
+    * property "valuename" === value
+    */
+    this.remove = function(valueName, value, options) {
+        var found = 0;
+        for (var i = 0, il = self.items.length; i < il; i++) {
+            if (self.items[i].values()[valueName] == value) {
+                self.templater.remove(self.items[i], options);
+                self.items.splice(i,1);
+                il--;
+                i--;
+                found++;
+            }
+        }
+        self.update();
+        return found;
+    };
+
+    /* Gets the objects in the list which
+    * property "valueName" === value
+    */
+    this.get = function(valueName, value) {
+        var matchedItems = [];
+        for (var i = 0, il = self.items.length; i < il; i++) {
+            var item = self.items[i];
+            if (item.values()[valueName] == value) {
+                matchedItems.push(item);
+            }
+        }
+        return matchedItems;
+    };
+
+    /*
+    * Get size of the list
+    */
+    this.size = function() {
+        return self.items.length;
+    };
+
+    /*
+    * Removes all items from the list
+    */
+    this.clear = function() {
+        self.templater.clear();
+        self.items = [];
+        return self;
+    };
+
+    this.on = function(event, callback) {
+        self.handlers[event].push(callback);
+        return self;
+    };
+
+    this.off = function(event, callback) {
+        var e = self.handlers[event];
+        var index = indexOf(e, callback);
+        if (index > -1) {
+            e.splice(index, 1);
+        }
+        return self;
+    };
+
+    this.trigger = function(event) {
+        var i = self.handlers[event].length;
+        while(i--) {
+            self.handlers[event][i](self);
+        }
+        return self;
+    };
+
+    this.reset = {
+        filter: function() {
+            var is = self.items,
+                il = is.length;
+            while (il--) {
+                is[il].filtered = false;
+            }
+            return self;
+        },
+        search: function() {
+            var is = self.items,
+                il = is.length;
+            while (il--) {
+                is[il].found = false;
+            }
+            return self;
+        }
+    };
+
+    this.update = function() {
+        var is = self.items,
+			il = is.length;
+
+        self.visibleItems = [];
+        self.matchingItems = [];
+        self.templater.clear();
+        for (var i = 0; i < il; i++) {
+            if (is[i].matching() && ((self.matchingItems.length+1) >= self.i && self.visibleItems.length < self.page)) {
+                is[i].show();
+                self.visibleItems.push(is[i]);
+                self.matchingItems.push(is[i]);
+			} else if (is[i].matching()) {
+                self.matchingItems.push(is[i]);
+                is[i].hide();
+			} else {
+                is[i].hide();
+			}
+        }
+        self.trigger('updated');
+        return self;
+    };
+
+    init.start();
+};
+
+module.exports = List;
+
+})(window);
+
+});
+require.register("list.js/src/search.js", function(exports, require, module){
+var events = require('events'),
+    getByClass = require('get-by-class'),
+    toString = require('to-string');
+
+module.exports = function(list) {
+    var item,
+        text,
+        columns,
+        searchString,
+        customSearch;
+
+    var prepare = {
+        resetList: function() {
+            list.i = 1;
+            list.templater.clear();
+            customSearch = undefined;
+        },
+        setOptions: function(args) {
+            if (args.length == 2 && args[1] instanceof Array) {
+                columns = args[1];
+            } else if (args.length == 2 && typeof(args[1]) == "function") {
+                customSearch = args[1];
+            } else if (args.length == 3) {
+                columns = args[1];
+                customSearch = args[2];
+            }
+        },
+        setColumns: function() {
+            columns = (columns === undefined) ? prepare.toArray(list.items[0].values()) : columns;
+        },
+        setSearchString: function(s) {
+            s = toString(s).toLowerCase();
+            s = s.replace(/[-[\]{}()*+?.,\\^$|#]/g, "\\$&"); // Escape regular expression characters
+            searchString = s;
+        },
+        toArray: function(values) {
+            var tmpColumn = [];
+            for (var name in values) {
+                tmpColumn.push(name);
+            }
+            return tmpColumn;
+        }
+    };
+    var search = {
+        list: function() {
+            for (var k = 0, kl = list.items.length; k < kl; k++) {
+                search.item(list.items[k]);
+            }
+        },
+        item: function(item) {
+            item.found = false;
+            for (var j = 0, jl = columns.length; j < jl; j++) {
+                if (search.values(item.values(), columns[j])) {
+                    item.found = true;
+                    return;
+                }
+            }
+        },
+        values: function(values, column) {
+            if (values.hasOwnProperty(column)) {
+                text = toString(values[column]).toLowerCase();
+                if ((searchString !== "") && (text.search(searchString) > -1)) {
+                    return true;
+                }
+            }
+            return false;
+        },
+        reset: function() {
+            list.reset.search();
+            list.searched = false;
+        }
+    };
+
+    var searchMethod = function(str) {
+        list.trigger('searchStart');
+
+        prepare.resetList();
+        prepare.setSearchString(str);
+        prepare.setOptions(arguments); // str, cols|searchFunction, searchFunction
+        prepare.setColumns();
+
+        if (searchString === "" ) {
+            search.reset();
+        } else {
+            list.searched = true;
+            if (customSearch) {
+                customSearch(searchString, columns);
+            } else {
+                search.list();
+            }
+        }
+
+        list.update();
+        list.trigger('searchComplete');
+        return list.visibleItems;
+    };
+
+    list.handlers.searchStart = list.handlers.searchStart || [];
+    list.handlers.searchComplete = list.handlers.searchComplete || [];
+
+    events.bind(getByClass(list.listContainer, list.searchClass), 'keyup', function(e) {
+        var target = e.target || e.srcElement, // IE have srcElement
+            alreadyCleared = (target.value === "" && !list.searched);
+        if (!alreadyCleared) { // If oninput already have resetted the list, do nothing
+            searchMethod(target.value);
+        }
+    });
+
+    // Used to detect click on HTML5 clear button
+    events.bind(getByClass(list.listContainer, list.searchClass), 'input', function(e) {
+        var target = e.target || e.srcElement;
+        if (target.value === "") {
+            searchMethod('');
+        }
+    });
+
+    list.helpers.toString = toString;
+    return searchMethod;
+};
+
+});
+require.register("list.js/src/sort.js", function(exports, require, module){
+var naturalSort = require('natural-sort'),
+    classes = require('classes'),
+    events = require('events'),
+    getByClass = require('get-by-class'),
+    getAttribute = require('get-attribute');
+
+module.exports = function(list) {
+    list.sortFunction = list.sortFunction || function(itemA, itemB, options) {
+        options.desc = options.order == "desc" ? true : false; // Natural sort uses this format
+        return naturalSort(itemA.values()[options.valueName], itemB.values()[options.valueName], options);
+    };
+
+    var buttons = {
+        els: undefined,
+        clear: function() {
+            for (var i = 0, il = buttons.els.length; i < il; i++) {
+                classes(buttons.els[i]).remove('asc');
+                classes(buttons.els[i]).remove('desc');
+            }
+        },
+        getOrder: function(btn) {
+            var predefinedOrder = getAttribute(btn, 'data-order');
+            if (predefinedOrder == "asc" || predefinedOrder == "desc") {
+                return predefinedOrder;
+            } else if (classes(btn).has('desc')) {
+                return "asc";
+            } else if (classes(btn).has('asc')) {
+                return "desc";
+            } else {
+                return "asc";
+            }
+        },
+        getInSensitive: function(btn, options) {
+            var insensitive = getAttribute(btn, 'data-insensitive');
+            if (insensitive === "true") {
+                options.insensitive = true;
+            } else {
+                options.insensitive = false;
+            }
+        },
+        setOrder: function(options) {
+            for (var i = 0, il = buttons.els.length; i < il; i++) {
+                var btn = buttons.els[i];
+                if (getAttribute(btn, 'data-sort') !== options.valueName) {
+                    continue;
+                }
+                var predefinedOrder = getAttribute(btn, 'data-order');
+                if (predefinedOrder == "asc" || predefinedOrder == "desc") {
+                    if (predefinedOrder == options.order) {
+                        classes(btn).add(options.order);
+                    }
+                } else {
+                    classes(btn).add(options.order);
+                }
+            }
+        }
+    };
+    var sort = function() {
+        list.trigger('sortStart');
+        options = {};
+
+        var target = arguments[0].currentTarget || arguments[0].srcElement || undefined;
+
+        if (target) {
+            options.valueName = getAttribute(target, 'data-sort');
+            buttons.getInSensitive(target, options);
+            options.order = buttons.getOrder(target);
+        } else {
+            options = arguments[1] || options;
+            options.valueName = arguments[0];
+            options.order = options.order || "asc";
+            options.insensitive = (typeof options.insensitive == "undefined") ? true : options.insensitive;
+        }
+        buttons.clear();
+        buttons.setOrder(options);
+
+        options.sortFunction = options.sortFunction || list.sortFunction;
+        list.items.sort(function(a, b) {
+            return options.sortFunction(a, b, options);
+        });
+        list.update();
+        list.trigger('sortComplete');
+    };
+
+    // Add handlers
+    list.handlers.sortStart = list.handlers.sortStart || [];
+    list.handlers.sortComplete = list.handlers.sortComplete || [];
+
+    buttons.els = getByClass(list.listContainer, list.sortClass);
+    events.bind(buttons.els, 'click', sort);
+    list.on('searchStart', buttons.clear);
+    list.on('filterStart', buttons.clear);
+
+    // Helpers
+    list.helpers.classes = classes;
+    list.helpers.naturalSort = naturalSort;
+    list.helpers.events = events;
+    list.helpers.getAttribute = getAttribute;
+
+    return sort;
+};
+
+});
+require.register("list.js/src/item.js", function(exports, require, module){
+module.exports = function(list) {
+    return function(initValues, element, notCreate) {
+        var item = this;
+
+        this._values = {};
+
+        this.found = false; // Show if list.searched == true and this.found == true
+        this.filtered = false;// Show if list.filtered == true and this.filtered == true
+
+        var init = function(initValues, element, notCreate) {
+            if (element === undefined) {
+                if (notCreate) {
+                    item.values(initValues, notCreate);
+                } else {
+                    item.values(initValues);
+                }
+            } else {
+                item.elm = element;
+                var values = list.templater.get(item, initValues);
+                item.values(values);
+            }
+        };
+        this.values = function(newValues, notCreate) {
+            if (newValues !== undefined) {
+                for(var name in newValues) {
+                    item._values[name] = newValues[name];
+                }
+                if (notCreate !== true) {
+                    list.templater.set(item, item.values());
+                }
+            } else {
+                return item._values;
+            }
+        };
+        this.show = function() {
+            list.templater.show(item);
+        };
+        this.hide = function() {
+            list.templater.hide(item);
+        };
+        this.matching = function() {
+            return (
+                (list.filtered && list.searched && item.found && item.filtered) ||
+                (list.filtered && !list.searched && item.filtered) ||
+                (!list.filtered && list.searched && item.found) ||
+                (!list.filtered && !list.searched)
+            );
+        };
+        this.visible = function() {
+            return (item.elm.parentNode == list.list) ? true : false;
+        };
+        init(initValues, element, notCreate);
+    };
+};
+
+});
+require.register("list.js/src/templater.js", function(exports, require, module){
+var getByClass = require('get-by-class');
+
+var Templater = function(list) {
+    var itemSource = getItemSource(list.item),
+        templater = this;
+
+    function getItemSource(item) {
+        if (item === undefined) {
+            var nodes = list.list.childNodes,
+                items = [];
+
+            for (var i = 0, il = nodes.length; i < il; i++) {
+                // Only textnodes have a data attribute
+                if (nodes[i].data === undefined) {
+                    return nodes[i];
+                }
+            }
+            return null;
+        } else if (item.indexOf("<") !== -1) { // Try create html element of list, do not work for tables!!
+            var div = document.createElement('div');
+            div.innerHTML = item;
+            return div.firstChild;
+        } else {
+            return document.getElementById(list.item);
+        }
+    }
+
+    /* Get values from element */
+    this.get = function(item, valueNames) {
+        templater.create(item);
+        var values = {};
+        for(var i = 0, il = valueNames.length; i < il; i++) {
+            var elm = getByClass(item.elm, valueNames[i], true);
+            values[valueNames[i]] = elm ? elm.innerHTML : "";
+        }
+        return values;
+    };
+
+    /* Sets values at element */
+    this.set = function(item, values) {
+        if (!templater.create(item)) {
+            for(var v in values) {
+                if (values.hasOwnProperty(v)) {
+                    // TODO speed up if possible
+                    var elm = getByClass(item.elm, v, true);
+                    if (elm) {
+                        /* src attribute for image tag & text for other tags */
+                        if (elm.tagName === "IMG" && values[v] !== "") {
+                            elm.src = values[v];
+                        } else {
+                            elm.innerHTML = values[v];
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    this.create = function(item) {
+        if (item.elm !== undefined) {
+            return false;
+        }
+        /* If item source does not exists, use the first item in list as
+        source for new items */
+        var newItem = itemSource.cloneNode(true);
+        newItem.removeAttribute('id');
+        item.elm = newItem;
+        templater.set(item, item.values());
+        return true;
+    };
+    this.remove = function(item) {
+        list.list.removeChild(item.elm);
+    };
+    this.show = function(item) {
+        templater.create(item);
+        list.list.appendChild(item.elm);
+    };
+    this.hide = function(item) {
+        if (item.elm !== undefined && item.elm.parentNode === list.list) {
+            list.list.removeChild(item.elm);
+        }
+    };
+    this.clear = function() {
+        /* .innerHTML = ''; fucks up IE */
+        if (list.list.hasChildNodes()) {
+            while (list.list.childNodes.length >= 1)
+            {
+                list.list.removeChild(list.list.firstChild);
+            }
+        }
+    };
+};
+
+module.exports = function(list) {
+    return new Templater(list);
+};
+
+});
+require.register("list.js/src/filter.js", function(exports, require, module){
+module.exports = function(list) {
+
+    // Add handlers
+    list.handlers.filterStart = list.handlers.filterStart || [];
+    list.handlers.filterComplete = list.handlers.filterComplete || [];
+
+    return function(filterFunction) {
+        list.trigger('filterStart');
+        list.i = 1; // Reset paging
+        list.reset.filter();
+        if (filterFunction === undefined) {
+            list.filtered = false;
+        } else {
+            list.filtered = true;
+            var is = list.items;
+            for (var i = 0, il = is.length; i < il; i++) {
+                var item = is[i];
+                if (filterFunction(item)) {
+                    item.filtered = true;
+                } else {
+                    item.filtered = false;
+                }
+            }
+        }
+        list.update();
+        list.trigger('filterComplete');
+        return list.visibleItems;
+    };
+};
+
+});
+require.register("list.js/src/add-async.js", function(exports, require, module){
+module.exports = function(list) {
+    return function(values, callback, items) {
+        var valuesToAdd = values.splice(0, 100);
+        items = items || [];
+        items = items.concat(list.add(valuesToAdd));
+        if (values.length > 0) {
+            setTimeout(function() {
+                addAsync(values, callback, items);
+            }, 10);
+        } else {
+            list.update();
+            callback(items);
+        }
+    };
+};
+});
+require.register("list.js/src/parse.js", function(exports, require, module){
+module.exports = function(list) {
+
+    var Item = require('./item')(list);
+
+    var getChildren = function(parent) {
+        var nodes = parent.childNodes,
+            items = [];
+        for (var i = 0, il = nodes.length; i < il; i++) {
+            // Only textnodes have a data attribute
+            if (nodes[i].data === undefined) {
+                items.push(nodes[i]);
+            }
+        }
+        return items;
+    };
+
+    var parse = function(itemElements, valueNames) {
+        for (var i = 0, il = itemElements.length; i < il; i++) {
+            list.items.push(new Item(valueNames, itemElements[i]));
+        }
+    };
+    var parseAsync = function(itemElements, valueNames) {
+        var itemsToIndex = itemElements.splice(0, 100); // TODO: If < 100 items, what happens in IE etc?
+        parse(itemsToIndex, valueNames);
+        if (itemElements.length > 0) {
+            setTimeout(function() {
+                init.items.indexAsync(itemElements, valueNames);
+            }, 10);
+        } else {
+            list.update();
+            // TODO: Add indexed callback
+        }
+    };
+
+    return function() {
+        var itemsToIndex = getChildren(list.list),
+            valueNames = list.valueNames;
+
+        if (list.indexAsync) {
+            parseAsync(itemsToIndex, valueNames);
+        } else {
+            parse(itemsToIndex, valueNames);
+        }
+    };
+};
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+require.alias("component-classes/index.js", "list.js/deps/classes/index.js");
+require.alias("component-classes/index.js", "classes/index.js");
+require.alias("component-indexof/index.js", "component-classes/deps/indexof/index.js");
+
+require.alias("segmentio-extend/index.js", "list.js/deps/extend/index.js");
+require.alias("segmentio-extend/index.js", "extend/index.js");
+
+require.alias("component-indexof/index.js", "list.js/deps/indexof/index.js");
+require.alias("component-indexof/index.js", "indexof/index.js");
+
+require.alias("javve-events/index.js", "list.js/deps/events/index.js");
+require.alias("javve-events/index.js", "events/index.js");
+require.alias("component-event/index.js", "javve-events/deps/event/index.js");
+
+require.alias("timoxley-to-array/index.js", "javve-events/deps/to-array/index.js");
+
+require.alias("javve-get-by-class/index.js", "list.js/deps/get-by-class/index.js");
+require.alias("javve-get-by-class/index.js", "get-by-class/index.js");
+
+require.alias("javve-get-attribute/index.js", "list.js/deps/get-attribute/index.js");
+require.alias("javve-get-attribute/index.js", "get-attribute/index.js");
+
+require.alias("javve-natural-sort/index.js", "list.js/deps/natural-sort/index.js");
+require.alias("javve-natural-sort/index.js", "natural-sort/index.js");
+
+require.alias("javve-to-string/index.js", "list.js/deps/to-string/index.js");
+require.alias("javve-to-string/index.js", "list.js/deps/to-string/index.js");
+require.alias("javve-to-string/index.js", "to-string/index.js");
+require.alias("javve-to-string/index.js", "javve-to-string/index.js");
+require.alias("component-type/index.js", "list.js/deps/type/index.js");
+require.alias("component-type/index.js", "type/index.js");
+if (typeof exports == "object") {
+  module.exports = require("list.js");
+} else if (typeof define == "function" && define.amd) {
+  define(function(){ return require("list.js"); });
+} else {
+  this["List"] = require("list.js");
+}})();
+
+  /*
+  --------------------------------------------
+       Begin editor.coffee
+  --------------------------------------------
+   */
+  var wpt_admin_ticketspage, wpt_editor, wpt_production, wpt_productions;
+
+  wpt_editor = (function() {
+    function wpt_editor(item) {
+      var options;
+      this.item = item;
+      this.id = this.item.attr('id');
+      options = {
+        valueNames: ['wpt_editor_production_title', 'wpt_editor_production_excerpt'],
+        listClass: 'wpt_editor_productions',
+        item: 'wpt_editor_production_template',
+        searchClass: 'wpt_editor_search'
+      };
+      this.list = new List(this.id, options);
+      this.productions = new wpt_productions(this);
+      this.categories();
+    }
+
+
+    /*
+    		Set status to busy (show spinner).
+     */
+
+    wpt_editor.prototype.busy = function() {
+      return this.item.addClass('busy');
+    };
+
+
+    /*
+    		Set status to done (hide spinner).
+     */
+
+    wpt_editor.prototype.done = function() {
+      return this.item.removeClass('busy');
+    };
+
+    wpt_editor.prototype.categories = function() {
+      this.category_filters = this.item.find('.wpt_editor_filters .categories li a');
+      return this.category_filters.click((function(_this) {
+        return function(e) {
+          var filter;
+          filter = jQuery(e.currentTarget);
+          if (filter.hasClass('active')) {
+            filter.removeClass('active');
+            _this.productions.category();
+          } else {
+            filter.addClass('active');
+            _this.productions.category(filter.text());
+          }
+          return false;
+        };
+      })(this));
+    };
+
+    return wpt_editor;
+
+  })();
+
+  wpt_productions = (function() {
+    function wpt_productions(editor) {
+      this.editor = editor;
+      this.load();
+    }
+
+    wpt_productions.prototype.load = function() {
+      var data;
+      data = {
+        'action': 'productions'
+      };
+      this.editor.busy();
+      return jQuery.post(wpt_editor_ajax.url, data, (function(_this) {
+        return function(response) {
+          var production, _i, _len, _ref;
+          _this.editor.list.add(response);
+          _ref = _this.editor.item.find('.wpt_editor_productions').children();
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            production = _ref[_i];
+            new wpt_production(production);
+          }
+          return _this.editor.done();
+        };
+      })(this));
+    };
+
+    wpt_productions.prototype.category = function(category) {
+      if (category == null) {
+        category = '';
+      }
+      return this.editor.list.filter(function(item) {
+        var categories, search;
+        if (category === '') {
+          return true;
+        } else {
+          categories = item.values().categories;
+          search = '>' + category + '</li>';
+          return (categories != null) && categories.indexOf(search) > -1;
+        }
+      });
+    };
+
+    return wpt_productions;
+
+  })();
+
+  wpt_production = (function() {
+    function wpt_production(production) {
+      this.production = production;
+    }
+
+    wpt_production.prototype.edit = function() {};
+
+    wpt_production.prototype.save = function() {};
+
+    return wpt_production;
+
+  })();
+
+  jQuery(function() {
+    return wpt_editor = new wpt_editor(jQuery('#wpt_editor'));
+  });
+
+
+  /*
+  --------------------------------------------
+       Begin admin.coffee
+  --------------------------------------------
+   */
+
+  wpt_admin_ticketspage = (function() {
+    function wpt_admin_ticketspage() {
+      this.ticketspage = jQuery('select#iframepage').parents('tr');
+      this.integrationstypes = jQuery("input[name='wpt_tickets[integrationtype]']");
+      if (this.ticketspage.length > 0 && this.integrationstypes.length > 0) {
+        this.update();
+        this.integrationstypes.click((function(_this) {
+          return function() {
+            return _this.update();
+          };
+        })(this));
+      }
+    }
+
+    wpt_admin_ticketspage.prototype.update = function() {
+      var integrationtype;
+      integrationtype = jQuery("input[name='wpt_tickets[integrationtype]']:checked").val();
+      if (integrationtype === 'iframe') {
+        return this.ticketspage.show(1000);
+      } else {
+        return this.ticketspage.hide(500);
+      }
+    };
+
+    return wpt_admin_ticketspage;
+
+  })();
+
+  jQuery(function() {
+    wpt_admin_ticketspage = new wpt_admin_ticketspage;
+
+    /*
+    	Enable datepicker in event admin form.
+     */
+    jQuery('.wp_theatre_datepicker').datetimepicker({
+      dateFormat: 'yy-mm-dd',
+      timeFormat: 'HH:mm:ss'
+    });
+
+    /*
+    	Update all connected events when bulk updating productions.
+    	See: http://codex.wordpress.org/Plugin_API/Action_Reference/bulk_edit_custom_box
+     */
+    return jQuery('#bulk_edit').live('click', function() {
+      var bulk_row, post_ids, post_status;
+      bulk_row = jQuery('#bulk-edit');
+      post_ids = new Array();
+      bulk_row.find('#bulk-titles').children().each(function() {
+        return post_ids.push(jQuery(this).attr('id').replace(/^(ttle)/i, ''));
+      });
+      post_status = bulk_row.find('select[name="_status"]').val();
+      return jQuery.ajax({
+        url: ajaxurl,
+        type: 'POST',
+        async: false,
+        cache: false,
+        data: {
+          action: 'save_bulk_edit_wp_theatre_prod',
+          post_ids: post_ids,
+          post_status: post_status
+        }
+      });
+    });
+  });
+
+}).call(this);
