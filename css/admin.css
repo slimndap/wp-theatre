@@ -35,6 +35,13 @@
 #wpt_editor {
   margin: 10px 20px 0px 2px;
 }
+#wpt_editor .wpt_editor_filters {
+  float: right;
+  width: 200px;
+}
+#wpt_editor .wpt_editor_productions {
+  margin-right: 210px;
+}
 #wpt_editor .wpt_editor_productions .production {
   background-color: white;
   border: 1px solid #E5E5E5;
