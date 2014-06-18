@@ -49,7 +49,7 @@
 					&.active:after {
 						content: "\f335";
 						font-family: dashicons;
-				vertical-align: middle;
+						vertical-align: middle;
 					}
 				}
 			}
@@ -184,7 +184,46 @@
 					margin-top: 1em;
 				}
 				
-			}	
+			}
+			.form {
+				display: none;
+			}
+			&.edit {
+				.meta, .content, .actions {
+					display: none;
+				}
+				.form {
+					display: block;
+					.close {
+						float: right;
+						display: block;
+						height: 20px;
+						width: 30px;
+						line-height: 20px;
+						overflow: hidden;
+						text-decoration: none;
+						margin-bottom: 10px;
+						&:before {
+							font-family: dashicons;
+							font-size: 20px;
+							display: inline-block;
+							width: 30px;
+							text-align: right;
+							display: block;
+							content: "\f335";
+						} 
+					}
+					input#wpt_editor_production_form_title {
+						padding: 3px 8px;
+						font-size: 1.7em;
+						line-height: 100%;
+						height: 1.7em;
+						width: 100%;
+						outline: 0px none;
+						margin: 0px;
+					}
+				}
+			}
 		}
 	}
 	&.busy {

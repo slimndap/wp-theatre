@@ -213,6 +213,45 @@
 #wpt_editor .wpt_editor_productions .production .content .excerpt {
   margin-top: 1em;
 }
+#wpt_editor .wpt_editor_productions .production .form {
+  display: none;
+}
+#wpt_editor .wpt_editor_productions .production.edit .meta,
+#wpt_editor .wpt_editor_productions .production.edit .content,
+#wpt_editor .wpt_editor_productions .production.edit .actions {
+  display: none;
+}
+#wpt_editor .wpt_editor_productions .production.edit .form {
+  display: block;
+}
+#wpt_editor .wpt_editor_productions .production.edit .form .close {
+  float: right;
+  display: block;
+  height: 20px;
+  width: 30px;
+  line-height: 20px;
+  overflow: hidden;
+  text-decoration: none;
+  margin-bottom: 10px;
+}
+#wpt_editor .wpt_editor_productions .production.edit .form .close:before {
+  font-family: dashicons;
+  font-size: 20px;
+  display: inline-block;
+  width: 30px;
+  text-align: right;
+  display: block;
+  content: "\f335";
+}
+#wpt_editor .wpt_editor_productions .production.edit .form input#wpt_editor_production_form_title {
+  padding: 3px 8px;
+  font-size: 1.7em;
+  line-height: 100%;
+  height: 1.7em;
+  width: 100%;
+  outline: 0px none;
+  margin: 0px;
+}
 #wpt_editor.busy .spinner {
   display: block;
   text-indent: 100%;

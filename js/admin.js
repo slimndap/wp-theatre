@@ -1549,6 +1549,7 @@ if (typeof exports == "object") {
     function wpt_productions(editor) {
       this.editor = editor;
       this.load();
+      this.form = this.editor.item.find('#wpt_editor_production_form_template');
     }
 
     wpt_productions.prototype.load = function() {
@@ -1559,16 +1560,63 @@ if (typeof exports == "object") {
       this.editor.busy();
       return jQuery.post(wpt_editor_ajax.url, data, (function(_this) {
         return function(response) {
-          var production, _i, _len, _ref;
           _this.editor.list.add(response);
-          _ref = _this.editor.item.find('.wpt_editor_productions').children();
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            production = _ref[_i];
-            new wpt_production(production);
-          }
+          _this.activate();
           return _this.editor.done();
         };
       })(this));
+    };
+
+    wpt_productions.prototype.activate = function() {
+      this.editor.item.find('.actions a').unbind('click').click((function(_this) {
+        return function(e) {
+          var action, production;
+          action = jQuery(e.currentTarget).parent();
+          production = action.parents('.production');
+          if (action.hasClass('edit_link')) {
+            _this.edit(production);
+          }
+          if (action.hasClass('delete_link')) {
+            _this["delete"](production);
+          }
+          if (action.hasClass('view_link')) {
+            _this.view(production);
+          }
+          return false;
+        };
+      })(this));
+      return this.form.find('a.close').unbind('click').click((function(_this) {
+        return function(e) {
+          _this.close(jQuery(e.currentTarget).parents('.production'));
+          return false;
+        };
+      })(this));
+    };
+
+    wpt_productions.prototype.close = function(production) {
+      return production.removeClass('edit');
+    };
+
+    wpt_productions.prototype.edit = function(production) {
+      var id, values;
+      this.editor.item.find('.production.edit').removeClass('edit');
+      production.addClass('edit');
+      id = production.find('.ID').text();
+      values = this.editor.list.get('ID', id)[0].values();
+      production.find('.form').append(this.form);
+      this.form.find('#wpt_editor_production_form_title').val(values.title);
+      return this.form.find('#wpt_editor_production_form_excerpt').val(values.excerpt);
+    };
+
+    wpt_productions.prototype["delete"] = function(production) {
+      var id, values;
+      id = production.find('.ID').text();
+      values = this.editor.list.get('ID', id)[0].values();
+      return confirm('Are you sure you want to delete \'' + values.title + '\'?');
+    };
+
+    wpt_productions.prototype.view = function(production) {
+      return window.open(production.find('.view_link a').attr('href'));
     };
 
     wpt_productions.prototype.category = function(category) {
@@ -1594,7 +1642,13 @@ if (typeof exports == "object") {
   wpt_production = (function() {
     function wpt_production(production) {
       this.production = production;
+      this.actions();
     }
+
+    wpt_production.prototype.actions = function() {
+      console.log(this.production.find('.actions .edit_link a'));
+      return this.production.find('.actions .edit_link .a').hide();
+    };
 
     wpt_production.prototype.edit = function() {};
 

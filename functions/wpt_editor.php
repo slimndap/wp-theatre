@@ -77,23 +77,24 @@
 			
 			echo '<div class="wpt_editor_templates">';
 			
+			
+			// production template
 			echo '<div id="wpt_editor_production_template" class="production">';
-	
+			echo '<div class="hidden"><div class="ID"></div></div>';
 			echo '<div class="actions"><div class="view_link"></div><div class="delete_link"></div><div class="edit_link"></div></div>';
+			echo '<div class="meta"><div class="dates"></div><div class="cities"></div><div class="categories"></div><div class="season"></div></div>';
+			echo '<div class="content"><div class="thumbnail"></div><h2 class="title"></h2><div class="excerpt"></div></div>';
+			echo '<div class="form"></div>';
+			echo '</div>'; // .wpt_editor_production_template
 			
-			echo '<div class="meta">';
-			echo '<div class="dates"></div><div class="cities"></div><div class="categories"></div><div class="season"></div>';
-			echo '</div>';
-			
-			echo '<div class="content">';
-			echo '<div class="thumbnail"></div>';
-			echo '<h2 class="title"></h2>';
-			echo '<div class="excerpt"></div>';
-			echo '<p></p>';
-			echo '</div>';
-			
-			echo '</div>';
-			echo '</div>';
+			echo '<div id="wpt_editor_production_form_template">';
+			echo '<a class="close" href="#">Close</a>';
+			echo '<input type="text" id="wpt_editor_production_form_title" placeholder="'.__('Title','wp_theatre').'" />';
+			echo '<textarea id="wpt_editor_production_form_excerpt" placeholder="'.__('Excerpt','wp_theatre').'"></textarea>';
+			echo '</div>'; // .wpt_editor_production_form_template
+
+
+			echo '</div>'; // .wpt_editor_templates
 			
 			// productions
 			echo '<div class="wpt_editor_productions"></div>';

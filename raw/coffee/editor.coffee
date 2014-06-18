@@ -41,9 +41,9 @@ class wpt_editor
 class wpt_productions
 
 	constructor: (@editor) ->
-
 		@load()
-
+		@form = @editor.item.find '#wpt_editor_production_form_template'
+		
 	load : ->
 		data =
 			'action': 'productions'
@@ -51,8 +51,43 @@ class wpt_productions
 		@editor.busy()
 		jQuery.post wpt_editor_ajax.url, data, (response) =>
 			@editor.list.add response
-			new wpt_production production for production in @editor.item.find('.wpt_editor_productions').children()
+			@activate()
 			@editor.done()
+	
+	activate: () ->
+		@editor.item.find('.actions a').unbind('click').click (e) =>
+			action = jQuery(e.currentTarget).parent()
+			production = action.parents '.production'
+			if action.hasClass 'edit_link' then @edit production
+			if action.hasClass 'delete_link' then @delete production
+			if action.hasClass 'view_link' then @view production
+			false	
+		@form.find('a.close').unbind('click').click (e) =>
+			@close jQuery(e.currentTarget).parents '.production'
+			false
+		
+	close: (production) ->
+		production.removeClass 'edit'
+	
+	edit: (production) ->
+		@editor.item.find('.production.edit').removeClass 'edit'
+		production.addClass 'edit'
+		id = production.find('.ID').text()
+		values = @editor.list.get('ID',id)[0].values()
+		
+		production.find('.form').append @form
+		@form.find('#wpt_editor_production_form_title').val values.title
+		@form.find('#wpt_editor_production_form_excerpt').val values.excerpt
+		
+
+	delete: (production) ->
+		id = production.find('.ID').text()
+		values = @editor.list.get('ID',id)[0].values()
+
+		confirm 'Are you sure you want to delete \''+values.title+'\'?'
+	view: (production) ->
+		window.open production.find('.view_link a').attr 'href'
+	
 	
 	category: (category='') ->
 		@editor.list.filter (item) ->
@@ -66,7 +101,11 @@ class wpt_productions
 class wpt_production
 
 	constructor:(@production) ->
-			
+		@actions()
+		
+	actions: () ->
+		console.log @production.find('.actions .edit_link a')
+		@production.find('.actions .edit_link .a').hide()
 	edit: ->
 	
 	save: ->
