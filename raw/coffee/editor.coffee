@@ -65,6 +65,8 @@ class wpt_productions
 		@form.find('a.close').unbind('click').click (e) =>
 			@close jQuery(e.currentTarget).parents '.production'
 			false
+		@form.find('input, textarea').unbind('change').change (e) =>
+			@save jQuery(e.currentTarget).parents '.production'
 		
 	close: (production) ->
 		production.removeClass 'edit'
@@ -88,7 +90,22 @@ class wpt_productions
 	view: (production) ->
 		window.open production.find('.view_link a').attr 'href'
 	
-	
+	save: (production) ->
+		id = production.find('.ID').text()
+
+		data =
+			'action': 'save'
+			'ID' :  id
+			'title' : @form.find('#wpt_editor_production_form_title').val()
+			'excerpt' : @form.find('#wpt_editor_production_form_excerpt').val()
+		
+		@editor.busy()
+		jQuery.post wpt_editor_ajax.url, data, (response) =>
+			@editor.list.get('ID',id)[0].values(response)
+			@activate()
+			@editor.done()
+		console.log 'save'
+		
 	category: (category='') ->
 		@editor.list.filter (item) ->
 			if category==''

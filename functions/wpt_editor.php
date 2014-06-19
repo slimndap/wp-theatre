@@ -5,6 +5,7 @@
 			add_action( 'admin_enqueue_scripts', array($this,'admin_enqueue_scripts'), 20);
 
 			add_action( 'wp_ajax_productions',array($this,'ajax_productions'));
+			add_action( 'wp_ajax_save',array($this,'ajax_save'));
 			add_filter( 'admin_footer_text',array($this,'admin_footer_text'));
 			
 			$this->page = false;
@@ -89,8 +90,10 @@
 			
 			echo '<div id="wpt_editor_production_form_template">';
 			echo '<a class="close" href="#">Close</a>';
+			echo '<form>';
 			echo '<input type="text" id="wpt_editor_production_form_title" placeholder="'.__('Title','wp_theatre').'" />';
 			echo '<textarea id="wpt_editor_production_form_excerpt" placeholder="'.__('Excerpt','wp_theatre').'"></textarea>';
+			echo '</form>';
 			echo '</div>'; // .wpt_editor_production_form_template
 
 
@@ -110,6 +113,21 @@
 				'upcoming' => true
 			);
 			wp_send_json($wp_theatre->productions->to_array($args));
+		}
+		
+		function ajax_save() {
+		
+			$post = array(
+				'ID' => $_POST['ID'],
+				'post_title' => $_POST['title'],
+				'post_excerpt' => $_POST['excerpt'],
+				'post_type' => WPT_Production::post_type_name,
+				'post_status' => 'publish'
+			);
+			$ID = wp_insert_post($post);
+
+			$production = new WPT_Production($ID);
+			wp_send_json($production->to_array());
 		}
 		
 		function is_theater_admin() {

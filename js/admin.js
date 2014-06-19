@@ -1585,10 +1585,15 @@ if (typeof exports == "object") {
           return false;
         };
       })(this));
-      return this.form.find('a.close').unbind('click').click((function(_this) {
+      this.form.find('a.close').unbind('click').click((function(_this) {
         return function(e) {
           _this.close(jQuery(e.currentTarget).parents('.production'));
           return false;
+        };
+      })(this));
+      return this.form.find('input, textarea').unbind('change').change((function(_this) {
+        return function(e) {
+          return _this.save(jQuery(e.currentTarget).parents('.production'));
         };
       })(this));
     };
@@ -1617,6 +1622,26 @@ if (typeof exports == "object") {
 
     wpt_productions.prototype.view = function(production) {
       return window.open(production.find('.view_link a').attr('href'));
+    };
+
+    wpt_productions.prototype.save = function(production) {
+      var data, id;
+      id = production.find('.ID').text();
+      data = {
+        'action': 'save',
+        'ID': id,
+        'title': this.form.find('#wpt_editor_production_form_title').val(),
+        'excerpt': this.form.find('#wpt_editor_production_form_excerpt').val()
+      };
+      this.editor.busy();
+      jQuery.post(wpt_editor_ajax.url, data, (function(_this) {
+        return function(response) {
+          _this.editor.list.get('ID', id)[0].values(response);
+          _this.activate();
+          return _this.editor.done();
+        };
+      })(this));
+      return console.log('save');
     };
 
     wpt_productions.prototype.category = function(category) {
