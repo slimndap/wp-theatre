@@ -1636,10 +1636,24 @@ if (typeof exports == "object") {
     };
 
     wpt_productions.prototype["delete"] = function(production) {
-      var id, values;
+      var confirm_message, data, id, values;
       id = production.find('.ID').text();
       values = this.editor.list.get('ID', id)[0].values();
-      return confirm('Are you sure you want to delete \'' + values.title + '\'?');
+      confirm_message = wpt_editor_ajax.confirm_message.replace(/%s/g, values.title);
+      if (confirm(confirm_message)) {
+        data = {
+          'wpt_nonce': wpt_editor_ajax.wpt_nonce,
+          'action': 'delete',
+          'ID': id
+        };
+        this.editor.busy();
+        return jQuery.post(wpt_editor_ajax.url, data, (function(_this) {
+          return function(response) {
+            _this.editor.list.remove('ID', response);
+            return _this.editor.done();
+          };
+        })(this));
+      }
     };
 
     wpt_productions.prototype.view = function(production) {
@@ -1659,14 +1673,13 @@ if (typeof exports == "object") {
         'season': this.form.find('#wpt_editor_production_form_season').val()
       };
       this.editor.busy();
-      jQuery.post(wpt_editor_ajax.url, data, (function(_this) {
+      return jQuery.post(wpt_editor_ajax.url, data, (function(_this) {
         return function(response) {
           _this.editor.list.get('ID', id)[0].values(response);
           _this.activate();
           return _this.editor.done();
         };
       })(this));
-      return console.log('save');
     };
 
     wpt_productions.prototype.category = function(category) {

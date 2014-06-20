@@ -167,6 +167,9 @@ class WPT_Production {
 		if ($season = $this->season()) {
 			$data['season'] = $season->ID;
 			$data['season_html'] = $season->title();
+		} else {
+			$data['season'] = false;
+			$data['season_html'] = '';
 		}
 		
 		return $data;

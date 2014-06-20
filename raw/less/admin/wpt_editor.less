@@ -188,6 +188,31 @@
 			}
 			.form {
 				display: none;
+				overflow: auto;
+				#wpt_editor_production_form_title {
+					
+				}
+				#wpt_editor_production_form_excerpt,
+				#wpt_editor_production_form_categories,
+				#wpt_editor_production_form_season {
+					float: left;
+					display: block;
+					box-sizing: border-box;
+					margin: 4px 0 0 0;
+				}
+				#wpt_editor_production_form_excerpt {
+					width: 79%;
+					height: 120px;
+					margin-right: 1%;
+				}
+				#wpt_editor_production_form_categories {
+					width: 20%;
+					height: 120px - 30px - 4px;;
+				}
+				#wpt_editor_production_form_season {
+					width: 20%;
+					height: 30px;
+				}
 			}
 			&.edit {
 				.meta, .content, .actions {

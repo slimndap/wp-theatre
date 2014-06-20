@@ -102,7 +102,19 @@ class wpt_productions
 		id = production.find('.ID').text()
 		values = @editor.list.get('ID',id)[0].values()
 
-		confirm 'Are you sure you want to delete \''+values.title+'\'?'
+		confirm_message = wpt_editor_ajax.confirm_message.replace /%s/g, values.title
+
+		if confirm confirm_message
+			data =
+				'wpt_nonce': wpt_editor_ajax.wpt_nonce
+				'action': 'delete'
+				'ID' :  id
+			@editor.busy()
+			jQuery.post wpt_editor_ajax.url, data, (response) =>
+				@editor.list.remove('ID',response)
+				@editor.done()
+
+			
 	view: (production) ->
 		window.open production.find('.view_link a').attr 'href'
 	
@@ -123,7 +135,6 @@ class wpt_productions
 			@editor.list.get('ID',id)[0].values(response)
 			@activate()
 			@editor.done()
-		console.log 'save'
 		
 	category: (category='') ->
 		@editor.list.filter (item) ->

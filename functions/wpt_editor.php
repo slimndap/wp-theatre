@@ -6,6 +6,7 @@
 
 			add_action( 'wp_ajax_productions',array($this,'ajax_productions'));
 			add_action( 'wp_ajax_save',array($this,'ajax_save'));
+			add_action( 'wp_ajax_delete',array($this,'ajax_delete'));
 			add_filter( 'admin_footer_text',array($this,'admin_footer_text'));
 			
 			$this->page = false;
@@ -21,7 +22,8 @@
 					array(
 						'wpt_nonce'=> wp_create_nonce('wpt_nonce'),
 						'url' => admin_url( 'admin-ajax.php' ),
-						'order_key' => $wp_theatre->order->meta_key
+						'order_key' => $wp_theatre->order->meta_key,
+						'confirm_message' => __('Are you sure you want to move \'%s\' to the Trash?','wp_theatre')
 					) 
 				);
 			}
@@ -110,6 +112,7 @@
 			echo '<div class="form"></div>';
 			echo '</div>'; // .wpt_editor_production_template
 			
+			// production form template
 			echo '<div id="wpt_editor_production_form_template">';
 			echo '<a class="close" href="#">Close</a>';
 			echo '<form>';
@@ -124,7 +127,7 @@
 			echo '</select>';
 			
 			echo '<select id="wpt_editor_production_form_season">';
-			echo '<option>'.__('Select a season','wp_theatre').'</option>';
+			echo '<option value="">'.__('(season)','wp_theatre').'</option>';
 			if (!empty($this->seasons)) {
 				foreach ($this->seasons as $season) {
 					echo '<option value="'.$season->ID.'">'.$season->post_title.'</option>';
@@ -143,6 +146,15 @@
 			
 			echo '</div>';
 			
+		}
+		
+		function ajax_delete() {
+			check_ajax_referer('wpt_nonce', 'wpt_nonce');
+			if (wp_trash_post($_POST['ID'])) {
+				wp_send_json($_POST['ID']);			
+			} else {
+				die();
+			}
 		}
 		
 		function ajax_productions() {

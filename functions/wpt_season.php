@@ -30,7 +30,12 @@ class WPT_Season {
 
 	function title() {
 		if (!isset($this->title)) {
-			$this->title = apply_filters('wpt_season_title',$this->post()->post_title,$this);
+			$post = $this->post();
+			if (!empty($post)) {
+				$this->title = apply_filters('wpt_season_title',$this->post()->post_title,$this);			
+			} else {
+				$this->title = '';
+			}
 		}	
 		return $this->title;			
 	}
@@ -57,11 +62,7 @@ class WPT_Season {
 
 	private function get_post() {
 		if (!isset($this->post)) {
-			if ($this->PostClass) {
-				$this->post = new $this->PostClass($this->ID);				
-			} else {
-				$this->post = get_post($this->ID);
-			}
+			$this->post = get_post($this->ID);
 		}
 		return $this->post;
 	}
