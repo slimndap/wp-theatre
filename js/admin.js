@@ -1503,6 +1503,7 @@ if (typeof exports == "object") {
       this.list = new List(this.id, options);
       this.productions = new wpt_productions(this);
       this.categories();
+      this.seasons();
     }
 
 
@@ -1541,6 +1542,24 @@ if (typeof exports == "object") {
       })(this));
     };
 
+    wpt_editor.prototype.seasons = function() {
+      this.season_filters = this.item.find('.wpt_editor_filters .seasons li a');
+      return this.season_filters.click((function(_this) {
+        return function(e) {
+          var filter;
+          filter = jQuery(e.currentTarget);
+          if (filter.hasClass('active')) {
+            filter.removeClass('active');
+            _this.productions.season();
+          } else {
+            filter.addClass('active');
+            _this.productions.season(filter.text());
+          }
+          return false;
+        };
+      })(this));
+    };
+
     return wpt_editor;
 
   })();
@@ -1555,7 +1574,8 @@ if (typeof exports == "object") {
     wpt_productions.prototype.load = function() {
       var data;
       data = {
-        'action': 'productions'
+        'action': 'productions',
+        'wpt_nonce': wpt_editor_ajax.wpt_nonce
       };
       this.editor.busy();
       return jQuery.post(wpt_editor_ajax.url, data, (function(_this) {
@@ -1591,7 +1611,7 @@ if (typeof exports == "object") {
           return false;
         };
       })(this));
-      return this.form.find('input, textarea').unbind('change').change((function(_this) {
+      return this.form.find('input, textarea, select').unbind('change').change((function(_this) {
         return function(e) {
           return _this.save(jQuery(e.currentTarget).parents('.production'));
         };
@@ -1610,7 +1630,9 @@ if (typeof exports == "object") {
       values = this.editor.list.get('ID', id)[0].values();
       production.find('.form').append(this.form);
       this.form.find('#wpt_editor_production_form_title').val(values.title);
-      return this.form.find('#wpt_editor_production_form_excerpt').val(values.excerpt);
+      this.form.find('#wpt_editor_production_form_excerpt').val(values.excerpt);
+      this.form.find('#wpt_editor_production_form_categories').val(values.categories);
+      return this.form.find('#wpt_editor_production_form_season').val(values.season);
     };
 
     wpt_productions.prototype["delete"] = function(production) {
@@ -1628,10 +1650,13 @@ if (typeof exports == "object") {
       var data, id;
       id = production.find('.ID').text();
       data = {
+        'wpt_nonce': wpt_editor_ajax.wpt_nonce,
         'action': 'save',
         'ID': id,
         'title': this.form.find('#wpt_editor_production_form_title').val(),
-        'excerpt': this.form.find('#wpt_editor_production_form_excerpt').val()
+        'excerpt': this.form.find('#wpt_editor_production_form_excerpt').val(),
+        'categories': this.form.find('#wpt_editor_production_form_categories').val(),
+        'season': this.form.find('#wpt_editor_production_form_season').val()
       };
       this.editor.busy();
       jQuery.post(wpt_editor_ajax.url, data, (function(_this) {
@@ -1653,9 +1678,22 @@ if (typeof exports == "object") {
         if (category === '') {
           return true;
         } else {
-          categories = item.values().categories;
+          categories = item.values().categories_html;
           search = '>' + category + '</li>';
           return (categories != null) && categories.indexOf(search) > -1;
+        }
+      });
+    };
+
+    wpt_productions.prototype.season = function(season) {
+      if (season == null) {
+        season = '';
+      }
+      return this.editor.list.filter(function(item) {
+        if (season === '') {
+          return true;
+        } else {
+          return item.values().season_html === season;
         }
       });
     };
@@ -1684,7 +1722,11 @@ if (typeof exports == "object") {
   })();
 
   jQuery(function() {
-    return wpt_editor = new wpt_editor(jQuery('#wpt_editor'));
+    var editor;
+    editor = jQuery('#wpt_editor');
+    if (editor.length) {
+      return wpt_editor = new wpt_editor(jQuery('#wpt_editor'));
+    }
   });
 
 

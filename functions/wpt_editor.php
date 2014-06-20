@@ -9,6 +9,7 @@
 			add_filter( 'admin_footer_text',array($this,'admin_footer_text'));
 			
 			$this->page = false;
+			
 		}
 		
 		function admin_enqueue_scripts() {
@@ -17,7 +18,8 @@
 				wp_localize_script(
 					'wpt_admin',
 					'wpt_editor_ajax',
-					array( 
+					array(
+						'wpt_nonce'=> wp_create_nonce('wpt_nonce'),
 						'url' => admin_url( 'admin-ajax.php' ),
 						'order_key' => $wp_theatre->order->meta_key
 					) 
@@ -38,6 +40,16 @@
 		
 		function admin_page() {
 			global $wp_theatre;
+			
+			$args = array();
+			$this->categories = get_categories($args);
+			
+			$args = array(
+				'post_type'=>WPT_Season::post_type_name,
+				'posts_per_page' => -1
+			);
+			$this->seasons = get_posts($args);
+
 			echo '<div id="wpt_editor">';
 			
 		
@@ -56,14 +68,24 @@
 			echo '<h3>'.__('Filters','wp_theatre').'</h3>';
 			echo '<input type="text" class="wpt_editor_search"  placeholder="'.__('Search by keyword','wp_theatre').'" />';
 			
-			$args = array();
-			$categories = get_categories($args);
-			if (!empty($categories)) {
+			if (!empty($this->categories)) {
 				echo '<div class="categories">';
 				echo '<ul>';
 				
-				foreach ($categories as $category) {
+				foreach ($this->categories as $category) {
 					echo '<li><a href="#'.$category->slug.'">'.$category->name.'</a></li>';
+				}
+				
+				echo '</ul>';
+				echo '</div>';				
+			}
+			
+			if (!empty($this->seasons)) {
+				echo '<div class="seasons">';
+				echo '<ul>';
+				
+				foreach ($this->seasons as $season) {
+					echo '<li><a href="#'.$season->ID.'">'.$season->post_title.'</a></li>';
 				}
 				
 				echo '</ul>';
@@ -83,7 +105,7 @@
 			echo '<div id="wpt_editor_production_template" class="production">';
 			echo '<div class="hidden"><div class="ID"></div></div>';
 			echo '<div class="actions"><div class="view_link"></div><div class="delete_link"></div><div class="edit_link"></div></div>';
-			echo '<div class="meta"><div class="dates"></div><div class="cities"></div><div class="categories"></div><div class="season"></div></div>';
+			echo '<div class="meta"><div class="dates"></div><div class="cities"></div><div class="categories_html"></div><div class="season_html"></div></div>';
 			echo '<div class="content"><div class="thumbnail"></div><h2 class="title"></h2><div class="excerpt"></div></div>';
 			echo '<div class="form"></div>';
 			echo '</div>'; // .wpt_editor_production_template
@@ -93,6 +115,23 @@
 			echo '<form>';
 			echo '<input type="text" id="wpt_editor_production_form_title" placeholder="'.__('Title','wp_theatre').'" />';
 			echo '<textarea id="wpt_editor_production_form_excerpt" placeholder="'.__('Excerpt','wp_theatre').'"></textarea>';
+			echo '<select id="wpt_editor_production_form_categories" multiple>';
+			if (!empty($this->categories)) {
+				foreach ($this->categories as $category) {
+					echo '<option value="'.$category->term_id.'">'.$category->name.'</option>';
+				}
+			}
+			echo '</select>';
+			
+			echo '<select id="wpt_editor_production_form_season">';
+			echo '<option>'.__('Select a season','wp_theatre').'</option>';
+			if (!empty($this->seasons)) {
+				foreach ($this->seasons as $season) {
+					echo '<option value="'.$season->ID.'">'.$season->post_title.'</option>';
+				}
+			}
+			echo '</select>';
+			
 			echo '</form>';
 			echo '</div>'; // .wpt_editor_production_form_template
 
@@ -107,6 +146,8 @@
 		}
 		
 		function ajax_productions() {
+			check_ajax_referer('wpt_nonce', 'wpt_nonce');
+		
 			global $wp_theatre;
 			
 			$args = array(
@@ -116,15 +157,19 @@
 		}
 		
 		function ajax_save() {
+			check_ajax_referer('wpt_nonce', 'wpt_nonce');
 		
 			$post = array(
 				'ID' => $_POST['ID'],
 				'post_title' => $_POST['title'],
 				'post_excerpt' => $_POST['excerpt'],
+				'post_category' => $_POST['categories'],
 				'post_type' => WPT_Production::post_type_name,
 				'post_status' => 'publish'
 			);
 			$ID = wp_insert_post($post);
+			
+			update_post_meta($ID, WPT_Season::post_type_name, $_POST['season']);
 
 			$production = new WPT_Production($ID);
 			wp_send_json($production->to_array());

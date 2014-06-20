@@ -13,6 +13,7 @@ class wpt_editor
 		@productions = new wpt_productions @
 		
 		@categories()
+		@seasons()
 	
 	###
 		Set status to busy (show spinner).
@@ -38,6 +39,18 @@ class wpt_editor
 				@productions.category filter.text()
 			false
 
+	seasons: () ->
+		@season_filters = @item.find('.wpt_editor_filters .seasons li a');
+		@season_filters.click (e) =>
+			filter = jQuery e.currentTarget
+			if filter.hasClass 'active'
+				filter.removeClass 'active'
+				@productions.season()
+			else
+				filter.addClass 'active'
+				@productions.season filter.text()
+			false
+
 class wpt_productions
 
 	constructor: (@editor) ->
@@ -47,6 +60,7 @@ class wpt_productions
 	load : ->
 		data =
 			'action': 'productions'
+			'wpt_nonce': wpt_editor_ajax.wpt_nonce
 
 		@editor.busy()
 		jQuery.post wpt_editor_ajax.url, data, (response) =>
@@ -65,7 +79,7 @@ class wpt_productions
 		@form.find('a.close').unbind('click').click (e) =>
 			@close jQuery(e.currentTarget).parents '.production'
 			false
-		@form.find('input, textarea').unbind('change').change (e) =>
+		@form.find('input, textarea, select').unbind('change').change (e) =>
 			@save jQuery(e.currentTarget).parents '.production'
 		
 	close: (production) ->
@@ -80,6 +94,8 @@ class wpt_productions
 		production.find('.form').append @form
 		@form.find('#wpt_editor_production_form_title').val values.title
 		@form.find('#wpt_editor_production_form_excerpt').val values.excerpt
+		@form.find('#wpt_editor_production_form_categories').val values.categories
+		@form.find('#wpt_editor_production_form_season').val values.season
 		
 
 	delete: (production) ->
@@ -94,10 +110,13 @@ class wpt_productions
 		id = production.find('.ID').text()
 
 		data =
+			'wpt_nonce': wpt_editor_ajax.wpt_nonce
 			'action': 'save'
 			'ID' :  id
 			'title' : @form.find('#wpt_editor_production_form_title').val()
 			'excerpt' : @form.find('#wpt_editor_production_form_excerpt').val()
+			'categories' : @form.find('#wpt_editor_production_form_categories').val()
+			'season' : @form.find('#wpt_editor_production_form_season').val()
 		
 		@editor.busy()
 		jQuery.post wpt_editor_ajax.url, data, (response) =>
@@ -111,9 +130,16 @@ class wpt_productions
 			if category==''
 				true
 			else
-				categories = item.values().categories
+				categories = item.values().categories_html
 				search = '>'+category+'</li>'
 				categories? and categories.indexOf(search) > -1
+
+	season: (season='') ->
+		@editor.list.filter (item) ->
+			if season==''
+				true
+			else
+				item.values().season_html == season
 
 class wpt_production
 
@@ -129,4 +155,5 @@ class wpt_production
 	
 
 jQuery ->
-	wpt_editor = new wpt_editor jQuery '#wpt_editor'
+	editor = jQuery '#wpt_editor'
+	wpt_editor = new wpt_editor jQuery '#wpt_editor' if editor.length 

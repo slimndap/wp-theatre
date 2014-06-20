@@ -61,6 +61,7 @@
   width: 16px;
   content: '';
   vertical-align: middle;
+  content: "\00A0\f156";
 }
 #wpt_editor .wpt_editor_sort .sort.asc:after {
   content: "\f142";
@@ -134,25 +135,25 @@
 }
 #wpt_editor .wpt_editor_productions .production .meta .dates,
 #wpt_editor .wpt_editor_productions .production .meta .cities,
-#wpt_editor .wpt_editor_productions .production .meta .categories,
-#wpt_editor .wpt_editor_productions .production .meta .season {
+#wpt_editor .wpt_editor_productions .production .meta .categories_html,
+#wpt_editor .wpt_editor_productions .production .meta .season_html {
   display: inline-block;
 }
 #wpt_editor .wpt_editor_productions .production .meta .dates:after,
 #wpt_editor .wpt_editor_productions .production .meta .cities:after,
-#wpt_editor .wpt_editor_productions .production .meta .categories:after,
-#wpt_editor .wpt_editor_productions .production .meta .season:after {
+#wpt_editor .wpt_editor_productions .production .meta .categories_html:after,
+#wpt_editor .wpt_editor_productions .production .meta .season_html:after {
   content: '\00A0';
 }
 #wpt_editor .wpt_editor_productions .production .meta .dates:empty,
 #wpt_editor .wpt_editor_productions .production .meta .cities:empty,
-#wpt_editor .wpt_editor_productions .production .meta .categories:empty,
-#wpt_editor .wpt_editor_productions .production .meta .season:empty {
+#wpt_editor .wpt_editor_productions .production .meta .categories_html:empty,
+#wpt_editor .wpt_editor_productions .production .meta .season_html:empty {
   display: none;
 }
 #wpt_editor .wpt_editor_productions .production .meta .dates:before,
-#wpt_editor .wpt_editor_productions .production .meta .categories:before,
-#wpt_editor .wpt_editor_productions .production .meta .season:before {
+#wpt_editor .wpt_editor_productions .production .meta .categories_html:before,
+#wpt_editor .wpt_editor_productions .production .meta .season_html:before {
   font-family: dashicons;
   font-size: 20px;
   display: inline-block;
@@ -165,25 +166,25 @@
 #wpt_editor .wpt_editor_productions .production .meta .cities:before {
   content: 'in\00A0';
 }
-#wpt_editor .wpt_editor_productions .production .meta .season:before {
+#wpt_editor .wpt_editor_productions .production .meta .season_html:before {
   content: "\f145\00A0";
 }
-#wpt_editor .wpt_editor_productions .production .meta .categories:before {
+#wpt_editor .wpt_editor_productions .production .meta .categories_html:before {
   content: "\f318\00A0";
 }
-#wpt_editor .wpt_editor_productions .production .meta .categories ul {
+#wpt_editor .wpt_editor_productions .production .meta .categories_html ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
   display: inline-block;
 }
-#wpt_editor .wpt_editor_productions .production .meta .categories ul li {
+#wpt_editor .wpt_editor_productions .production .meta .categories_html ul li {
   display: inline;
 }
-#wpt_editor .wpt_editor_productions .production .meta .categories ul li:before {
+#wpt_editor .wpt_editor_productions .production .meta .categories_html ul li:before {
   content: ', ';
 }
-#wpt_editor .wpt_editor_productions .production .meta .categories ul li:first-child:before {
+#wpt_editor .wpt_editor_productions .production .meta .categories_html ul li:first-child:before {
   content: '';
 }
 #wpt_editor .wpt_editor_productions .production .content {

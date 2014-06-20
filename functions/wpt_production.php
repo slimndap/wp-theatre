@@ -152,7 +152,8 @@ class WPT_Production {
 			'excerpt'    => $this->excerpt(),
 			'dates'      => $this->dates(),
 			'cities'     => $this->cities(),
-			'categories' => $this->categories(array('html'=>true)),
+			'categories' => $this->categories(),
+			'categories_html' => $this->categories(array('html'=>true)),
 			'permalink'  => $this->permalink(),
 			
 			'edit_link'  => '<a href="'.get_edit_post_link($this->ID).'">'.__('Edit').'</a>',
@@ -164,7 +165,8 @@ class WPT_Production {
 		);
 		
 		if ($season = $this->season()) {
-			$data['season'] = $season;
+			$data['season'] = $season->ID;
+			$data['season_html'] = $season->title();
 		}
 		
 		return $data;

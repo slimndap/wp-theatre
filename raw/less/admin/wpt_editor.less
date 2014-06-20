@@ -27,6 +27,7 @@
 				width: 16px;
 				content: '';
 				vertical-align: middle;
+				content: "\00A0\f156";
 			}
 			&.asc:after {
 				content: "\f142";
@@ -106,8 +107,8 @@
 				line-height: 18px;
 				.dates,
 				.cities,
-				.categories,
-				.season {
+				.categories_html,
+				.season_html {
 					display: inline-block;
 					&:after {
 						content: '\00A0';
@@ -117,8 +118,8 @@
 					}
 				}
 				.dates,
-				.categories,
-				.season {
+				.categories_html,
+				.season_html {
 					&:before {
 						font-family: dashicons;
 						font-size: 20px;
@@ -133,10 +134,10 @@
 				.cities:before {
 					content: 'in\00A0';
 				}
-				.season:before {
+				.season_html:before {
 					content: "\f145\00A0";
 				}
-				.categories {
+				.categories_html {
 					&:before {
 						content: "\f318\00A0";
 					}
