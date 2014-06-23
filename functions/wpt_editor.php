@@ -1,6 +1,7 @@
 <?php
 	class WPT_Editor {
 		function __construct() {
+			add_action( 'admin_init', array($this, 'admin_init' ));
 			add_action( 'admin_menu', array($this, 'admin_menu' ));
 			add_action( 'admin_enqueue_scripts', array($this,'admin_enqueue_scripts'), 20);
 
@@ -8,9 +9,16 @@
 			add_action( 'wp_ajax_save',array($this,'ajax_save'));
 			add_action( 'wp_ajax_delete',array($this,'ajax_delete'));
 			add_filter( 'admin_footer_text',array($this,'admin_footer_text'));
-			
+
+			add_action( 'admin_notices', array($this,'admin_notices'));			
 			$this->page = false;
 			
+			$this->notices = (array) get_option('wpt_editor_notices');
+			
+		}
+		
+		function admin_init() {			
+			$this->catch_form_submit();
 		}
 		
 		function admin_enqueue_scripts() {
@@ -40,7 +48,16 @@
 			);	
 		}
 		
+		function admin_notices() {
+			foreach($this->notices as $notice) {
+				echo '<div class="'.$notice['class'].'">'.$notice['msg'].'</div>';
+			}
+			delete_option('wpt_editor_notices');
+		}
+		
 		function admin_page() {
+		
+		
 			global $wp_theatre;
 			
 			$args = array();
@@ -52,100 +69,94 @@
 			);
 			$this->seasons = get_posts($args);
 
+			$html = '';
+
+			$html.= '<div class="wrap">';
+
+			$html.= '<div class="wpt_editor_settings">';
+			$html.= '<a href="'.admin_url('edit.php?post_status=trash&post_type='.WPT_Production::post_type_name).'" class="trash">'.__('Trash','wp_theatre').'</a>';
+			$html.= '<a href="'.admin_url('admin.php?page=wpt_admin').'" class="settings">'.__('Settings','wp_theatre').'</a>';
+			$html.= '</div>';
+
 			echo '<div id="wpt_editor">';
+
 			
-		
+
+
     		// create event form
-			echo $this->production_form();
+			$html.= '<div id="wpt_editor_production_form_create">'.$this->production_form().'</div>';
 			
 			// sort
-			echo '<div class="wpt_editor_sort"> Sort by: ';
-			echo '<div class="spinner">'.__('Working...','wp_theatre').'</div>';
-			echo '<span class="sort" href="#" data-sort="title">name</span>';
-			echo '<span class="sort" href="#" data-sort="'.$wp_theatre->order->meta_key.'">date</span>';
-			echo '</div>';
+			$html.= '<div class="wpt_editor_sort"> Sort by: ';
+			$html.= '<div class="spinner">'.__('Working...','wp_theatre').'</div>';
+			$html.= '<span class="sort" href="#" data-sort="title">name</span>';
+			$html.= '<span class="sort" href="#" data-sort="'.$wp_theatre->order->meta_key.'">date</span>';
+			$html.= '</div>';
 
 			// filters
-			echo '<div class="wpt_editor_filters">';
-			echo '<h3>'.__('Filters','wp_theatre').'</h3>';
-			echo '<input type="text" class="wpt_editor_search"  placeholder="'.__('Search by keyword','wp_theatre').'" />';
+			$html.= '<div class="wpt_editor_filters">';
+			$html.= '<h3>'.__('Filters','wp_theatre').'</h3>';
+			$html.= '<input type="text" class="wpt_editor_search"  placeholder="'.__('Search by keyword','wp_theatre').'" />';
 			
 			if (!empty($this->categories)) {
-				echo '<div class="categories">';
-				echo '<ul>';
+				$html.= '<div class="categories">';
+				$html.= '<ul>';
 				
 				foreach ($this->categories as $category) {
-					echo '<li><a href="#'.$category->slug.'">'.$category->name.'</a></li>';
+					$html.= '<li><a href="#'.$category->slug.'">'.$category->name.'</a></li>';
 				}
 				
-				echo '</ul>';
-				echo '</div>';				
+				$html.= '</ul>';
+				$html.= '</div>';				
 			}
 			
 			if (!empty($this->seasons)) {
-				echo '<div class="seasons">';
-				echo '<ul>';
+				$html.= '<div class="seasons">';
+				$html.= '<ul>';
 				
 				foreach ($this->seasons as $season) {
-					echo '<li><a href="#'.$season->ID.'">'.$season->post_title.'</a></li>';
+					$html.= '<li><a href="#'.$season->ID.'">'.$season->post_title.'</a></li>';
 				}
 				
-				echo '</ul>';
-				echo '</div>';				
+				$html.= '</ul>';
+				$html.= '</div>';				
 			}
 
 			// echo $wp_theatre->calendar->html();
 
-			echo '</div>';
+			$html.= '</div>';
 			
 			// settings
 			
-			echo '<div class="wpt_editor_templates">';
+			$html.= '<div class="wpt_editor_templates">';
 			
 			
 			// production template
-			echo '<div id="wpt_editor_production_template" class="production">';
-			echo '<div class="hidden"><div class="ID"></div></div>';
-			echo '<div class="actions"><div class="view_link"></div><div class="delete_link"></div><div class="edit_link"></div></div>';
-			echo '<div class="meta"><div class="dates"></div><div class="cities"></div><div class="categories_html"></div><div class="season_html"></div></div>';
-			echo '<div class="content"><div class="thumbnail"></div><h2 class="title"></h2><div class="excerpt"></div></div>';
-			echo '<div class="form"></div>';
-			echo '</div>'; // .wpt_editor_production_template
+			$html.= '<div id="wpt_editor_production_template" class="production">';
+			$html.= '<div class="hidden"><div class="ID"></div></div>';
+			$html.= '<div class="actions"><div class="view_link"></div><div class="delete_link"></div><div class="edit_link"></div></div>';
+			$html.= '<div class="meta"><div class="dates"></div><div class="cities"></div><div class="categories_html"></div><div class="season_html"></div></div>';
+			$html.= '<div class="content"><div class="thumbnail"></div><h2 class="title"></h2><div class="excerpt"></div></div>';
+			$html.= '<div class="form"></div>';
+			$html.= '</div>'; // .wpt_editor_production_template
 			
 			// production form template
-			echo '<div id="wpt_editor_production_form_template">';
-			echo '<a class="close" href="#">Close</a>';
-			echo '<form>';
-			echo '<input type="text" id="wpt_editor_production_form_title" placeholder="'.__('Title','wp_theatre').'" />';
-			echo '<textarea id="wpt_editor_production_form_excerpt" placeholder="'.__('Excerpt','wp_theatre').'"></textarea>';
-			echo '<select id="wpt_editor_production_form_categories" multiple>';
-			if (!empty($this->categories)) {
-				foreach ($this->categories as $category) {
-					echo '<option value="'.$category->term_id.'">'.$category->name.'</option>';
-				}
-			}
-			echo '</select>';
-			
-			echo '<select id="wpt_editor_production_form_season">';
-			echo '<option value="">'.__('(season)','wp_theatre').'</option>';
-			if (!empty($this->seasons)) {
-				foreach ($this->seasons as $season) {
-					echo '<option value="'.$season->ID.'">'.$season->post_title.'</option>';
-				}
-			}
-			echo '</select>';
-			
-			echo '</form>';
-			echo '</div>'; // .wpt_editor_production_form_template
+			$html.= '<div id="wpt_editor_production_form_template">';
+			$html.= '<a class="close" href="#">Close</a>';
+			$html.= $this->production_form();
+			$html.= '</div>';
 
 
-			echo '</div>'; // .wpt_editor_templates
+			$html.= '</div>'; // .wpt_editor_templates
 			
 			// productions
-			echo '<div class="wpt_editor_productions"></div>';
+			$html.= '<div class="wpt_editor_productions"></div>';
 			
-			echo '</div>';
+			$html.= '</div>';
 			
+			$html.= '</div>';
+			
+			echo $html;
 		}
 		
 		function ajax_delete() {
@@ -171,20 +182,46 @@
 		function ajax_save() {
 			check_ajax_referer('wpt_nonce', 'wpt_nonce');
 		
-			$post = array(
+			$production = array(
 				'ID' => $_POST['ID'],
 				'post_title' => $_POST['title'],
 				'post_excerpt' => $_POST['excerpt'],
 				'post_category' => $_POST['categories'],
-				'post_type' => WPT_Production::post_type_name,
-				'post_status' => 'publish'
+				'season' => $_POST['season']
 			);
-			$ID = wp_insert_post($post);
+			$production = $this->save_production($production);
 			
-			update_post_meta($ID, WPT_Season::post_type_name, $_POST['season']);
-
-			$production = new WPT_Production($ID);
 			wp_send_json($production->to_array());
+		}
+		
+		function catch_form_submit() {
+			// Bail if this is not a submit of our form
+			if ( ! isset( $_POST['wpt_editor_submit'] ) ) {
+				return;
+			}
+			
+			// Bail if the nonce check fails
+			if ( ! isset( $_POST['wpt_nonce'] ) || ! wp_verify_nonce( $_POST['wpt_nonce'], 'wpt_nonce' ) ) {
+				$this->notice(__('Please try again.','wp_theatre'),'error');
+				wp_redirect('admin.php?page=wpt_editor');
+				die();
+			}
+						
+			// Bail if production doesn't have a title
+			if (empty($_POST['title'])) {
+				$this->notice(__('Please give your event a title.','wp_theatre'),'error');
+				wp_redirect('admin.php?page=wpt_editor');
+				die();
+			}
+			
+			$production = array(
+				'post_title' => $_POST['title'],
+				'post_excerpt' => empty($_POST['excerpt'])?'':$_POST['excerpt'],
+				'post_category' => empty($_POST['categories'])?array():$_POST['categories'],
+				'season' => empty($_POST['season'])?'':$_POST['season']
+			);
+		
+			$this->save_production($production);
 		}
 		
 		function is_theater_admin() {
@@ -193,11 +230,36 @@
 		}
 		
 		function production_form() {
-			echo '<form id="wpt_editor_create_production_form">';
+			$html = '';
+		
+			$html.= '<form class="wpt_editor_production_form" action="?page=wpt_editor" method="post">';
+			$html.= wp_nonce_field('wpt_nonce','wpt_nonce', true, false);
+			$html.= '<input type="hidden" name="ID" />';
+			$html.= '<input type="text" name="title" id="wpt_editor_production_form_title" placeholder="'.__('Title','wp_theatre').'" />';
+			$html.= '<textarea name="excerpt" id="wpt_editor_production_form_excerpt" placeholder="'.__('Excerpt','wp_theatre').'"></textarea>';
+			$html.= '<select id="wpt_editor_production_form_categories" name="categories[]" multiple>';
+			if (!empty($this->categories)) {
+				foreach ($this->categories as $category) {
+					$html.= '<option value="'.$category->term_id.'">'.$category->name.'</option>';
+				}
+			}
+			$html.= '</select>';
 			
-			echo '<input type="text" placeholder="'.__('Start typing to create a new event...','wp_theatre').'" />';
+			$html.= '<select id="wpt_editor_production_form_season" name="season">';
+			$html.= '<option value="">'.__('(season)','wp_theatre').'</option>';
+			if (!empty($this->seasons)) {
+				foreach ($this->seasons as $season) {
+					$html.= '<option value="'.$season->ID.'">'.$season->post_title.'</option>';
+				}
+			}
+			$html.= '</select>';
 			
-			echo '</form>';
+			$html.= '<input type="submit" name="wpt_editor_submit" class="button button-primary" value="'.__('Save new event','wp_theatre').'" />';
+			$html.= '<input type="reset" class="button" value="'.__('Cancel').'" />';
+			
+			$html.= '</form>';
+			
+			return $html;
 		}
 
 		function admin_footer_text ($text)
@@ -209,6 +271,28 @@
 			}
 			return $text;
 		}
+	
+		function notice($msg, $class='updated') {
+			$this->notices[] = array(
+				'msg' => $msg,
+				'class' => $class
+			);
+			update_option('wpt_editor_notices',$this->notices);
+		}
+		
+		function save_production($production) {
+			$defaults = array(
+				'post_title' => __('(Draft production)','wp_theatre'),
+				'post_type' => WPT_Production::post_type_name,
+				'post_status' => 'publish'
+			);
+			
+			$post = wp_parse_args( $production, $defaults );
+			$ID = wp_insert_post($post);
+			if (!empty($production['season'])) {
+				update_post_meta($ID, WPT_Season::post_type_name, $production['season']);
+			}
+			return new WPT_Production($ID);
+		}
 		
 	}
-?>

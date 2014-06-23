@@ -1611,11 +1611,14 @@ if (typeof exports == "object") {
           return false;
         };
       })(this));
-      return this.form.find('input, textarea, select').unbind('change').change((function(_this) {
+      this.form.find('input, textarea, select').unbind('change').change((function(_this) {
         return function(e) {
           return _this.save(jQuery(e.currentTarget).parents('.production'));
         };
       })(this));
+      return this.form.find('form').submit(function(e) {
+        return false;
+      });
     };
 
     wpt_productions.prototype.close = function(production) {
@@ -1629,10 +1632,11 @@ if (typeof exports == "object") {
       id = production.find('.ID').text();
       values = this.editor.list.get('ID', id)[0].values();
       production.find('.form').append(this.form);
-      this.form.find('#wpt_editor_production_form_title').val(values.title);
-      this.form.find('#wpt_editor_production_form_excerpt').val(values.excerpt);
-      this.form.find('#wpt_editor_production_form_categories').val(values.categories);
-      return this.form.find('#wpt_editor_production_form_season').val(values.season);
+      this.form.find('input[name=ID]').val(id);
+      this.form.find('input[name=title]').val(values.title);
+      this.form.find('textarea[name=excerpt]').val(values.excerpt);
+      this.form.find('select[name=categories]').val(values.categories);
+      return this.form.find('select[name=season]').val(values.season);
     };
 
     wpt_productions.prototype["delete"] = function(production) {
@@ -1662,15 +1666,15 @@ if (typeof exports == "object") {
 
     wpt_productions.prototype.save = function(production) {
       var data, id;
-      id = production.find('.ID').text();
+      id = this.form.find('input[name=ID]').val();
       data = {
         'wpt_nonce': wpt_editor_ajax.wpt_nonce,
         'action': 'save',
         'ID': id,
-        'title': this.form.find('#wpt_editor_production_form_title').val(),
-        'excerpt': this.form.find('#wpt_editor_production_form_excerpt').val(),
-        'categories': this.form.find('#wpt_editor_production_form_categories').val(),
-        'season': this.form.find('#wpt_editor_production_form_season').val()
+        'title': this.form.find('input[name=title]').val(),
+        'excerpt': this.form.find('textarea[name=excerpt]').val(),
+        'categories': this.form.find('select[name=categories\\[\\]]').val(),
+        'season': this.form.find('select[name=season]').val()
       };
       this.editor.busy();
       return jQuery.post(wpt_editor_ajax.url, data, (function(_this) {

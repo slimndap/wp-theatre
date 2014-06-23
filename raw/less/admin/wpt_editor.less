@@ -1,20 +1,70 @@
 #wpt_editor {
-	margin: 10px 20px 0px 2px;
-	#wpt_editor_create_production_form {
-		margin: 20px 210px 40px 0;
-		
-		input {
+	margin: 10px 15px;
+	.wpt_editor_settings {
+		float: right;
+		width: 195px;
+		text-align: right;
+		a {
+			display: inline-block;
+			line-height: 21px;
+			text-decoration: none;
+			&:before {
+				font-family: dashicons;
+				font-size: 20px;
+				display: inline-block;
+				width: 30px;
+				vertical-align: middle;
+				text-align: center;
+			}
+			&.settings:before {
+				content: "\f111";
+				
+			}
+			&.trash:before {
+				content: "\f182";
+				
+			}
+		}
+	}
+	.wpt_editor_production_form {
+		[name=title] {
 			padding: 3px 8px;
 			font-size: 1.7em;
 			line-height: 100%;
 			height: 1.7em;
 			width: 100%;
 			outline: 0px none;
-			margin: 0px;
-			
+			margin: 0px;			
+		}
+		[name=excerpt],
+		[name='categories\[\]'],
+		[name=season] {
+			float: left;
+			display: block;
+			box-sizing: border-box;
+			margin: 4px 0 0 0;						
+		}
+		[name=excerpt] {
+			width: 79%;
+			height: 120px;
+			margin-right: 1%;
+		}
+		[name='categories\[\]'] {
+			width: 20%;
+			height: 120px - 30px - 4px;;					
+		}
+		[name=season] {
+			width: 20%;
+			height: 30px;					
+		}
+		[type="submit"], 
+		[type="reset"] {
+			margin: 4px 1% 0 0;						
 		}
 	}
-	
+	#wpt_editor_production_form_create {
+		margin: 20px 210px 40px 0;		
+	}
 	.wpt_editor_sort {
 		line-height: 30px;
 		margin-right: 210px;
@@ -39,7 +89,7 @@
 	}
 	.wpt_editor_filters {
 		float: right;
-		width: 200px;
+		width: 205px;
 		h3 {
 			margin-top: 0;
 		}
@@ -189,29 +239,9 @@
 			.form {
 				display: none;
 				overflow: auto;
-				#wpt_editor_production_form_title {
-					
-				}
-				#wpt_editor_production_form_excerpt,
-				#wpt_editor_production_form_categories,
-				#wpt_editor_production_form_season {
-					float: left;
-					display: block;
-					box-sizing: border-box;
-					margin: 4px 0 0 0;
-				}
-				#wpt_editor_production_form_excerpt {
-					width: 79%;
-					height: 120px;
-					margin-right: 1%;
-				}
-				#wpt_editor_production_form_categories {
-					width: 20%;
-					height: 120px - 30px - 4px;;
-				}
-				#wpt_editor_production_form_season {
-					width: 20%;
-					height: 30px;
+				[type="submit"], 
+				[type="reset"] {
+					display: none;
 				}
 			}
 			&.edit {

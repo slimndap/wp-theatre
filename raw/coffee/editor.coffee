@@ -81,6 +81,8 @@ class wpt_productions
 			false
 		@form.find('input, textarea, select').unbind('change').change (e) =>
 			@save jQuery(e.currentTarget).parents '.production'
+		@form.find('form').submit (e) ->
+			false
 		
 	close: (production) ->
 		production.removeClass 'edit'
@@ -92,10 +94,11 @@ class wpt_productions
 		values = @editor.list.get('ID',id)[0].values()
 		
 		production.find('.form').append @form
-		@form.find('#wpt_editor_production_form_title').val values.title
-		@form.find('#wpt_editor_production_form_excerpt').val values.excerpt
-		@form.find('#wpt_editor_production_form_categories').val values.categories
-		@form.find('#wpt_editor_production_form_season').val values.season
+		@form.find('input[name=ID]').val id
+		@form.find('input[name=title]').val values.title
+		@form.find('textarea[name=excerpt]').val values.excerpt
+		@form.find('select[name=categories]').val values.categories
+		@form.find('select[name=season]').val values.season
 		
 
 	delete: (production) ->
@@ -119,16 +122,15 @@ class wpt_productions
 		window.open production.find('.view_link a').attr 'href'
 	
 	save: (production) ->
-		id = production.find('.ID').text()
-
+		id = @form.find('input[name=ID]').val()
 		data =
 			'wpt_nonce': wpt_editor_ajax.wpt_nonce
 			'action': 'save'
-			'ID' :  id
-			'title' : @form.find('#wpt_editor_production_form_title').val()
-			'excerpt' : @form.find('#wpt_editor_production_form_excerpt').val()
-			'categories' : @form.find('#wpt_editor_production_form_categories').val()
-			'season' : @form.find('#wpt_editor_production_form_season').val()
+			'ID' : id
+			'title' : @form.find('input[name=title]').val()
+			'excerpt' : @form.find('textarea[name=excerpt]').val()
+			'categories' : @form.find('select[name=categories\\[\\]]').val()
+			'season' : @form.find('select[name=season]').val()
 		
 		@editor.busy()
 		jQuery.post wpt_editor_ajax.url, data, (response) =>
