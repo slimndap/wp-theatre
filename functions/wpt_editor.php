@@ -9,6 +9,7 @@
 			add_action( 'wp_ajax_save',array($this,'ajax_save'));
 			add_action( 'wp_ajax_delete',array($this,'ajax_delete'));
 			add_filter( 'admin_footer_text',array($this,'admin_footer_text'));
+			add_filter( 'update_footer',array($this,'update_footer'),11);
 
 			add_action( 'admin_notices', array($this,'admin_notices'));			
 			$this->page = false;
@@ -56,8 +57,6 @@
 		}
 		
 		function admin_page() {
-		
-		
 			global $wp_theatre;
 			
 			$args = array();
@@ -80,11 +79,11 @@
 
 			echo '<div id="wpt_editor">';
 
-			
-
-
     		// create event form
 			$html.= '<div id="wpt_editor_production_form_create">'.$this->production_form().'</div>';
+			
+			
+			$html.= '<div class="wpt_editor_list">';
 			
 			// sort
 			$html.= '<div class="wpt_editor_sort"> Sort by: ';
@@ -156,6 +155,8 @@
 			
 			$html.= '</div>';
 			
+			$html.= '</div>';
+
 			echo $html;
 		}
 		
@@ -215,12 +216,13 @@
 			}
 			
 			$production = array(
+				'ID' => $_POST['ID'],
 				'post_title' => $_POST['title'],
 				'post_excerpt' => empty($_POST['excerpt'])?'':$_POST['excerpt'],
 				'post_category' => empty($_POST['categories'])?array():$_POST['categories'],
 				'season' => empty($_POST['season'])?'':$_POST['season']
 			);
-		
+					
 			$this->save_production($production);
 		}
 		
@@ -295,4 +297,11 @@
 			return new WPT_Production($ID);
 		}
 		
+		function update_footer($text) {
+			$text = __('Created by <a href="http://slimndap.com">Jeroen Schmit</a> of <a class="logo" href="http://slimndap.com">Slim &amp; Dapper</a>','wp_theatre');
+		//echo $text;
+//		exit;
+			return $text;
+			
+		}
 	}

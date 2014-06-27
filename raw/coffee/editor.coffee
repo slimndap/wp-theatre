@@ -26,6 +26,11 @@ class wpt_editor
 	###
 	done: () ->
 		@item.removeClass 'busy'
+
+		if @list.items.length > 0
+			@item.find('.wpt_editor_list').addClass 'activated'
+		else 
+			@item.find('.wpt_editor_list').removeClass 'activated'
 		
 	categories: () ->
 		@category_filters = @item.find('.wpt_editor_filters .categories li a');
@@ -64,8 +69,9 @@ class wpt_productions
 
 		@editor.busy()
 		jQuery.post wpt_editor_ajax.url, data, (response) =>
-			@editor.list.add response
-			@activate()
+			if response?
+				@editor.list.add response
+				@activate()
 			@editor.done()
 	
 	activate: () ->

@@ -1484,10 +1484,59 @@ if (typeof exports == "object") {
 
   /*
   --------------------------------------------
+       Begin calendar.coffee
+  --------------------------------------------
+   */
+  var wpt_admin_ticketspage, wpt_calendar, wpt_editor, wpt_production, wpt_productions;
+
+  wpt_calendar = (function() {
+
+    /*
+    	Manage the navigation of all WPT_Calendar blocks.
+    	@since 0.8
+     */
+    function wpt_calendar(calendar) {
+      this.calendar = calendar;
+      this.calendar = jQuery(this.calendar);
+      this.calendar.addClass('navigate');
+      this.calendar.children().first().addClass('active');
+      jQuery(this.calendar).find('tfoot a').click((function(_this) {
+        return function(e) {
+          return _this.navigate(e.currentTarget);
+        };
+      })(this));
+    }
+
+
+    /*
+    	Handle prev/next.
+    	@since 0.8
+     */
+
+    wpt_calendar.prototype.navigate = function(e) {
+      var href;
+      href = jQuery(e).attr('href');
+      this.calendar.find('.active').removeClass('active');
+      this.calendar.find('caption a[href="' + href + '"]').parents('.wpt_month').addClass('active');
+      return false;
+    };
+
+    return wpt_calendar;
+
+  })();
+
+  jQuery(function() {
+    return jQuery('.wpt_calendar').each(function() {
+      return new wpt_calendar(this);
+    });
+  });
+
+
+  /*
+  --------------------------------------------
        Begin editor.coffee
   --------------------------------------------
    */
-  var wpt_admin_ticketspage, wpt_editor, wpt_production, wpt_productions;
 
   wpt_editor = (function() {
     function wpt_editor(item) {
@@ -1521,7 +1570,12 @@ if (typeof exports == "object") {
      */
 
     wpt_editor.prototype.done = function() {
-      return this.item.removeClass('busy');
+      this.item.removeClass('busy');
+      if (this.list.items.length > 0) {
+        return this.item.find('.wpt_editor_list').addClass('activated');
+      } else {
+        return this.item.find('.wpt_editor_list').removeClass('activated');
+      }
     };
 
     wpt_editor.prototype.categories = function() {
@@ -1580,8 +1634,10 @@ if (typeof exports == "object") {
       this.editor.busy();
       return jQuery.post(wpt_editor_ajax.url, data, (function(_this) {
         return function(response) {
-          _this.editor.list.add(response);
-          _this.activate();
+          if (response != null) {
+            _this.editor.list.add(response);
+            _this.activate();
+          }
           return _this.editor.done();
         };
       })(this));

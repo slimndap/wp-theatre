@@ -96,15 +96,21 @@
 #wpt_editor #wpt_editor_production_form_create {
   margin: 20px 210px 40px 0;
 }
-#wpt_editor .wpt_editor_sort {
+#wpt_editor .wpt_editor_list {
+  display: none;
+}
+#wpt_editor .wpt_editor_list.activated {
+  display: block;
+}
+#wpt_editor .wpt_editor_list .wpt_editor_sort {
   line-height: 30px;
   margin-right: 210px;
 }
-#wpt_editor .wpt_editor_sort .sort {
+#wpt_editor .wpt_editor_list .wpt_editor_sort .sort {
   display: inline-block;
   padding: 0 10px;
 }
-#wpt_editor .wpt_editor_sort .sort:after {
+#wpt_editor .wpt_editor_list .wpt_editor_sort .sort:after {
   font-family: dashicons;
   display: inline-block;
   width: 16px;
@@ -112,53 +118,53 @@
   vertical-align: middle;
   content: "\00A0\f156";
 }
-#wpt_editor .wpt_editor_sort .sort.asc:after {
+#wpt_editor .wpt_editor_list .wpt_editor_sort .sort.asc:after {
   content: "\f142";
 }
-#wpt_editor .wpt_editor_sort .sort.desc:after {
+#wpt_editor .wpt_editor_list .wpt_editor_sort .sort.desc:after {
   content: "\f140";
 }
-#wpt_editor .wpt_editor_filters {
+#wpt_editor .wpt_editor_list .wpt_editor_filters {
   float: right;
   width: 205px;
 }
-#wpt_editor .wpt_editor_filters h3 {
+#wpt_editor .wpt_editor_list .wpt_editor_filters h3 {
   margin-top: 0;
 }
-#wpt_editor .wpt_editor_filters ul li a {
+#wpt_editor .wpt_editor_list .wpt_editor_filters ul li a {
   text-decoration: none;
 }
-#wpt_editor .wpt_editor_filters ul li a.active:after {
+#wpt_editor .wpt_editor_list .wpt_editor_filters ul li a.active:after {
   content: "\f335";
   font-family: dashicons;
   vertical-align: middle;
 }
-#wpt_editor .wpt_editor_productions {
+#wpt_editor .wpt_editor_list .wpt_editor_productions {
   margin-right: 210px;
 }
-#wpt_editor .wpt_editor_productions .production {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production {
   background-color: white;
   border: 1px solid #E5E5E5;
   padding: 10px;
   margin: 0 0 20px 0;
   box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.04);
 }
-#wpt_editor .wpt_editor_productions .production .actions {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .actions {
   float: right;
   opacity: .1;
   line-height: 20px;
 }
-#wpt_editor .wpt_editor_productions .production .actions div {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .actions div {
   display: inline-block;
 }
-#wpt_editor .wpt_editor_productions .production .actions div a {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .actions div a {
   display: inline-block;
   height: 20px;
   width: 30px;
   overflow: hidden;
   text-decoration: none;
 }
-#wpt_editor .wpt_editor_productions .production .actions div a:before {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .actions div a:before {
   font-family: dashicons;
   font-size: 20px;
   display: inline-block;
@@ -166,120 +172,120 @@
   text-align: right;
   display: block;
 }
-#wpt_editor .wpt_editor_productions .production .actions div.view_link a:before {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .actions div.view_link a:before {
   content: "\f177";
 }
-#wpt_editor .wpt_editor_productions .production .actions div.delete_link a:before {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .actions div.delete_link a:before {
   content: "\f182";
 }
-#wpt_editor .wpt_editor_productions .production .actions div.edit_link a:before {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .actions div.edit_link a:before {
   content: "\f464";
 }
-#wpt_editor .wpt_editor_productions .production:hover .actions {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production:hover .actions {
   opacity: 1;
 }
-#wpt_editor .wpt_editor_productions .production .meta {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .meta {
   color: #bbb;
   line-height: 18px;
 }
-#wpt_editor .wpt_editor_productions .production .meta .dates,
-#wpt_editor .wpt_editor_productions .production .meta .cities,
-#wpt_editor .wpt_editor_productions .production .meta .categories_html,
-#wpt_editor .wpt_editor_productions .production .meta .season_html {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .meta .dates,
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .meta .cities,
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .meta .categories_html,
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .meta .season_html {
   display: inline-block;
 }
-#wpt_editor .wpt_editor_productions .production .meta .dates:after,
-#wpt_editor .wpt_editor_productions .production .meta .cities:after,
-#wpt_editor .wpt_editor_productions .production .meta .categories_html:after,
-#wpt_editor .wpt_editor_productions .production .meta .season_html:after {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .meta .dates:after,
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .meta .cities:after,
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .meta .categories_html:after,
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .meta .season_html:after {
   content: '\00A0';
 }
-#wpt_editor .wpt_editor_productions .production .meta .dates:empty,
-#wpt_editor .wpt_editor_productions .production .meta .cities:empty,
-#wpt_editor .wpt_editor_productions .production .meta .categories_html:empty,
-#wpt_editor .wpt_editor_productions .production .meta .season_html:empty {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .meta .dates:empty,
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .meta .cities:empty,
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .meta .categories_html:empty,
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .meta .season_html:empty {
   display: none;
 }
-#wpt_editor .wpt_editor_productions .production .meta .dates:before,
-#wpt_editor .wpt_editor_productions .production .meta .categories_html:before,
-#wpt_editor .wpt_editor_productions .production .meta .season_html:before {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .meta .dates:before,
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .meta .categories_html:before,
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .meta .season_html:before {
   font-family: dashicons;
   font-size: 20px;
   display: inline-block;
   height: 20px;
   vertical-align: middle;
 }
-#wpt_editor .wpt_editor_productions .production .meta .dates:before {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .meta .dates:before {
   content: "\f469\00A0";
 }
-#wpt_editor .wpt_editor_productions .production .meta .cities:before {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .meta .cities:before {
   content: 'in\00A0';
 }
-#wpt_editor .wpt_editor_productions .production .meta .season_html:before {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .meta .season_html:before {
   content: "\f145\00A0";
 }
-#wpt_editor .wpt_editor_productions .production .meta .categories_html:before {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .meta .categories_html:before {
   content: "\f318\00A0";
 }
-#wpt_editor .wpt_editor_productions .production .meta .categories_html ul {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .meta .categories_html ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
   display: inline-block;
 }
-#wpt_editor .wpt_editor_productions .production .meta .categories_html ul li {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .meta .categories_html ul li {
   display: inline;
 }
-#wpt_editor .wpt_editor_productions .production .meta .categories_html ul li:before {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .meta .categories_html ul li:before {
   content: ', ';
 }
-#wpt_editor .wpt_editor_productions .production .meta .categories_html ul li:first-child:before {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .meta .categories_html ul li:first-child:before {
   content: '';
 }
-#wpt_editor .wpt_editor_productions .production .content {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .content {
   margin-top: 1em;
   overflow: auto;
 }
-#wpt_editor .wpt_editor_productions .production .content > * {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .content > * {
   margin-left: 85px;
 }
-#wpt_editor .wpt_editor_productions .production .content .thumbnail {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .content .thumbnail {
   width: 75px;
   float: left;
   margin-left: 0;
 }
-#wpt_editor .wpt_editor_productions .production .content .thumbnail img {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .content .thumbnail img {
   width: 100%;
   height: auto;
 }
-#wpt_editor .wpt_editor_productions .production .content .thumbnail:empty {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .content .thumbnail:empty {
   border: 1px dashed #bbb;
   height: 75px;
 }
-#wpt_editor .wpt_editor_productions .production .content h2 {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .content h2 {
   margin-top: 0;
   margin-bottom: 0;
 }
-#wpt_editor .wpt_editor_productions .production .content .excerpt {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .content .excerpt {
   margin-top: 1em;
 }
-#wpt_editor .wpt_editor_productions .production .form {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .form {
   display: none;
   overflow: auto;
 }
-#wpt_editor .wpt_editor_productions .production .form [type="submit"],
-#wpt_editor .wpt_editor_productions .production .form [type="reset"] {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .form [type="submit"],
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production .form [type="reset"] {
   display: none;
 }
-#wpt_editor .wpt_editor_productions .production.edit .meta,
-#wpt_editor .wpt_editor_productions .production.edit .content,
-#wpt_editor .wpt_editor_productions .production.edit .actions {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production.edit .meta,
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production.edit .content,
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production.edit .actions {
   display: none;
 }
-#wpt_editor .wpt_editor_productions .production.edit .form {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production.edit .form {
   display: block;
 }
-#wpt_editor .wpt_editor_productions .production.edit .form .close {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production.edit .form .close {
   float: right;
   display: block;
   height: 20px;
@@ -289,7 +295,7 @@
   text-decoration: none;
   margin-bottom: 10px;
 }
-#wpt_editor .wpt_editor_productions .production.edit .form .close:before {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production.edit .form .close:before {
   font-family: dashicons;
   font-size: 20px;
   display: inline-block;
@@ -298,7 +304,7 @@
   display: block;
   content: "\f335";
 }
-#wpt_editor .wpt_editor_productions .production.edit .form input#wpt_editor_production_form_title {
+#wpt_editor .wpt_editor_list .wpt_editor_productions .production.edit .form input#wpt_editor_production_form_title {
   padding: 3px 8px;
   font-size: 1.7em;
   line-height: 100%;
@@ -307,14 +313,32 @@
   outline: 0px none;
   margin: 0px;
 }
-#wpt_editor.busy .spinner {
+#wpt_editor .wpt_editor_list.busy .spinner {
   display: block;
   text-indent: 100%;
   overflow: hidden;
   white-space: nowrap;
 }
-#wpt_editor .wpt_editor_templates {
+#wpt_editor .wpt_editor_list .wpt_editor_templates {
   display: none;
+}
+#footer-left {
+  padding-top: 21px;
+}
+#footer-upgrade {
+  padding-bottom: 9px;
+  height: 41px;
+}
+#footer-upgrade .logo {
+  display: inline-block;
+  width: 175px;
+  height: 50px;
+  vertical-align: bottom;
+  background-image: url(../img/slimndap@1x.png);
+  margin-bottom: -9px;
+  text-indent: 100%;
+  overflow: hidden;
+  white-space: nowrap;
 }
 @font-face {
   font-family: "theatre-webfont";
