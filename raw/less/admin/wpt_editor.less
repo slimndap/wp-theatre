@@ -111,193 +111,197 @@
 				}
 			}
 		}
-		.wpt_editor_productions {
-			margin-right: 210px;
-			.production {
-				background-color: white;
-				border: 1px solid #E5E5E5;
-				padding: 10px;
-				margin: 0 0 20px 0;
-				box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.04);
-				.actions {
-					float: right;
-					opacity: .1;
-					line-height: 20px;
-					div {
-						display: inline-block;
-						a {
-							display: inline-block;
-							height: 20px;
-							width: 30px;
-							overflow: hidden;
-							text-decoration: none;
-							
-						}
-						a:before {
-							font-family: dashicons;
-							font-size: 20px;
-							display: inline-block;
-							width: 30px;
-							text-align: right;
-							display: block;
-						}
-						&.view_link a:before {
-							content: "\f177";
-						} 
-						&.delete_link a:before {
-							content: "\f182";
-						} 
-						&.edit_link a:before {
-							content: "\f464";
-						} 
-					}
-				}
-				&:hover {
+		#wpt_editor_productions {
+			> .list {
+				margin-right: 210px;
+				.production {
+					background-color: white;
+					border: 1px solid #E5E5E5;
+					padding: 10px;
+					margin: 0 0 20px 0;
+					box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.04);
 					.actions {
-						opacity: 1;
-					}
-				}
-				.meta {
-					color: #bbb;
-					line-height: 18px;
-					.dates,
-					.cities,
-					.categories_html,
-					.season_html {
-						display: inline-block;
-						&:after {
-							content: '\00A0';
-						}
-						&:empty {
-							display: none;
-						}
-					}
-					.dates,
-					.categories_html,
-					.season_html {
-						&:before {
-							font-family: dashicons;
-							font-size: 20px;
+						float: right;
+						opacity: .1;
+						line-height: 20px;
+						div {
 							display: inline-block;
-							height: 20px;
-							vertical-align: middle;
-						}
-					}
-					.dates:before {
-						content: "\f469\00A0";
-					}
-					.cities:before {
-						content: 'in\00A0';
-					}
-					.season_html:before {
-						content: "\f145\00A0";
-					}
-					.categories_html {
-						&:before {
-							content: "\f318\00A0";
-						}
-						ul {
-							list-style-type: none;
-							margin: 0;
-							padding: 0;
-							display: inline-block;
-							li {
-								display: inline;
-								&:before {
-									content: ', ';
-								}
-								&:first-child:before {
-									content: '';
-								}
+							a {
+								display: inline-block;
+								height: 20px;
+								width: 30px;
+								overflow: hidden;
+								text-decoration: none;
+								
 							}
-						}
-					}				
-				}
-				.content {
-					margin-top: 1em;
-					overflow: auto;
-					> * {
-						margin-left: 75px + 10px;
-					}
-					.thumbnail {
-						width: 75px;
-						float: left;
-						margin-left: 0;
-						img {
-							width: 100%;
-							height: auto;
-						}
-						&:empty {
-							border: 1px dashed #bbb;
-							height: 75px;
-						}
-					}
-					h2 {
-						margin-top: 0;
-						margin-bottom: 0;
-					}
-					.excerpt {
-						margin-top: 1em;
-					}
-					
-				}
-				.form {
-					display: none;
-					overflow: auto;
-					[type="submit"], 
-					[type="reset"] {
-						display: none;
-					}
-				}
-				&.edit {
-					.meta, .content, .actions {
-						display: none;
-					}
-					.form {
-						display: block;
-						.close {
-							float: right;
-							display: block;
-							height: 20px;
-							width: 30px;
-							line-height: 20px;
-							overflow: hidden;
-							text-decoration: none;
-							margin-bottom: 10px;
-							&:before {
+							a:before {
 								font-family: dashicons;
 								font-size: 20px;
 								display: inline-block;
 								width: 30px;
 								text-align: right;
 								display: block;
-								content: "\f335";
+							}
+							&.view_link a:before {
+								content: "\f177";
+							} 
+							&.delete_link a:before {
+								content: "\f182";
+							} 
+							&.edit_link a:before {
+								content: "\f464";
 							} 
 						}
-						input#wpt_editor_production_form_title {
-							padding: 3px 8px;
-							font-size: 1.7em;
-							line-height: 100%;
-							height: 1.7em;
-							width: 100%;
-							outline: 0px none;
-							margin: 0px;
+					}
+					&:hover {
+						.actions {
+							opacity: 1;
 						}
 					}
-				}
+					.meta {
+						color: #bbb;
+						line-height: 18px;
+						.dates,
+						.cities,
+						.categories_html,
+						.season_html {
+							display: inline-block;
+							&:after {
+								content: '\00A0';
+							}
+							&:empty {
+								display: none;
+							}
+						}
+						.dates,
+						.categories_html,
+						.season_html {
+							&:before {
+								font-family: dashicons;
+								font-size: 20px;
+								display: inline-block;
+								height: 20px;
+								vertical-align: middle;
+							}
+						}
+						.dates:before {
+							content: "\f469\00A0";
+						}
+						.cities:before {
+							content: 'in\00A0';
+						}
+						.season_html:before {
+							content: "\f145\00A0";
+						}
+						.categories_html {
+							&:before {
+								content: "\f318\00A0";
+							}
+							ul {
+								list-style-type: none;
+								margin: 0;
+								padding: 0;
+								display: inline-block;
+								li {
+									display: inline;
+									&:before {
+										content: ', ';
+									}
+									&:first-child:before {
+										content: '';
+									}
+								}
+							}
+						}				
+					}
+					> .content {
+						margin-top: 1em;
+						overflow: auto;
+						> * {
+							margin-left: 75px + 10px;
+						}
+						.thumbnail {
+							width: 75px;
+							float: left;
+							margin-left: 0;
+							img {
+								width: 100%;
+								height: auto;
+							}
+							&:empty {
+								border: 1px dashed #bbb;
+								height: 75px;
+							}
+						}
+						h2 {
+							margin-top: 0;
+							margin-bottom: 0;
+							padding-top: 0;
+							padding-bottom: 0;
+						}
+						.excerpt {
+						}
+						
+					}
+					> .form {
+						display: none;
+						overflow: auto;
+						[type="submit"], 
+						[type="reset"] {
+							display: none;
+						}
+					}
+					&.edit {
+						> .meta, > .content, > .actions {
+							display: none;
+						}
+						> .form {
+							display: block;
+							.close {
+								float: right;
+								display: block;
+								height: 20px;
+								width: 30px;
+								line-height: 20px;
+								overflow: hidden;
+								text-decoration: none;
+								margin-bottom: 10px;
+								&:before {
+									font-family: dashicons;
+									font-size: 20px;
+									display: inline-block;
+									width: 30px;
+									text-align: right;
+									display: block;
+									content: "\f335";
+								} 
+							}
+							input#wpt_editor_production_form_title {
+								padding: 3px 8px;
+								font-size: 1.7em;
+								line-height: 100%;
+								height: 1.7em;
+								width: 100%;
+								outline: 0px none;
+								margin: 0px;
+							}
+						}
+					}
+				}				
 			}
-		}
-		&.busy {
-			.spinner {
-				display: block;
-				text-indent: 100%;
-				overflow: hidden;
-				white-space: nowrap;
-			}
+
 		}
 		.wpt_editor_templates {
 			display: none;
 		}		
+	}
+	&.busy {
+		.spinner {
+			display: block;
+			text-indent: 100%;
+			overflow: hidden;
+			white-space: nowrap;
+		}
 	}
 
 }

@@ -6,6 +6,7 @@
 			add_action( 'admin_enqueue_scripts', array($this,'admin_enqueue_scripts'), 20);
 
 			add_action( 'wp_ajax_productions',array($this,'ajax_productions'));
+			add_action( 'wp_ajax_events',array($this,'ajax_events'));
 			add_action( 'wp_ajax_save',array($this,'ajax_save'));
 			add_action( 'wp_ajax_delete',array($this,'ajax_delete'));
 			add_filter( 'admin_footer_text',array($this,'admin_footer_text'));
@@ -139,17 +140,24 @@
 			$html.= '<div class="form"></div>';
 			$html.= '</div>'; // .wpt_editor_production_template
 			
+			// event template
+			$html.= '<div id="wpt_editor_event_template" class="event">';
+			$html.= '<div class="hidden"><div class="ID"></div></div>';
+			$html.= '<div class="content"><div class="datetime_html"></div><h2 class="city"></h2><div class="location"></div></div>';
+			$html.= '</div>'; // .wpt_editor_event_template
+			
 			// production form template
 			$html.= '<div id="wpt_editor_production_form_template">';
 			$html.= '<a class="close" href="#">Close</a>';
 			$html.= $this->production_form();
+			$html.= '<div id="wpt_editor_events"><div class="list">events</div></div>';
 			$html.= '</div>';
 
 
 			$html.= '</div>'; // .wpt_editor_templates
 			
 			// productions
-			$html.= '<div class="wpt_editor_productions"></div>';
+			$html.= '<div id="wpt_editor_productions"><div class="list"></div></div>';
 			
 			$html.= '</div>';
 			
@@ -178,6 +186,18 @@
 				'upcoming' => true
 			);
 			wp_send_json($wp_theatre->productions->to_array($args));
+		}
+		
+		function ajax_events() {
+			check_ajax_referer('wpt_nonce', 'wpt_nonce');
+		
+			global $wp_theatre;
+			
+			$args = array(
+				'production' => $_POST['production']
+			);
+			wp_send_json($wp_theatre->events->to_array($args));
+			
 		}
 		
 		function ajax_save() {

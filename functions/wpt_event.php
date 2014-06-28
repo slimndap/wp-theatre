@@ -515,6 +515,24 @@ class WPT_Event {
 		}
 	}
 		
+	function to_array() {
+		global $wp_theatre;
+		$data = array(
+			'ID'         => $this->ID,
+			'date' => $this->date(),
+			'time' => $this->time(),
+			'datetime_html' => $this->datetime(array('html'=>true)),
+			'remark'    => $this->remark(),
+			'city'      => $this->city(),
+			'location'     => $this->location(),
+
+			$wp_theatre->order->meta_key => get_post_meta($this->ID, $wp_theatre->order->meta_key, true)
+
+		);
+		
+		return $data;
+	}
+
 	/**
 	 * Event venue.
 	 *

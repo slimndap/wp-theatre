@@ -1484,73 +1484,17 @@ if (typeof exports == "object") {
 
   /*
   --------------------------------------------
-       Begin calendar.coffee
-  --------------------------------------------
-   */
-  var wpt_admin_ticketspage, wpt_calendar, wpt_editor, wpt_production, wpt_productions;
-
-  wpt_calendar = (function() {
-
-    /*
-    	Manage the navigation of all WPT_Calendar blocks.
-    	@since 0.8
-     */
-    function wpt_calendar(calendar) {
-      this.calendar = calendar;
-      this.calendar = jQuery(this.calendar);
-      this.calendar.addClass('navigate');
-      this.calendar.children().first().addClass('active');
-      jQuery(this.calendar).find('tfoot a').click((function(_this) {
-        return function(e) {
-          return _this.navigate(e.currentTarget);
-        };
-      })(this));
-    }
-
-
-    /*
-    	Handle prev/next.
-    	@since 0.8
-     */
-
-    wpt_calendar.prototype.navigate = function(e) {
-      var href;
-      href = jQuery(e).attr('href');
-      this.calendar.find('.active').removeClass('active');
-      this.calendar.find('caption a[href="' + href + '"]').parents('.wpt_month').addClass('active');
-      return false;
-    };
-
-    return wpt_calendar;
-
-  })();
-
-  jQuery(function() {
-    return jQuery('.wpt_calendar').each(function() {
-      return new wpt_calendar(this);
-    });
-  });
-
-
-  /*
-  --------------------------------------------
        Begin editor.coffee
   --------------------------------------------
    */
+  var wpt_admin_ticketspage, wpt_editor, wpt_events, wpt_production, wpt_productions;
 
   wpt_editor = (function() {
     function wpt_editor(item) {
-      var options;
       this.item = item;
       this.id = this.item.attr('id');
-      options = {
-        valueNames: ['wpt_editor_production_title', 'wpt_editor_production_excerpt'],
-        listClass: 'wpt_editor_productions',
-        item: 'wpt_editor_production_template',
-        searchClass: 'wpt_editor_search'
-      };
-      this.list = new List(this.id, options);
       this.productions = new wpt_productions(this);
+      this.events = new wpt_events(this);
       this.categories();
       this.seasons();
     }
@@ -1571,7 +1515,7 @@ if (typeof exports == "object") {
 
     wpt_editor.prototype.done = function() {
       this.item.removeClass('busy');
-      if (this.list.items.length > 0) {
+      if (this.productions.list.items.length > 0) {
         return this.item.find('.wpt_editor_list').addClass('activated');
       } else {
         return this.item.find('.wpt_editor_list').removeClass('activated');
@@ -1620,7 +1564,14 @@ if (typeof exports == "object") {
 
   wpt_productions = (function() {
     function wpt_productions(editor) {
+      var options;
       this.editor = editor;
+      options = {
+        listClass: 'list',
+        item: 'wpt_editor_production_template',
+        searchClass: 'wpt_editor_search'
+      };
+      this.list = new List('wpt_editor_productions', options);
       this.load();
       this.form = this.editor.item.find('#wpt_editor_production_form_template');
     }
@@ -1635,7 +1586,7 @@ if (typeof exports == "object") {
       return jQuery.post(wpt_editor_ajax.url, data, (function(_this) {
         return function(response) {
           if (response != null) {
-            _this.editor.list.add(response);
+            _this.list.add(response);
             _this.activate();
           }
           return _this.editor.done();
@@ -1686,19 +1637,24 @@ if (typeof exports == "object") {
       this.editor.item.find('.production.edit').removeClass('edit');
       production.addClass('edit');
       id = production.find('.ID').text();
-      values = this.editor.list.get('ID', id)[0].values();
+      values = this.list.get('ID', id)[0].values();
       production.find('.form').append(this.form);
       this.form.find('input[name=ID]').val(id);
       this.form.find('input[name=title]').val(values.title);
       this.form.find('textarea[name=excerpt]').val(values.excerpt);
       this.form.find('select[name=categories]').val(values.categories);
-      return this.form.find('select[name=season]').val(values.season);
+      this.form.find('select[name=season]').val(values.season);
+
+      /*
+      			Load events
+       */
+      return this.editor.events.load(id);
     };
 
     wpt_productions.prototype["delete"] = function(production) {
       var confirm_message, data, id, values;
       id = production.find('.ID').text();
-      values = this.editor.list.get('ID', id)[0].values();
+      values = this.list.get('ID', id)[0].values();
       confirm_message = wpt_editor_ajax.confirm_message.replace(/%s/g, values.title);
       if (confirm(confirm_message)) {
         data = {
@@ -1709,7 +1665,7 @@ if (typeof exports == "object") {
         this.editor.busy();
         return jQuery.post(wpt_editor_ajax.url, data, (function(_this) {
           return function(response) {
-            _this.editor.list.remove('ID', response);
+            _this.list.remove('ID', response);
             return _this.editor.done();
           };
         })(this));
@@ -1735,7 +1691,7 @@ if (typeof exports == "object") {
       this.editor.busy();
       return jQuery.post(wpt_editor_ajax.url, data, (function(_this) {
         return function(response) {
-          _this.editor.list.get('ID', id)[0].values(response);
+          _this.list.get('ID', id)[0].values(response);
           _this.activate();
           return _this.editor.done();
         };
@@ -1746,7 +1702,7 @@ if (typeof exports == "object") {
       if (category == null) {
         category = '';
       }
-      return this.editor.list.filter(function(item) {
+      return this.list.filter(function(item) {
         var categories, search;
         if (category === '') {
           return true;
@@ -1762,7 +1718,7 @@ if (typeof exports == "object") {
       if (season == null) {
         season = '';
       }
-      return this.editor.list.filter(function(item) {
+      return this.list.filter(function(item) {
         if (season === '') {
           return true;
         } else {
@@ -1772,6 +1728,40 @@ if (typeof exports == "object") {
     };
 
     return wpt_productions;
+
+  })();
+
+  wpt_events = (function() {
+    function wpt_events(editor) {
+      var options;
+      this.editor = editor;
+      options = {
+        listClass: 'list',
+        item: 'wpt_editor_event_template'
+      };
+      this.list = new List('wpt_editor_events', options);
+    }
+
+    wpt_events.prototype.load = function(production) {
+      var data;
+      data = {
+        'action': 'events',
+        'production': production,
+        'wpt_nonce': wpt_editor_ajax.wpt_nonce
+      };
+      this.editor.busy();
+      return jQuery.post(wpt_editor_ajax.url, data, (function(_this) {
+        return function(response) {
+          if (response != null) {
+            _this.list.clear();
+            _this.list.add(response);
+          }
+          return _this.editor.done();
+        };
+      })(this));
+    };
+
+    return wpt_events;
 
   })();
 

@@ -3,14 +3,8 @@ class wpt_editor
 	constructor: (@item) ->
 		@id = @item.attr('id')
 
-		options = 
-			valueNames: ['wpt_editor_production_title','wpt_editor_production_excerpt']
-			listClass: 'wpt_editor_productions'
-			item: 'wpt_editor_production_template'
-			searchClass: 'wpt_editor_search'
-		@list = new List @id, options
-
 		@productions = new wpt_productions @
+		@events = new wpt_events @
 		
 		@categories()
 		@seasons()
@@ -27,7 +21,7 @@ class wpt_editor
 	done: () ->
 		@item.removeClass 'busy'
 
-		if @list.items.length > 0
+		if @productions.list.items.length > 0
 			@item.find('.wpt_editor_list').addClass 'activated'
 		else 
 			@item.find('.wpt_editor_list').removeClass 'activated'
@@ -59,6 +53,12 @@ class wpt_editor
 class wpt_productions
 
 	constructor: (@editor) ->
+		options = 
+			listClass: 'list'
+			item: 'wpt_editor_production_template'
+			searchClass: 'wpt_editor_search'
+		@list = new List 'wpt_editor_productions', options
+
 		@load()
 		@form = @editor.item.find '#wpt_editor_production_form_template'
 		
@@ -70,7 +70,7 @@ class wpt_productions
 		@editor.busy()
 		jQuery.post wpt_editor_ajax.url, data, (response) =>
 			if response?
-				@editor.list.add response
+				@list.add response
 				@activate()
 			@editor.done()
 	
@@ -97,7 +97,7 @@ class wpt_productions
 		@editor.item.find('.production.edit').removeClass 'edit'
 		production.addClass 'edit'
 		id = production.find('.ID').text()
-		values = @editor.list.get('ID',id)[0].values()
+		values = @list.get('ID',id)[0].values()
 		
 		production.find('.form').append @form
 		@form.find('input[name=ID]').val id
@@ -106,10 +106,15 @@ class wpt_productions
 		@form.find('select[name=categories]').val values.categories
 		@form.find('select[name=season]').val values.season
 		
+		###
+			Load events
+		###
+		@editor.events.load id
+
 
 	delete: (production) ->
 		id = production.find('.ID').text()
-		values = @editor.list.get('ID',id)[0].values()
+		values = @list.get('ID',id)[0].values()
 
 		confirm_message = wpt_editor_ajax.confirm_message.replace /%s/g, values.title
 
@@ -120,7 +125,7 @@ class wpt_productions
 				'ID' :  id
 			@editor.busy()
 			jQuery.post wpt_editor_ajax.url, data, (response) =>
-				@editor.list.remove('ID',response)
+				@list.remove('ID',response)
 				@editor.done()
 
 			
@@ -140,12 +145,12 @@ class wpt_productions
 		
 		@editor.busy()
 		jQuery.post wpt_editor_ajax.url, data, (response) =>
-			@editor.list.get('ID',id)[0].values(response)
+			@list.get('ID',id)[0].values(response)
 			@activate()
 			@editor.done()
 		
 	category: (category='') ->
-		@editor.list.filter (item) ->
+		@list.filter (item) ->
 			if category==''
 				true
 			else
@@ -154,11 +159,33 @@ class wpt_productions
 				categories? and categories.indexOf(search) > -1
 
 	season: (season='') ->
-		@editor.list.filter (item) ->
+		@list.filter (item) ->
 			if season==''
 				true
 			else
 				item.values().season_html == season
+
+class wpt_events
+
+	constructor:(@editor) ->
+		options = 
+			listClass: 'list'
+			item: 'wpt_editor_event_template'
+		@list = new List 'wpt_editor_events', options
+
+	load : (production) ->
+		data =
+			'action': 'events'
+			'production': production
+			'wpt_nonce': wpt_editor_ajax.wpt_nonce
+
+		@editor.busy()
+		jQuery.post wpt_editor_ajax.url, data, (response) =>
+			if response?
+				@list.clear()
+				@list.add response
+			@editor.done()
+	
 
 class wpt_production
 
