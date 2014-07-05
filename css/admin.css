@@ -59,6 +59,9 @@
 #wpt_editor .wpt_editor_settings a.trash:before {
   content: "\f182";
 }
+#wpt_editor .wpt_editor_production_form {
+  overflow: auto;
+}
 #wpt_editor .wpt_editor_production_form [name=title] {
   padding: 3px 8px;
   font-size: 1.7em;
@@ -95,6 +98,52 @@
 }
 #wpt_editor #wpt_editor_production_form_create {
   margin: 20px 210px 40px 0;
+}
+#wpt_editor .wpt_editor_event_form {
+  float: left;
+}
+#wpt_editor .wpt_editor_event_form .dates {
+  width: 30%;
+  float: left;
+  margin: 4px 0 0 0;
+}
+#wpt_editor .wpt_editor_event_form .dates input {
+  float: left;
+  margin: 0 3.33333333% 4px 0;
+}
+#wpt_editor .wpt_editor_event_form .dates [name=event_date_date],
+#wpt_editor .wpt_editor_event_form .dates [name=enddate_date] {
+  width: 50%;
+}
+#wpt_editor .wpt_editor_event_form .dates [name=event_date_time],
+#wpt_editor .wpt_editor_event_form .dates [name=enddate_time] {
+  width: 43.33333333%;
+}
+#wpt_editor .wpt_editor_event_form .location,
+#wpt_editor .wpt_editor_event_form .tickets {
+  width: 20%;
+  float: left;
+}
+#wpt_editor .wpt_editor_event_form .location input,
+#wpt_editor .wpt_editor_event_form .tickets input {
+  margin: 4px 5% 0 0;
+  width: 95%;
+}
+#wpt_editor .wpt_editor_event_form .prices {
+  width: 10%;
+  float: left;
+}
+#wpt_editor .wpt_editor_event_form .prices textarea {
+  margin: 4px 10% 0 0;
+  width: 90%;
+  height: 58px;
+}
+#wpt_editor .wpt_editor_event_form .status {
+  float: left;
+  width: 20%;
+}
+#wpt_editor .wpt_editor_event_form .status select {
+  margin: 4px 0 0 0;
 }
 #wpt_editor .wpt_editor_list {
   display: none;
@@ -338,6 +387,12 @@
   text-indent: 100%;
   overflow: hidden;
   white-space: nowrap;
+}
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  #footer-upgrade .logo {
+    background-image: url(../img/slimndap@2x.png);
+    background-size: 175px 50px;
+  }
 }
 @font-face {
   font-family: "theatre-webfont";

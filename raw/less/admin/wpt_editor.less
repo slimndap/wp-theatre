@@ -27,6 +27,7 @@
 		}
 	}
 	.wpt_editor_production_form {
+		overflow: auto;
 		[name=title] {
 			padding: 3px 8px;
 			font-size: 1.7em;
@@ -59,11 +60,56 @@
 		}
 		[type="submit"], 
 		[type="reset"] {
-			margin: 4px 1% 0 0;						
+			margin: 4px 1% 0 0;
 		}
 	}
 	#wpt_editor_production_form_create {
 		margin: 20px 210px 40px 0;		
+	}
+	.wpt_editor_event_form {
+		float: left;
+		.dates {
+			width: 30%;
+			float: left;
+			margin: 4px 0 0 0;
+			input {
+				float: left;
+				margin: 0 (1% * 10/3) 4px 0;
+			}
+			[name=event_date_date],
+			[name=enddate_date] {
+				width: 50%;
+			}
+			[name=event_date_time],
+			[name=enddate_time] {
+				width: 50% - (1% * 20/3);
+			}
+		}
+		.location,
+		.tickets {
+			width: 20%;
+			float: left;
+			input {
+				margin: 4px 5% 0 0;
+				width: 95%;
+			}
+		}
+		.prices {
+			width: 10%;
+			float: left;
+			textarea {
+				margin: 4px 10% 0 0;
+				width: 90%;
+				height: 58px;
+			}
+		}
+		.status {
+			float: left;
+			width: 20%;
+			select {
+				margin: 4px 0 0 0;
+			}
+		}
 	}
 	.wpt_editor_list {
 		display: none;
@@ -321,5 +367,9 @@
 		text-indent: 100%;
 		overflow: hidden;
 		white-space: nowrap;
+		@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+			background-image: url(../img/slimndap@2x.png);
+			background-size: 175px 50px;
+		}
 	}
 }

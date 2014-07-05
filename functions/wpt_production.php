@@ -364,6 +364,43 @@ class WPT_Production {
 		}
 	}
 	
+	
+	function save() {
+		$args = array();
+
+		$args['post_type'] = self::post_type_name;
+		$args['post_status'] = 'publish';
+
+		if (!empty($this->ID)) {
+			$args['ID'] = $this->ID;
+		}
+
+		if (isset($this->title)) {
+			if (empty($this->title)) {
+				$this->title = __('(Draft production)','wp_theatre');			
+			}
+			$args['post_title'] = $this->title;
+		}
+
+		if (isset($this->excerpt)) {
+			$args['post_excerpt'] = $this->excerpt;
+		}
+		
+		if (isset($this->categories)) {
+			$args['post_category'] = $this->categories;
+		}
+		
+		$this->ID = wp_insert_post($args);
+
+		if (isset($this->events)) {
+			foreach ($this->events as $event) {
+				$event->production = $this;
+				$event->save();
+			}
+		}
+		
+	}
+	
 	/**
 	 * Production season.
 	 *

@@ -338,6 +338,10 @@ class WPT_Events extends WPT_Listing {
 
 		return $html;
 	}
+	
+	function save() {
 		
+	}
+	
 }
 ?>

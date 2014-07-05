@@ -72,7 +72,7 @@
 			$html = '';
 
 			$html.= '<div class="wrap">';
-
+			
 			$html.= '<div class="wpt_editor_settings">';
 			$html.= '<a href="'.admin_url('edit.php?post_status=trash&post_type='.WPT_Production::post_type_name).'" class="trash">'.__('Trash','wp_theatre').'</a>';
 			$html.= '<a href="'.admin_url('admin.php?page=wpt_admin').'" class="settings">'.__('Settings','wp_theatre').'</a>';
@@ -136,14 +136,14 @@
 			$html.= '<div class="hidden"><div class="ID"></div></div>';
 			$html.= '<div class="actions"><div class="view_link"></div><div class="delete_link"></div><div class="edit_link"></div></div>';
 			$html.= '<div class="meta"><div class="dates"></div><div class="cities"></div><div class="categories_html"></div><div class="season_html"></div></div>';
-			$html.= '<div class="content"><div class="thumbnail"></div><h2 class="title"></h2><div class="excerpt"></div></div>';
+			$html.= '<div class="content"><div class="thumbnail"></div><div class="title"></div><div class="excerpt"></div></div>';
 			$html.= '<div class="form"></div>';
 			$html.= '</div>'; // .wpt_editor_production_template
 			
 			// event template
 			$html.= '<div id="wpt_editor_event_template" class="event">';
 			$html.= '<div class="hidden"><div class="ID"></div></div>';
-			$html.= '<div class="content"><div class="datetime_html"></div><h2 class="city"></h2><div class="location"></div></div>';
+			$html.= '<div class="content"><div class="datetime_html"></div><div class="city"></div><div class="location"></div></div>';
 			$html.= '</div>'; // .wpt_editor_event_template
 			
 			// production form template
@@ -235,15 +235,22 @@
 				die();
 			}
 			
-			$production = array(
-				'ID' => $_POST['ID'],
-				'post_title' => $_POST['title'],
-				'post_excerpt' => empty($_POST['excerpt'])?'':$_POST['excerpt'],
-				'post_category' => empty($_POST['categories'])?array():$_POST['categories'],
-				'season' => empty($_POST['season'])?'':$_POST['season']
-			);
-					
-			$this->save_production($production);
+			$production = new WPT_Production();
+			$production->title = $_POST['title'];
+			$production->excerpt = empty($_POST['excerpt'])?'':$_POST['excerpt'];
+			$production->categories = empty($_POST['categories'])?array():$_POST['categories'];
+			$production->season = empty($_POST['season'])?'':$_POST['season'];
+
+			$event = new WPT_Event();
+			$event->datetime = $_POST['event_date_date'].' '.$_POST['event_date_time'];
+			$event->venue = $_POST['venue'];
+			$event->city = $_POST['city'];
+			$event->tickets_url = $_POST['tickets_url'];
+			$event->tickets_button = $_POST['tickets_button'];
+			$production->events = array($event);
+
+			$production->save();
+
 		}
 		
 		function is_theater_admin() {
@@ -257,7 +264,7 @@
 			$html.= '<form class="wpt_editor_production_form" action="?page=wpt_editor" method="post">';
 			$html.= wp_nonce_field('wpt_nonce','wpt_nonce', true, false);
 			$html.= '<input type="hidden" name="ID" />';
-			$html.= '<input type="text" name="title" id="wpt_editor_production_form_title" placeholder="'.__('Title','wp_theatre').'" />';
+			$html.= '<input type="text" name="title" id="wpt_editor_production_form_title" required placeholder="'.__('Title','wp_theatre').'" />';
 			$html.= '<textarea name="excerpt" id="wpt_editor_production_form_excerpt" placeholder="'.__('Excerpt','wp_theatre').'"></textarea>';
 			$html.= '<select id="wpt_editor_production_form_categories" name="categories[]" multiple>';
 			if (!empty($this->categories)) {
@@ -276,11 +283,67 @@
 			}
 			$html.= '</select>';
 			
+			$html.= $this->event_form();
+			
 			$html.= '<input type="submit" name="wpt_editor_submit" class="button button-primary" value="'.__('Save new event','wp_theatre').'" />';
 			$html.= '<input type="reset" class="button" value="'.__('Cancel').'" />';
 			
 			$html.= '</form>';
 			
+			return $html;
+		}
+		
+		function event_form() {
+			
+			$html = '';
+			
+			$html.= '<div class="dates">';
+			
+			$default_date = strtotime('20:00');
+			if ($default_date < time()) {
+				$default_date = strtotime('tomorrow 20:00');
+			}
+			$default_date = apply_filters('wpt_editor_default_date',$default_date);
+			
+			$html.= '<input type="text" name="event_date_date" id="wpt_editor_event_form_event_date_date" placeholder="'.__('Start date','wp_theatre').'" value="'.date('Y-m-d',$default_date).'" />';
+			$html.= '<input type="text" name="event_date_time" id="wpt_editor_event_form_event_date_time" placeholder="'.__('Start time','wp_theatre').'" value="'.date('H:i',$default_date).'" />';
+			$html.= '<input type="text" name="enddate_date" id="wpt_editor_event_form_enddate_date" placeholder="'.__('End date','wp_theatre').'" />';
+			$html.= '<input type="text" name="enddate_time" id="wpt_editor_event_form_enddate_time" placeholder="'.__('End time','wp_theatre').'" />';
+			$html.= '</div>'; // .dates
+			
+			$html.= '<div class="location">';
+			$html.= '<input type="text" name="venue" id="wpt_editor_event_form_venue" placeholder="'.__('Venue','wp_theatre').'" />';
+			$html.= '<input type="text" name="city" id="wpt_editor_event_form_city" placeholder="'.__('City','wp_theatre').'" />';
+			$html.= '</div>'; // .location
+			
+			$html.= '<div class="prices">';
+			$html.= '<textarea name="prices" id="wpt_editor_production_form_pcires" placeholder="'.__('Prices','wp_theatre').'"></textarea>';
+			$html.= '</div>'; // .prices
+			
+			$html.= '<div class="tickets">';
+			$html.= '<input type="url" name="tickets_url" id="wpt_editor_event_form_tickets_url" placeholder="'.__('Tickets URL','wp_theatre').'" />';
+			$html.= '<input type="text" name="tickets_button" id="wpt_editor_event_form_tickets_button" placeholder="'.__('Tickets text','wp_theatre').'" />';
+			$html.= '</div>'; // .tickets
+			
+			$html.= '<div class="status">';
+			$html.= '<select id="wpt_editor_production_form_tickets_status" name="status">';
+			
+			$statusses = array(
+				WPT_Event::tickets_status_onsale => __('On sale','wp_theatre'),
+				WPT_Event::tickets_status_soldout => __('Sold Out','wp_theatre'),
+				WPT_Event::tickets_status_cancelled => __('Cancelled','wp_theatre'),
+				WPT_Event::tickets_status_hidden => __('Hidden','wp_theatre'),	
+				WPT_Event::tickets_status_other => __('Other&hellip;','wp_theatre'),	
+			);
+			
+			foreach ($statusses as $value=>$label) {
+				$html.= '<option value="'.$value.'">'.$label.'</option>';
+			}
+
+			$html.= '</select>';
+			$html.= '</div>'; // .status
+			
+			$html = '<div class="wpt_editor_event_form">'.$html.'</div>';
 			return $html;
 		}
 

@@ -650,6 +650,43 @@ class WPT_Event {
 		return $html;		
 	}
 	
+	function save() {
+		$args = array();
+		
+		$args['post_type'] = self::post_type_name;
+
+		if (!empty($this->ID)) {
+			$args['ID'] = $this->ID;
+		}
+		
+		$this->ID = wp_insert_post($args);
+
+		if (isset($this->production)) {
+			update_post_meta($this->ID, WPT_Production::post_type_name, $this->production->ID);
+		}
+		
+		if (isset($this->datetime)) {
+			update_post_meta($this->ID,'event_date',$this->datetime);
+		}
+		
+		if (isset($this->venue)) {
+			update_post_meta($this->ID,'venue',$this->venue);
+		}
+		
+		if (isset($this->city)) {
+			update_post_meta($this->ID,'city',$this->city);
+		}
+		
+		if (isset($this->tickets_url)) {
+			update_post_meta($this->ID,'tickets_url',$this->tickets_url);
+		}
+		
+		if (isset($this->tickets_button)) {
+			update_post_meta($this->ID,'tickets_button',$this->tickets_button);
+		}
+		
+	}
+	
 	/**
 	 * The custom post as a WP_Post object.
 	 *
