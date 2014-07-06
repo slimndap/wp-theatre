@@ -348,7 +348,7 @@ class WPT_Event {
 	 */
 	function production() {
 		if (!isset($this->production)) {
-			$this->production = new WPT_Production(get_post_meta($this->ID,WPT_Production::post_type_name, TRUE), $this->PostClass);
+			$this->production = new WPT_Production(get_post_meta($this->ID,WPT_Production::post_type_name, TRUE));
 		}
 		return $this->production;		
 	}
