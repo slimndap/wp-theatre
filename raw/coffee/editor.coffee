@@ -3,9 +3,12 @@ class wpt_editor
 	constructor: (@item) ->
 		@id = @item.attr('id')
 
+
 		@productions = new wpt_productions @
 		@events = new wpt_events @
 		
+		@production_create_form = new wpt_production_create_form @
+
 		@categories()
 		@seasons()
 	
@@ -39,7 +42,7 @@ class wpt_editor
 			false
 
 	seasons: () ->
-		@season_filters = @item.find('.wpt_editor_filters .seasons li a');
+		@season_filters = @item.find '.wpt_editor_filters .seasons li a'
 		@season_filters.click (e) =>
 			filter = jQuery e.currentTarget
 			if filter.hasClass 'active'
@@ -49,6 +52,61 @@ class wpt_editor
 				filter.addClass 'active'
 				@productions.season filter.text()
 			false
+
+class wpt_production_create_form
+
+	constructor: (@editor) ->
+		@form = @editor.item.find '#wpt_editor_production_form_create'
+		@title = @form.find '[name=title]'
+		@reset = @form.find ':reset';
+		
+		@title.focus =>
+			@open()
+			
+		@close()
+
+		@form.find('form').submit =>
+			@save()
+			false
+		
+		@reset.click =>
+			@close()
+	
+
+	open : ->
+		@form.removeClass 'close'
+	
+	close : ->
+		@form.addClass 'close'
+		if @editor.productions.list.items.length 
+			@title.attr 'placeholder', wpt_editor_ajax.start_typing
+		else 
+			@title.attr 'placeholder', wpt_editor_ajax.start_typing_first
+	save : ->
+		event_data = 
+			'event_date': @form.find('input[name=event_date_date]').val()+' '+@form.find('input[name=event_date_time]').val()
+			'enddate': @form.find('input[name=enddate_date]').val()+' '+@form.find('input[name=enddate_time]').val()
+			'venue' : @form.find('input[name=venue]').val()
+			'city' : @form.find('input[name=city]').val()
+			'prices' : @form.find('[name=prices]').val()
+			'tickets_url' : @form.find('input[name=tickets_url]').val()
+			'tickets_button' : @form.find('input[name=tickets_button]').val()
+		data =
+			'wpt_nonce': wpt_editor_ajax.wpt_nonce
+			'action': 'save'
+			'title' : @form.find('input[name=title]').val()
+			'excerpt' : @form.find('textarea[name=excerpt]').val()
+			'categories' : @form.find('select[name=categories\\[\\]]').val()
+			'season' : @form.find('select[name=season]').val()
+			'events' : [event_data]
+		
+		@editor.busy()
+		jQuery.post wpt_editor_ajax.url, data, (response) =>
+			if response?
+				@editor.productions.list.add response
+				@editor.productions.activate()
+			@editor.done()
+			@reset.click()
 
 class wpt_productions
 
@@ -185,20 +243,6 @@ class wpt_events
 				@list.clear()
 				@list.add response
 			@editor.done()
-	
-
-class wpt_production
-
-	constructor:(@production) ->
-		@actions()
-		
-	actions: () ->
-		console.log @production.find('.actions .edit_link a')
-		@production.find('.actions .edit_link .a').hide()
-	edit: ->
-	
-	save: ->
-	
 
 jQuery ->
 	editor = jQuery '#wpt_editor'

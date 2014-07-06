@@ -99,6 +99,15 @@
 #wpt_editor #wpt_editor_production_form_create {
   margin: 20px 210px 40px 0;
 }
+#wpt_editor #wpt_editor_production_form_create.close form input,
+#wpt_editor #wpt_editor_production_form_create.close form textarea,
+#wpt_editor #wpt_editor_production_form_create.close form select,
+#wpt_editor #wpt_editor_production_form_create.close form button {
+  display: none;
+}
+#wpt_editor #wpt_editor_production_form_create.close form input[name=title] {
+  display: block;
+}
 #wpt_editor .wpt_editor_event_form {
   float: left;
 }

@@ -10,13 +10,6 @@ class WPT_Production {
 			$ID = $ID->ID;
 		}
 
-		if (!$ID) {
-			$post = get_post();
-			if ($post) {
-				$ID = $post->ID;				
-			}
-		}		
-
 		$this->ID = $ID;
 	}
 

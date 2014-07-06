@@ -25,9 +25,7 @@ class WPT_Event {
 	const tickets_status_soldout = '_soldout';
 	const tickets_status_other = '_other';
 	
-	function __construct($ID=false, $PostClass=false) {
-		$this->PostClass = $PostClass;
-	
+	function __construct($ID=false) {	
 		if ($ID instanceof WP_Post) {
 			// $ID is a WP_Post object
 			if (!$PostClass) {
@@ -131,7 +129,17 @@ class WPT_Event {
 		}
 
 		if (!isset($this->datetime[$field])) {
-			$this->datetime[$field] = apply_filters('wpt_event_datetime',date_i18n('U',strtotime($this->post()->{$field}),true), $this);
+			$this->datetime[$field] = apply_filters(
+				'wpt_event_datetime',
+				date_i18n(
+					'U',
+					strtotime(
+						get_post_meta($this->ID, $field, true)
+					),
+					true
+				), 
+				$this
+			);
 		}
 		
 		if ($args['html']) {
@@ -660,13 +668,14 @@ class WPT_Event {
 		}
 		
 		$this->ID = wp_insert_post($args);
+		unset($this->post);
 
 		if (isset($this->production)) {
 			update_post_meta($this->ID, WPT_Production::post_type_name, $this->production->ID);
 		}
 		
-		if (isset($this->datetime)) {
-			update_post_meta($this->ID,'event_date',$this->datetime);
+		if (isset($this->datetime['event_date'])) {
+			update_post_meta($this->ID,'event_date',date('Y-m-d H:i:s',$this->datetime['event_date']));
 		}
 		
 		if (isset($this->venue)) {
@@ -685,6 +694,15 @@ class WPT_Event {
 			update_post_meta($this->ID,'tickets_button',$this->tickets_button);
 		}
 		
+		if (isset($this->prices)) {
+			delete_post_meta($post_id, '_wpt_event_tickets_price');
+			for ($p=0;$p<count($this->prices);$p++) {
+				$price = (float) $this->prices[$p];
+				if ($price>0) {
+					add_post_meta($this->ID,'_wpt_event_tickets_price', $price);			
+				}
+			}					
+		}
 	}
 	
 	/**

@@ -33,7 +33,9 @@
 						'wpt_nonce'=> wp_create_nonce('wpt_nonce'),
 						'url' => admin_url( 'admin-ajax.php' ),
 						'order_key' => $wp_theatre->order->meta_key,
-						'confirm_message' => __('Are you sure you want to move \'%s\' to the Trash?','wp_theatre')
+						'confirm_message' => __('Are you sure you want to move \'%s\' to the Trash?','wp_theatre'),
+						'start_typing' => __('Start typing to create a new event&hellip;','wp_theatre'),
+						'start_typing_first' => __('Start typing to create your first event&hellip;','wp_theatre')
 					) 
 				);
 			}
@@ -42,7 +44,7 @@
 		function admin_menu() {
 			$this->page = add_submenu_page(
 				'theatre',
-				__('Theater for WordPress','wp_theatre'),
+				__('Theater','wp_theatre'),
 				'WPT Editor',
 				'manage_options', 
 				'wpt_editor', 
@@ -202,15 +204,32 @@
 		
 		function ajax_save() {
 			check_ajax_referer('wpt_nonce', 'wpt_nonce');
-		
-			$production = array(
-				'ID' => $_POST['ID'],
-				'post_title' => $_POST['title'],
-				'post_excerpt' => $_POST['excerpt'],
-				'post_category' => $_POST['categories'],
-				'season' => $_POST['season']
-			);
-			$production = $this->save_production($production);
+
+			if (!empty($_POST['ID'])) {
+				$production = new WPT_Production($_POST['ID']);
+			} else {
+				$production = new WPT_Production();			
+			}
+
+			$production->title = $_POST['title'];
+			$production->excerpt = empty($_POST['excerpt'])?'':$_POST['excerpt'];
+			$production->categories = empty($_POST['categories'])?array():$_POST['categories'];
+			$production->season = empty($_POST['season'])?'':$_POST['season'];
+
+			if (!empty($_POST['events'])) {
+				$event_data = $_POST['events'][0];
+				$event = new WPT_Event();
+				$event->datetime['event_date'] = strtotime($event_data['event_date']);
+				$event->datetime['enddate'] = strtotime($event_data['enddate']);
+				$event->venue = $event_data['venue'];
+				$event->city = $event_data['city'];
+				$event->tickets_url = $event_data['tickets_url'];
+				$event->tickets_button = $event_data['tickets_button'];
+				$event->prices = explode("\n",$event_data['prices']);			
+				$production->events = array($event);
+			}
+
+			$production->save();
 			
 			wp_send_json($production->to_array());
 		}
@@ -235,18 +254,24 @@
 				die();
 			}
 			
-			$production = new WPT_Production();
+			if (!empty($_POST['ID'])) {
+				$production = new WPT_Production($_POST['ID']);
+			} else {
+				$production = new WPT_Production();			
+			}
+
 			$production->title = $_POST['title'];
 			$production->excerpt = empty($_POST['excerpt'])?'':$_POST['excerpt'];
 			$production->categories = empty($_POST['categories'])?array():$_POST['categories'];
 			$production->season = empty($_POST['season'])?'':$_POST['season'];
 
 			$event = new WPT_Event();
-			$event->datetime = $_POST['event_date_date'].' '.$_POST['event_date_time'];
+			$event->datetime = strtotime($_POST['event_date_date'].' '.$_POST['event_date_time']);
 			$event->venue = $_POST['venue'];
 			$event->city = $_POST['city'];
 			$event->tickets_url = $_POST['tickets_url'];
 			$event->tickets_button = $_POST['tickets_button'];
+			$event->prices = explode("\n",$_POST['prices']);			
 			$production->events = array($event);
 
 			$production->save();
@@ -286,7 +311,7 @@
 			$html.= $this->event_form();
 			
 			$html.= '<input type="submit" name="wpt_editor_submit" class="button button-primary" value="'.__('Save new event','wp_theatre').'" />';
-			$html.= '<input type="reset" class="button" value="'.__('Cancel').'" />';
+			$html.= '<button type="reset" class="button">'.__('Cancel').'</button>';
 			
 			$html.= '</form>';
 			

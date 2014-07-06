@@ -64,7 +64,17 @@
 		}
 	}
 	#wpt_editor_production_form_create {
-		margin: 20px 210px 40px 0;		
+		margin: 20px 210px 40px 0;
+		&.close {
+			form {
+				input, textarea, select, button {
+					display: none;
+				}
+				input[name=title] {
+					display: block;
+				}
+			}
+		}	
 	}
 	.wpt_editor_event_form {
 		float: left;
