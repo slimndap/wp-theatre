@@ -110,7 +110,7 @@
 			textarea {
 				margin: 4px 10% 0 0;
 				width: 90%;
-				height: 58px;
+				height: 50px;
 			}
 		}
 		.status {
@@ -166,6 +166,35 @@
 					}
 				}
 			}
+		}
+		#wpt_editor_events {
+			margin-right: 30px;
+			.list {
+				.event {
+					border-bottom: 1px solid #E5E5E5;
+					overflow: auto;
+					padding: 4px 0;
+					.content {
+						> * {
+							float: left;
+						}
+						.datetime_html {
+							.wp_theatre_event_datetime {
+								> * {
+								}
+							}
+							width: 30%;
+						}
+						.location_html {
+							width: 20%;
+						}
+						.prices_html {
+							width: 10%;
+						}
+					}
+				}
+			}
+			
 		}
 		#wpt_editor_productions {
 			> .list {
@@ -289,11 +318,13 @@
 								height: 75px;
 							}
 						}
-						h2 {
+						.title {
 							margin-top: 0;
 							margin-bottom: 0;
 							padding-top: 0;
 							padding-bottom: 0;
+							font-size: 1.5em;
+							line-height: 1.4em;
 						}
 						.excerpt {
 						}

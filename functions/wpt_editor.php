@@ -145,7 +145,8 @@
 			// event template
 			$html.= '<div id="wpt_editor_event_template" class="event">';
 			$html.= '<div class="hidden"><div class="ID"></div></div>';
-			$html.= '<div class="content"><div class="datetime_html"></div><div class="city"></div><div class="location"></div></div>';
+			$html.= '<div class="content"><div class="datetime_html"></div><div class="location_html"></div><div class="tickets_html"></div></div>';
+			$html.= '<div class="actions"><div class="delete_link"></div><div class="edit_link"></div></div>';
 			$html.= '</div>'; // .wpt_editor_event_template
 			
 			// production form template

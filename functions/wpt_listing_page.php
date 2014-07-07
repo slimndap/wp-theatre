@@ -593,7 +593,7 @@
 
 	 	function the_content($content) {
 	 		global $wp_theatre;
-	 		
+
 	 		if ($this->page() && is_page($this->page->ID)) {
 	 			if (!empty($this->options['listing_page_position'])) {
 		 			switch($this->options['listing_page_position']) {
@@ -606,6 +606,7 @@
 		 			}
 	 			}
 	 		}
+
 	 		
 			if (is_singular(WPT_Production::post_type_name)) {
 				if (
@@ -630,7 +631,7 @@
 					}
 				}
 			}
-		
+
 		 	return $content;
 	 	}
 	 	

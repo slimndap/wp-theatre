@@ -4,6 +4,7 @@ class wpt_editor
 		@id = @item.attr('id')
 
 
+
 		@productions = new wpt_productions @
 		@events = new wpt_events @
 		
@@ -26,8 +27,10 @@ class wpt_editor
 
 		if @productions.list.items.length > 0
 			@item.find('.wpt_editor_list').addClass 'activated'
+			@production_create_form.title.attr 'placeholder', wpt_editor_ajax.start_typing
 		else 
 			@item.find('.wpt_editor_list').removeClass 'activated'
+			@production_create_form.title.attr 'placeholder', wpt_editor_ajax.start_typing_first
 		
 	categories: () ->
 		@category_filters = @item.find('.wpt_editor_filters .categories li a');
@@ -78,10 +81,7 @@ class wpt_production_create_form
 	
 	close : ->
 		@form.addClass 'close'
-		if @editor.productions.list.items.length 
-			@title.attr 'placeholder', wpt_editor_ajax.start_typing
-		else 
-			@title.attr 'placeholder', wpt_editor_ajax.start_typing_first
+
 	save : ->
 		event_data = 
 			'event_date': @form.find('input[name=event_date_date]').val()+' '+@form.find('input[name=event_date_time]').val()
@@ -131,6 +131,7 @@ class wpt_productions
 				@list.add response
 				@activate()
 			@editor.done()
+			@editor.production_create_form.close()
 	
 	activate: () ->
 		@editor.item.find('.actions a').unbind('click').click (e) =>

@@ -123,7 +123,7 @@ class WPT_Frontend {
 	function wpt_events($atts, $content=null) {
 		global $wp_theatre;
 		global $wp_query;
-		
+
 		$defaults = array(
 			'upcoming' => true,
 			'past' => false,

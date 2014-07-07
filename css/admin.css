@@ -145,7 +145,7 @@
 #wpt_editor .wpt_editor_event_form .prices textarea {
   margin: 4px 10% 0 0;
   width: 90%;
-  height: 58px;
+  height: 50px;
 }
 #wpt_editor .wpt_editor_event_form .status {
   float: left;
@@ -196,6 +196,26 @@
   content: "\f335";
   font-family: dashicons;
   vertical-align: middle;
+}
+#wpt_editor .wpt_editor_list #wpt_editor_events {
+  margin-right: 30px;
+}
+#wpt_editor .wpt_editor_list #wpt_editor_events .list .event {
+  border-bottom: 1px solid #E5E5E5;
+  overflow: auto;
+  padding: 4px 0;
+}
+#wpt_editor .wpt_editor_list #wpt_editor_events .list .event .content > * {
+  float: left;
+}
+#wpt_editor .wpt_editor_list #wpt_editor_events .list .event .content .datetime_html {
+  width: 30%;
+}
+#wpt_editor .wpt_editor_list #wpt_editor_events .list .event .content .location_html {
+  width: 20%;
+}
+#wpt_editor .wpt_editor_list #wpt_editor_events .list .event .content .prices_html {
+  width: 10%;
 }
 #wpt_editor .wpt_editor_list #wpt_editor_productions > .list {
   margin-right: 210px;
@@ -320,11 +340,13 @@
   border: 1px dashed #bbb;
   height: 75px;
 }
-#wpt_editor .wpt_editor_list #wpt_editor_productions > .list .production > .content h2 {
+#wpt_editor .wpt_editor_list #wpt_editor_productions > .list .production > .content .title {
   margin-top: 0;
   margin-bottom: 0;
   padding-top: 0;
   padding-bottom: 0;
+  font-size: 1.5em;
+  line-height: 1.4em;
 }
 #wpt_editor .wpt_editor_list #wpt_editor_productions > .list .production > .form {
   display: none;

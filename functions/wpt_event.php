@@ -531,8 +531,12 @@ class WPT_Event {
 			'time' => $this->time(),
 			'datetime_html' => $this->datetime(array('html'=>true)),
 			'remark'    => $this->remark(),
-			'city'      => $this->city(),
-			'location'     => $this->location(),
+			'location_html'     => $this->location(array('html'=>true)),
+			'prices_html'     => $this->prices(array('html'=>true, 'summary'=>true)),
+			'tickets_html'     => $this->tickets(array('html'=>true)),
+
+			'edit_link'  => '<a href="'.get_edit_post_link($this->ID).'">'.__('Edit').'</a>',
+			'delete_link'=> '<a href="'.get_delete_post_link($this->ID,null,true).'">'.__('Delete').'</a>',
 
 			$wp_theatre->order->meta_key => get_post_meta($this->ID, $wp_theatre->order->meta_key, true)
 
@@ -659,9 +663,10 @@ class WPT_Event {
 	}
 	
 	function save() {
-		$args = array();
-		
-		$args['post_type'] = self::post_type_name;
+		$args = array(
+			'post_type' => self::post_type_name,
+			'post_status' => 'publish'
+		);
 
 		if (!empty($this->ID)) {
 			$args['ID'] = $this->ID;
