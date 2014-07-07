@@ -17,7 +17,6 @@
 		}
 		
 		function get($name, $args) {
-		return false;
 			$key = 'wpt'.$name.md5(serialize($args));
 			return get_transient($key);
 		}
