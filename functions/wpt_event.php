@@ -527,10 +527,14 @@ class WPT_Event {
 		global $wp_theatre;
 		$data = array(
 			'ID'         => $this->ID,
-			'date' => $this->date(),
-			'time' => $this->time(),
-			'datetime_html' => $this->datetime(array('html'=>true)),
+			'event_date' => date('Y-m-d H:i',$this->datetime()),
+			'enddate' => date('Y-m-d H:i',$this->datetime(array('start'=>false))),
+			'venue'    => $this->venue(),
+			'city'    => $this->city(),
 			'remark'    => $this->remark(),
+			'tickets_url'    => $this->tickets(),
+
+			'datetime_html' => $this->datetime(array('html'=>true)),
 			'location_html'     => $this->location(array('html'=>true)),
 			'prices_html'     => $this->prices(array('html'=>true, 'summary'=>true)),
 			'tickets_html'     => $this->tickets(array('html'=>true)),

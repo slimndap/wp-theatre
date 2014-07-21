@@ -1484,10 +1484,59 @@ if (typeof exports == "object") {
 
   /*
   --------------------------------------------
+       Begin calendar.coffee
+  --------------------------------------------
+   */
+  var wpt_admin_ticketspage, wpt_calendar, wpt_editor, wpt_events, wpt_production_create_form, wpt_productions;
+
+  wpt_calendar = (function() {
+
+    /*
+    	Manage the navigation of all WPT_Calendar blocks.
+    	@since 0.8
+     */
+    function wpt_calendar(calendar) {
+      this.calendar = calendar;
+      this.calendar = jQuery(this.calendar);
+      this.calendar.addClass('navigate');
+      this.calendar.children().first().addClass('active');
+      jQuery(this.calendar).find('tfoot a').click((function(_this) {
+        return function(e) {
+          return _this.navigate(e.currentTarget);
+        };
+      })(this));
+    }
+
+
+    /*
+    	Handle prev/next.
+    	@since 0.8
+     */
+
+    wpt_calendar.prototype.navigate = function(e) {
+      var href;
+      href = jQuery(e).attr('href');
+      this.calendar.find('.active').removeClass('active');
+      this.calendar.find('caption a[href="' + href + '"]').parents('.wpt_month').addClass('active');
+      return false;
+    };
+
+    return wpt_calendar;
+
+  })();
+
+  jQuery(function() {
+    return jQuery('.wpt_calendar').each(function() {
+      return new wpt_calendar(this);
+    });
+  });
+
+
+  /*
+  --------------------------------------------
        Begin editor.coffee
   --------------------------------------------
    */
-  var wpt_admin_ticketspage, wpt_editor, wpt_events, wpt_production_create_form, wpt_productions;
 
   wpt_editor = (function() {
     function wpt_editor(item) {
@@ -1591,11 +1640,11 @@ if (typeof exports == "object") {
     }
 
     wpt_production_create_form.prototype.open = function() {
-      return this.form.removeClass('close');
+      return this.form.removeClass('closed');
     };
 
     wpt_production_create_form.prototype.close = function() {
-      return this.form.addClass('close');
+      return this.form.addClass('closed');
     };
 
     wpt_production_create_form.prototype.save = function() {
@@ -1669,7 +1718,7 @@ if (typeof exports == "object") {
     };
 
     wpt_productions.prototype.activate = function() {
-      this.editor.item.find('.actions a').unbind('click').click((function(_this) {
+      this.editor.item.find('.production > .actions a').unbind('click').click((function(_this) {
         return function(e) {
           var action, production;
           action = jQuery(e.currentTarget).parent();
@@ -1686,16 +1735,14 @@ if (typeof exports == "object") {
           return false;
         };
       })(this));
-      this.form.find('a.close').unbind('click').click((function(_this) {
+      this.form.find('> a.close').unbind('click').click((function(_this) {
         return function(e) {
           _this.close(jQuery(e.currentTarget).parents('.production'));
           return false;
         };
       })(this));
       this.form.find('input, textarea, select').unbind('change').change((function(_this) {
-        return function(e) {
-          return _this.save(jQuery(e.currentTarget).parents('.production'));
-        };
+        return function(e) {};
       })(this));
       return this.form.find('form').submit(function(e) {
         return false;
@@ -1703,14 +1750,15 @@ if (typeof exports == "object") {
     };
 
     wpt_productions.prototype.close = function(production) {
-      return production.removeClass('edit');
+      production.removeClass('edit');
+      return this.save();
     };
 
     wpt_productions.prototype.edit = function(production) {
       var id, values;
       this.editor.item.find('.production.edit').removeClass('edit');
       production.addClass('edit');
-      id = production.find('.ID').text();
+      id = production.find('>.hidden .ID').text();
       values = this.list.get('ID', id)[0].values();
       production.find('.form').append(this.form);
       this.form.find('input[name=ID]').val(id);
@@ -1727,7 +1775,7 @@ if (typeof exports == "object") {
 
     wpt_productions.prototype["delete"] = function(production) {
       var confirm_message, data, id, values;
-      id = production.find('.ID').text();
+      id = production.find('>.hidden .ID').text();
       values = this.list.get('ID', id)[0].values();
       confirm_message = wpt_editor_ajax.confirm_message.replace(/%s/g, values.title);
       if (confirm(confirm_message)) {
@@ -1750,9 +1798,19 @@ if (typeof exports == "object") {
       return window.open(production.find('.view_link a').attr('href'));
     };
 
-    wpt_productions.prototype.save = function(production) {
-      var data, id;
+    wpt_productions.prototype.save = function() {
+      var data, event_values, id, item;
       id = this.form.find('input[name=ID]').val();
+      event_values = (function() {
+        var _i, _len, _ref, _results;
+        _ref = this.editor.events.list.items;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          item = _ref[_i];
+          _results.push(item.values());
+        }
+        return _results;
+      }).call(this);
       data = {
         'wpt_nonce': wpt_editor_ajax.wpt_nonce,
         'action': 'save',
@@ -1760,13 +1818,19 @@ if (typeof exports == "object") {
         'title': this.form.find('input[name=title]').val(),
         'excerpt': this.form.find('textarea[name=excerpt]').val(),
         'categories': this.form.find('select[name=categories\\[\\]]').val(),
-        'season': this.form.find('select[name=season]').val()
+        'season': this.form.find('select[name=season]').val(),
+        'events': event_values
       };
       this.editor.busy();
       return jQuery.post(wpt_editor_ajax.url, data, (function(_this) {
         return function(response) {
           _this.list.get('ID', id)[0].values(response);
           _this.activate();
+
+          /*
+          				Load events
+           */
+          _this.editor.events.load(id);
           return _this.editor.done();
         };
       })(this));
@@ -1814,6 +1878,11 @@ if (typeof exports == "object") {
         item: 'wpt_editor_event_template'
       };
       this.list = new List('wpt_editor_events', options);
+      this.form = this.editor.productions.form.find('.wpt_editor_event_form');
+      this.events = this.editor.productions.form.find('#wpt_editor_events');
+      this.form.find('input[name=event_date_date], input[name=enddate_date]').datepicker({
+        dateFormat: "yy-mm-dd"
+      });
     }
 
     wpt_events.prototype.load = function(production) {
@@ -1829,10 +1898,139 @@ if (typeof exports == "object") {
           if (response != null) {
             _this.list.clear();
             _this.list.add(response);
+            _this.activate(production);
           }
           return _this.editor.done();
         };
       })(this));
+    };
+
+    wpt_events.prototype.activate = function() {
+      this.events.find('.actions a').unbind('click').click((function(_this) {
+        return function(e) {
+          var action, event;
+          action = jQuery(e.currentTarget).parent();
+          event = action.parents('.event');
+          if (action.hasClass('edit_link')) {
+            _this.edit(event);
+          }
+          if (action.hasClass('delete_link')) {
+            _this["delete"](event);
+          }
+          return false;
+        };
+      })(this));
+      this.form.find('input, textarea, select').unbind('change').change((function(_this) {
+        return function(e) {};
+      })(this));
+      this.form.find('a.close').unbind('click').click((function(_this) {
+        return function(e) {
+          _this.close(jQuery(e.currentTarget).parents('.event'));
+          return false;
+        };
+      })(this));
+      return this.events.find('.add a').unbind('click').click((function(_this) {
+        return function(e) {
+          var action;
+          action = jQuery(e.currentTarget);
+          if (action.hasClass('add_link')) {
+            _this.add();
+          }
+          if (action.hasClass('save_link')) {
+            _this.close();
+          }
+          if (action.hasClass('cancel_link')) {
+            _this.reset();
+          }
+          return false;
+        };
+      })(this));
+    };
+
+    wpt_events.prototype.add = function() {
+      var add;
+      this.reset();
+      add = this.events.find('.add');
+      add.prepend(this.form);
+      return add.addClass('edit');
+    };
+
+    wpt_events.prototype.edit = function(event) {
+      var enddate, event_date, id, values;
+      this.reset();
+      id = event.find('.ID').text();
+      values = this.list.get('ID', id)[0].values();
+      event_date = values.event_date.split(' ');
+      enddate = values.enddate.split(' ');
+      this.form.find('input[name=event_id]').val(id);
+      this.form.find('input[name=event_date_date]').val(event_date[0]);
+      this.form.find('input[name=event_date_time]').val(event_date[1]);
+      this.form.find('input[name=enddate_date]').val(enddate[0]);
+      this.form.find('input[name=enddate_time]').val(enddate[1]);
+      this.form.find('input[name=venue]').val(values.venue);
+      this.form.find('input[name=city]').val(values.city);
+      this.form.find('input[name=tickets_url]').val(values.tickets_url);
+      this.form.find('input[name=tickets_button]').val(values.tickets_button);
+      event.append(this.form);
+      return event.addClass('edit');
+    };
+
+    wpt_events.prototype["delete"] = function(event) {
+      var confirm_message, id, title, values;
+      id = event.find('.ID').text();
+      values = this.list.get('ID', id)[0].values();
+      title = jQuery(values.datetime_html).find('.wp_theatre_event_date').text();
+      title += ' ';
+      title += jQuery(values.datetime_html).find('.wp_theatre_event_time').text();
+      confirm_message = wpt_editor_ajax.confirm_message_event.replace(/%s/g, title);
+      if (confirm(confirm_message)) {
+        this.list.remove('ID', id);
+        return this.save();
+      }
+    };
+
+    wpt_events.prototype.reset = function() {
+      var event_date;
+      this.events.find('.edit').removeClass('edit');
+
+      /*
+      			Set form inputs to defaults.
+       */
+      event_date = wpt_editor_ajax.default_date.split(' ');
+      this.form.find('input[name=event_id]').removeAttr('value');
+      this.form.find('input[name=event_date_date]').val(event_date[0]);
+      this.form.find('input[name=event_date_time]').val(event_date[1]);
+      this.form.find('input[name=enddate_date]').removeAttr('value');
+      this.form.find('input[name=enddate_time]').removeAttr('value');
+      this.form.find('input[name=venue]').removeAttr('value');
+      this.form.find('input[name=city]').removeAttr('value');
+      this.form.find('input[name=tickets_url]').removeAttr('value');
+      return this.form.find('input[name=tickets_button]').removeAttr('value');
+    };
+
+    wpt_events.prototype.save = function() {
+      return this.editor.productions.save();
+    };
+
+    wpt_events.prototype.close = function(event) {
+      var id, item, values;
+      values = {
+        event_date: this.form.find('input[name=event_date_date]').val() + ' ' + this.form.find('input[name=event_date_time]').val(),
+        enddate: this.form.find('input[name=enddate_date]').val() + ' ' + this.form.find('input[name=enddate_time]').val(),
+        venue: this.form.find('input[name=venue]').val(),
+        city: this.form.find('input[name=city]').val(),
+        tickets_url: this.form.find('input[name=tickets_url]').val(),
+        tickets_button: this.form.find('input[name=tickets_button]').val()
+      };
+      id = this.form.find('input[name=event_id]').val();
+      if ((id != null) && id !== '') {
+        item = this.list.get('ID', id)[0];
+        item.values(values);
+      } else {
+        this.list.add(values);
+      }
+      this.save();
+      return this.reset();
     };
 
     return wpt_events;

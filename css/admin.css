@@ -99,13 +99,13 @@
 #wpt_editor #wpt_editor_production_form_create {
   margin: 20px 210px 40px 0;
 }
-#wpt_editor #wpt_editor_production_form_create.close form input,
-#wpt_editor #wpt_editor_production_form_create.close form textarea,
-#wpt_editor #wpt_editor_production_form_create.close form select,
-#wpt_editor #wpt_editor_production_form_create.close form button {
+#wpt_editor #wpt_editor_production_form_create.closed form input,
+#wpt_editor #wpt_editor_production_form_create.closed form textarea,
+#wpt_editor #wpt_editor_production_form_create.closed form select,
+#wpt_editor #wpt_editor_production_form_create.closed form button {
   display: none;
 }
-#wpt_editor #wpt_editor_production_form_create.close form input[name=title] {
+#wpt_editor #wpt_editor_production_form_create.closed form input[name=title] {
   display: block;
 }
 #wpt_editor .wpt_editor_event_form {
@@ -154,6 +154,9 @@
 #wpt_editor .wpt_editor_event_form .status select {
   margin: 4px 0 0 0;
 }
+#wpt_editor .wpt_editor_event_form .close {
+  display: none;
+}
 #wpt_editor .wpt_editor_list {
   display: none;
 }
@@ -197,25 +200,78 @@
   font-family: dashicons;
   vertical-align: middle;
 }
+#wpt_editor .wpt_editor_list .wpt_editor_event_form {
+  display: none;
+}
 #wpt_editor .wpt_editor_list #wpt_editor_events {
-  margin-right: 30px;
+  padding-top: 10px;
+}
+#wpt_editor .wpt_editor_list #wpt_editor_events h3 {
+  font-size: 1em;
+  font-weight: bold;
+  margin: 0 0 4px;
 }
 #wpt_editor .wpt_editor_list #wpt_editor_events .list .event {
-  border-bottom: 1px solid #E5E5E5;
+  border-top: 1px solid #E5E5E5;
   overflow: auto;
   padding: 4px 0;
 }
 #wpt_editor .wpt_editor_list #wpt_editor_events .list .event .content > * {
   float: left;
 }
-#wpt_editor .wpt_editor_list #wpt_editor_events .list .event .content .datetime_html {
-  width: 30%;
+#wpt_editor .wpt_editor_list #wpt_editor_events .list .event .content .event_date {
+  width: 20%;
 }
-#wpt_editor .wpt_editor_list #wpt_editor_events .list .event .content .location_html {
+#wpt_editor .wpt_editor_list #wpt_editor_events .list .event .content .venue {
+  width: 20%;
+}
+#wpt_editor .wpt_editor_list #wpt_editor_events .list .event .content .city {
   width: 20%;
 }
 #wpt_editor .wpt_editor_list #wpt_editor_events .list .event .content .prices_html {
   width: 10%;
+}
+#wpt_editor .wpt_editor_list #wpt_editor_events .list .event.edit {
+  background-color: #f9f9f9;
+  padding: 4px;
+}
+#wpt_editor .wpt_editor_list #wpt_editor_events .list .event.edit .content,
+#wpt_editor .wpt_editor_list #wpt_editor_events .list .event.edit .actions {
+  display: none;
+}
+#wpt_editor .wpt_editor_list #wpt_editor_events .list .event.edit .wpt_editor_event_form {
+  display: block;
+}
+#wpt_editor .wpt_editor_list #wpt_editor_events .list .event:hover .actions {
+  opacity: 1;
+}
+#wpt_editor .wpt_editor_list #wpt_editor_events .add {
+  padding: 4px 0;
+  border-top: 1px solid #E5E5E5;
+}
+#wpt_editor .wpt_editor_list #wpt_editor_events .add.edit {
+  background-color: #f9f9f9;
+  padding: 4px;
+}
+#wpt_editor .wpt_editor_list #wpt_editor_events .add.edit .wpt_editor_event_form {
+  display: block;
+}
+#wpt_editor .wpt_editor_list #wpt_editor_events .add.edit .wpt_editor_event_form .close {
+  display: none !important;
+}
+#wpt_editor .wpt_editor_list #wpt_editor_events .add.edit a.save_link,
+#wpt_editor .wpt_editor_list #wpt_editor_events .add.edit a.cancel_link {
+  display: inline-block;
+}
+#wpt_editor .wpt_editor_list #wpt_editor_events .add.edit a.add_link {
+  display: none;
+}
+#wpt_editor .wpt_editor_list #wpt_editor_events .add a.button {
+  margin: 10px 0;
+}
+#wpt_editor .wpt_editor_list #wpt_editor_events .add a.save_link,
+#wpt_editor .wpt_editor_list #wpt_editor_events .add a.cancel_link {
+  display: none;
 }
 #wpt_editor .wpt_editor_list #wpt_editor_productions > .list {
   margin-right: 210px;
@@ -259,7 +315,7 @@
 #wpt_editor .wpt_editor_list #wpt_editor_productions > .list .production .actions div.edit_link a:before {
   content: "\f464";
 }
-#wpt_editor .wpt_editor_list #wpt_editor_productions > .list .production:hover .actions {
+#wpt_editor .wpt_editor_list #wpt_editor_productions > .list .production:hover > .actions {
   opacity: 1;
 }
 #wpt_editor .wpt_editor_list #wpt_editor_productions > .list .production .meta {

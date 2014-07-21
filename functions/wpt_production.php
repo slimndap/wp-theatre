@@ -359,6 +359,8 @@ class WPT_Production {
 	
 	
 	function save() {
+		global $wp_theatre;
+	
 		$args = array();
 
 		$args['post_type'] = self::post_type_name;
@@ -384,6 +386,19 @@ class WPT_Production {
 		}
 		
 		$this->ID = wp_insert_post($args);
+
+		/* Process events */
+		
+		/* Remove all old events from database */
+		$args = array(
+			'production' => $this->ID
+		);
+		$old_events = $wp_theatre->events->load($args);
+		foreach ($old_events as $old_event) {
+			delete_post_meta($old_event->ID, WPT_Production::post_type_name);
+		}
+		
+		/* Save the new ones */
 
 		if (isset($this->events)) {
 			foreach ($this->events as $event) {

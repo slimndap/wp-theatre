@@ -65,7 +65,7 @@
 	}
 	#wpt_editor_production_form_create {
 		margin: 20px 210px 40px 0;
-		&.close {
+		&.closed {
 			form {
 				input, textarea, select, button {
 					display: none;
@@ -120,6 +120,9 @@
 				margin: 4px 0 0 0;
 			}
 		}
+		.close {
+			display: none;
+		}
 	}
 	.wpt_editor_list {
 		display: none;
@@ -167,34 +170,85 @@
 				}
 			}
 		}
+		.wpt_editor_event_form {
+			display: none;
+		}
 		#wpt_editor_events {
-			margin-right: 30px;
+			padding-top: 10px;
+			h3 {
+				font-size: 1em;
+				font-weight: bold;
+				margin: 0 0 4px;
+			}
 			.list {
 				.event {
-					border-bottom: 1px solid #E5E5E5;
+					border-top: 1px solid #E5E5E5;
 					overflow: auto;
 					padding: 4px 0;
 					.content {
 						> * {
 							float: left;
 						}
-						.datetime_html {
-							.wp_theatre_event_datetime {
-								> * {
-								}
-							}
-							width: 30%;
+						.event_date {
+							width: 20%;
 						}
-						.location_html {
+						.venue {
+							width: 20%;
+						}
+						.city {
 							width: 20%;
 						}
 						.prices_html {
 							width: 10%;
 						}
 					}
+					&.edit {
+						background-color: #f9f9f9;
+						padding: 4px;
+						.content, .actions {
+							display: none;
+						}
+						.wpt_editor_event_form {
+							display: block;
+						}
+					}
+					&:hover {
+						.actions {
+							opacity: 1;
+						}
+					}
 				}
 			}
-			
+			.add {
+				padding: 4px 0;
+				border-top: 1px solid #E5E5E5;
+				&.edit {
+					background-color: #f9f9f9;
+					padding: 4px;
+					.wpt_editor_event_form {
+						display: block;
+						.close {
+							display: none !important;
+						}
+					}
+					a {
+						&.save_link, &.cancel_link {
+							display: inline-block;
+						}
+						&.add_link {
+							display: none;
+						}
+					}
+				}
+				a {
+					&.button {
+						margin: 10px 0;
+					}
+					&.save_link, &.cancel_link {
+						display: none;
+					}
+				}
+			}
 		}
 		#wpt_editor_productions {
 			> .list {
@@ -239,7 +293,7 @@
 						}
 					}
 					&:hover {
-						.actions {
+						> .actions {
 							opacity: 1;
 						}
 					}

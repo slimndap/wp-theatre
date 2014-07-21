@@ -77,10 +77,10 @@ class wpt_production_create_form
 	
 
 	open : ->
-		@form.removeClass 'close'
+		@form.removeClass 'closed'
 	
 	close : ->
-		@form.addClass 'close'
+		@form.addClass 'closed'
 
 	save : ->
 		event_data = 
@@ -134,28 +134,29 @@ class wpt_productions
 			@editor.production_create_form.close()
 	
 	activate: () ->
-		@editor.item.find('.actions a').unbind('click').click (e) =>
+		@editor.item.find('.production > .actions a').unbind('click').click (e) =>
 			action = jQuery(e.currentTarget).parent()
 			production = action.parents '.production'
 			if action.hasClass 'edit_link' then @edit production
 			if action.hasClass 'delete_link' then @delete production
 			if action.hasClass 'view_link' then @view production
 			false	
-		@form.find('a.close').unbind('click').click (e) =>
+		@form.find('> a.close').unbind('click').click (e) =>
 			@close jQuery(e.currentTarget).parents '.production'
 			false
 		@form.find('input, textarea, select').unbind('change').change (e) =>
-			@save jQuery(e.currentTarget).parents '.production'
+			#@save()
 		@form.find('form').submit (e) ->
 			false
 		
 	close: (production) ->
 		production.removeClass 'edit'
+		@save()
 	
 	edit: (production) ->
 		@editor.item.find('.production.edit').removeClass 'edit'
 		production.addClass 'edit'
-		id = production.find('.ID').text()
+		id = production.find('>.hidden .ID').text()
 		values = @list.get('ID',id)[0].values()
 		
 		production.find('.form').append @form
@@ -172,7 +173,7 @@ class wpt_productions
 
 
 	delete: (production) ->
-		id = production.find('.ID').text()
+		id = production.find('>.hidden .ID').text()
 		values = @list.get('ID',id)[0].values()
 
 		confirm_message = wpt_editor_ajax.confirm_message.replace /%s/g, values.title
@@ -191,8 +192,11 @@ class wpt_productions
 	view: (production) ->
 		window.open production.find('.view_link a').attr 'href'
 	
-	save: (production) ->
+	save: () ->
 		id = @form.find('input[name=ID]').val()
+
+		event_values = (item.values() for item in @editor.events.list.items)
+				
 		data =
 			'wpt_nonce': wpt_editor_ajax.wpt_nonce
 			'action': 'save'
@@ -201,11 +205,17 @@ class wpt_productions
 			'excerpt' : @form.find('textarea[name=excerpt]').val()
 			'categories' : @form.find('select[name=categories\\[\\]]').val()
 			'season' : @form.find('select[name=season]').val()
+			'events' : event_values
 		
 		@editor.busy()
 		jQuery.post wpt_editor_ajax.url, data, (response) =>
 			@list.get('ID',id)[0].values(response)
 			@activate()
+
+			###
+				Load events
+			###
+			@editor.events.load id
 			@editor.done()
 		
 	category: (category='') ->
@@ -231,8 +241,14 @@ class wpt_events
 			listClass: 'list'
 			item: 'wpt_editor_event_template'
 		@list = new List 'wpt_editor_events', options
+		@form = @editor.productions.form.find '.wpt_editor_event_form'
+		@events = @editor.productions.form.find '#wpt_editor_events'
 
-	load : (production) ->
+		@form.find('input[name=event_date_date], input[name=enddate_date]').datepicker
+			dateFormat: "yy-mm-dd"
+		
+		
+	load: (production) ->
 		data =
 			'action': 'events'
 			'production': production
@@ -243,7 +259,115 @@ class wpt_events
 			if response?
 				@list.clear()
 				@list.add response
+				@activate production
 			@editor.done()
+			
+	activate: ->
+		@events.find('.actions a').unbind('click').click (e) =>
+			action = jQuery(e.currentTarget).parent()
+			event = action.parents '.event'
+			if action.hasClass 'edit_link' then @edit event
+			if action.hasClass 'delete_link' then @delete event
+			false
+
+		@form.find('input, textarea, select').unbind('change').change (e) =>
+			#@save()
+
+		@form.find('a.close').unbind('click').click (e) =>
+			@close jQuery(e.currentTarget).parents '.event'
+			false
+
+		@events.find('.add a').unbind('click').click (e) =>
+			action = jQuery(e.currentTarget)
+			if action.hasClass 'add_link' then @add()
+			if action.hasClass 'save_link' then @close()
+			if action.hasClass 'cancel_link' then @reset()
+			false
+
+	add: () ->
+		@reset()
+		
+		add = @events.find('.add')
+		add.prepend @form
+		add.addClass 'edit'
+
+	edit: (event) ->
+		@reset()
+	
+		id = event.find('.ID').text()
+		values = @list.get('ID',id)[0].values()
+		
+		event_date = values.event_date.split ' '
+		enddate = values.enddate.split ' '
+		
+		@form.find('input[name=event_id]').val id
+		@form.find('input[name=event_date_date]').val event_date[0]
+		@form.find('input[name=event_date_time]').val event_date[1]
+		@form.find('input[name=enddate_date]').val enddate[0]
+		@form.find('input[name=enddate_time]').val enddate[1]
+		@form.find('input[name=venue]').val values.venue
+		@form.find('input[name=city]').val values.city
+		@form.find('input[name=tickets_url]').val values.tickets_url
+		@form.find('input[name=tickets_button]').val values.tickets_button
+		
+		event.append @form
+		event.addClass 'edit'
+
+	delete: (event) ->
+		id = event.find('.ID').text()
+		
+		values = @list.get('ID',id)[0].values()
+
+		title = jQuery(values.datetime_html).find('.wp_theatre_event_date').text()
+		title+= ' '
+		title+= jQuery(values.datetime_html).find('.wp_theatre_event_time').text()
+		confirm_message = wpt_editor_ajax.confirm_message_event.replace /%s/g, title
+
+		if confirm confirm_message
+			@list.remove 'ID', id
+			@save()
+
+	reset: () ->
+		@events.find('.edit').removeClass 'edit'
+		
+		###
+			Set form inputs to defaults.
+		###
+		event_date = wpt_editor_ajax.default_date.split ' '
+
+		@form.find('input[name=event_id]').removeAttr 'value'
+		@form.find('input[name=event_date_date]').val event_date[0]
+		@form.find('input[name=event_date_time]').val event_date[1]
+		@form.find('input[name=enddate_date]').removeAttr 'value'
+		@form.find('input[name=enddate_time]').removeAttr 'value'
+		@form.find('input[name=venue]').removeAttr 'value'
+		@form.find('input[name=city]').removeAttr 'value'
+		@form.find('input[name=tickets_url]').removeAttr 'value'
+		@form.find('input[name=tickets_button]').removeAttr 'value'
+		
+	
+	save: () ->
+		@editor.productions.save()
+		
+	close: (event) ->
+		values =
+			event_date: @form.find('input[name=event_date_date]').val() + ' ' + @form.find('input[name=event_date_time]').val()
+			enddate: @form.find('input[name=enddate_date]').val() + ' ' + @form.find('input[name=enddate_time]').val()
+			venue: @form.find('input[name=venue]').val()
+			city: @form.find('input[name=city]').val()
+			tickets_url: @form.find('input[name=tickets_url]').val()
+			tickets_button: @form.find('input[name=tickets_button]').val()
+
+		id = @form.find('input[name=event_id]').val()
+		if id? and id isnt ''
+			item = @list.get('ID',id)[0]
+			item.values values
+		else
+			@list.add values
+			
+		@save()
+		@reset()
+		
 
 jQuery ->
 	editor = jQuery '#wpt_editor'
