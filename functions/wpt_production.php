@@ -372,7 +372,7 @@ class WPT_Production {
 
 		if (isset($this->title)) {
 			if (empty($this->title)) {
-				$this->title = __('(Draft production)','wp_theatre');			
+				$this->title = apply_filters('wpt_production_default_title',__('(Draft production)','wp_theatre'));			
 			}
 			$args['post_title'] = $this->title;
 		}
@@ -385,7 +385,12 @@ class WPT_Production {
 			$args['post_category'] = $this->categories;
 		}
 		
+		
 		$this->ID = wp_insert_post($args);
+
+		if (isset($this->thumbnail)) {
+			set_post_thumbnail($this->ID, $this->thumbnail);
+		}
 
 		/* Process events */
 		

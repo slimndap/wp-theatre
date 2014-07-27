@@ -386,6 +386,14 @@ class WPT_Event {
 		}
 	}
 	
+	function tickets_status() {
+		if (!isset($this->tickets_status)) {
+			$this->tickets_status = get_post_meta($this->ID,'tickets_status',true);
+		}
+		
+		return $this->tickets_status;
+	}
+	
 	/**
 	 * Event ticket link.
 	 * 
@@ -527,14 +535,15 @@ class WPT_Event {
 		global $wp_theatre;
 		$data = array(
 			'ID'         => $this->ID,
-			'event_date' => date('Y-m-d H:i',$this->datetime()),
-			'enddate' => date('Y-m-d H:i',$this->datetime(array('start'=>false))),
+			'event_date' => $this->datetime(),
+			'enddate' => $this->datetime(array('start'=>false)),
 			'venue'    => $this->venue(),
 			'city'    => $this->city(),
 			'remark'    => $this->remark(),
 			'tickets_url'    => $this->tickets(),
+			'tickets_status'    => $this->tickets_status(),
 
-			'datetime_html' => $this->datetime(array('html'=>true)),
+			'event_date_html' => $this->datetime(array('html'=>true)),
 			'location_html'     => $this->location(array('html'=>true)),
 			'prices_html'     => $this->prices(array('html'=>true, 'summary'=>true)),
 			'tickets_html'     => $this->tickets(array('html'=>true)),
@@ -687,12 +696,20 @@ class WPT_Event {
 			update_post_meta($this->ID,'event_date',date('Y-m-d H:i:s',$this->datetime['event_date']));
 		}
 		
+		if (isset($this->datetime['enddate'])) {
+			update_post_meta($this->ID,'enddate',date('Y-m-d H:i:s',$this->datetime['enddate']));
+		}
+		
 		if (isset($this->venue)) {
 			update_post_meta($this->ID,'venue',$this->venue);
 		}
 		
 		if (isset($this->city)) {
 			update_post_meta($this->ID,'city',$this->city);
+		}
+		
+		if (isset($this->tickets_status)) {
+			update_post_meta($this->ID,'tickets_status',$this->tickets_status);
 		}
 		
 		if (isset($this->tickets_url)) {

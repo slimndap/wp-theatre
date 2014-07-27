@@ -3,9 +3,8 @@
 	.wpt_editor_settings {
 		float: right;
 		width: 195px;
-		text-align: right;
 		a {
-			display: inline-block;
+			display: block;
 			line-height: 21px;
 			text-decoration: none;
 			&:before {
@@ -24,6 +23,12 @@
 				content: "\f182";
 				
 			}
+			&.categories:before {
+				content: "\f318";
+			}
+			&.seasons:before {
+				content: "\f145";
+			}
 		}
 	}
 	.wpt_editor_production_form {
@@ -37,6 +42,19 @@
 			outline: 0px none;
 			margin: 0px;			
 		}
+		.thumbnail_control {
+			width: 19%;
+			height: 120px;
+			border: 1px dashed #bbb;
+			float: left;
+			margin: 4px 1% 0 0;
+			.box-sizing(border-box);
+			overflow: hidden;
+			img {
+				width: 100%;
+				height: auto;
+			}
+		}
 		[name=excerpt],
 		[name='categories\[\]'],
 		[name=season] {
@@ -46,7 +64,7 @@
 			margin: 4px 0 0 0;						
 		}
 		[name=excerpt] {
-			width: 79%;
+			width: 59%;
 			height: 120px;
 			margin-right: 1%;
 		}
@@ -67,17 +85,20 @@
 		margin: 20px 210px 40px 0;
 		&.closed {
 			form {
-				input, textarea, select, button {
-					display: none;
+				input, textarea, select, button, .thumbnail_control {
+					display: none !important;
 				}
 				input[name=title] {
-					display: block;
+					display: block !important;
 				}
 			}
 		}	
 	}
 	.wpt_editor_event_form {
 		float: left;
+		input, select {
+			height: 25px;
+		}
 		.dates {
 			width: 30%;
 			float: left;
@@ -110,14 +131,20 @@
 			textarea {
 				margin: 4px 10% 0 0;
 				width: 90%;
-				height: 50px;
+				height: 25px * 2 + 4px;
 			}
 		}
-		.status {
+		.tickets_status_control {
 			float: left;
-			width: 20%;
+			width: 15%;
 			select {
 				margin: 4px 0 0 0;
+				width: 100%;
+			}
+			input {
+				display: none;
+				margin: 4px 0 0 0;
+				width: 100%;
 			}
 		}
 		.close {
@@ -467,4 +494,13 @@
 			background-size: 175px 50px;
 		}
 	}
+}
+
+/*
+ * Hide the datepicker div when it is not in use.
+ * Necessary when the datepicker inputs are hidden.
+ * @see: http://stackoverflow.com/questions/4580727/override-jquery-ui-datepicker-div-visible-strangely-on-first-page-load
+ */
+#ui-datepicker-div {
+	display: none;
 }

@@ -1487,7 +1487,7 @@ if (typeof exports == "object") {
        Begin calendar.coffee
   --------------------------------------------
    */
-  var wpt_admin_ticketspage, wpt_calendar, wpt_editor, wpt_events, wpt_production_create_form, wpt_productions;
+  var WPT_Editor_Date, WPT_Editor_Datetime_Control, WPT_Editor_Status_Control, WPT_Editor_Thumbnail_Control, wpt_admin_ticketspage, wpt_calendar, wpt_editor, wpt_events, wpt_production_create_form, wpt_productions;
 
   wpt_calendar = (function() {
 
@@ -1541,7 +1541,6 @@ if (typeof exports == "object") {
   wpt_editor = (function() {
     function wpt_editor(item) {
       this.item = item;
-      this.id = this.item.attr('id');
       this.productions = new wpt_productions(this);
       this.events = new wpt_events(this);
       this.production_create_form = new wpt_production_create_form(this);
@@ -1551,7 +1550,7 @@ if (typeof exports == "object") {
 
 
     /*
-    		Set status to busy (show spinner).
+    	Set status to busy (show spinner).
      */
 
     wpt_editor.prototype.busy = function() {
@@ -1560,18 +1559,24 @@ if (typeof exports == "object") {
 
 
     /*
-    		Set status to done (hide spinner).
+    	Set status to done (hide spinner).
      */
 
     wpt_editor.prototype.done = function() {
-      this.item.removeClass('busy');
-      if (this.productions.list.items.length > 0) {
-        this.item.find('.wpt_editor_list').addClass('activated');
-        return this.production_create_form.title.attr('placeholder', wpt_editor_ajax.start_typing);
-      } else {
-        this.item.find('.wpt_editor_list').removeClass('activated');
-        return this.production_create_form.title.attr('placeholder', wpt_editor_ajax.start_typing_first);
-      }
+      return this.item.removeClass('busy');
+    };
+
+
+    /*
+    	Reset the editor to the default state.
+    	
+    	Close all production forms.
+    	Reset the production create form.
+     */
+
+    wpt_editor.prototype.reset = function() {
+      this.productions.close();
+      return this.production_create_form.reset();
     };
 
     wpt_editor.prototype.categories = function() {
@@ -1610,72 +1615,207 @@ if (typeof exports == "object") {
       })(this));
     };
 
+    wpt_editor.prototype.datepickers = function() {
+      var date;
+      date = new WPT_Editor_Date();
+      return this.item.find('input[name=event_date_date], input[name=enddate_date]').datepicker({
+        dateFormat: date.date_format(),
+        defaultDate: date.object(),
+        onSelect: function(dateText, inst) {
+          var enddate, input;
+          input = jQuery(this);
+          if (input.attr('name') === 'event_date_date') {
+            enddate = new WPT_Editor_Date();
+            enddate["import"](input, input.parent().find('[name=event_date_time]'));
+            enddate.datetime += wpt_editor_ajax.default_duration * 1;
+            input.parent().find('[name=enddate_date]').val(enddate.date());
+            return input.parent().find('[name=enddate_time]').val(enddate.time());
+          }
+        }
+      });
+    };
+
     return wpt_editor;
 
   })();
+
+
+  /*
+  Form to create a new production.
+   */
 
   wpt_production_create_form = (function() {
     function wpt_production_create_form(editor) {
       this.editor = editor;
       this.form = this.editor.item.find('#wpt_editor_production_form_create');
       this.title = this.form.find('[name=title]');
-      this.reset = this.form.find(':reset');
+
+      /*
+      		Open the form as soon as the title gets the focus.
+      		Close the production edit form in the productions list.
+       */
       this.title.focus((function(_this) {
         return function() {
-          return _this.open();
+          _this.open();
+          return _this.editor.productions.close();
         };
       })(this));
-      this.close();
+
+      /*
+      		Save the new production.
+      		Block the regular submission of the form.
+       */
       this.form.find('form').submit((function(_this) {
         return function() {
           _this.save();
           return false;
         };
       })(this));
-      this.reset.click((function(_this) {
+
+      /*
+      		Close the form when the reset button is clicked.
+       */
+      this.reset_button = this.form.find(':reset');
+      this.reset_button.click((function(_this) {
         return function() {
           return _this.close();
         };
       })(this));
+      this.init();
     }
+
+
+    /*
+    	Initialize the form.
+    	Set the title placeholder based on the contents of the productions list.
+    	Close the form, ready to receive input.
+     */
+
+    wpt_production_create_form.prototype.init = function() {
+      if (this.editor.productions.list.items.length > 0) {
+        this.title.attr('placeholder', wpt_editor_ajax.start_typing);
+      } else {
+        this.title.attr('placeholder', wpt_editor_ajax.start_typing_first);
+      }
+
+      /*
+      		Add a datetime control.
+       */
+      this.datetime = new WPT_Editor_Datetime_Control(this.form);
+
+      /*
+      		Add a tickets status control.
+       */
+      this.tickets_status = new WPT_Editor_Status_Control(this.form);
+
+      /*
+      		Add a thumbnail control
+       */
+      this.thumbnail = new WPT_Editor_Thumbnail_Control(this.form);
+      return this.close();
+    };
+
+
+    /*
+    	Open the form.
+     */
 
     wpt_production_create_form.prototype.open = function() {
       return this.form.removeClass('closed');
     };
 
+
+    /*
+    	Close the form.
+    	Remove the focus from the title input so it can trigger @open() 
+    	as soon as it gets the focus again.
+     */
+
     wpt_production_create_form.prototype.close = function() {
-      return this.form.addClass('closed');
+      this.form.addClass('closed');
+      return this.title.blur();
     };
 
+
+    /*
+    	Reset the form to the default state.
+    	Use the reset button to clear all inputs and close the form.
+     */
+
+    wpt_production_create_form.prototype.reset = function() {
+      return this.reset_button.click();
+    };
+
+
+    /*
+    	Create the new production.
+    	Submit the production and event data to the server.
+    	Add the new production to the list object.
+     */
+
     wpt_production_create_form.prototype.save = function() {
-      var data, event_data;
+
+      /*
+      		Collect the event data
+       */
+      var data, enddate, event_data, event_date, _ref;
+      _ref = this.datetime.value(), event_date = _ref[0], enddate = _ref[1];
       event_data = {
-        'event_date': this.form.find('input[name=event_date_date]').val() + ' ' + this.form.find('input[name=event_date_time]').val(),
-        'enddate': this.form.find('input[name=enddate_date]').val() + ' ' + this.form.find('input[name=enddate_time]').val(),
+        'event_date': event_date + wpt_editor_ajax.gmt_offset * 60 * 60,
+        'enddate': enddate + wpt_editor_ajax.gmt_offset * 60 * 60,
         'venue': this.form.find('input[name=venue]').val(),
         'city': this.form.find('input[name=city]').val(),
         'prices': this.form.find('[name=prices]').val(),
         'tickets_url': this.form.find('input[name=tickets_url]').val(),
-        'tickets_button': this.form.find('input[name=tickets_button]').val()
+        'tickets_button': this.form.find('input[name=tickets_button]').val(),
+        'tickets_status': this.tickets_status.value()
       };
+
+      /*
+      		Create the production data
+       */
       data = {
         'wpt_nonce': wpt_editor_ajax.wpt_nonce,
         'action': 'save',
         'title': this.form.find('input[name=title]').val(),
+        'thumbnail': this.thumbnail.value(),
         'excerpt': this.form.find('textarea[name=excerpt]').val(),
         'categories': this.form.find('select[name=categories\\[\\]]').val(),
         'season': this.form.find('select[name=season]').val(),
         'events': [event_data]
       };
+      console.log(data);
       this.editor.busy();
+
+      /*
+      		Submit the data to the server.
+       */
       return jQuery.post(wpt_editor_ajax.url, data, (function(_this) {
         return function(response) {
           if (response != null) {
+
+            /*
+            				When succesful, add the new production to the productions list.
+             */
             _this.editor.productions.list.add(response);
+
+            /*
+            				Re-activate all productions.
+             */
             _this.editor.productions.activate();
           }
-          _this.editor.done();
-          return _this.reset.click();
+
+          /*
+          			Re-initialize the productions list.
+          			The list needs to be activated if this is the first production that was added.
+           */
+          _this.editor.productions.init();
+
+          /*
+          			Clear the form and close it.
+           */
+          _this.reset();
+          return _this.editor.done();
         };
       })(this));
     };
@@ -1696,7 +1836,16 @@ if (typeof exports == "object") {
       this.list = new List('wpt_editor_productions', options);
       this.load();
       this.form = this.editor.item.find('#wpt_editor_production_form_template');
+      this.init();
     }
+
+    wpt_productions.prototype.init = function() {
+      if (this.list.items.length > 0) {
+        return this.editor.item.find('.wpt_editor_list').addClass('activated');
+      } else {
+        return this.editor.item.find('.wpt_editor_list').removeClass('activated');
+      }
+    };
 
     wpt_productions.prototype.load = function() {
       var data;
@@ -1712,7 +1861,8 @@ if (typeof exports == "object") {
             _this.activate();
           }
           _this.editor.done();
-          return _this.editor.production_create_form.close();
+          _this.editor.production_create_form.reset();
+          return _this.init();
         };
       })(this));
     };
@@ -1737,25 +1887,23 @@ if (typeof exports == "object") {
       })(this));
       this.form.find('> a.close').unbind('click').click((function(_this) {
         return function(e) {
-          _this.close(jQuery(e.currentTarget).parents('.production'));
+          _this.close();
+          _this.save();
           return false;
         };
-      })(this));
-      this.form.find('input, textarea, select').unbind('change').change((function(_this) {
-        return function(e) {};
       })(this));
       return this.form.find('form').submit(function(e) {
         return false;
       });
     };
 
-    wpt_productions.prototype.close = function(production) {
-      production.removeClass('edit');
-      return this.save();
+    wpt_productions.prototype.close = function() {
+      return this.form.parents('.production').removeClass('edit');
     };
 
     wpt_productions.prototype.edit = function(production) {
       var id, values;
+      this.editor.reset();
       this.editor.item.find('.production.edit').removeClass('edit');
       production.addClass('edit');
       id = production.find('>.hidden .ID').text();
@@ -1766,6 +1914,11 @@ if (typeof exports == "object") {
       this.form.find('textarea[name=excerpt]').val(values.excerpt);
       this.form.find('select[name=categories]').val(values.categories);
       this.form.find('select[name=season]').val(values.season);
+
+      /*
+      		Add a thumbnail control
+       */
+      this.thumbnail = new WPT_Editor_Thumbnail_Control(this.form);
 
       /*
       			Load events
@@ -1788,7 +1941,9 @@ if (typeof exports == "object") {
         return jQuery.post(wpt_editor_ajax.url, data, (function(_this) {
           return function(response) {
             _this.list.remove('ID', response);
-            return _this.editor.done();
+            _this.editor.done();
+            _this.editor.reset();
+            return _this.init();
           };
         })(this));
       }
@@ -1826,6 +1981,7 @@ if (typeof exports == "object") {
         return function(response) {
           _this.list.get('ID', id)[0].values(response);
           _this.activate();
+          _this.init();
 
           /*
           				Load events
@@ -1880,9 +2036,6 @@ if (typeof exports == "object") {
       this.list = new List('wpt_editor_events', options);
       this.form = this.editor.productions.form.find('.wpt_editor_event_form');
       this.events = this.editor.productions.form.find('#wpt_editor_events');
-      this.form.find('input[name=event_date_date], input[name=enddate_date]').datepicker({
-        dateFormat: "yy-mm-dd"
-      });
     }
 
     wpt_events.prototype.load = function(production) {
@@ -1898,7 +2051,7 @@ if (typeof exports == "object") {
           if (response != null) {
             _this.list.clear();
             _this.list.add(response);
-            _this.activate(production);
+            _this.activate();
           }
           return _this.editor.done();
         };
@@ -1920,12 +2073,9 @@ if (typeof exports == "object") {
           return false;
         };
       })(this));
-      this.form.find('input, textarea, select').unbind('change').change((function(_this) {
-        return function(e) {};
-      })(this));
       this.form.find('a.close').unbind('click').click((function(_this) {
         return function(e) {
-          _this.close(jQuery(e.currentTarget).parents('.event'));
+          _this.close();
           return false;
         };
       })(this));
@@ -1957,21 +2107,27 @@ if (typeof exports == "object") {
 
     wpt_events.prototype.edit = function(event) {
       var enddate, event_date, id, values;
+      event.append(this.form);
       this.reset();
       id = event.find('.ID').text();
       values = this.list.get('ID', id)[0].values();
-      event_date = values.event_date.split(' ');
-      enddate = values.enddate.split(' ');
+      event_date = new WPT_Editor_Date(values.event_date - wpt_editor_ajax.gmt_offset * 60 * 60);
+      this.form.find('input[name=event_date_date]').val(event_date.date());
+      this.form.find('input[name=event_date_time]').val(event_date.time());
+      this.form.find('input[name=event_date_date]').datepicker('setDate', event_date.object());
+      enddate = new WPT_Editor_Date(values.enddate - wpt_editor_ajax.gmt_offset * 60 * 60);
+      this.form.find('input[name=enddate_date]').val(enddate.date());
+      this.form.find('input[name=enddate_time]').val(enddate.time());
+      this.form.find('input[name=enddate_date]').datepicker('setDate', enddate.object());
       this.form.find('input[name=event_id]').val(id);
-      this.form.find('input[name=event_date_date]').val(event_date[0]);
-      this.form.find('input[name=event_date_time]').val(event_date[1]);
-      this.form.find('input[name=enddate_date]').val(enddate[0]);
-      this.form.find('input[name=enddate_time]').val(enddate[1]);
       this.form.find('input[name=venue]').val(values.venue);
       this.form.find('input[name=city]').val(values.city);
       this.form.find('input[name=tickets_url]').val(values.tickets_url);
       this.form.find('input[name=tickets_button]').val(values.tickets_button);
-      event.append(this.form);
+      this.tickets_status = new WPT_Editor_Status_Control(this.form);
+      this.tickets_status.value(values.tickets_status);
+      this.datetime = new WPT_Editor_Datetime_Control(this.form);
+      this.datetime.value(values.event_date - wpt_editor_ajax.gmt_offset * 60 * 60, values.enddate - wpt_editor_ajax.gmt_offset * 60 * 60);
       return event.addClass('edit');
     };
 
@@ -1984,44 +2140,47 @@ if (typeof exports == "object") {
       title += jQuery(values.datetime_html).find('.wp_theatre_event_time').text();
       confirm_message = wpt_editor_ajax.confirm_message_event.replace(/%s/g, title);
       if (confirm(confirm_message)) {
-        this.list.remove('ID', id);
-        return this.save();
+        return this.list.remove('ID', id);
       }
     };
 
     wpt_events.prototype.reset = function() {
-      var event_date;
+      var enddate, event_date;
       this.events.find('.edit').removeClass('edit');
 
       /*
       			Set form inputs to defaults.
        */
-      event_date = wpt_editor_ajax.default_date.split(' ');
+      event_date = new WPT_Editor_Date();
+      enddate = new WPT_Editor_Date();
+      enddate.datetime += wpt_editor_ajax.default_duration * 1;
       this.form.find('input[name=event_id]').removeAttr('value');
-      this.form.find('input[name=event_date_date]').val(event_date[0]);
-      this.form.find('input[name=event_date_time]').val(event_date[1]);
-      this.form.find('input[name=enddate_date]').removeAttr('value');
-      this.form.find('input[name=enddate_time]').removeAttr('value');
+      this.form.find('input[name=event_date_date]').val(event_date.date());
+      this.form.find('input[name=event_date_time]').val(event_date.time());
+      this.form.find('input[name=enddate_date]').val(enddate.date());
+      this.form.find('input[name=enddate_time]').val(enddate.time());
       this.form.find('input[name=venue]').removeAttr('value');
       this.form.find('input[name=city]').removeAttr('value');
       this.form.find('input[name=tickets_url]').removeAttr('value');
-      return this.form.find('input[name=tickets_button]').removeAttr('value');
+      this.form.find('input[name=tickets_button]').removeAttr('value');
+      return this.activate();
     };
 
-    wpt_events.prototype.save = function() {
-      return this.editor.productions.save();
-    };
-
-    wpt_events.prototype.close = function(event) {
-      var id, item, values;
+    wpt_events.prototype.close = function() {
+      var enddate, event_date, id, item, values, _ref;
+      _ref = this.datetime.value(), event_date = _ref[0], enddate = _ref[1];
       values = {
-        event_date: this.form.find('input[name=event_date_date]').val() + ' ' + this.form.find('input[name=event_date_time]').val(),
-        enddate: this.form.find('input[name=enddate_date]').val() + ' ' + this.form.find('input[name=enddate_time]').val(),
+        event_date: event_date + wpt_editor_ajax.gmt_offset * 60 * 60,
+        enddate: enddate + wpt_editor_ajax.gmt_offset * 60 * 60,
         venue: this.form.find('input[name=venue]').val(),
         city: this.form.find('input[name=city]').val(),
         tickets_url: this.form.find('input[name=tickets_url]').val(),
-        tickets_button: this.form.find('input[name=tickets_button]').val()
+        tickets_button: this.form.find('input[name=tickets_button]').val(),
+        tickets_status: this.tickets_status.value(),
+        edit_link: '<a href="#">Edit</a>',
+        delete_link: '<a href="#">Delete</a>'
       };
+      values[wpt_editor_ajax.order_key] = values.event_date;
       id = this.form.find('input[name=event_id]').val();
       if ((id != null) && id !== '') {
         item = this.list.get('ID', id)[0];
@@ -2029,11 +2188,248 @@ if (typeof exports == "object") {
       } else {
         this.list.add(values);
       }
-      this.save();
+      this.list.sort(wpt_editor_ajax.order_key);
       return this.reset();
     };
 
     return wpt_events;
+
+  })();
+
+  WPT_Editor_Date = (function() {
+    function WPT_Editor_Date(datetime) {
+      this.datetime = datetime;
+      if (this.datetime == null) {
+        this.datetime = wpt_editor_ajax.default_date - wpt_editor_ajax.gmt_offset * 60 * 60;
+      }
+    }
+
+    WPT_Editor_Date.prototype.object = function() {
+      return new Date(this.datetime * 1000);
+    };
+
+    WPT_Editor_Date.prototype.date = function() {
+      return jQuery.datepicker.formatDate(this.date_format(), this.object());
+    };
+
+    WPT_Editor_Date.prototype.time = function() {
+      var hours, minutes;
+      hours = this.object().getHours();
+      if (hours < 10) {
+        hours = '0' + hours;
+      }
+      minutes = this.object().getMinutes();
+      if (minutes < 10) {
+        minutes = '0' + minutes;
+      }
+      return hours + ':' + minutes;
+    };
+
+    WPT_Editor_Date.prototype.date_format = function() {
+      var format, javascript, php, translate;
+      format = wpt_editor_ajax.date_format;
+      translate = {
+        'd': 'dd',
+        'D': 'D',
+        'j': 'd',
+        'l': 'DD',
+        'N': '',
+        'S': '',
+        'w': '',
+        'z': 'o',
+        'W': '',
+        'F': 'MM',
+        'm': 'mm',
+        'M': 'M',
+        'n': 'm',
+        't': '',
+        'L': '',
+        'o': '',
+        'Y': 'yy',
+        'y': 'y'
+      };
+      for (php in translate) {
+        javascript = translate[php];
+        format = format.replace(php, javascript);
+      }
+      return format;
+    };
+
+    WPT_Editor_Date.prototype["import"] = function(formatted_date, formatted_time) {
+      var hours, minutes, _ref;
+      this.datetime = Math.floor((jQuery.datepicker.formatDate('@', formatted_date.datepicker('getDate'))) / 1000);
+      _ref = formatted_time.val().split(':'), hours = _ref[0], minutes = _ref[1];
+      if ((jQuery.isNumeric(hours)) && (jQuery.isNumeric(minutes))) {
+        this.datetime += hours * 60 * 60 + minutes * 60;
+      }
+      return this;
+    };
+
+    return WPT_Editor_Date;
+
+  })();
+
+  WPT_Editor_Datetime_Control = (function() {
+    function WPT_Editor_Datetime_Control(form) {
+      var date;
+      this.form = form;
+      date = new WPT_Editor_Date();
+      this.event_date_date = this.form.find('input[name=event_date_date]');
+      this.event_date_time = this.form.find('input[name=event_date_time]');
+      this.enddate_date = this.form.find('input[name=enddate_date]');
+      this.enddate_time = this.form.find('input[name=enddate_time]');
+      this.event_date_date.datepicker('destroy');
+      this.event_date_date.datepicker({
+        dateFormat: date.date_format(),
+        defaultDate: date.object(),
+        onSelect: (function(_this) {
+          return function(DateText, inst) {
+            var enddate;
+            enddate = new WPT_Editor_Date();
+            enddate["import"](_this.event_date_date, _this.event_date_time).datetime += wpt_editor_ajax.default_duration * 1;
+            _this.enddate_date.val(enddate.date());
+            _this.enddate_time.val(enddate.time());
+            _this.sanitize();
+            return _this.enddate_date.datepicker('option', 'minDate', enddate.object());
+          };
+        })(this)
+      });
+      this.enddate_date.datepicker('destroy');
+      this.enddate_date.datepicker({
+        dateFormat: date.date_format(),
+        defaultDate: date.object(),
+        minDate: this.event_date_date.datepicker('getDate'),
+        onSelect: (function(_this) {
+          return function(DateText, inst) {
+            return _this.sanitize();
+          };
+        })(this)
+      });
+      this.event_date_time.change((function(_this) {
+        return function() {
+          return _this.sanitize();
+        };
+      })(this));
+      this.enddate_time.change((function(_this) {
+        return function() {
+          return _this.sanitize();
+        };
+      })(this));
+    }
+
+    WPT_Editor_Datetime_Control.prototype.sanitize = function() {
+      var enddate, event_date;
+      event_date = new WPT_Editor_Date();
+      enddate = new WPT_Editor_Date();
+
+      /*
+      		Time input must be like 00:00.
+       */
+      this.event_date_time.val(event_date["import"](this.event_date_date, this.event_date_time).time());
+      this.enddate_time.val(enddate["import"](this.enddate_date, this.enddate_time).time());
+
+      /*
+      		Enddate must be later than event_date.
+       */
+      if (enddate.datetime < event_date.datetime) {
+        enddate.datetime = event_date.datetime + wpt_editor_ajax.default_duration * 1;
+        this.enddate_date.val(enddate.date());
+        return this.enddate_time.val(enddate.time());
+      }
+    };
+
+    WPT_Editor_Datetime_Control.prototype.value = function(event_date, enddate) {
+      if (event_date != null) {
+        event_date = new WPT_Editor_Date(event_date);
+        this.form.find('input[name=event_date_date]').val(event_date.date());
+        this.form.find('input[name=event_date_time]').val(event_date.time());
+        this.form.find('input[name=event_date_date]').datepicker('setDate', event_date.object());
+      } else {
+        event_date = new WPT_Editor_Date();
+      }
+      if (enddate != null) {
+        enddate = new WPT_Editor_Date(enddate);
+        this.form.find('input[name=enddate_date]').val(enddate.date());
+        this.form.find('input[name=enddate_time]').val(enddate.time());
+        this.form.find('input[name=enddate_date]').datepicker('setDate', enddate.object());
+      } else {
+        enddate = new WPT_Editor_Date();
+      }
+      return [event_date["import"](this.event_date_date, this.event_date_time).datetime, enddate["import"](this.enddate_date, this.enddate_time).datetime];
+    };
+
+    return WPT_Editor_Datetime_Control;
+
+  })();
+
+  WPT_Editor_Status_Control = (function() {
+    function WPT_Editor_Status_Control(form) {
+      this.form = form;
+      this.control = this.form.find('.tickets_status_control');
+      this.select = this.control.find('select[name=tickets_status]');
+      this.other = this.control.find('input[name=tickets_status_other]');
+      this.select.change((function(_this) {
+        return function() {
+          return _this.sanitize();
+        };
+      })(this));
+    }
+
+    WPT_Editor_Status_Control.prototype.sanitize = function() {
+      if (this.select.val() === wpt_editor_ajax.tickets_status_other) {
+        return this.other.show().focus();
+      } else {
+        return this.other.hide();
+      }
+    };
+
+    WPT_Editor_Status_Control.prototype.value = function(tickets_status) {
+      var option;
+      if (tickets_status != null) {
+        option = this.select.find('option[value=' + tickets_status + ']');
+        if (option.length) {
+          alert(tickets_status);
+          this.select.val(tickets_status);
+          this.other.removeAttr('value');
+        } else {
+          this.select.val(wpt_editor_ajax.tickets_status_other);
+          this.other.val(tickets_status);
+        }
+      }
+      this.sanitize();
+      if (this.select.val() === wpt_editor_ajax.tickets_status_other) {
+        return this.other.val();
+      } else {
+        return this.select.val();
+      }
+    };
+
+    return WPT_Editor_Status_Control;
+
+  })();
+
+  WPT_Editor_Thumbnail_Control = (function() {
+    function WPT_Editor_Thumbnail_Control(form) {
+      this.form = form;
+      this.control = this.form.find('.thumbnail_control');
+      this.input = this.control.find('input[name=thumbnail]');
+      this.img = this.control.find('img');
+      this.control.click((function(_this) {
+        return function() {
+          wp.media.editor.send.attachment = function(props, attachment) {
+            _this.input.val(attachment.id);
+            return _this.img.attr('src', attachment.sizes.thumbnail.url);
+          };
+          return wp.media.editor.open(_this);
+        };
+      })(this));
+    }
+
+    WPT_Editor_Thumbnail_Control.prototype.value = function() {
+      return this.input.val();
+    };
+
+    return WPT_Editor_Thumbnail_Control;
 
   })();
 

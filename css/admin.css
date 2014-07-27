@@ -38,10 +38,9 @@
 #wpt_editor .wpt_editor_settings {
   float: right;
   width: 195px;
-  text-align: right;
 }
 #wpt_editor .wpt_editor_settings a {
-  display: inline-block;
+  display: block;
   line-height: 21px;
   text-decoration: none;
 }
@@ -59,6 +58,12 @@
 #wpt_editor .wpt_editor_settings a.trash:before {
   content: "\f182";
 }
+#wpt_editor .wpt_editor_settings a.categories:before {
+  content: "\f318";
+}
+#wpt_editor .wpt_editor_settings a.seasons:before {
+  content: "\f145";
+}
 #wpt_editor .wpt_editor_production_form {
   overflow: auto;
 }
@@ -71,6 +76,21 @@
   outline: 0px none;
   margin: 0px;
 }
+#wpt_editor .wpt_editor_production_form .thumbnail_control {
+  width: 19%;
+  height: 120px;
+  border: 1px dashed #bbb;
+  float: left;
+  margin: 4px 1% 0 0;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+#wpt_editor .wpt_editor_production_form .thumbnail_control img {
+  width: 100%;
+  height: auto;
+}
 #wpt_editor .wpt_editor_production_form [name=excerpt],
 #wpt_editor .wpt_editor_production_form [name='categories\[\]'],
 #wpt_editor .wpt_editor_production_form [name=season] {
@@ -80,7 +100,7 @@
   margin: 4px 0 0 0;
 }
 #wpt_editor .wpt_editor_production_form [name=excerpt] {
-  width: 79%;
+  width: 59%;
   height: 120px;
   margin-right: 1%;
 }
@@ -102,14 +122,19 @@
 #wpt_editor #wpt_editor_production_form_create.closed form input,
 #wpt_editor #wpt_editor_production_form_create.closed form textarea,
 #wpt_editor #wpt_editor_production_form_create.closed form select,
-#wpt_editor #wpt_editor_production_form_create.closed form button {
-  display: none;
+#wpt_editor #wpt_editor_production_form_create.closed form button,
+#wpt_editor #wpt_editor_production_form_create.closed form .thumbnail_control {
+  display: none !important;
 }
 #wpt_editor #wpt_editor_production_form_create.closed form input[name=title] {
-  display: block;
+  display: block !important;
 }
 #wpt_editor .wpt_editor_event_form {
   float: left;
+}
+#wpt_editor .wpt_editor_event_form input,
+#wpt_editor .wpt_editor_event_form select {
+  height: 25px;
 }
 #wpt_editor .wpt_editor_event_form .dates {
   width: 30%;
@@ -145,14 +170,20 @@
 #wpt_editor .wpt_editor_event_form .prices textarea {
   margin: 4px 10% 0 0;
   width: 90%;
-  height: 50px;
+  height: 54px;
 }
-#wpt_editor .wpt_editor_event_form .status {
+#wpt_editor .wpt_editor_event_form .tickets_status_control {
   float: left;
-  width: 20%;
+  width: 15%;
 }
-#wpt_editor .wpt_editor_event_form .status select {
+#wpt_editor .wpt_editor_event_form .tickets_status_control select {
   margin: 4px 0 0 0;
+  width: 100%;
+}
+#wpt_editor .wpt_editor_event_form .tickets_status_control input {
+  display: none;
+  margin: 4px 0 0 0;
+  width: 100%;
 }
 #wpt_editor .wpt_editor_event_form .close {
   display: none;
@@ -480,6 +511,14 @@
     background-image: url(../img/slimndap@2x.png);
     background-size: 175px 50px;
   }
+}
+/*
+ * Hide the datepicker div when it is not in use.
+ * Necessary when the datepicker inputs are hidden.
+ * @see: http://stackoverflow.com/questions/4580727/override-jquery-ui-datepicker-div-visible-strangely-on-first-page-load
+ */
+#ui-datepicker-div {
+  display: none;
 }
 @font-face {
   font-family: "theatre-webfont";
