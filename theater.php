@@ -1,14 +1,27 @@
 <?php
 /*
-Plugin Name: Theater
-Plugin URI: http://wordpress.org/plugins/theatre/
-Description: Turn your Wordpress website into a theater website.
-Author: Jeroen Schmit, Slim & Dapper
-Version: 0.8.1
-Author URI: http://slimndap.com/
-Text Domain: wp_theatre
-Domain Path: /lang
-*/
+ * Plugin Name: Theater
+ * Plugin URI: http://wordpress.org/plugins/theatre/
+ * Description: Turn your Wordpress website into a theater website.
+ * Version: 0.8.1
+ * Author: Jeroen Schmit, Slim & Dapper
+ * Author URI: http://slimndap.com/
+ * Text Domain: wp_theatre
+ * Domain Path: /lang
+ * 
+ * Theater is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * any later version.
+ *
+ * Theater is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Theater. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	

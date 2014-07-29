@@ -206,8 +206,6 @@
 			} else {
 				$production = new WPT_Production();			
 			}
-
-
 			
 			$production->title = $_POST['title'];
 			$production->thumbnail = $_POST['thumbnail'];
@@ -344,6 +342,10 @@
 			$html.= '<input type="text" name="title" id="wpt_editor_production_form_title" required placeholder="'.__('Title','wp_theatre').'" />';
 
 			$html.= '<div class="thumbnail_control">';
+			$html.= '<div class="actions">';
+			$html.= '<a class="edit_link" href="#">'.__('Edit','wp_theatre').'</a>';
+			$html.= '<a class="remove_link" href="#">'.__('Remove','wp_theatre').'</a>';
+			$html.= '</div>';
 			$html.= '<input type="hidden" name="thumbnail" id="wpt_editor_production_form_thumbnail" />';
 			$html.= '<img src="" />';
 			$html.= '</div>';

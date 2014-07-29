@@ -411,6 +411,9 @@ class wpt_events
 			if action.hasClass 'cancel_link' then @reset()
 			false
 
+		@tickets_status = new WPT_Editor_Status_Control @form
+		@datetime = new WPT_Editor_Datetime_Control @form
+
 	add: () ->
 		@reset()
 		
@@ -421,20 +424,11 @@ class wpt_events
 	edit: (event) ->
 		event.append @form
 		
+
 		@reset()
-	
+
 		id = event.find('.ID').text()
 		values = @list.get('ID',id)[0].values()
-
-		event_date = new WPT_Editor_Date values.event_date - wpt_editor_ajax.gmt_offset * 60 * 60
-		@form.find('input[name=event_date_date]').val event_date.date()
-		@form.find('input[name=event_date_time]').val event_date.time()
-		@form.find('input[name=event_date_date]').datepicker 'setDate', event_date.object()
-		
-		enddate = new WPT_Editor_Date values.enddate - wpt_editor_ajax.gmt_offset * 60 * 60
-		@form.find('input[name=enddate_date]').val enddate.date()
-		@form.find('input[name=enddate_time]').val enddate.time()
-		@form.find('input[name=enddate_date]').datepicker 'setDate', enddate.object()
 
 		@form.find('input[name=event_id]').val id
 		@form.find('input[name=venue]').val values.venue
@@ -442,12 +436,10 @@ class wpt_events
 		@form.find('input[name=tickets_url]').val values.tickets_url
 		@form.find('input[name=tickets_button]').val values.tickets_button
 
-		@tickets_status = new WPT_Editor_Status_Control @form
 		@tickets_status.value values.tickets_status
 		
-		@datetime = new WPT_Editor_Datetime_Control @form
 		@datetime.value values.event_date - wpt_editor_ajax.gmt_offset*60*60, values.enddate - wpt_editor_ajax.gmt_offset*60*60
-
+	
 		event.addClass 'edit'
 		
 
@@ -470,6 +462,7 @@ class wpt_events
 		###
 			Set form inputs to defaults.
 		###
+		###
 		event_date = new WPT_Editor_Date()
 		enddate = new WPT_Editor_Date()
 		enddate.datetime += wpt_editor_ajax.default_duration * 1
@@ -479,6 +472,8 @@ class wpt_events
 		@form.find('input[name=event_date_time]').val event_date.time()
 		@form.find('input[name=enddate_date]').val enddate.date()
 		@form.find('input[name=enddate_time]').val enddate.time()
+		###
+		@datetime.reset()
 		@form.find('input[name=venue]').removeAttr 'value'
 		@form.find('input[name=city]').removeAttr 'value'
 		@form.find('input[name=tickets_url]').removeAttr 'value'
@@ -609,7 +604,7 @@ class WPT_Editor_Datetime_Control
 		enddate = new WPT_Editor_Date()
 
 		###
-		Time input must be like 00:00.
+		Time input value must be like 00:00.
 		###
 		@event_date_time.val event_date.import(@event_date_date,@event_date_time).time()
 		@enddate_time.val enddate.import(@enddate_date,@enddate_time).time()
@@ -625,17 +620,17 @@ class WPT_Editor_Datetime_Control
 	value: (event_date, enddate) ->
 		if event_date?
 			event_date = new WPT_Editor_Date event_date
-			@form.find('input[name=event_date_date]').val event_date.date()
-			@form.find('input[name=event_date_time]').val event_date.time()
-			@form.find('input[name=event_date_date]').datepicker 'setDate', event_date.object()
+			@event_date_date.val event_date.date()
+			@event_date_time.val event_date.time()
+			@event_date_date.datepicker 'setDate', event_date.object()
 		else 
 			event_date = new WPT_Editor_Date()
 			
 		if enddate?
 			enddate = new WPT_Editor_Date enddate
-			@form.find('input[name=enddate_date]').val enddate.date()
-			@form.find('input[name=enddate_time]').val enddate.time()
-			@form.find('input[name=enddate_date]').datepicker 'setDate', enddate.object()
+			@enddate_date.val enddate.date()
+			@enddate_time.val enddate.time()
+			@enddate_date.datepicker 'setDate', enddate.object()
 		else
 			enddate = new WPT_Editor_Date()
 	
@@ -643,6 +638,11 @@ class WPT_Editor_Datetime_Control
 			event_date.import(@event_date_date,@event_date_time).datetime
 			enddate.import(@enddate_date,@enddate_time).datetime
 		]
+
+	reset: ->
+		event_date = new WPT_Editor_Date()
+		@value event_date.datetime, event_date.datetime + wpt_editor_ajax.default_duration*1
+	
 
 class WPT_Editor_Status_Control
 
@@ -661,7 +661,6 @@ class WPT_Editor_Status_Control
 		if tickets_status?
 			option = @select.find 'option[value='+tickets_status+']'
 			if option.length
-				alert tickets_status
 				@select.val tickets_status
 				@other.removeAttr 'value'			
 			else 
@@ -680,14 +679,31 @@ class WPT_Editor_Thumbnail_Control
 		@img = @control.find 'img'
 		
 		@control.click =>
-			wp.media.editor.send.attachment = (props, attachment) =>
-				@input.val attachment.id
-				@img.attr 'src', attachment.sizes.thumbnail.url
-			wp.media.editor.open @
+			if not @control.hasClass 'selected'
+				@edit()
+				
+		@actions = @control.find '.actions'
+		@actions.find('.edit_link').click =>
+			@edit()
+			false
+		@actions.find('.remove_link').click =>
+			@reset()
+			false
+	
+	edit: ->
+		wp.media.editor.send.attachment = (props, attachment) =>
+			@input.val attachment.id
+			@img.attr 'src', attachment.sizes.thumbnail.url
+			@control.addClass 'selected'
+		wp.media.editor.open @
+	
+	reset: ->
+		@input.removeAttr 'value'
+		@img.removeAttr 'src'
+		@control.removeClass 'selected'
 	
 	value: ->
 		@input.val()
 	
 jQuery ->
-	editor = jQuery '#wpt_editor'
-	wpt_editor = new wpt_editor jQuery '#wpt_editor' if editor.length 
+	new wpt_editor editor if (editor = jQuery('#wpt_editor')) and editor.length 

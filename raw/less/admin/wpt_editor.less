@@ -50,9 +50,34 @@
 			margin: 4px 1% 0 0;
 			.box-sizing(border-box);
 			overflow: hidden;
+			.actions {
+				display: none;
+			}
 			img {
-				width: 100%;
-				height: auto;
+				display: none;
+			}
+			&.selected {
+				position: relative;
+				border: none;
+				&:hover {
+				.actions {
+					display: block;
+					position: absolute;
+					right: 4px;
+					top: 4px;
+					a {
+						display: block;
+						background-color: #000;
+						color: #fff;
+					}
+				}
+					
+				}
+				img {
+					display: block;
+					width: 100%;
+					height: auto;
+				}
 			}
 		}
 		[name=excerpt],

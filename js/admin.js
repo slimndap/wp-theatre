@@ -2079,7 +2079,7 @@ if (typeof exports == "object") {
           return false;
         };
       })(this));
-      return this.events.find('.add a').unbind('click').click((function(_this) {
+      this.events.find('.add a').unbind('click').click((function(_this) {
         return function(e) {
           var action;
           action = jQuery(e.currentTarget);
@@ -2095,6 +2095,8 @@ if (typeof exports == "object") {
           return false;
         };
       })(this));
+      this.tickets_status = new WPT_Editor_Status_Control(this.form);
+      return this.datetime = new WPT_Editor_Datetime_Control(this.form);
     };
 
     wpt_events.prototype.add = function() {
@@ -2106,27 +2108,17 @@ if (typeof exports == "object") {
     };
 
     wpt_events.prototype.edit = function(event) {
-      var enddate, event_date, id, values;
+      var id, values;
       event.append(this.form);
       this.reset();
       id = event.find('.ID').text();
       values = this.list.get('ID', id)[0].values();
-      event_date = new WPT_Editor_Date(values.event_date - wpt_editor_ajax.gmt_offset * 60 * 60);
-      this.form.find('input[name=event_date_date]').val(event_date.date());
-      this.form.find('input[name=event_date_time]').val(event_date.time());
-      this.form.find('input[name=event_date_date]').datepicker('setDate', event_date.object());
-      enddate = new WPT_Editor_Date(values.enddate - wpt_editor_ajax.gmt_offset * 60 * 60);
-      this.form.find('input[name=enddate_date]').val(enddate.date());
-      this.form.find('input[name=enddate_time]').val(enddate.time());
-      this.form.find('input[name=enddate_date]').datepicker('setDate', enddate.object());
       this.form.find('input[name=event_id]').val(id);
       this.form.find('input[name=venue]').val(values.venue);
       this.form.find('input[name=city]').val(values.city);
       this.form.find('input[name=tickets_url]').val(values.tickets_url);
       this.form.find('input[name=tickets_button]').val(values.tickets_button);
-      this.tickets_status = new WPT_Editor_Status_Control(this.form);
       this.tickets_status.value(values.tickets_status);
-      this.datetime = new WPT_Editor_Datetime_Control(this.form);
       this.datetime.value(values.event_date - wpt_editor_ajax.gmt_offset * 60 * 60, values.enddate - wpt_editor_ajax.gmt_offset * 60 * 60);
       return event.addClass('edit');
     };
@@ -2145,20 +2137,24 @@ if (typeof exports == "object") {
     };
 
     wpt_events.prototype.reset = function() {
-      var enddate, event_date;
       this.events.find('.edit').removeClass('edit');
 
       /*
       			Set form inputs to defaults.
        */
-      event_date = new WPT_Editor_Date();
-      enddate = new WPT_Editor_Date();
-      enddate.datetime += wpt_editor_ajax.default_duration * 1;
-      this.form.find('input[name=event_id]').removeAttr('value');
-      this.form.find('input[name=event_date_date]').val(event_date.date());
-      this.form.find('input[name=event_date_time]').val(event_date.time());
-      this.form.find('input[name=enddate_date]').val(enddate.date());
-      this.form.find('input[name=enddate_time]').val(enddate.time());
+
+      /*
+      		event_date = new WPT_Editor_Date()
+      		enddate = new WPT_Editor_Date()
+      		enddate.datetime += wpt_editor_ajax.default_duration * 1
+      
+      		@form.find('input[name=event_id]').removeAttr 'value'
+      		@form.find('input[name=event_date_date]').val event_date.date()
+      		@form.find('input[name=event_date_time]').val event_date.time()
+      		@form.find('input[name=enddate_date]').val enddate.date()
+      		@form.find('input[name=enddate_time]').val enddate.time()
+       */
+      this.datetime.reset();
       this.form.find('input[name=venue]').removeAttr('value');
       this.form.find('input[name=city]').removeAttr('value');
       this.form.find('input[name=tickets_url]').removeAttr('value');
@@ -2323,7 +2319,7 @@ if (typeof exports == "object") {
       enddate = new WPT_Editor_Date();
 
       /*
-      		Time input must be like 00:00.
+      		Time input value must be like 00:00.
        */
       this.event_date_time.val(event_date["import"](this.event_date_date, this.event_date_time).time());
       this.enddate_time.val(enddate["import"](this.enddate_date, this.enddate_time).time());
@@ -2341,21 +2337,27 @@ if (typeof exports == "object") {
     WPT_Editor_Datetime_Control.prototype.value = function(event_date, enddate) {
       if (event_date != null) {
         event_date = new WPT_Editor_Date(event_date);
-        this.form.find('input[name=event_date_date]').val(event_date.date());
-        this.form.find('input[name=event_date_time]').val(event_date.time());
-        this.form.find('input[name=event_date_date]').datepicker('setDate', event_date.object());
+        this.event_date_date.val(event_date.date());
+        this.event_date_time.val(event_date.time());
+        this.event_date_date.datepicker('setDate', event_date.object());
       } else {
         event_date = new WPT_Editor_Date();
       }
       if (enddate != null) {
         enddate = new WPT_Editor_Date(enddate);
-        this.form.find('input[name=enddate_date]').val(enddate.date());
-        this.form.find('input[name=enddate_time]').val(enddate.time());
-        this.form.find('input[name=enddate_date]').datepicker('setDate', enddate.object());
+        this.enddate_date.val(enddate.date());
+        this.enddate_time.val(enddate.time());
+        this.enddate_date.datepicker('setDate', enddate.object());
       } else {
         enddate = new WPT_Editor_Date();
       }
       return [event_date["import"](this.event_date_date, this.event_date_time).datetime, enddate["import"](this.enddate_date, this.enddate_time).datetime];
+    };
+
+    WPT_Editor_Datetime_Control.prototype.reset = function() {
+      var event_date;
+      event_date = new WPT_Editor_Date();
+      return this.value(event_date.datetime, event_date.datetime + wpt_editor_ajax.default_duration * 1);
     };
 
     return WPT_Editor_Datetime_Control;
@@ -2388,7 +2390,6 @@ if (typeof exports == "object") {
       if (tickets_status != null) {
         option = this.select.find('option[value=' + tickets_status + ']');
         if (option.length) {
-          alert(tickets_status);
           this.select.val(tickets_status);
           this.other.removeAttr('value');
         } else {
@@ -2416,14 +2417,42 @@ if (typeof exports == "object") {
       this.img = this.control.find('img');
       this.control.click((function(_this) {
         return function() {
-          wp.media.editor.send.attachment = function(props, attachment) {
-            _this.input.val(attachment.id);
-            return _this.img.attr('src', attachment.sizes.thumbnail.url);
-          };
-          return wp.media.editor.open(_this);
+          if (!_this.control.hasClass('selected')) {
+            return _this.edit();
+          }
+        };
+      })(this));
+      this.actions = this.control.find('.actions');
+      this.actions.find('.edit_link').click((function(_this) {
+        return function() {
+          _this.edit();
+          return false;
+        };
+      })(this));
+      this.actions.find('.remove_link').click((function(_this) {
+        return function() {
+          _this.reset();
+          return false;
         };
       })(this));
     }
+
+    WPT_Editor_Thumbnail_Control.prototype.edit = function() {
+      wp.media.editor.send.attachment = (function(_this) {
+        return function(props, attachment) {
+          _this.input.val(attachment.id);
+          _this.img.attr('src', attachment.sizes.thumbnail.url);
+          return _this.control.addClass('selected');
+        };
+      })(this);
+      return wp.media.editor.open(this);
+    };
+
+    WPT_Editor_Thumbnail_Control.prototype.reset = function() {
+      this.input.removeAttr('value');
+      this.img.removeAttr('src');
+      return this.control.removeClass('selected');
+    };
 
     WPT_Editor_Thumbnail_Control.prototype.value = function() {
       return this.input.val();
@@ -2435,9 +2464,8 @@ if (typeof exports == "object") {
 
   jQuery(function() {
     var editor;
-    editor = jQuery('#wpt_editor');
-    if (editor.length) {
-      return wpt_editor = new wpt_editor(jQuery('#wpt_editor'));
+    if ((editor = jQuery('#wpt_editor')) && editor.length) {
+      return new wpt_editor(editor);
     }
   });
 
