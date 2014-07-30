@@ -390,13 +390,15 @@
 
 			$html.= $this->production_form();
 
-			$events_html = '<h3>'.__('Dates','wp_theatre').'</h3>';
-			$events_html.= '<div class="list">events</div>';
 
-			$add_html = '<a href="#" class="add_link button button-primary">'.__('Add a date','wp_theatre').'</a>';
+			$add_html = '<a href="#" class="add_link">'.__('Add','wp_theatre').'</a>';
 			$add_html.= '<a href="#" class="save_link button button-primary">'.__('Save new date','wp_theatre').'</a>';
 			$add_html.= ' <a href="#" class="cancel_link button button">'.__('Cancel','wp_theatre').'</a>';
-			$events_html.= '<div class="add">'.$add_html.'</div>';
+			$events_html = '<div class="add">'.$add_html.'</div>';
+
+			$events_html.= '<h3>'.__('Dates','wp_theatre').'</h3>';
+
+			$events_html.= '<div class="list">events</div>';
 
 			$html.= '<div id="wpt_editor_events">'.$events_html.'</div>';
 			

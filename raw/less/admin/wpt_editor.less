@@ -226,11 +226,13 @@
 			display: none;
 		}
 		#wpt_editor_events {
-			padding-top: 10px;
+			padding-top: 20px;
+			margin-right: 20px;
 			h3 {
 				font-size: 1em;
 				font-weight: bold;
 				margin: 0 0 4px;
+				line-height: 20px;
 			}
 			.list {
 				.event {
@@ -272,8 +274,10 @@
 				}
 			}
 			.add {
-				padding: 4px 0;
-				border-top: 1px solid #E5E5E5;
+				float: right;
+				width: 30px;
+				height: 20px;
+				overflow: hidden;
 				&.edit {
 					background-color: #f9f9f9;
 					padding: 4px;
@@ -293,6 +297,16 @@
 					}
 				}
 				a {
+					text-decoration: none;
+					&:before {
+						font-family: dashicons;
+						font-size: 20px;
+						display: inline-block;
+						width: 30px;
+						text-align: right;
+						display: block;
+						content: "\f132";;
+					}
 					&.button {
 						margin: 10px 0;
 					}

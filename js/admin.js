@@ -1484,59 +1484,10 @@ if (typeof exports == "object") {
 
   /*
   --------------------------------------------
-       Begin calendar.coffee
-  --------------------------------------------
-   */
-  var WPT_Editor_Date, WPT_Editor_Datetime_Control, WPT_Editor_Status_Control, WPT_Editor_Thumbnail_Control, wpt_admin_ticketspage, wpt_calendar, wpt_editor, wpt_events, wpt_production_create_form, wpt_productions;
-
-  wpt_calendar = (function() {
-
-    /*
-    	Manage the navigation of all WPT_Calendar blocks.
-    	@since 0.8
-     */
-    function wpt_calendar(calendar) {
-      this.calendar = calendar;
-      this.calendar = jQuery(this.calendar);
-      this.calendar.addClass('navigate');
-      this.calendar.children().first().addClass('active');
-      jQuery(this.calendar).find('tfoot a').click((function(_this) {
-        return function(e) {
-          return _this.navigate(e.currentTarget);
-        };
-      })(this));
-    }
-
-
-    /*
-    	Handle prev/next.
-    	@since 0.8
-     */
-
-    wpt_calendar.prototype.navigate = function(e) {
-      var href;
-      href = jQuery(e).attr('href');
-      this.calendar.find('.active').removeClass('active');
-      this.calendar.find('caption a[href="' + href + '"]').parents('.wpt_month').addClass('active');
-      return false;
-    };
-
-    return wpt_calendar;
-
-  })();
-
-  jQuery(function() {
-    return jQuery('.wpt_calendar').each(function() {
-      return new wpt_calendar(this);
-    });
-  });
-
-
-  /*
-  --------------------------------------------
        Begin editor.coffee
   --------------------------------------------
    */
+  var WPT_Editor_Date, WPT_Editor_Datetime_Control, WPT_Editor_Status_Control, WPT_Editor_Thumbnail_Control, wpt_admin_ticketspage, wpt_editor, wpt_events, wpt_production_create_form, wpt_productions;
 
   wpt_editor = (function() {
     function wpt_editor(item) {
@@ -1615,24 +1566,16 @@ if (typeof exports == "object") {
       })(this));
     };
 
-    wpt_editor.prototype.datepickers = function() {
+
+    /*
+    	Calculate the date offset between WP and the browser.
+    	Returns the number of seconds that have to be added to dates that are submitted to the server.
+     */
+
+    wpt_editor.prototype.dateoffset = function() {
       var date;
-      date = new WPT_Editor_Date();
-      return this.item.find('input[name=event_date_date], input[name=enddate_date]').datepicker({
-        dateFormat: date.date_format(),
-        defaultDate: date.object(),
-        onSelect: function(dateText, inst) {
-          var enddate, input;
-          input = jQuery(this);
-          if (input.attr('name') === 'event_date_date') {
-            enddate = new WPT_Editor_Date();
-            enddate["import"](input, input.parent().find('[name=event_date_time]'));
-            enddate.datetime += wpt_editor_ajax.default_duration * 1;
-            input.parent().find('[name=enddate_date]').val(enddate.date());
-            return input.parent().find('[name=enddate_time]').val(enddate.time());
-          }
-        }
-      });
+      date = new Date();
+      return date.getTimezoneOffset() * 60 * -1 + wpt_editor_ajax.gmt_offset * 60 * 60;
     };
 
     return wpt_editor;
@@ -1761,8 +1704,8 @@ if (typeof exports == "object") {
       var data, enddate, event_data, event_date, _ref;
       _ref = this.datetime.value(), event_date = _ref[0], enddate = _ref[1];
       event_data = {
-        'event_date': event_date + wpt_editor_ajax.gmt_offset * 60 * 60,
-        'enddate': enddate + wpt_editor_ajax.gmt_offset * 60 * 60,
+        'event_date': event_date + this.editor.dateoffset(),
+        'enddate': enddate + this.editor.dateoffset(),
         'venue': this.form.find('input[name=venue]').val(),
         'city': this.form.find('input[name=city]').val(),
         'prices': this.form.find('[name=prices]').val(),
@@ -1784,7 +1727,6 @@ if (typeof exports == "object") {
         'season': this.form.find('select[name=season]').val(),
         'events': [event_data]
       };
-      console.log(data);
       this.editor.busy();
 
       /*
@@ -1898,6 +1840,18 @@ if (typeof exports == "object") {
     };
 
     wpt_productions.prototype.close = function() {
+      var id, item, values;
+      id = this.form.find('input[name=ID]').val();
+      if (id !== '') {
+        values = {
+          title: this.form.find('input[name=title]').val(),
+          excerpt: this.form.find('textarea[name=excerpt]').val(),
+          categories: this.form.find('select[name=categories\\[\\]]').val(),
+          season: this.form.find('select[name=season]').val()
+        };
+        item = this.list.get('ID', id)[0];
+        item.values(values);
+      }
       return this.form.parents('.production').removeClass('edit');
     };
 
@@ -1954,9 +1908,12 @@ if (typeof exports == "object") {
     };
 
     wpt_productions.prototype.save = function() {
-      var data, event_values, id, item;
+      var data, id, item;
       id = this.form.find('input[name=ID]').val();
-      event_values = (function() {
+      data = this.list.get('ID', id)[0].values();
+      data['wpt_nonce'] = wpt_editor_ajax.wpt_nonce;
+      data['action'] = 'save';
+      data['events'] = (function() {
         var _i, _len, _ref, _results;
         _ref = this.editor.events.list.items;
         _results = [];
@@ -1966,28 +1923,18 @@ if (typeof exports == "object") {
         }
         return _results;
       }).call(this);
-      data = {
-        'wpt_nonce': wpt_editor_ajax.wpt_nonce,
-        'action': 'save',
-        'ID': id,
-        'title': this.form.find('input[name=title]').val(),
-        'excerpt': this.form.find('textarea[name=excerpt]').val(),
-        'categories': this.form.find('select[name=categories\\[\\]]').val(),
-        'season': this.form.find('select[name=season]').val(),
-        'events': event_values
-      };
       this.editor.busy();
       return jQuery.post(wpt_editor_ajax.url, data, (function(_this) {
         return function(response) {
           _this.list.get('ID', id)[0].values(response);
           _this.activate();
           _this.init();
+          _this.editor.done();
 
           /*
           				Load events
            */
-          _this.editor.events.load(id);
-          return _this.editor.done();
+          return _this.editor.events.load(id);
         };
       })(this));
     };
@@ -2100,11 +2047,24 @@ if (typeof exports == "object") {
     };
 
     wpt_events.prototype.add = function() {
-      var add;
-      this.reset();
-      add = this.events.find('.add');
-      add.prepend(this.form);
-      return add.addClass('edit');
+
+      /*
+      		Create a new event
+       */
+      var event_date, values;
+      event_date = new WPT_Editor_Date();
+      values = {
+        event_date: event_date.datetime + this.editor.dateoffset(),
+        enddate: event_date.datetime + wpt_editor_ajax.default_duration * 1 + this.editor.dateoffset()
+      };
+      values[wpt_editor_ajax.order_key] = values.event_date;
+      this.list.add(values);
+      this.list.update();
+      return this.editor.productions.save();
+
+      /*
+      		Edit the new event
+       */
     };
 
     wpt_events.prototype.edit = function(event) {
@@ -2119,7 +2079,7 @@ if (typeof exports == "object") {
       this.form.find('input[name=tickets_url]').val(values.tickets_url);
       this.form.find('input[name=tickets_button]').val(values.tickets_button);
       this.tickets_status.value(values.tickets_status);
-      this.datetime.value(values.event_date - wpt_editor_ajax.gmt_offset * 60 * 60, values.enddate - wpt_editor_ajax.gmt_offset * 60 * 60);
+      this.datetime.value(values.event_date - this.editor.dateoffset(), values.enddate - this.editor.dateoffset());
       return event.addClass('edit');
     };
 
@@ -2142,18 +2102,6 @@ if (typeof exports == "object") {
       /*
       			Set form inputs to defaults.
        */
-
-      /*
-      		event_date = new WPT_Editor_Date()
-      		enddate = new WPT_Editor_Date()
-      		enddate.datetime += wpt_editor_ajax.default_duration * 1
-      
-      		@form.find('input[name=event_id]').removeAttr 'value'
-      		@form.find('input[name=event_date_date]').val event_date.date()
-      		@form.find('input[name=event_date_time]').val event_date.time()
-      		@form.find('input[name=enddate_date]').val enddate.date()
-      		@form.find('input[name=enddate_time]').val enddate.time()
-       */
       this.datetime.reset();
       this.form.find('input[name=venue]').removeAttr('value');
       this.form.find('input[name=city]').removeAttr('value');
@@ -2166,8 +2114,8 @@ if (typeof exports == "object") {
       var enddate, event_date, id, item, values, _ref;
       _ref = this.datetime.value(), event_date = _ref[0], enddate = _ref[1];
       values = {
-        event_date: event_date + wpt_editor_ajax.gmt_offset * 60 * 60,
-        enddate: enddate + wpt_editor_ajax.gmt_offset * 60 * 60,
+        event_date: event_date + this.editor.dateoffset(),
+        enddate: enddate + this.editor.dateoffset(),
         venue: this.form.find('input[name=venue]').val(),
         city: this.form.find('input[name=city]').val(),
         tickets_url: this.form.find('input[name=tickets_url]').val(),
@@ -2194,9 +2142,11 @@ if (typeof exports == "object") {
 
   WPT_Editor_Date = (function() {
     function WPT_Editor_Date(datetime) {
+      var date;
       this.datetime = datetime;
       if (this.datetime == null) {
-        this.datetime = wpt_editor_ajax.default_date - wpt_editor_ajax.gmt_offset * 60 * 60;
+        date = new Date();
+        this.datetime = wpt_editor_ajax.default_date - wpt_editor_ajax.gmt_offset * 60 * 60 - date.getTimezoneOffset() * 60 * -1;
       }
     }
 
@@ -2387,7 +2337,7 @@ if (typeof exports == "object") {
 
     WPT_Editor_Status_Control.prototype.value = function(tickets_status) {
       var option;
-      if (tickets_status != null) {
+      if ((tickets_status != null) && (tickets_status !== '')) {
         option = this.select.find('option[value=' + tickets_status + ']');
         if (option.length) {
           this.select.val(tickets_status);

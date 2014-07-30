@@ -7,7 +7,6 @@ class wpt_editor
 
 		@categories()
 		@seasons()
-		#@datepickers()
 
 	###
 	Set status to busy (show spinner).
@@ -55,20 +54,15 @@ class wpt_editor
 				@productions.season filter.text()
 			false
 
-	datepickers: ->
-		date = new WPT_Editor_Date()
-		@item.find('input[name=event_date_date], input[name=enddate_date]').datepicker
-			dateFormat: date.date_format()
-			defaultDate: date.object()
-			onSelect: (dateText,inst)->
-				input = jQuery @
-				if input.attr('name') is 'event_date_date'
-					enddate = new WPT_Editor_Date()
-					enddate.import input, input.parent().find('[name=event_date_time]')
-					enddate.datetime += wpt_editor_ajax.default_duration * 1
-					
-					input.parent().find('[name=enddate_date]').val enddate.date()
-					input.parent().find('[name=enddate_time]').val enddate.time()
+	###
+	Calculate the date offset between WP and the browser.
+	Returns the number of seconds that have to be added to dates that are submitted to the server.
+	###
+
+	dateoffset: ->
+		date = new Date()
+		date.getTimezoneOffset() * 60 * -1 + wpt_editor_ajax.gmt_offset * 60 * 60
+	
 					
 ###
 Form to create a new production.
@@ -160,7 +154,7 @@ class wpt_production_create_form
 	Submit the production and event data to the server.
 	Add the new production to the list object.
 	###
-	save : ->
+	save: ->
 	
 		###
 		Collect the event data
@@ -168,8 +162,8 @@ class wpt_production_create_form
 		[event_date, enddate] = @datetime.value()
 
 		event_data = 
-			'event_date': event_date + wpt_editor_ajax.gmt_offset * 60 * 60
-			'enddate': enddate + wpt_editor_ajax.gmt_offset * 60 * 60
+			'event_date': event_date + @editor.dateoffset()
+			'enddate': enddate + @editor.dateoffset()
 			'venue' : @form.find('input[name=venue]').val()
 			'city' : @form.find('input[name=city]').val()
 			'prices' : @form.find('[name=prices]').val()
@@ -189,9 +183,7 @@ class wpt_production_create_form
 			'categories' : @form.find('select[name=categories\\[\\]]').val()
 			'season' : @form.find('select[name=season]').val()
 			'events' : [event_data]
-		
-		console.log data
-		
+				
 		@editor.busy()
 		
 		###
@@ -220,7 +212,7 @@ class wpt_production_create_form
 			Clear the form and close it.
 			###
 			@reset()
-			
+						
 			@editor.done()
 
 
@@ -275,6 +267,17 @@ class wpt_productions
 			false
 		
 	close:  ->
+		id = @form.find('input[name=ID]').val()
+		if id != ''
+			values =
+				title: @form.find('input[name=title]').val()
+				excerpt : @form.find('textarea[name=excerpt]').val()
+				categories : @form.find('select[name=categories\\[\\]]').val()
+				season : @form.find('select[name=season]').val()
+	
+			item = @list.get('ID',id)[0]
+			item.values values
+
 		@form.parents('.production').removeClass 'edit'
 	
 	edit: (production) ->
@@ -324,32 +327,26 @@ class wpt_productions
 	view: (production) ->
 		window.open production.find('.view_link a').attr 'href'
 	
-	save: () ->
+	save: ->
 		id = @form.find('input[name=ID]').val()
 
-		event_values = (item.values() for item in @editor.events.list.items)
-
-		data =
-			'wpt_nonce': wpt_editor_ajax.wpt_nonce
-			'action': 'save'
-			'ID' : id
-			'title' : @form.find('input[name=title]').val()
-			'excerpt' : @form.find('textarea[name=excerpt]').val()
-			'categories' : @form.find('select[name=categories\\[\\]]').val()
-			'season' : @form.find('select[name=season]').val()
-			'events' : event_values
+		data = @list.get('ID',id)[0].values()
+		data['wpt_nonce'] = wpt_editor_ajax.wpt_nonce
+		data['action'] = 'save'
+		data['events'] = (item.values() for item in @editor.events.list.items)
 		
 		@editor.busy()
-		jQuery.post wpt_editor_ajax.url, data, (response) =>
+		jQuery.post wpt_editor_ajax.url, data, (response) => 
 			@list.get('ID',id)[0].values(response)
 			@activate()
 			@init()
+
+			@editor.done()
 
 			###
 				Load events
 			###
 			@editor.events.load id
-			@editor.done()
 		
 	category: (category='') ->
 		@list.filter (item) ->
@@ -391,6 +388,7 @@ class wpt_events
 				@list.add response
 				@activate()
 			@editor.done()
+
 			
 	activate: ->
 		@events.find('.actions a').unbind('click').click (e) =>
@@ -415,16 +413,28 @@ class wpt_events
 		@datetime = new WPT_Editor_Datetime_Control @form
 
 	add: () ->
-		@reset()
+		###
+		Create a new event
+		###
+		event_date = new WPT_Editor_Date()
+		values =
+			event_date: event_date.datetime + @editor.dateoffset()
+			enddate: event_date.datetime + wpt_editor_ajax.default_duration*1 + @editor.dateoffset()
+		values[wpt_editor_ajax.order_key] = values.event_date
+
+		@list.add values
+		@list.update()
 		
-		add = @events.find('.add')
-		add.prepend @form
-		add.addClass 'edit'
+		@editor.productions.save()
+			
+				
+		###
+		Edit the new event
+		###
 
 	edit: (event) ->
 		event.append @form
 		
-
 		@reset()
 
 		id = event.find('.ID').text()
@@ -437,8 +447,8 @@ class wpt_events
 		@form.find('input[name=tickets_button]').val values.tickets_button
 
 		@tickets_status.value values.tickets_status
-		
-		@datetime.value values.event_date - wpt_editor_ajax.gmt_offset*60*60, values.enddate - wpt_editor_ajax.gmt_offset*60*60
+
+		@datetime.value values.event_date - @editor.dateoffset(), values.enddate - @editor.dateoffset()
 	
 		event.addClass 'edit'
 		
@@ -462,17 +472,7 @@ class wpt_events
 		###
 			Set form inputs to defaults.
 		###
-		###
-		event_date = new WPT_Editor_Date()
-		enddate = new WPT_Editor_Date()
-		enddate.datetime += wpt_editor_ajax.default_duration * 1
 
-		@form.find('input[name=event_id]').removeAttr 'value'
-		@form.find('input[name=event_date_date]').val event_date.date()
-		@form.find('input[name=event_date_time]').val event_date.time()
-		@form.find('input[name=enddate_date]').val enddate.date()
-		@form.find('input[name=enddate_time]').val enddate.time()
-		###
 		@datetime.reset()
 		@form.find('input[name=venue]').removeAttr 'value'
 		@form.find('input[name=city]').removeAttr 'value'
@@ -485,8 +485,8 @@ class wpt_events
 		[event_date, enddate] = @datetime.value()
 		
 		values =
-			event_date: event_date + wpt_editor_ajax.gmt_offset * 60 * 60
-			enddate: enddate + wpt_editor_ajax.gmt_offset * 60 * 60
+			event_date: event_date + @editor.dateoffset()
+			enddate: enddate + @editor.dateoffset()
 			venue: @form.find('input[name=venue]').val()
 			city: @form.find('input[name=city]').val()
 			tickets_url: @form.find('input[name=tickets_url]').val()
@@ -511,7 +511,9 @@ class wpt_events
 
 class WPT_Editor_Date
 	constructor:(@datetime) ->
-		@datetime ?= wpt_editor_ajax.default_date - wpt_editor_ajax.gmt_offset * 60 * 60
+		if not @datetime?
+			date = new Date()
+			@datetime = wpt_editor_ajax.default_date - wpt_editor_ajax.gmt_offset * 60 * 60 - date.getTimezoneOffset() * 60 * -1
 	
 	object: () ->
 		new Date @datetime * 1000
@@ -658,7 +660,7 @@ class WPT_Editor_Status_Control
 		if @select.val() is wpt_editor_ajax.tickets_status_other then @other.show().focus() else @other.hide()
 		
 	value: (tickets_status) ->
-		if tickets_status?
+		if tickets_status? and (tickets_status != '')
 			option = @select.find 'option[value='+tickets_status+']'
 			if option.length
 				@select.val tickets_status

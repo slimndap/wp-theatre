@@ -257,12 +257,14 @@
   display: none;
 }
 #wpt_editor .wpt_editor_list #wpt_editor_events {
-  padding-top: 10px;
+  padding-top: 20px;
+  margin-right: 20px;
 }
 #wpt_editor .wpt_editor_list #wpt_editor_events h3 {
   font-size: 1em;
   font-weight: bold;
   margin: 0 0 4px;
+  line-height: 20px;
 }
 #wpt_editor .wpt_editor_list #wpt_editor_events .list .event {
   border-top: 1px solid #E5E5E5;
@@ -299,8 +301,10 @@
   opacity: 1;
 }
 #wpt_editor .wpt_editor_list #wpt_editor_events .add {
-  padding: 4px 0;
-  border-top: 1px solid #E5E5E5;
+  float: right;
+  width: 30px;
+  height: 20px;
+  overflow: hidden;
 }
 #wpt_editor .wpt_editor_list #wpt_editor_events .add.edit {
   background-color: #f9f9f9;
@@ -318,6 +322,18 @@
 }
 #wpt_editor .wpt_editor_list #wpt_editor_events .add.edit a.add_link {
   display: none;
+}
+#wpt_editor .wpt_editor_list #wpt_editor_events .add a {
+  text-decoration: none;
+}
+#wpt_editor .wpt_editor_list #wpt_editor_events .add a:before {
+  font-family: dashicons;
+  font-size: 20px;
+  display: inline-block;
+  width: 30px;
+  text-align: right;
+  display: block;
+  content: "\f132";
 }
 #wpt_editor .wpt_editor_list #wpt_editor_events .add a.button {
   margin: 10px 0;
