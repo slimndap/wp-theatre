@@ -40,6 +40,8 @@ class WPT_Test extends WP_UnitTestCase {
 		add_post_meta($this->upcoming_event_with_prices, 'event_date', date('Y-m-d H:i:s', time() + (2 * DAY_IN_SECONDS)));
 		add_post_meta($this->upcoming_event_with_prices, '_wpt_event_tickets_price', 12);
 		add_post_meta($this->upcoming_event_with_prices, '_wpt_event_tickets_price', 8.5);
+		add_post_meta($this->upcoming_event_with_prices, 'venue', 'Paard van Troje');
+		add_post_meta($this->upcoming_event_with_prices, 'city', 'Den Haag');
 		
 		// create production with 2 upcoming events
 		$this->production_with_upcoming_events = $this->factory->post->create($production_args);
@@ -232,13 +234,13 @@ class WPT_Test extends WP_UnitTestCase {
 	
 	// Test templates
 	
-	function test_wpt_events_template_permalink() {
+	function test_wpt_events_template_permalink_filter() {
 		$matcher = array(
 			'tag' => 'div',
 			'descendant' => array(
 				'tag' => 'div',
 				'attributes' => array(
-					'class' => 'wp_theatre_event_location'
+					'class' => 'wp_theatre_event_venue'
 				),
 				'child' => array(
 					'tag' => 'a',
@@ -248,7 +250,20 @@ class WPT_Test extends WP_UnitTestCase {
 				)
 			)	
 		);
-        $this->assertTag($matcher, do_shortcode('[wpt_events]{{location|permalink}}[/wpt_events]'));
+		$output = do_shortcode('[wpt_events]{{location|permalink}}[/wpt_events]');
+        $this->assertTag($matcher, $output, $output);
+	}
+	
+	function test_wpt_events_template_date_filter() {
+		$date_format = 'j M xxx';
+
+		$event = new WPT_Event($this->upcoming_event_with_prices);
+
+		$formatted_date = date( $date_format , $event->datetime());
+		
+		$output = do_shortcode('[wpt_events]{{datetime|date("'.$date_format.'")|permalink}}[/wpt_events]');
+		
+		$this->assertContains($formatted_date, $output);
 	}
 
 	function test_shortcode_wpt_productions_with_custom_field() {
@@ -267,6 +282,24 @@ class WPT_Test extends WP_UnitTestCase {
 		$xml = new DomDocument;
         $xml->loadHTML($html);
         $this->assertSelectCount('.wpt_productions .wp_theatre_prod_director', 5, $xml);		
+	}
+	
+	function test_shortcode_wpt_productions_with_custom_field_and_filter() {
+		$director = 'Steven Spielberg';
+	
+		update_post_meta(
+			$this->production_with_upcoming_event, 
+			'director', 
+			$director
+		);
+		
+		$html = do_shortcode('[wpt_productions]{{title}}{{director|permalink}}[/wpt_productions]');
+
+		$this->assertContains($director,$html);
+
+		$xml = new DomDocument;
+        $xml->loadHTML($html);
+        $this->assertSelectCount('.wpt_productions .wp_theatre_prod_director a', 5, $xml);		
 	}
 	
 	// Test event features
@@ -410,6 +443,7 @@ class WPT_Test extends WP_UnitTestCase {
 		$user = new WP_User( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
 		wp_set_current_user( $user->ID );		
         $this->assertFalse($this->wp_theatre->transient->get('p',$args));		
+		wp_set_current_user(0);		
 	}
 	
 	function test_wpt_transient_events() {

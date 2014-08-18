@@ -58,11 +58,27 @@ class WPT_Event {
 	 *
 	 * @return string City.
 	 */
-	function city() {
+	function city($args=array()) {
+		global $wp_theatre;
+		
+		$defaults = array(
+			'html' => false,
+			'filters' => array()
+		);
+		$args = wp_parse_args( $args, $defaults );
+		
 		if (!isset($this->city)) {
 			$this->city = apply_filters('wpt_event_venue',get_post_meta($this->ID,'city',true),$this);
 		}	
-		return $this->city;			
+
+		if ($args['html']) {
+			$html = '<div class="'.self::post_type_name.'_city">';
+			$html.= $wp_theatre->filter->apply($this->city, $args['filters'], $this);
+			$html.= '</div>';
+			return apply_filters('wpt_event_city_html', $html, $this);
+		} else {
+			return $this->city;			
+		}
 	}
 	
 	/**
@@ -78,9 +94,12 @@ class WPT_Event {
 	 * @return string text or HTML.
 	 */
 	function date($args=array()) {
+		global $wp_theatre;
+		
 		$defaults = array(
 			'html' => false,
-			'start' => true
+			'start' => true,
+			'filters'=> array()
 		);
 		$args = wp_parse_args( $args, $defaults );
 
@@ -92,9 +111,15 @@ class WPT_Event {
 		if (!isset($this->date[$field])) {
 			$datetime_args = array('start'=>$args['start']);
 			$this->date[$field] = apply_filters('wpt_event_date',date_i18n(get_option('date_format'),$this->datetime($datetime_args)),$this);
-		}	
+		}
+		
 		if ($args['html']) {
-			$html= '<div class="'.self::post_type_name.'_date">'.$this->date[$field].'</div>';
+			$html= '<div class="'.self::post_type_name.'_date">';
+
+			// Apply WPT_Filters
+			$html.= $wp_theatre->filter->apply($this->date[$field], $args['filters'], $this);
+			
+			$html.= '</div>';
 			return apply_filters('wpt_event_date_html', $html, $this);
 		} else {
 			return $this->date[$field];			
@@ -118,9 +143,12 @@ class WPT_Event {
 	 * @return string text or HTML.
 	 */
 	function datetime($args=array()) {
+		global $wp_theatre;
+		
 		$defaults = array(
 			'html' => false,
-			'start' => true
+			'start' => true,
+			'filters' => Array()
 		);
 		$args = wp_parse_args( $args, $defaults );
 
@@ -147,8 +175,11 @@ class WPT_Event {
 	}
 	
 	function duration($args=array()) {
+		global $wp_theatre;
+		
 		$defaults = array(
-			'html' => false
+			'html' => false,
+			'filters' => array()
 		);
 		$args = wp_parse_args( $args, $defaults );
 		if (
@@ -165,14 +196,16 @@ class WPT_Event {
 			$text = $minutes.' '._n('minute','minutes', $minutes, 'wp_theatre');
 			$this->duration = apply_filters('wpt_event_duration',$text,$this);
 		}
+				
 		if ($args['html']) {
 			$html = '';
-			$html.= '<div class="'.self::post_type_name.'_duration">'.$this->duration.'</div>';
+			$html.= '<div class="'.self::post_type_name.'_duration">';
+			$html.= $wp_theatre->filter->apply($this->duration, $args['filters'], $this);
+			$html.= '</div>';
 			return $html;
 		} else {
 			return $this->duration;				
 		}
-		return $this->duration;		
 	}
 	
 	/**
@@ -192,8 +225,11 @@ class WPT_Event {
 	 * @return string text or HTML.
 	 */
 	function location($args=array()) {
+		global $wp_theatre;
+		
 		$defaults = array(
 			'html' => false,
+			'filters' => Array()
 		);
 		$args = wp_parse_args( $args, $defaults );
 
@@ -212,21 +248,18 @@ class WPT_Event {
 			}
 			$this->location = apply_filters('wpt_event_location',$location,$this);
 		}	
+
 		if ($args['html']) {
 			$venue = $this->venue();
 			$city = $this->city();
 			$html = '';
 			$html.= '<div class="'.self::post_type_name.'_location">';
-			if (!empty($venue)) {
-				$html.= '<div class="'.self::post_type_name.'_venue">'.$this->venue().'</div>';
-			}
-			if (!empty($city)) {
-				$html.= '<div class="'.self::post_type_name.'_city" >'.$this->city().'</div>';
-			}
+			$html.= $this->venue($args);
+			$html.= $this->city($args);
 			$html.= '</div>'; // .location
 			return apply_filters('wpt_event_location_html', $html, $this);
 		} else {
-			return $this->location;			
+			return $this->location;
 		}
 	}
 	
@@ -266,6 +299,10 @@ class WPT_Event {
 		$html.= '</span>';
 		
 		return $html;
+	}
+
+	function permalink($args=array()) {
+		return $this->production()->permalink($args);
 	}
 
 	/**
@@ -358,9 +395,12 @@ class WPT_Event {
 	 * @return string text or HTML.
 	 */
 	function remark($args=array()) {
+		global $wp_theatre;
+		
 		$defaults = array(
 			'html' => false,
-			'text' => false
+			'text' => false,
+			'filters' => array()
 		);
 
 		$args = wp_parse_args( $args, $defaults );
@@ -369,9 +409,11 @@ class WPT_Event {
 			$this->remark = apply_filters('wpt_event_remark',get_post_meta($this->ID,'remark',true), $this);
 		}
 
-		if ($args['html'] && !empty($this->remark)) {
+		if ($args['html'] && !empty($remark)) {
 			$html = '';
-			$html.= '<div class="'.self::post_type_name.'_remark">'.$this->remark.'</div>';
+			$html.= '<div class="'.self::post_type_name.'_remark">';
+			$html.= $wp_theatre->filter->apply($this->remark, $args['filters'], $this);
+			$html.= '</div>';
 			return apply_filters('wpt_event_remark_html', $html, $this);				
 		} else {
 			return $this->remark;				
@@ -491,9 +533,12 @@ class WPT_Event {
 	 * @return string text or HTML.
 	 */
 	function time($args=array()) {
+		global $wp_theatre;
+		
 		$defaults = array(
 			'html' => false,
-			'start' => true
+			'start' => true,
+			'filters' => array()
 		);
 		$args = wp_parse_args( $args, $defaults );
 
@@ -506,9 +551,12 @@ class WPT_Event {
 		if (!isset($this->time[$field])) {
 			$datetime_args = array('start'=>$args['start']);
 			$this->time[$field] = apply_filters('wpt_event_time',date_i18n(get_option('time_format'),$this->datetime($datetime_args)),$this);
-		}	
+		}
+
 		if ($args['html']) {
-			$html= '<div class="'.self::post_type_name.'_time">'.$this->time[$field].'</div>';
+			$html= '<div class="'.self::post_type_name.'_time">';
+			$html.= $wp_theatre->filter->apply($this->time[$field], $args['filters'], $this);
+			$html.= '</div>';
 			return apply_filters('wpt_event_time_html', $html, $this);
 		} else {
 			return $this->time[$field];			
@@ -522,11 +570,27 @@ class WPT_Event {
 	 *
 	 * @return string Venue.
 	 */
-	function venue() {
+	function venue($args=array()) {
+		global $wp_theatre;
+		
+		$defaults = array(
+			'html' => false,
+			'filters' => Array()
+		);
+		$args = wp_parse_args( $args, $defaults );
+
 		if (!isset($this->venue)) {
 			$this->venue = apply_filters('wpt_event_venue',get_post_meta($this->ID,'venue',true),$this);
-		}	
-		return $this->venue;			
+		}
+		
+		if ($args['html']) {
+			$html= '<div class="'.self::post_type_name.'_venue">';
+			$html.= $wp_theatre->filter->apply($this->venue, $args['filters'], $this);
+			$html.= '</div>';
+			return apply_filters('wpt_event_venue_html', $html, $this);
+		} else {
+			return $this->venue;			
+		}
 	}
 	
 	/**
@@ -559,14 +623,16 @@ class WPT_Event {
 		foreach($placeholders[1] as $placeholder) {
 
 			$field = '';
-			$filter = '';
+			$filters = Array();
 
 			$placeholder_parts = explode('|',$placeholder);
+
 			if (!empty($placeholder_parts[0])) {
 				$field = $placeholder_parts[0];
 			}
 			if (!empty($placeholder_parts[1])) {
-				$filter = $placeholder_parts[1];
+				$filters = $placeholder_parts;
+				array_shift($filters);
 			}
 
 			switch($field) {
@@ -577,33 +643,19 @@ class WPT_Event {
 				case 'remark':
 				case 'time':
 				case 'tickets':
-					$replacement = $this->{$field}(array('html'=>true));
+					$replacement = $this->{$field}(array('html'=>true, 'filters'=>$filters));
 					break;
 				case 'title':
 				case 'categories':
 				case 'content':
 				case 'excerpt':
 				case 'thumbnail':
-					$replacement = $this->production()->{$field}(array('html'=>true));
+					$replacement = $this->production()->{$field}(array('html'=>true, 'filters'=>$filters));
 					break;
 				default: 
-					$replacement = $this->production()->custom($field,array('html'=>true));
+					$replacement = $this->production()->custom($field,array('html'=>true, 'filters'=>$filters));
 			}
-			
-			switch($filter) {
-				case 'permalink':
-					if (!empty($replacement)) {
-						$args = array(
-							'html'=>true,
-							'text'=> $replacement,
-							'inside'=>true
-						);
-						$replacement = $this->production()->permalink($args);
-					}
-					break;
-				default:
-					$replacement = $replacement;
-			}
+
 			$html = str_replace('{{'.$placeholder.'}}', $replacement, $html);
 		}
 

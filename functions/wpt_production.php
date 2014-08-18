@@ -64,8 +64,11 @@ class WPT_Production {
 	 * @return string URL or HTML.
 	 */
 	function cities($args=array()) {
+		global $wp_theatre;
+		
 		$defaults = array(
-			'html' => false
+			'html' => false,
+			'filters' => array()
 		);
 
 		$args = wp_parse_args( $args, $defaults );
@@ -105,7 +108,9 @@ class WPT_Production {
 		}
 		if ($args['html']) {
 			$html = '';
-			$html.= '<div class="'.self::post_type_name.'_cities">'.$this->cities.'</div>';
+			$html.= '<div class="'.self::post_type_name.'_cities">';
+			$html.= $wp_theatre->filter->apply($this->cities, $args['filters'], $this);
+			$html.= '</div>';
 			return apply_filters('wpt_production_cities_html', $html, $this);				
 		} else {
 			return $this->cities;
@@ -156,8 +161,10 @@ class WPT_Production {
 	 * @return string URL or HTML.
 	 */
 	function dates($args=array()) {
+		global $wp_theatre;
 		$defaults = array(
-			'html' => false
+			'html' => false,
+			'filters' => array()
 		);
 
 		$args = wp_parse_args( $args, $defaults );
@@ -190,9 +197,12 @@ class WPT_Production {
 			$this->dates = $dates;
 			$this->dates = apply_filters('wpt_production_dates',$dates, $this);
 		}
+		
 		if ($args['html']) {
 			$html = '';
-			$html.= '<div class="'.self::post_type_name.'_dates">'.$this->dates.'</div>';
+			$html.= '<div class="'.self::post_type_name.'_dates">';
+			$html.= $wp_theatre->filter->apply($this->dates, $args['filters'], $this);
+			$html.= '</div>';
 			return apply_filters('wpt_production_dates_html', $html, $this);				
 		} else {
 			return $this->dates;
@@ -229,9 +239,12 @@ class WPT_Production {
 	 * @return string URL or HTML.
 	 */
 	function excerpt($args=array()) {
+		global $wp_theatre;
+
 		$defaults = array(
 			'html' => false,
-			'words' => 15
+			'words' => 15,
+			'filters' => array()
 		);
 
 		$args = wp_parse_args( $args, $defaults );
@@ -247,7 +260,9 @@ class WPT_Production {
 
 		if ($args['html']) {
 			$html = '';
-			$html.= '<p class="'.self::post_type_name.'_excerpt">'.$this->excerpt.'</p>';
+			$html.= '<p class="'.self::post_type_name.'_excerpt">';
+			$html.= $wp_theatre->filter->apply($this->excerpt, $args['filters'], $this);
+			$html.= '</p>';
 			return apply_filters('wpt_production_excerpt_html', $html, $this);				
 		} else {
 			return $this->excerpt;				
@@ -366,8 +381,11 @@ class WPT_Production {
 	 * @return string URL or HTML.
 	 */
 	function summary($args=array()) {
+		global $wp_theatre;
+		
 		$defaults = array(
-			'html' => false
+			'html' => false,
+			'filters' => array()
 		);
 
 		$args = wp_parse_args( $args, $defaults );
@@ -387,7 +405,10 @@ class WPT_Production {
 		
 		if ($args['html']) {
 			$html = '';
-			$html.= '<p class="'.self::post_type_name.'_summary">'.$this->summary.'</p>';
+			$html.= '<p class="'.self::post_type_name.'_summary">';
+			$html.= $wp_theatre->filter->apply($this->summary, $args['filters'], $this);
+			$html.= '</p>';
+
 			return apply_filters('wpt_production_summary_html', $html, $this);				
 		} else {
 			return $this->summary;
@@ -408,9 +429,12 @@ class WPT_Production {
 	 * @return integer ID or string HTML.
 	 */
 	function thumbnail($args=array()) {
+		global $wp_theatre;
+		
 		$defaults = array(
 			'html' => false,
-			'size' => 'thumbnail'
+			'size' => 'thumbnail',
+			'filters' => array()
 		);
 		$args = wp_parse_args( $args, $defaults );
 		
@@ -422,7 +446,9 @@ class WPT_Production {
 			$html = '';
 			$thumbnail = get_the_post_thumbnail($this->ID,$args['size']);					
 			if (!empty($thumbnail)) {
-				$html.= '<figure>'.$thumbnail.'</figure>';
+				$html.= '<figure>';
+				$html.= $wp_theatre->filter->apply($thumbnail, $args['filters'], $this);
+				$html.= '</figure>';
 			}
 			return apply_filters('wpt_production_thumbnail_html', $html, $this);
 		} else {
@@ -443,17 +469,23 @@ class WPT_Production {
 	 * @return string text or HTML.
 	 */
 	function title($args=array()) {
+		global $wp_theatre;
+		
 		$defaults = array(
-			'html' => false
+			'html' => false,
+			'filters' => array()
 		);
 		$args = wp_parse_args( $args, $defaults );
 
 		if (!isset($this->title)) {
 			$this->title = apply_filters('wpt_production_title',$this->post()->post_title,$this);
-		}	
+		}
+		
 		if ($args['html']) {
 			$html = '';
-			$html.= '<div class="'.self::post_type_name.'_title">'.$this->title.'</div>';
+			$html.= '<div class="'.self::post_type_name.'_title">';
+			$html.= $wp_theatre->filter->apply($this->title, $args['filters'], $this);
+			$html.= '</div>';
 			return apply_filters('wpt_production_title_html', $html, $this);
 		} else {
 			return $this->title;			
@@ -471,8 +503,11 @@ class WPT_Production {
      * @return string.
      */
 	function custom($field, $args=array()) {
+		global $wp_theatre;
+		
 		$defaults = array(
-			'html' => false
+			'html' => false,
+			'filters' => array()
 		);
 		$args = wp_parse_args( $args, $defaults );
 
@@ -485,7 +520,10 @@ class WPT_Production {
 
 		if ($args['html']) {
 			$html = '';
-			$html.= '<div class="'.self::post_type_name.'_'.$field.'">'.$this->{$field}.'</div>';
+			$html.= '<div class="'.self::post_type_name.'_'.$field.'">';
+			$html.= $wp_theatre->filter->apply($this->{$field}, $args['filters'], $this);
+			$html.= '</div>';
+
 			return apply_filters('wpt_production_'.$field.'_html', $html, $this);
 		} else {
 			return $this->{$field};
