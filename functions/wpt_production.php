@@ -101,12 +101,12 @@ class WPT_Production {
 			if (count($cities)>3) {
 				$cities_text = __('ao','wp_theatre').' '.$cities_text;
 			}
-			$this->cities = apply_filters('wpt_event_cities',$cities_text, $this);
+			$this->cities = apply_filters('wpt_production_cities',$cities_text, $this);
 		}
 		if ($args['html']) {
 			$html = '';
 			$html.= '<div class="'.self::post_type_name.'_cities">'.$this->cities.'</div>';
-			return apply_filters('wpt_event_cities_html', $html, $this);				
+			return apply_filters('wpt_production_cities_html', $html, $this);				
 		} else {
 			return $this->cities;
 		}
@@ -188,12 +188,12 @@ class WPT_Production {
 				}
 			}
 			$this->dates = $dates;
-			$this->dates = apply_filters('wpt_event_dates',$dates, $this);
+			$this->dates = apply_filters('wpt_production_dates',$dates, $this);
 		}
 		if ($args['html']) {
 			$html = '';
 			$html.= '<div class="'.self::post_type_name.'_dates">'.$this->dates.'</div>';
-			return apply_filters('wpt_event_dates_html', $html, $this);				
+			return apply_filters('wpt_production_dates_html', $html, $this);				
 		} else {
 			return $this->dates;
 		}
@@ -326,7 +326,7 @@ class WPT_Production {
 				$html.= $args['text'];
 				$html.= '</a>';				
 			}
-			return apply_filters('wpt_event_permalink_html', $html, $this);				
+			return apply_filters('wpt_production_permalink_html', $html, $this);				
 		} else {
 			return $this->permalink;				
 		}
@@ -388,7 +388,7 @@ class WPT_Production {
 		if ($args['html']) {
 			$html = '';
 			$html.= '<p class="'.self::post_type_name.'_summary">'.$this->summary.'</p>';
-			return apply_filters('wpt_event_summary_html', $html, $this);				
+			return apply_filters('wpt_production_summary_html', $html, $this);				
 		} else {
 			return $this->summary;
 		}
