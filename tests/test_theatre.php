@@ -403,6 +403,13 @@ class WPT_Test extends WP_UnitTestCase {
         $xml->loadHTML($this->wp_theatre->transient->get('p',$args));
         $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 5, $xml);		
 		
+		/* 
+		 * Test if transients are off for logged in users 
+		 */
+		 
+		$user = new WP_User( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
+		wp_set_current_user( $user->ID );		
+        $this->assertFalse($this->wp_theatre->transient->get('p',$args));		
 	}
 	
 	function test_wpt_transient_events() {
@@ -448,7 +455,7 @@ class WPT_Test extends WP_UnitTestCase {
 		);
 		$this->assertFalse($this->wp_theatre->transient->get('prods',$args));					
 	}
-	
+		
 	// Tags
 	function test_tag_archive() {
 		return;
