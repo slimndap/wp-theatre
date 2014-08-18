@@ -203,6 +203,29 @@ class WPT_Test extends WP_UnitTestCase {
         $this->assertSelectCount('.wpt_events .wp_theatre_event', 4, $xml);		
 	}
 	
+	function test_shortcode_wpt_events_magic_dates() {
+		// create production
+		$production_args = array(
+			'post_type'=>WPT_Production::post_type_name
+		);
+		$production = $this->factory->post->create($production_args);
+
+		$event_args = array(
+			'post_type'=>WPT_Event::post_type_name
+		);
+
+		$event_today = $this->factory->post->create($event_args);
+		add_post_meta($event_today, WPT_Production::post_type_name, $production);
+		add_post_meta($event_today, 'event_date', date('Y-m-d H:i:s', strtotime('today')));
+
+		$xml = new DomDocument;
+        $xml->loadHTML(do_shortcode('[wpt_events day="today" upcoming="false"]'));
+        $this->assertSelectCount('.wpt_events .wp_theatre_event', 1, $xml);		
+
+        $xml->loadHTML(do_shortcode('[wpt_events day="tomorrow"]'));
+        $this->assertSelectCount('.wpt_events .wp_theatre_event', 1, $xml);		
+	}
+	
 	function test_shortcode_wpt_events_filter_season() {
 		$xml = new DomDocument;
         $xml->loadHTML(do_shortcode('[wpt_events season="'.$this->season2.'"]'));

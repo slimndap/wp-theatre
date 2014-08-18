@@ -125,7 +125,7 @@ class WPT_Frontend {
 		global $wp_query;
 		
 		$defaults = array(
-			'upcoming' => true,
+			'upcoming' => 'true',
 			'past' => false,
 			'paginateby'=>array(),
 			'category'=> false,
@@ -190,11 +190,11 @@ class WPT_Frontend {
 			$atts['category'] = implode(',',$categories);
 		}
 		
+		$atts['upcoming'] = 'true' === $atts['upcoming'];
+		
 		if (!is_null($content) && !empty($content)) {
 			$atts['template'] = html_entity_decode($content);
 		}
-
-		$wp_theatre->events->filters['upcoming'] = true;
 
 		if ( ! ( $html = $wp_theatre->transient->get('e', array_merge($atts, $_GET)) ) ) {
 			$html = $wp_theatre->events->html($atts);

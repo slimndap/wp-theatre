@@ -78,15 +78,16 @@ class WPT_Events extends WPT_Listing {
 		global $wp_theatre;
 
 		$defaults = array(
-			'paginateby' => array(),
+			'category' => false,
+			'day' => false,
 			'groupby'=>false,
+			'limit' => false,
+			'month' => false,
+			'paginateby' => array(),
 			'production' => false,
 			'season' => false,
-			'limit' => false,
-			'category' => false,
-			'month' => false,
-			'day' => false,
-			'template' => NULL
+			'template' => NULL,
+			'upcoming' => true
 		);
 		$args = wp_parse_args($args, $defaults );
 
@@ -98,7 +99,7 @@ class WPT_Events extends WPT_Listing {
 		}
 
 		$filters = array(
-			'upcoming' => true,
+			'upcoming' => $args['upcoming'],
 			'production' => $args['production'],
 			'limit' => $args['limit'],
 			'category' => $args['category'],
@@ -135,6 +136,7 @@ class WPT_Events extends WPT_Listing {
 					$days = $this->days($filters);
 					foreach($days as $day=>$name) {
 						$filters['day'] = $day;
+						$filters['upcoming'] = true;
 						$events = $this->get($filters);
 						if (!empty($events)) {
 							$html.= '<h3 class="wpt_listing_group day">'.date_i18n('l d F',strtotime($day)).'</h3>';
@@ -222,10 +224,10 @@ class WPT_Events extends WPT_Listing {
 	 */
 	 
 	function load($filters=array()) {
-		global $wpdb;
 		global $wp_theatre;
-		
+
 		$filters = wp_parse_args( $filters, $this->defaults() );
+
 		$args = array(
 			'post_type' => WPT_Event::post_type_name,
 			'post_status' => $filters['status'],
@@ -258,6 +260,17 @@ class WPT_Events extends WPT_Listing {
 		}
 
 		if ($filters['day']) {
+			/*
+			 * Translate 'today' and 'tomorrow' to real dates
+			 */
+			switch ($filters['day']) {
+				case 'today':
+					$filters['day'] = date('Y-m-d',strtotime('today'));
+					break;
+				case 'tomorrow':
+					$filters['day'] = date('Y-m-d',strtotime('tomorrow'));
+					break;
+			}
 			$args['meta_query'][] = array (
 				'key' => 'event_date',
 				'value' => $filters['day'],
