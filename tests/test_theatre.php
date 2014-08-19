@@ -170,6 +170,25 @@ class WPT_Test extends WP_UnitTestCase {
 	}
 	
 	function test_event_inherits_categories_from_production() {
+		$production_args = array(
+			'post_type'=>WPT_Production::post_type_name
+		);
+		$production = $this->factory->post->create($production_args);
+
+		$event_args = array(
+			'post_type'=>WPT_Event::post_type_name
+		);
+
+		$event = $this->factory->post->create($event_args);
+		add_post_meta($event, WPT_Production::post_type_name, $production);
+		add_post_meta($event, 'event_date', date('Y-m-d H:i:s', strtotime('tomorrow')));
+
+		$category = wp_create_category('testcategory');
+		wp_set_post_categories($production, array($category));
+
+		$xml = new DomDocument;
+        $xml->loadHTML(do_shortcode('[wpt_events category="testcategory"]{{title}}{{categories}}[/wpt_events]'));
+        $this->assertSelectCount('.wpt_events .wp_theatre_event', 1, $xml);		
 		
 	}
 	
@@ -204,7 +223,6 @@ class WPT_Test extends WP_UnitTestCase {
 	}
 	
 	function test_shortcode_wpt_events_magic_dates() {
-		// create production
 		$production_args = array(
 			'post_type'=>WPT_Production::post_type_name
 		);

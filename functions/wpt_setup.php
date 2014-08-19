@@ -16,6 +16,7 @@
 			add_action('save_post_'.WPT_Production::post_type_name,array( $this,'save_production'), 20);
 			add_action('updated_post_meta', array($this,'updated_post_meta'), 20 ,4);
 			add_action('added_post_meta', array($this,'updated_post_meta'), 20 ,4);
+			add_action( 'set_object_terms', array($this,'set_object_terms'),20, 6);
 			
 			add_action('before_delete_post',array( $this,'before_delete_post'));
 			add_action('wp_trash_post',array( $this,'wp_trash_post'));
@@ -186,12 +187,6 @@
 			$production = new WPT_Production($post_id);
 			$events = $production->events();
 			
-			// give child events the same categories
-			$categories = wp_get_post_categories($post_id);
-			foreach ($events as $event) {
-				wp_set_post_categories($event->ID, $categories);
-			}
-			
 			// give child events the same season
 			if ($season = $production->season()) {
 				foreach ($events as $event) {
@@ -201,6 +196,23 @@
 			}
 		}
 		
+		/*
+		 * Give child events the same category as the parent production.
+		 * If the category of a production is set, walk through all connected events and
+		 * overwrite the categories of the events with the categories of the production.
+		 */
+		
+		function set_object_terms($object_id, $terms, $tt_ids, $taxonomy, $append, $old_tt_ids ) {
+			if ('category'==$taxonomy && WPT_Production::post_type_name==get_post_type($object_id)) {
+				$production = new WPT_Production($object_id);
+				$events = $production->events();
+				$categories = wp_get_post_categories($object_id);
+				foreach ($events as $event) {
+					wp_set_post_categories($event->ID, $categories);
+				}
+			}
+		}
+
 		function widgets_init() {
 		     register_widget( 'WPT_Events_Widget' );
 		     register_widget( 'WPT_Productions_Widget' );
