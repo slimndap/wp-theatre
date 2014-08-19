@@ -12,7 +12,7 @@
 		public function widget( $args, $instance ) {
 			global $wp_theatre;
 			
-			$title = apply_filters( 'widget_title', $instance['title'] );
+			$title = apply_filters( 'widget_title', $instance['title'], $instance, $this->id_base );
 			
 			echo $args['before_widget'];
 			if ( ! empty( $title ) )
@@ -63,6 +63,99 @@
 		}
 	}
 
+	/*
+	 * Theater Production widget.
+	 * Display a single production in a widget
+	 * @since 0.8.2
+	 */
+
+	class WPT_Production_Widget extends WP_Widget {
+		function __construct() {
+			parent::__construct(
+				'wpt_production_widget',
+				__('Theater Production','wp_theatre'), // Name
+				array( 'description' => __( 'Display a single production', 'wp_theatre' ), ) // Args
+			);
+		}
+	
+		public function widget( $args, $instance ) {
+			global $wp_theatre;
+			
+			
+			if (!empty($instance['production'])) {
+				$title = apply_filters( 'widget_title', $instance['title'], $instance, $this->id_base );
+				
+				echo $args['before_widget'];
+				if ( ! empty( $title ) )
+					echo $args['before_title'] . $title . $args['after_title'];
+					
+				$filters = array(
+					'limit'=>$instance['limit']
+				);
+				
+				if (!empty($instance['template'])) {
+					$filters['template'] = $instance['template'];
+				}
+	
+				$production = new WPT_Production($instance['production']);
+
+				$production_args = array();
+				if (!empty($instance['template'])) {
+					$production_args['template'] = $instance['template'];
+				}
+				$html.= $production->html($production_args);
+
+				echo $html;
+	
+				echo $args['after_widget'];
+			}
+
+		}
+
+		public function form( $instance ) {
+			global $wp_theatre;
+			$defaults = array(
+				'title' => __( 'Production', 'wp_theatre' ),
+				'template' => ''
+			);
+			$values = wp_parse_args( $instance, $defaults );
+
+			?>
+			<p>
+			<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title' ); ?>:</label> 
+			<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $values['title'] ); ?>">
+			</p>
+
+			<p>
+			<label for="<?php echo $this->get_field_id( 'production' ); ?>"><?php _e( 'Production','wp_theatre' ); ?>:</label> 
+			<select class="widefat" id="<?php echo $this->get_field_id( 'production' ); ?>" name="<?php echo $this->get_field_name( 'production' ); ?>">
+				<option value=""></option>
+				<?php
+					$productions = $wp_theatre->productions->load();
+					
+					foreach ($productions as $production) {
+						echo '<option value="'.$production->ID.'"';
+						if ($instance['production']==$production->ID) {
+							echo ' selected="selected"';
+						}
+						echo '>';
+						echo $production->title();
+						echo '</option>';
+					}
+				?>
+			</select>
+			</p>
+
+
+			<p class="wpt_widget_template">
+			<label for="<?php echo $this->get_field_id( 'template' ); ?>"><?php _e( 'Template','wp_theatre' ); ?>:</label> 
+			<textarea class="widefat" id="<?php echo $this->get_field_id( 'template' ); ?>" name="<?php echo $this->get_field_name( 'template' ); ?>"><?php echo esc_attr( $values['template'] ); ?></textarea>
+			<em><?php _e('Optional, see <a href="https://github.com/slimndap/wp-theatre/wiki/Shortcodes#template" target="_blank">documentation</a>.','wp_theatre');?></em>
+			</p>
+			<?php 
+		}
+	}
+
 	class WPT_Productions_Widget extends WP_Widget {
 		function __construct() {
 			parent::__construct(
@@ -75,8 +168,8 @@
 		public function widget( $args, $instance ) {
 			global $wp_theatre;
 
-			$title = apply_filters( 'widget_title', $instance['title'] );
-			
+			$title = apply_filters( 'widget_title', $instance['title'], $instance, $this->id_base );
+
 			echo $args['before_widget'];
 			if ( ! empty( $title ) )
 				echo $args['before_title'] . $title . $args['after_title'];
@@ -138,7 +231,7 @@
 		public function widget( $args, $instance ) {
 			global $wp_theatre;			
 			if (!$wp_theatre->cart->is_empty()) {
-				$title = apply_filters( 'widget_title', $instance['title'] );
+				$title = apply_filters( 'widget_title', $instance['title'], $instance, $this->id_base );
 				
 				echo $args['before_widget'];
 				if ( ! empty( $title ) )

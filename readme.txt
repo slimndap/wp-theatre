@@ -79,6 +79,7 @@ The new feature may be added directly to the Theater plugin or as an extension s
 = 0.8.2 = 
 * New date filter for template placeholder: `{{datetime|date('D j')}}`. Thank you [Epco](http://wordpress.org/support/profile/epco)!
 * Show all events for today or tomorrow: `[wpt_events day="today"]` and `[wpt_events day="tomorrow"]`. Thank you [mychelemy](https://github.com/mychelemy)!
+* New Theater Production widget. Highlight a single production in your sidebar.
 
 = 0.8 =
 * New Theater Calendar widget with upcoming events.

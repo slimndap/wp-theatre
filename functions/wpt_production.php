@@ -571,14 +571,15 @@ class WPT_Production {
 		foreach($placeholders[1] as $placeholder) {
 
 			$field = '';
-			$filter = '';
+			$filters = array();
 
 			$placeholder_parts = explode('|',$placeholder);
 			if (!empty($placeholder_parts[0])) {
 				$field = $placeholder_parts[0];
 			}
 			if (!empty($placeholder_parts[1])) {
-				$filter = $placeholder_parts[1];
+				$filters = $placeholder_parts;
+				array_shift($filters);
 			}
 
 			switch($field) {
@@ -590,12 +591,12 @@ class WPT_Production {
 				case 'summary':
 				case 'categories':
 				case 'thumbnail':
-					$replacement = $this->{$field}(array('html'=>true));
+					$replacement = $this->{$field}(array('html'=>true, 'filters'=>$filters));
 					break;
 				default:
-					$replacement = $this->custom($field,array('html'=>true));
+					$replacement = $this->custom($field,array('html'=>true, 'filters'=>$filters));
 			}
-			
+			/*
 			switch($filter) {
 				case 'permalink':
 					if (!empty($replacement)) {
@@ -610,6 +611,7 @@ class WPT_Production {
 				default:
 					$replacement = $replacement;
 			}
+			*/
 			$html = str_replace('{{'.$placeholder.'}}', $replacement, $html);
 		}
 
