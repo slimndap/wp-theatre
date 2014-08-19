@@ -64,10 +64,6 @@ __I don't see the Theater Calendar widget__
 
 Make sure that you select a page to show your event listings on in the Theater plugin settings.
 
-__I don't see the Theater Categories widget__
-
-Make sure that you select a page to show your event listings on in the Theater plugin settings.
-
 __I really need feature X. Can you add it?__
 
 If you are missing a feature that you really need for your website you can:

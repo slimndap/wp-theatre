@@ -3,6 +3,7 @@
 class WPT_Test_Listing_Page extends WP_UnitTestCase {
 
 	function setUp() {
+		global $wp_rewrite; 
 		global $wp_theatre;
 		
 		parent::setUp();
@@ -99,8 +100,16 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		add_post_meta($upcoming_event, 'tickets_status', WPT_Event::tickets_status_hidden );
 
 
-
-
+		/* 
+		 * Make sure permalink structure is consistent when running query tests.
+		 * @see: https://core.trac.wordpress.org/ticket/27704#comment:7
+		 * @see: https://core.trac.wordpress.org/changeset/28967
+		 * @see: https://github.com/slimndap/wp-theatre/issues/48
+		 */
+		$wp_rewrite->init(); 
+		$wp_rewrite->set_permalink_structure( '/%year%/%monthnum%/%day%/%postname%/' );
+		create_initial_taxonomies(); 
+		$wp_rewrite->flush_rules();
 	}
 
 
