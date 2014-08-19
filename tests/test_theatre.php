@@ -340,7 +340,7 @@ class WPT_Test extends WP_UnitTestCase {
 
 		$xml = new DomDocument;
         $xml->loadHTML($html);
-        $this->assertSelectCount('.wpt_productions .wp_theatre_prod_director a', 5, $xml);		
+        $this->assertSelectCount('.wpt_productions .wp_theatre_prod_director a', 1, $xml, $html);		
 	}
 	
 	// Test event features
