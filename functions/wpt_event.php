@@ -623,7 +623,7 @@ class WPT_Event {
 		foreach($placeholders[1] as $placeholder) {
 
 			$field = '';
-			$filters = Array();
+			$filters = array();
 
 			$placeholder_parts = explode('|',$placeholder);
 

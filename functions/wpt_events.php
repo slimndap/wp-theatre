@@ -314,8 +314,9 @@ class WPT_Events extends WPT_Listing {
 	 */
 	function months($filters=array()) {
 		// get all event according to remaining filters
+		$filters['upcoming'] = true;
 		$filters['month'] = false;
-		$events = $this->load($filters);		
+		$events = $this->load($filters);
 		$months = array();
 		foreach ($events as $event) {
 			$months[date('Y-m',$event->datetime())] = date_i18n('M Y',$event->datetime());
