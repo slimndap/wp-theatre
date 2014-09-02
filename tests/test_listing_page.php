@@ -122,9 +122,8 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 	function test_listing_appears_on_listing_page() {
 		$this->go_to( get_permalink( $this->wp_theatre->listing_page->page() ) );
 
-		$xml = new DomDocument;
-		$xml->loadHTML( get_echo( 'the_content' ) );
-		$this->assertSelectCount('.wpt_listing', 1, $xml);		
+		$html = get_echo( 'the_content' );
+		$this->assertEquals(1, substr_count($html, '<div class="wpt_listing'), $html);
 	}
 		
 	/* 
@@ -139,14 +138,14 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 	function test_productions_on_listing_page() {
 		$this->go_to( get_permalink( $this->wp_theatre->listing_page->page() ) );
 
-		$xml = new DomDocument;
-        $xml->loadHTML( get_echo( 'the_content' ) );
+		$html = get_echo( 'the_content' );
 
 		/*
 		 * Unlike [wpt_productions], listing page only shows productions with upcoming events.
 		 * Expected: 3 productions with upcoming events + 1 sticky production
 		 */
-        $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 4, $xml);		
+
+		$this->assertEquals(4, substr_count($html, '"wp_theatre_prod"'), $html);
 	}
 	
 	function test_events_on_listing_page() {
@@ -155,9 +154,8 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		
 		$this->go_to( get_permalink( $this->wp_theatre->listing_page->page() ) );
 
-		$xml = new DomDocument;
-        $xml->loadHTML( get_echo( 'the_content' ) );
-        $this->assertSelectCount('.wpt_events .wp_theatre_event', 4, $xml);			
+		$html = get_echo( 'the_content' );
+		$this->assertEquals(4, substr_count($html, '"wp_theatre_event"'), $html);
 	}
 	
 	function test_events_are_paginated_by_day_on_listing_page() {
@@ -179,12 +177,10 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		
 		$html = get_echo( 'the_content' );
 
-		$xml = new DomDocument();
-		$xml->loadHTML($html);
-        $this->assertSelectCount('.wpt_listing_filter_pagination.day', 1, $xml, $html);			
-        $this->assertSelectCount('.wpt_listing_filter', 4, $xml, $html);			
-        $this->assertSelectCount('.wpt_listing_filter.wpt_listing_filter_active', 1, $xml, $html);			
-        $this->assertSelectCount('.wpt_events .wp_theatre_event', 1, $xml, $html);			
+		$this->assertEquals(1, substr_count($html, '"wpt_listing_filter_pagination day"'), $html);
+		$this->assertEquals(4, substr_count($html, '<span class="wpt_listing_filter'), $html);
+		$this->assertEquals(1, substr_count($html, 'wpt_listing_filter_active'), $html);
+		$this->assertEquals(1, substr_count($html, '"wpt_listing_filter_pagination day"'), $html);
 		
 	}
 	
@@ -211,10 +207,8 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		
 		$html = get_echo( 'the_content' );
 
-		$xml = new DomDocument();
-		$xml->loadHTML($html);
-        $this->assertSelectCount('.wpt_listing_filter_pagination.month', 1, $xml, $html);			
-        $this->assertSelectCount('.wpt_events .wp_theatre_event', true, $xml, $html);			
+		$this->assertEquals(1, substr_count($html, '"wpt_listing_filter_pagination month"'), $html);
+		$this->assertContains('"wp_theatre_event"', $html);
 	}
 	
 	function test_events_are_paginated_by_year_on_listing_page() {
@@ -234,12 +228,10 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 
 		$this->go_to($url);
 		
-		$content = get_echo( 'the_content' );
+		$html= get_echo( 'the_content' );
+		$this->assertEquals(1, substr_count($html, '"wpt_listing_filter_pagination category"'), $html);
+		$this->assertEquals(1, substr_count($html, '"wp_theatre_prod"'), $html);
 		
-		$xml = new DomDocument();
-		$xml->loadHTML($content);
-        $this->assertSelectCount('.wpt_listing_filter_pagination.category', 1, $xml);			
-        $this->assertSelectCount('.wpt_productions .wp_theatre_prod', 1, $xml);			
 	}
 
 	function test_events_are_paginated_by_category_on_listing_page() {
@@ -256,10 +248,9 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 
 		$this->go_to($url);
 		
-		$xml = new DomDocument();
-		$xml->loadHTML(get_echo( 'the_content' ));
-        $this->assertSelectCount('.wpt_listing_filter_pagination.category', 1, $xml);			
-        $this->assertSelectCount('.wpt_events .wp_theatre_event', 2, $xml);			
+		$html= get_echo( 'the_content' );
+		$this->assertEquals(1, substr_count($html, '"wpt_listing_filter_pagination category"'), $html);
+		$this->assertEquals(2, substr_count($html, '"wp_theatre_event"'), $html);
 		
 	}
 
@@ -273,10 +264,8 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 			get_permalink($this->wp_theatre->listing_page->page())
 		);
 
-		$xml = new DomDocument();
-		$xml->loadHTML(get_echo( 'the_content' ));
-
-        $this->assertSelectCount('.wpt_listing_group.day', 4, $xml);					
+		$html= get_echo( 'the_content' );
+		$this->assertEquals(4, substr_count($html, '"wpt_listing_group day"'), $html);
 		
 	}
 	
@@ -294,10 +283,8 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 			get_permalink($this->wp_theatre->listing_page->page())
 		);
 
-		$xml = new DomDocument();
-		$xml->loadHTML(get_echo( 'the_content' ));
-
-        $this->assertSelectCount('.wpt_listing_group.month', true, $xml);					
+		$html= get_echo( 'the_content' );
+		$this->assertContains('"wpt_listing_group month"', $html);
 	}
 	
 	function test_events_are_grouped_by_year_on_listing_page() {
@@ -313,11 +300,8 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 			get_permalink($this->wp_theatre->listing_page->page())
 		);
 
-		$xml = new DomDocument();
-		libxml_use_internal_errors(true);
-		$xml->loadHTML(get_echo( 'the_content' ));
-
-        $this->assertSelectCount('.wpt_listing_group.season', 2, $xml);							
+		$html= get_echo( 'the_content' );
+		$this->assertEquals(2, substr_count($html, '"wpt_listing_group season"'), $html);
 	}
 	
 	function test_productions_are_grouped_by_category_on_listing_page() {
@@ -328,12 +312,8 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		$this->go_to(
 			get_permalink($this->wp_theatre->listing_page->page())
 		);
-
-		$xml = new DomDocument();
-		libxml_use_internal_errors(true);
-		$xml->loadHTML(get_echo( 'the_content' ));
-
-        $this->assertSelectCount('.wpt_listing_group.category', 2, $xml);							
+		$html= get_echo( 'the_content' );
+		$this->assertEquals(2, substr_count($html, '"wpt_listing_group category"'), $html);
 	}
 	
 	function test_events_are_grouped_by_category_on_listing_page() {
@@ -346,11 +326,9 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 			get_permalink($this->wp_theatre->listing_page->page())
 		);
 
-		$xml = new DomDocument();
-		libxml_use_internal_errors(true);
-		$xml->loadHTML(get_echo( 'the_content' ));
+		$html= get_echo( 'the_content' );
+		$this->assertEquals(2, substr_count($html, '"wpt_listing_group category"'), $html);
 
-        $this->assertSelectCount('.wpt_listing_group.category', 2, $xml);					
 	}
 	
 	function test_events_are_filtered_by_day_on_listing_page() {
@@ -368,15 +346,13 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		
 		$this->go_to($url);
 
-		$xml = new DomDocument();
+		$html= get_echo( 'the_content' );
 
-		$xml->loadHTML(get_echo( 'the_content' ));
-		
 		// Is the active filter shown?
-        $this->assertSelectCount('.wpt_listing_filter_active a', 1, $xml);			
-        
+		$this->assertEquals(1, substr_count($html, 'wpt_listing_filter_active"><a'), $html);
+
 		// Are the filtered events shown?
-        $this->assertSelectCount('.wpt_listing.wpt_events .wp_theatre_event', 1, $xml);			
+		$this->assertEquals(1, substr_count($html, '"wp_theatre_event"'), $html);
 		
 	}
 	
@@ -399,15 +375,13 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		
 		$this->go_to($url);
 
-		$xml = new DomDocument();
-		libxml_use_internal_errors(true);
-		$xml->loadHTML(get_echo( 'the_content' ));
-		
+		$html= get_echo( 'the_content' );
+
 		// Is the active filter shown?
-        $this->assertSelectCount('.wpt_listing_filter_active a', 1, $xml);			
-        
+		$this->assertEquals(1, substr_count($html, 'wpt_listing_filter_active"><a'), $html);
+
 		// Are the filtered events shown?
-        $this->assertSelectCount('.wpt_listing.wpt_events .wp_theatre_event', true, $xml);			
+		$this->assertContains('"wp_theatre_event"',$html);
 	}
 	
 	function test_events_are_filtered_by_year_on_listing_page() {
@@ -425,15 +399,13 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 
 		$this->go_to($url);
 		
-		$xml = new DomDocument();
-		libxml_use_internal_errors(true);
-		$xml->loadHTML(get_echo( 'the_content' ));
+		$html= get_echo( 'the_content' );
 
 		// Is the active filter shown?
-        $this->assertSelectCount('.wpt_listing_filter_active a', 1, $xml);			
-        
+		$this->assertEquals(1, substr_count($html, 'wpt_listing_filter_active"><a'), $html);
+
 		// Are the filtered events shown?
-        $this->assertSelectCount('.wpt_listing.wpt_productions .wp_theatre_prod', 1, $xml);			
+		$this->assertEquals(1, substr_count($html, '"wp_theatre_prod"'), $html);
 		
 	}
 	
@@ -449,15 +421,13 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 
 		$this->go_to($url);
 		
-		$xml = new DomDocument();
-		libxml_use_internal_errors(true);
-		$xml->loadHTML(get_echo( 'the_content' ));
+		$html= get_echo( 'the_content' );
 
 		// Is the active filter shown?
-        $this->assertSelectCount('.wpt_listing_filter_active a', 1, $xml);			
-        
+		$this->assertEquals(1, substr_count($html, 'wpt_listing_filter_active"><a'), $html);
+
 		// Are the filtered events shown?
-        $this->assertSelectCount('.wpt_listing.wpt_events .wp_theatre_event', 2, $xml);			
+		$this->assertEquals(2, substr_count($html, '"wp_theatre_event"'), $html);
 		
 	}
 
@@ -469,11 +439,8 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 			get_permalink($this->production_with_upcoming_events)
 		);
 
-		$html = get_echo( 'the_content' );
-
-		$xml = new DomDocument();
-		$xml->loadHTML(get_echo( 'the_content' ));
-        $this->assertSelectCount('.wpt_listing.wpt_events .wp_theatre_event', 2, $xml, $html);			
+		$html= get_echo( 'the_content' );
+		$this->assertEquals(2, substr_count($html, '"wp_theatre_event"'), $html);
 	}
 	
 	function test_events_with_template_on_production_page() {
@@ -492,12 +459,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 	
 	function test_shortcode_wpt_calendar() {
 		$html = do_shortcode('[wpt_calendar]');
-
-		$xml = new DomDocument;
-        $xml->loadHTML($html);
-
-        $this->assertSelectCount('.wpt_calendar .wpt_month tr td a', 4, $xml, $html);			
-		
+		$this->assertEquals(4, substr_count($html, '<td><a'), $html);		
 	}
 	
 	
