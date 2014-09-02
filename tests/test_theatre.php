@@ -253,23 +253,10 @@ class WPT_Test extends WP_UnitTestCase {
 	// Test templates
 	
 	function test_wpt_events_template_permalink_filter() {
-		$matcher = array(
-			'tag' => 'div',
-			'descendant' => array(
-				'tag' => 'div',
-				'attributes' => array(
-					'class' => 'wp_theatre_event_venue'
-				),
-				'child' => array(
-					'tag' => 'a',
-					'attributes' => array(
-						'href' => get_permalink($this->production_with_upcoming_event)
-					)
-				)
-			)	
-		);
+		$link = '<a href="'.get_permalink($this->production_with_upcoming_event).'">';
 		$output = do_shortcode('[wpt_events]{{location|permalink}}[/wpt_events]');
-        $this->assertTag($matcher, $output, $output);
+
+		$this->assertContains($link,$output);
 	}
 	
 	function test_wpt_events_template_date_filter() {
