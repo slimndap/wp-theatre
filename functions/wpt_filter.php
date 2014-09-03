@@ -24,11 +24,9 @@
 		 
 		function apply($content, $filters, $object) {
 			$this->object = $object;
-
 			foreach($filters as $filter) {
 				$function = $this->get_function($filter);
 				$arguments = $this->get_arguments($filter);
-
 				if ($this->is_valid($function, $arguments, $object)) {
 					switch($function) {
 					 	/*
@@ -48,9 +46,13 @@
 						 * Format the content using the date format defined in $arguments[0].
 						 */
 						case 'date':
-							if (!empty($arguments[0])) {		
-								$timestamp = strtotime($content);
-								$content = date($arguments[0],$timestamp);
+							if (!empty($arguments[0])) {	
+								if (is_numeric($content)) {
+									$timestamp = $content;
+								} else {
+									$timestamp = strtotime($content);								
+								}
+								$content = date_i18n($arguments[0],$timestamp);
 							}
 					}
 				}
@@ -60,6 +62,14 @@
 
 			return $content;
 			
+		}
+		
+		function get_functions($filters) {
+			$functions = array();
+			foreach($filters as $filter) {
+				$functions[] = $this->get_function($filter);
+			}
+			return $functions;
 		}
 		
 		/*
@@ -101,12 +111,14 @@
 		
 		/*
 		 * Sanitize arguments.
+		 * Removed surrounding quotes.
 		 * @param $arguments array 
 		 */
 		function sanitize_arguments($arguments) {
 			if (!empty($arguments) && is_array($arguments)) {
 				for ($i=0;$i<count($arguments);$i++) {
-					preg_replace('/^([\'"])(.*)\\1$/', '\\2', $arguments[$i]);
+					$arguments[$i] = trim($arguments[$i],'"');
+					$arguments[$i] = trim($arguments[$i],"'");
 				}
 			}
 			return $arguments;

@@ -91,6 +91,7 @@ The new feature may be added directly to the Theater plugin or as an extension s
 * [wpt_production_events] now supports a production ID if used outside of a production detail page: [wpt_production_events production=123].
 * Rearranged settings screen.
 * Updated Dutch and German (by [pixelfis.ch](http://pixelfis.ch)) translations.
+* And [more...](http://www.slimndap.com/event-calendar-better-listings/)
 
 = 0.7 =
 * Support for tickets prices, cancelled events.
@@ -186,6 +187,9 @@ The new feature may be added directly to the Theater plugin or as an extension s
 * Basic version of the plugin.
 
 == Upgrade Notice ==
+
+= 0.8.2. =
+* Fixed event calendar showing months with old events.
 
 = 0.8.1 =
 * Event listing sometimes wasn't showing all events.

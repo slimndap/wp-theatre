@@ -108,6 +108,7 @@ class WPT_Event {
 		} else {
 			$field = 'enddate';
 		}
+
 		if (!isset($this->date[$field])) {
 			$datetime_args = array('start'=>$args['start']);
 			$this->date[$field] = apply_filters('wpt_event_date',date_i18n(get_option('date_format'),$this->datetime($datetime_args)),$this);
@@ -116,8 +117,16 @@ class WPT_Event {
 		if ($args['html']) {
 			$html= '<div class="'.self::post_type_name.'_date">';
 
-			// Apply WPT_Filters
-			$html.= $wp_theatre->filter->apply($this->date[$field], $args['filters'], $this);
+			/**
+			 * Apply WPT_Filters
+			 * Use the raw datetime when the date filter is active.
+			 */
+			$filters_functions = $wp_theatre->filter->get_functions($args['filters']);
+			if (in_array('date', $filters_functions)) {
+				$html.= $wp_theatre->filter->apply($this->datetime[$field], $args['filters'], $this);				
+			} else {
+				$html.= $wp_theatre->filter->apply($this->date[$field], $args['filters'], $this);
+			}
 			
 			$html.= '</div>';
 			return apply_filters('wpt_event_date_html', $html, $this);
@@ -165,8 +174,18 @@ class WPT_Event {
 		if ($args['html']) {
 			$html = '';
 			$html.= '<div class="'.self::post_type_name.'_datetime">';
-			$html.= $this->date($args);
-			$html.= $this->time($args);
+
+			/**
+			 * Apply WPT_Filters
+			 * Use the raw datetime when the date filter is active.
+			 */
+			$filters_functions = $wp_theatre->filter->get_functions($args['filters']);
+			if (in_array('date', $filters_functions)) {
+				$html.= $wp_theatre->filter->apply($this->datetime[$field], $args['filters'], $this);				
+			} else {
+				$html.= $this->date($args);
+				$html.= $this->time($args);				
+			}
 			$html.= '</div>';
 			return $html;
 		} else {
@@ -555,7 +574,17 @@ class WPT_Event {
 
 		if ($args['html']) {
 			$html= '<div class="'.self::post_type_name.'_time">';
-			$html.= $wp_theatre->filter->apply($this->time[$field], $args['filters'], $this);
+
+			/**
+			 * Apply WPT_Filters
+			 * Use the raw datetime when the date filter is active.
+			 */
+			$filters_functions = $wp_theatre->filter->get_functions($args['filters']);
+			if (in_array('date', $filters_functions)) {
+				$html.= $wp_theatre->filter->apply($this->datetime[$field], $args['filters'], $this);
+			} else {
+				$html.= $wp_theatre->filter->apply($this->time[$field], $args['filters'], $this);				
+			}
 			$html.= '</div>';
 			return apply_filters('wpt_event_time_html', $html, $this);
 		} else {
@@ -655,7 +684,6 @@ class WPT_Event {
 				default: 
 					$replacement = $this->production()->custom($field,array('html'=>true, 'filters'=>$filters));
 			}
-
 			$html = str_replace('{{'.$placeholder.'}}', $replacement, $html);
 		}
 
