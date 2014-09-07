@@ -292,8 +292,10 @@ class WPT_Events extends WPT_Listing {
 		
 		if ($filters['limit']) {
 			$args['posts_per_page'] = $filters['limit'];
+			$args['numberposts'] = $filters['limit'];
 		} else {	
 			$args['posts_per_page'] = -1;
+			$args['numberposts'] = -1;
 		}
 
 		$posts = get_posts($args);
