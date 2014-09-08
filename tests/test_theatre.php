@@ -303,6 +303,30 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertEquals(1, substr_count($html, 'wp_theatre_prod_director"><a'));		
 	}
 	
+	function test_shortcode_wpt_events_with_custom_field() {
+		$director = 'Steven Spielberg';
+	
+		update_post_meta(
+			$this->production_with_upcoming_and_historic_events, 
+			'director', 
+			$director
+		);
+		
+		update_post_meta(
+			$this->upcoming_event_with_prices, 
+			'director', 
+			'George Lucas'
+		);
+		
+		$html = do_shortcode('[wpt_events]{{title}}{{director}}[/wpt_events]');
+
+		$this->assertContains($director,$html);
+
+		$this->assertEquals(4, substr_count($html, 'wp_theatre_event_director'), $html);		
+		$this->assertEquals(1, substr_count($html, $director), $html);		
+		$this->assertEquals(1, substr_count($html, 'George Lucas'), $html);		
+	}
+	
 	// Test event features
 	function test_wpt_event_tickets_status_cancelled() {
 		$this->assertEquals(1, substr_count(do_shortcode('[wpt_events]'), 'wp_theatre_event_tickets_status_cancelled'));		

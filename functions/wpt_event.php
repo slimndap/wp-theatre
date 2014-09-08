@@ -81,6 +81,52 @@ class WPT_Event {
 		}
 	}
 	
+    /**
+     * Returns value of a custom field.
+     * Fallback to production is custom field doesn't exist for event.
+     *
+     * @since 0.8.3
+     *
+     * @param string $field
+     * @param array $args {
+	 *     @type bool $html Return HTML? Default <false>.
+     * }
+     * @param bool $fallback_to_production
+     * @return string.
+     */
+	function custom($field, $args=array(), $fallback_to_production=true) {
+		global $wp_theatre;
+		
+		$defaults = array(
+			'html' => false,
+			'filters' => array()
+		);
+		$args = wp_parse_args( $args, $defaults );
+
+		if (!isset($this->{$field})) {
+			$custom_value = get_post_meta($this->ID, $field, true);
+			if (empty($custom_value)) {
+				$custom_value = get_post_meta($this->production->ID, $field, true);			
+			}
+
+			$this->{$field} = apply_filters(
+				'wpt_event_'.$field, 
+				$custom_value
+			);
+		}
+
+		if ($args['html']) {
+			$html = '';
+			$html.= '<div class="'.self::post_type_name.'_'.$field.'">';
+			$html.= $wp_theatre->filter->apply($this->{$field}, $args['filters'], $this);
+			$html.= '</div>';
+
+			return apply_filters('wpt_production_'.$field.'_html', $html, $this);
+		} else {
+			return $this->{$field};
+		}
+	}
+
 	/**
 	 * Event date.
 	 * 
@@ -682,7 +728,7 @@ class WPT_Event {
 					$replacement = $this->production()->{$field}(array('html'=>true, 'filters'=>$filters));
 					break;
 				default: 
-					$replacement = $this->production()->custom($field,array('html'=>true, 'filters'=>$filters));
+					$replacement = $this->custom($field,array('html'=>true, 'filters'=>$filters));
 			}
 			$html = str_replace('{{'.$placeholder.'}}', $replacement, $html);
 		}
