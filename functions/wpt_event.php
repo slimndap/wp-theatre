@@ -111,7 +111,8 @@ class WPT_Event {
 
 			$this->{$field} = apply_filters(
 				'wpt_event_'.$field, 
-				$custom_value
+				$custom_value,
+				$this
 			);
 		}
 
@@ -121,7 +122,7 @@ class WPT_Event {
 			$html.= $wp_theatre->filter->apply($this->{$field}, $args['filters'], $this);
 			$html.= '</div>';
 
-			return apply_filters('wpt_production_'.$field.'_html', $html, $this);
+			return apply_filters('wpt_event_'.$field.'_html', $html, $this);
 		} else {
 			return $this->{$field};
 		}
@@ -393,20 +394,19 @@ class WPT_Event {
 		$args = wp_parse_args( $args, $defaults );
 
 		if (!isset($this->prices)) {
-			$this->prices = apply_filters('wpt_event_tickets_prices',get_post_meta($this->ID,'_wpt_event_tickets_price'), $this);
+			$this->prices = apply_filters('wpt_event_prices',get_post_meta($this->ID,'_wpt_event_tickets_price'), $this);
 		}
 
 		if ($args['html']) {
 			$prices_args = array(
-				'summary' => $args['summary']
+				'summary' => true
 			);
 			$html = $this->prices($prices_args);
-			
+
 			if (!empty($html)) {
 				$html= '<div class="'.self::post_type_name.'_prices">'.$html.'</div>';
-				
 			}
-			return apply_filters('wpt_event_tickets_prices_html', $html, $this);				
+			return apply_filters('wpt_event_prices_html', $html, $this);				
 		} else {
 			if ($args['summary']) {
 				$summary = '';
@@ -557,7 +557,7 @@ class WPT_Event {
 					'html'=>true,
 					'summary'=>true
 				);
-				$html.= $this->prices($prices_args);				
+				$html.= apply_filters('wpt_event_tickets_prices_html', $this->prices($prices_args), $this);				
 			} else {
 				switch ($status) {
 					case self::tickets_status_soldout :
@@ -718,6 +718,7 @@ class WPT_Event {
 				case 'remark':
 				case 'time':
 				case 'tickets':
+				case 'prices':
 					$replacement = $this->{$field}(array('html'=>true, 'filters'=>$filters));
 					break;
 				case 'title':

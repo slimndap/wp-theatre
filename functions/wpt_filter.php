@@ -9,7 +9,7 @@
 	class WPT_Filter {
 		
 		function __construct() {
-			$this->allowed_functions = Array('permalink','date');
+			$this->allowed_functions = Array('permalink','date','wpautop');
 		}
 		
 		/*
@@ -54,6 +54,12 @@
 								}
 								$content = date_i18n($arguments[0],$timestamp);
 							}
+					 	/*
+						 * Add a link (<a>) to the production detail page around the content.
+						 */
+						case 'wpautop':
+							$content = wpautop($content);
+							break;
 					}
 				}
 					
@@ -131,7 +137,6 @@
 			return 
 				!empty($function) && 
 				in_array($function, $this->allowed_functions) &&
-				is_array($arguments) &&
-				method_exists($object, $function);
+				is_array($arguments);
 		}
 	}
