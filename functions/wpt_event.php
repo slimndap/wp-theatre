@@ -112,6 +112,7 @@ class WPT_Event {
 			$this->{$field} = apply_filters(
 				'wpt_event_'.$field, 
 				$custom_value,
+				$field,
 				$this
 			);
 		}
@@ -122,7 +123,7 @@ class WPT_Event {
 			$html.= $wp_theatre->filter->apply($this->{$field}, $args['filters'], $this);
 			$html.= '</div>';
 
-			return apply_filters('wpt_event_'.$field.'_html', $html, $this);
+			return apply_filters('wpt_event_'.$field.'_html', $html, $field, $this);
 		} else {
 			return $this->{$field};
 		}

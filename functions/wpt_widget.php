@@ -174,6 +174,8 @@
 	
 		public function widget( $args, $instance ) {
 			global $wp_theatre;
+			global $post;
+			
 			if (is_singular(WPT_Production::post_type_name)) {
 				$title = apply_filters( 'widget_title', $instance['title'], $instance, $this->id_base );
 				
@@ -186,6 +188,8 @@
 					$filters['template'] = $instance['template'];
 				}
 	
+				$filters['production'] = $post->ID;
+				
 				if ( ! ( $html = $wp_theatre->transient->get('e', array_merge($filters)) ) ) {
 					$html = $wp_theatre->events->html($filters);
 					$wp_theatre->transient->set('e', array_merge($filters), $html);

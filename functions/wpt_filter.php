@@ -55,7 +55,7 @@
 								$content = date_i18n($arguments[0],$timestamp);
 							}
 					 	/*
-						 * Add a link (<a>) to the production detail page around the content.
+						 * Changes double line-breaks in the content into HTML paragraphs (<p>...</p>).
 						 */
 						case 'wpautop':
 							$content = wpautop($content);

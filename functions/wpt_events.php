@@ -260,7 +260,7 @@ class WPT_Events extends WPT_Listing {
 		}
 
 		if ($filters['day']) {
-			/*
+			/**
 			 * Translate 'today' and 'tomorrow' to real dates
 			 */
 			switch ($filters['day']) {
