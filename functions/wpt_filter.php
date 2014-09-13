@@ -9,11 +9,21 @@
 	class WPT_Filter {
 		
 		function __construct() {
-			$this->allowed_functions = Array('permalink','date','wpautop');
-			
+			$this->allowed_functions = Array('permalink','date','wpautop','tickets_url');
+
+			/**
+			 * Make sure all filters are cleaned up.
+			 * Necessary for unit tests to work.
+			 */
+			remove_all_filters('wpt_filter_date');
+			remove_all_filters('wpt_filter_permalink');
+			remove_all_filters('wpt_filter_wpautop');
+			remove_all_filters('wpt_filter_tickets_url');
+
 			add_filter('wpt_filter_date', array($this,'date'),10,3);
 			add_filter('wpt_filter_permalink', array($this,'permalink'),10,2);
 			add_filter('wpt_filter_wpautop', array($this,'wpautop'),10,1);
+			add_filter('wpt_filter_tickets_url', array($this,'tickets_url'),10,2);
 			
 		}
 		
@@ -28,7 +38,9 @@
 					'text'=> $content,
 					'inside'=>true
 				);
-				$content = $object->permalink($permalink_args);
+				if (method_exists($object, 'permalink')) {
+					$content = $object->permalink($permalink_args);
+				}
 			}
 			return $content;		
 		}
@@ -38,10 +50,7 @@
 		 * Format the content using the date format defined in the third argument.
 		 */
 		function date($content, $object, $format='') {
-			$args = func_get_args();
-
 			if (!empty($format)) {	
-			
 				if (is_numeric($content)) {
 					$timestamp = $content;
 				} else {
@@ -49,7 +58,6 @@
 				}
 				$content = date_i18n($format,$timestamp);
 			}
-			
 			return $content;
 		}
 		
@@ -59,6 +67,24 @@
 		 */
 		function wpautop($content) {
 			return wpautop($content);
+		}
+		
+		/**
+	 	 * Tickets URL filter.
+		 * Add a link (<a>) to the tickets URL around the content.
+		 */	 
+		function tickets_url($content, $object) {
+			if (!empty($content)) {
+				$tickets_url_args = array(
+					'html'=>true,
+					'text'=> $content
+				);
+				if (method_exists($object, 'tickets_url')) {
+					$content = $object->tickets_url($tickets_url_args);				
+				}
+			}
+			return $content;		
+			
 		}
 		
 		/*
@@ -116,7 +142,7 @@
 		 * Extract the arguments from a filter.
 		 */
 		function get_arguments($filter) {
-			$arguments = Array();
+			$arguments = array();
 		
 			$brackets_open = strpos($filter, '(');
 			$brackets_close = strpos($filter, ')');
