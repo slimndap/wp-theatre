@@ -10,6 +10,55 @@
 		
 		function __construct() {
 			$this->allowed_functions = Array('permalink','date','wpautop');
+			
+			add_filter('wpt_filter_date', array($this,'date'),10,3);
+			add_filter('wpt_filter_permalink', array($this,'permalink'),10,2);
+			add_filter('wpt_filter_wpautop', array($this,'wpautop'),10,1);
+			
+		}
+		
+	 	/*
+	 	 * Permalink filter.
+		 * Add a link (<a>) to the production detail page around the content.
+		 */	 
+		function permalink($content, $object) {
+			if (!empty($content)) {
+				$permalink_args = array(
+					'html'=>true,
+					'text'=> $content,
+					'inside'=>true
+				);
+				$content = $object->permalink($permalink_args);
+			}
+			return $content;		
+		}
+		
+		/**
+		 * Date filter.
+		 * Format the content using the date format defined in the third argument.
+		 */
+		function date($content, $object, $format='') {
+			$args = func_get_args();
+
+			if (!empty($format)) {	
+			
+				if (is_numeric($content)) {
+					$timestamp = $content;
+				} else {
+					$timestamp = strtotime($content);								
+				}
+				$content = date_i18n($format,$timestamp);
+			}
+			
+			return $content;
+		}
+		
+	 	/*
+	 	 * Wpautop filter.
+		 * Changes double line-breaks in the content into HTML paragraphs (<p>...</p>).
+		 */
+		function wpautop($content) {
+			return wpautop($content);
 		}
 		
 		/*
@@ -28,42 +77,9 @@
 				$function = $this->get_function($filter);
 				$arguments = $this->get_arguments($filter);
 				if ($this->is_valid($function, $arguments, $object)) {
-					switch($function) {
-					 	/*
-						 * Add a link (<a>) to the production detail page around the content.
-						 */
-						case 'permalink':
-							if (!empty($content)) {
-								$args = array(
-									'html'=>true,
-									'text'=> $content,
-									'inside'=>true
-								);
-								$content = $object->permalink($args);
-							}
-							break;
-						/*
-						 * Format the content using the date format defined in $arguments[0].
-						 */
-						case 'date':
-							if (!empty($arguments[0])) {	
-								if (is_numeric($content)) {
-									$timestamp = $content;
-								} else {
-									$timestamp = strtotime($content);								
-								}
-								$content = date_i18n($arguments[0],$timestamp);
-							}
-					 	/*
-						 * Changes double line-breaks in the content into HTML paragraphs (<p>...</p>).
-						 */
-						case 'wpautop':
-							$content = wpautop($content);
-							break;
-					}
-				}
-					
-				
+					array_unshift($arguments, $content, $object);
+					$content = apply_filters_ref_array('wpt_filter_'.$function,$arguments);
+				}				
 			}
 
 			return $content;
