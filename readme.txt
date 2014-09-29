@@ -188,6 +188,9 @@ The new feature may be added directly to the Theater plugin or as an extension s
 
 == Upgrade Notice ==
 
+= 0.8.3. =
+* Fixed event creation link for WordPress installs with non-standard folder structures.
+
 = 0.8.2. =
 * Fixed event calendar showing months with old events.
 
