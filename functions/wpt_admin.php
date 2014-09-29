@@ -278,7 +278,11 @@ class WPT_Admin {
 				}
 				echo '</ul>';	
 			}	
-			echo '<p><a href="'.get_bloginfo('url').'/wp-admin/post-new.php?post_type='.WPT_Event::post_type_name.'&'.WPT_Production::post_type_name.'='.$production->ID.'" class="button button-primary">'.WPT_Event::post_type()->labels->new_item.'</a></p>';	
+			$create_event_url = admin_url(
+				'post-new.php?post_type='.WPT_Event::post_type_name.'&'.
+				WPT_Production::post_type_name.'='.$production->ID
+			);
+			echo '<p><a href="'.$create_event_url.'" class="button button-primary">'.WPT_Event::post_type()->labels->new_item.'</a></p>';	
 		}		
 	}
 
