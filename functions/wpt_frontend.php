@@ -132,8 +132,10 @@ class WPT_Frontend {
 			'day' => false,
 			'month' => false,
 			'season'=> false,
+			'start' => false,
+			'end' => false,
 			'groupby'=>false,
-			'limit'=>false
+			'limit'=>false,
 		);
 		
 		if (!empty($wp_query->query_vars['wpt_category'])) {

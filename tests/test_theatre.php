@@ -230,6 +230,14 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertEquals(1, substr_count(do_shortcode('[wpt_events day="tomorrow"]'), '"wp_theatre_event"'));
 	}
 	
+	function test_shortcode_wpt_events_start_end() {
+		$this->assertEquals(5, substr_count(do_shortcode('[wpt_events start="yesterday"]'), '"wp_theatre_event"'));
+		$this->assertEquals(2, substr_count(do_shortcode('[wpt_events start="today" end="+2 days"]'), '"wp_theatre_event"'));
+		$this->assertEquals(3, substr_count(do_shortcode('[wpt_events start="'.date('Y-m-d',time() + (2 * DAY_IN_SECONDS)).'"]'), '"wp_theatre_event"'));
+		$this->assertEquals(3, substr_count(do_shortcode('[wpt_events end="now"]'), '"wp_theatre_event"'));
+		$this->assertEquals(4, substr_count(do_shortcode('[wpt_events start="today" end="+2 weeks"]'), '"wp_theatre_event"'));
+	}
+	
 	function test_shortcode_wpt_events_filter_season() {
 		$this->assertEquals(2, substr_count(do_shortcode('[wpt_events season="'.$this->season2.'"]'), '"wp_theatre_event"'));
 	}
@@ -451,16 +459,22 @@ class WPT_Test extends WP_UnitTestCase {
 	function test_wpt_transient_events() {
 		do_shortcode('[wpt_events]');
 		
+		/** 
+		 * Copy the defaults from WPT_Frontend::wpt_events
+		 * Remove the quotes around 'true' for upcoming.
+		 */
 		$args = array(
 			'upcoming' => true,
 			'past' => false,
 			'paginateby'=>array(),
 			'category'=> false,
-			'day'=> false,
-			'month'=> false,
+			'day' => false,
+			'month' => false,
 			'season'=> false,
+			'start' => false,
+			'end' => false,
 			'groupby'=>false,
-			'limit'=>false
+			'limit'=>false,
 		);
 		
 		$this->assertEquals(4, substr_count($this->wp_theatre->transient->get('e',$args), '"wp_theatre_event"'));

@@ -47,6 +47,8 @@ class WPT_Events extends WPT_Listing {
 			'past' => false,
 			'day' => false,
 			'month' => false,
+			'start' => false,
+			'end' => false,
 			'category' => false,
 			'season' => false,
 			'production' => false,
@@ -83,6 +85,8 @@ class WPT_Events extends WPT_Listing {
 			'groupby'=>false,
 			'limit' => false,
 			'month' => false,
+			'start' => false,
+			'end' => false,
 			'paginateby' => array(),
 			'production' => false,
 			'season' => false,
@@ -105,6 +109,8 @@ class WPT_Events extends WPT_Listing {
 			'category' => $args['category'],
 			'month' => $args['month'],
 			'day' => $args['day'],
+			'start' => $args['start'],
+			'end' => $args['end'],
 			'season' => $args['season']
 		);
 
@@ -235,12 +241,20 @@ class WPT_Events extends WPT_Listing {
 			'order' => 'asc'
 		);
 		
-		if ($filters['upcoming']) {
-			$args['meta_query'][] = array (
-				'key' => $wp_theatre->order->meta_key,
-				'value' => time(),
-				'compare' => '>='
-			);
+		/**
+		 * Apply upcoming filter.
+		 * Ignore when one of the other time related filters are set.
+		 * Maybe deprecate in favor of `start="now"`.
+		 */
+		
+		if (
+			$filters['upcoming'] &&
+			!$filters['start'] &&
+			!$filters['end'] &&
+			!$filters['day'] &&
+			!$filters['month']
+		) {
+			$filters['start'] = 'now';
 		}
 
 		if ($filters['production']) {
@@ -275,6 +289,36 @@ class WPT_Events extends WPT_Listing {
 				'key' => 'event_date',
 				'value' => $filters['day'],
 				'compare' => 'LIKE'
+			);
+		}
+		
+		/**
+		 * Apply start filter.
+		 * Only show events that start after the `start` value.
+		 * Can be any value that is supported by strtotime().
+		 * @since 0.8.4
+		 */
+		
+		if ($filters['start']) {
+			$args['meta_query'][] = array (
+				'key' => $wp_theatre->order->meta_key,
+				'value' => strtotime($filters['start']),
+				'compare' => '>='
+			);
+		}
+
+		/**
+		 * Apply end filter.
+		 * Only show events that start before the `end` value.
+		 * Can be any value that is supported by strtotime().
+		 * @since 0.8.4
+		 */
+		
+		if ($filters['end']) {
+			$args['meta_query'][] = array (
+				'key' => $wp_theatre->order->meta_key,
+				'value' => strtotime($filters['end']),
+				'compare' => '<='
 			);
 		}
 
