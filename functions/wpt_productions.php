@@ -37,7 +37,11 @@ class WPT_Productions extends WPT_Listing {
 			'post__in' => false,
 			'post__not_in' => false,
 			'upcoming' => false,
-			'category' => false,
+			'cat' => false,
+			'category_name' => false,
+			'category__and' => false,
+			'category__in' => false,
+			'category__not_in' => false,
 			'season' => false,
 			'ignore_sticky_posts' => false
 		);
@@ -75,7 +79,11 @@ class WPT_Productions extends WPT_Listing {
 			'post__in' => false,
 			'post__not_in' => false,
 			'upcoming' => false,
-			'category' => false,
+			'cat' => false,
+			'category_name' => false,
+			'category__and' => false,
+			'category__in' => false,
+			'category__not_in' => false,
 			'season' => false,
 			'paginateby' => array(),
 			'groupby' => false,
@@ -87,7 +95,11 @@ class WPT_Productions extends WPT_Listing {
 		$filters = array(
 			'post__in' => $args['post__in'],
 			'post__not_in' => $args['post__not_in'],
-			'category' => $args['category'],
+			'cat' => $args['cat'],
+			'category_name' => $args['category_name'],
+			'category__and' => $args['category__and'],
+			'category__in' => $args['category__in'],
+			'category__not_in' => $args['category__not_in'],
 			'season' => $args['season'],
 			'limit' => $args['limit'],
 			'upcoming' => $args['upcoming']
@@ -246,15 +258,31 @@ class WPT_Productions extends WPT_Listing {
 			);
 		}
 		
-		if ($filters['category']) {
-			$args['cat'] = $filters['category'];
+		if ($filters['cat']) {
+			$args['cat'] = $filters['cat'];
+		}
+		
+		if ($filters['category_name']) {
+			$args['category_name'] = $filters['category_name'];
+		}
+		
+		if ($filters['category__and']) {
+			$args['category__and'] = $filters['category__and'];
+		}
+		
+		if ($filters['category__in']) {
+			$args['category__in'] = $filters['category__in'];
+		}
+		
+		if ($filters['category__not_in']) {
+			$args['category__not_in'] = $filters['category__not_in'];
 		}
 		
 		if ($filters['limit']) {
 			$args['posts_per_page'] = $filters['limit'];
 		} elseif (
 			!$filters['season'] &&
-			!$filters['category']
+			!$filters['cat']
 		) { 
 			$args['posts_per_page'] = get_option('posts_per_page');		
 		} else {

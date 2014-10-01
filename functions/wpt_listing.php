@@ -14,52 +14,76 @@ class WPT_Listing {
 	function filter_pagination($field, $options, $args=array()) {
 		global $wp_query;
 
+		$html = '';
+
+		$query_var = 'wpt_'.$field;
+		$paginate = in_array($field,$args['paginateby']);
+		
+		/**
+		 * Bail if:
+		 * - pagination is not active for this $field and 
+		 * - no query_var is set for this $field.
+		 */
+
+		if (
+			!$paginate &&
+			empty($wp_query->query_vars[$query_var])
+		) {
+			return $html;
+		};
+
 		/*
 		 * Build the base url for all filters
 		 */
 		$current_url = $_SERVER['REQUEST_URI'];
-		if (!empty($args['day'])) {
-			$current_url = add_query_arg('wpt_day',$args['day'],$current_url);
-		}
-		if (!empty($args['month'])) {
-			$current_url = add_query_arg('wpt_month',$args['month'],$current_url);
-		}
-		if (!empty($args['category'])) {
-			$current_url = add_query_arg('wpt_category',$args['category'],$current_url);
-		}		
 
-		$query_var = 'wpt_'.$field;
+		if (!empty($args[$field])) {
+			$current_url = add_query_arg($query_var,$args[$field],$current_url);
+		}
 
-		$paginate = in_array($field,$args['paginateby']);
+		foreach($options as $slug=>$name) {
 		
-		$html = '';
+			$url = remove_query_arg($query_var, $current_url);
+			$classes = array('wpt_listing_filter');
 
-		if (
-			$paginate ||
-			!empty($wp_query->query_vars[$query_var])
-		) {
-			foreach($options as $slug=>$name) {
+			/**
+			 * Check if $option is the current page.
+			 */
+
+			$is_current_page = false;
 			
-				$url = remove_query_arg($query_var, $current_url);
-				$classes = array('wpt_listing_filter');
-				if ($slug != $args[$field]) {
-					if (!$paginate) {
-						continue;
-					}
-					$url = add_query_arg($query_var, $slug , $url);
-				} else {
-					$classes[] = 'wpt_listing_filter_active';					
-				}
+			if (!empty($args['start']) && $slug == $args['start']) {
+
+				/**
+				 * $option is the current page for a time-based pagination (eg. day or month).
+				 */
+			
+				$is_current_page = true;
+
+			} elseif ($slug == $args[$field]) {
+
+				/**
+				 * $option is the current page for a text-based pagination (eg. category).
+				 */
+			
+				$is_current_page = true;				
 				
-				$url = apply_filters('wpt_listing_filter_pagination_url', $url);
-				$html.= '<span class="'.implode(' ',$classes).'"><a href="'.htmlentities($url).'">'.$name.'</a></span> ';
 			}
 
-			$html = '<div class="wpt_listing_filter_pagination '.$field.'">'.$html.'</div>';
-
+			if ($is_current_page) {
+				$classes[] = 'wpt_listing_filter_active';					
+			} else {
+				if (!$paginate) {
+					continue;
+				}
+				$url = add_query_arg($query_var, $slug , $url);
+			}
+			
+			$url = apply_filters('wpt_listing_filter_pagination_url', $url);
+			$html.= '<span class="'.implode(' ',$classes).'"><a href="'.htmlentities($url).'">'.$name.'</a></span> ';
 		}
-		
-		return $html;
+
+		return '<div class="wpt_listing_filter_pagination '.$field.'">'.$html.'</div>';
 
 	}
 

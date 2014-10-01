@@ -441,9 +441,16 @@ class WPT_Test extends WP_UnitTestCase {
 		
 		$args = array(
 			'paginateby' => array(),
+			'post__in' => false,
+			'post__not_in' => false,
 			'upcoming' => false,
 			'season'=> false,
-			'category'=> false,
+			'category'=> false, // deprecated since v0.9.
+			'cat'=>false,
+			'category_name'=>false,
+			'category__and'=>false,
+			'category__in'=>false,
+			'category__not_in'=>false,
 			'groupby'=>false,
 			'limit'=>false
 		);
@@ -468,10 +475,15 @@ class WPT_Test extends WP_UnitTestCase {
 		 * Remove the quotes around 'true' for upcoming.
 		 */
 		$args = array(
-			'upcoming' => true,
+			'upcoming' => 'true',
 			'past' => false,
 			'paginateby'=>array(),
-			'category'=> false,
+			'category'=> false, // deprecated since v0.9.
+			'cat'=>false,
+			'category_name'=>false,
+			'category__and'=>false,
+			'category__in'=>false,
+			'category__not_in'=>false,
 			'day' => false,
 			'month' => false,
 			'season'=> false,

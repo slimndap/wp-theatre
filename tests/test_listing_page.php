@@ -178,7 +178,10 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		$html = get_echo( 'the_content' );
 
 		$this->assertEquals(1, substr_count($html, '"wpt_listing_filter_pagination day"'), $html);
+		
+		// Test if pagination navigation is present.
 		$this->assertEquals(4, substr_count($html, '<span class="wpt_listing_filter'), $html);
+		
 		$this->assertEquals(1, substr_count($html, 'wpt_listing_filter_active'), $html);
 		$this->assertEquals(1, substr_count($html, '"wpt_listing_filter_pagination day"'), $html);
 		
