@@ -176,6 +176,11 @@ class WPT_Frontend {
 			$atts['paginateby'] = $fields;
 		}
 		
+		/**
+		 * Sanitize the categories.
+		 * Translate slugs to IDs.
+		 */
+		
 		if (!empty($atts['category'])) {
 			$categories = array();
 			$fields = explode(',',$atts['category']);
@@ -211,6 +216,8 @@ class WPT_Frontend {
 		
 		$defaults = array(
 			'paginateby' => array(),
+			'post__in' => false,
+			'post__not_in' => false,
 			'upcoming' => false,
 			'season'=> false,
 			'category'=> false,
@@ -254,6 +261,14 @@ class WPT_Frontend {
 				}
 			}
 			$atts['category'] = implode(',',$categories);
+		}
+
+		if (!empty($atts['post__in'])) {
+			$atts['post__in'] = explode(',',$atts['post__in']);
+		}
+		
+		if (!empty($atts['post__not_in'])) {
+			$atts['post__not_in'] = explode(',',$atts['post__not_in']);
 		}
 		
 		if (!is_null($content) && !empty($content)) {

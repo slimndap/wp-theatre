@@ -206,6 +206,10 @@ class WPT_Test extends WP_UnitTestCase {
 	function test_shortcode_wpt_productions_filter_category() {
 		// test with mixed category-slug and category-id
 		$this->assertEquals(2, substr_count(do_shortcode('[wpt_productions category="muziek,'.$this->category_film.'"]'), '"wp_theatre_prod"'));
+		
+		// test with an excluded category
+		$this->assertEquals(1, substr_count(do_shortcode('[wpt_productions category="muziek,-'.$this->category_film.'"]'), '"wp_theatre_prod"'));
+		
 	}
 	
 	function test_shortcode_wpt_events() {

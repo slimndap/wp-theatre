@@ -34,6 +34,8 @@ class WPT_Productions extends WPT_Listing {
 	function defaults() {
 		return array(
 			'limit' => false,
+			'post__in' => false,
+			'post__not_in' => false,
 			'upcoming' => false,
 			'category' => false,
 			'season' => false,
@@ -70,6 +72,8 @@ class WPT_Productions extends WPT_Listing {
 
 		$defaults = array(
 			'limit' => false,
+			'post__in' => false,
+			'post__not_in' => false,
 			'upcoming' => false,
 			'category' => false,
 			'season' => false,
@@ -81,6 +85,8 @@ class WPT_Productions extends WPT_Listing {
 		$args = wp_parse_args( $args, $defaults );
 		
 		$filters = array(
+			'post__in' => $args['post__in'],
+			'post__not_in' => $args['post__not_in'],
 			'category' => $args['category'],
 			'season' => $args['season'],
 			'limit' => $args['limit'],
@@ -223,6 +229,14 @@ class WPT_Productions extends WPT_Listing {
 			'meta_query' => array(),
 			'order' => 'asc'
 		);
+		
+		if ($filters['post__in']) {
+			$args['post__in'] = $filters['post__in'];
+		}
+		
+		if ($filters['post__not_in']) {
+			$args['post__not_in'] = $filters['post__not_in'];
+		}
 		
 		if ($filters['season']) {
 			$args['meta_query'][] = array (
