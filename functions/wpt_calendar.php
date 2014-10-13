@@ -101,13 +101,31 @@
 					$date = date('Y-m-d', $first_day + ($i * 60*60*24));
 					$days[$date] = array();
 				}
-	
-				$filters = array(
-					'month' => $month,
-					'upcoming' => true
-				);
-				$filters['month'] = $month;
-				$events = $wp_theatre->events->load($filters);
+
+				$events_filters = array();
+
+				/**
+				 * Set the start-filter for the events.
+				 * Start a first day of `$month` if `$month` is not the current month.
+				 * Start today if `$month` is the current month.
+				 */
+				 
+				$start_time = strtotime($month);
+				if ($start_time < time()) {
+					$events_filters['start'] = 'now';
+				} else {
+					$events_filters['start'] = date('Y-m-d', $start_time);					
+				}
+
+				/**
+				 * Set the end-filter for the events.
+				 * Use the first day of the next month for the end-filter.
+				 */
+
+				$events_filters['end'] = date('Y-m-d',strtotime($month.' + 1 month'));
+
+				$events = $wp_theatre->events->load($events_filters);
+				
 				foreach ($events as $event) {
 					$date = date('Y-m-d',$event->datetime());
 					$days[$date][] = $event;
