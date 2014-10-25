@@ -274,7 +274,7 @@ class WPT_Events extends WPT_Listing {
 		 * Apply start filter.
 		 * Only show events that start after the `start` value.
 		 * Can be any value that is supported by strtotime().
-		 * @since 0.8.4
+		 * @since 0.9
 		 */
 		
 		if ($filters['start']) {
@@ -289,7 +289,7 @@ class WPT_Events extends WPT_Listing {
 		 * Apply end filter.
 		 * Only show events that start before the `end` value.
 		 * Can be any value that is supported by strtotime().
-		 * @since 0.8.4
+		 * @since 0.9
 		 */
 		
 		if ($filters['end']) {

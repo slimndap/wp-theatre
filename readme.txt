@@ -86,6 +86,8 @@ The new feature may be added directly to the Theater plugin or as an extension s
     * `[wpt_events start="now" end="+1 week"]`
     * `[wpt_events start="next Monday" end="next Monday +1 week"]`
 * Removed WordPress SEO by Yoast meta box from event admin screens.
+* Improved category filtering for production and event listings. You can now use `cat`, `category_name`, `category__and`, `category__in` and `category__not_in` attributes in the `[wpt_events]` and `[wpt_productions]` shortcodes.
+* Added productions filtering for production listings. You now use `post__in` and `post__not_in` attributes in the `[wpt_productions]` shortcode.
 
 
 = 0.8.3 =
