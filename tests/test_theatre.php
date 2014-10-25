@@ -203,12 +203,51 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertEquals(1, substr_count(do_shortcode('[wpt_productions season="'.$this->season1.'"]'), '"wp_theatre_prod"'));
 	}
 
+	function test_shortcode_wpt_productions_filter_post() {
+		
+		// test with post__in
+		$this->assertEquals(1, substr_count(do_shortcode('[wpt_productions post__in="'.$this->production_with_upcoming_events.'"]'), '"wp_theatre_prod"'));
+
+		$this->assertEquals(2, substr_count(do_shortcode('[wpt_productions post__in="'.$this->production_with_upcoming_events.','.$this->production_with_upcoming_and_historic_events.'"]'), '"wp_theatre_prod"'));
+
+		// test with an excluded post__not_in
+		$this->assertEquals(4, substr_count(do_shortcode('[wpt_productions post__not_in="'.$this->production_with_upcoming_events.'"]'), '"wp_theatre_prod"'));
+		
+		$this->assertEquals(3, substr_count(do_shortcode('[wpt_productions post__not_in="'.$this->production_with_upcoming_events.','.$this->production_with_upcoming_and_historic_events.'"]'), '"wp_theatre_prod"'));
+	}
+	
 	function test_shortcode_wpt_productions_filter_category() {
+
+		// test with cat
+		$result = do_shortcode('[wpt_productions cat="'.$this->category_film.','.$this->category_muziek.'"]');
+		$this->assertEquals(2, substr_count($result, '"wp_theatre_prod"'), $result);
+
+		$result = do_shortcode('[wpt_productions cat="-'.$this->category_film.','.$this->category_muziek.'"]');
+		$this->assertEquals(1, substr_count($result, '"wp_theatre_prod"'), $result);
+		
+		// test with category_name
+		$result = do_shortcode('[wpt_productions category_name="muziek,film"]');
+		$this->assertEquals(2, substr_count($result, '"wp_theatre_prod"'), $result);
+		
+		// test with an excluded category__in
+		$this->assertEquals(1, substr_count(do_shortcode('[wpt_productions category__in="'.$this->category_film.'"]'), '"wp_theatre_prod"'));
+
+		// test with an excluded category__not_in
+		// should list all productions except 1.
+		$this->assertEquals(4, substr_count(do_shortcode('[wpt_productions category__not_in="'.$this->category_film.'"]'), '"wp_theatre_prod"'));
+
+		// test with an excluded category__and_in
+		$this->assertEquals(1, substr_count(do_shortcode('[wpt_productions category__and="'.$this->category_film.','.$this->category_muziek.'"]'), '"wp_theatre_prod"'));
+
+	}
+	
+	function test_shortcode_wpt_productions_filter_category_deprecated() {
 		// test with mixed category-slug and category-id
 		$this->assertEquals(2, substr_count(do_shortcode('[wpt_productions category="muziek,'.$this->category_film.'"]'), '"wp_theatre_prod"'));
 		
 		// test with an excluded category
 		$this->assertEquals(1, substr_count(do_shortcode('[wpt_productions category="muziek,-'.$this->category_film.'"]'), '"wp_theatre_prod"'));
+
 		
 	}
 	
@@ -475,7 +514,7 @@ class WPT_Test extends WP_UnitTestCase {
 		 * Remove the quotes around 'true' for upcoming.
 		 */
 		$args = array(
-			'upcoming' => 'true',
+			'upcoming' => true,
 			'past' => false,
 			'paginateby'=>array(),
 			'category'=> false, // deprecated since v0.9.

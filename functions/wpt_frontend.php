@@ -120,6 +120,14 @@ class WPT_Frontend {
 		return $content;
 	}
 
+	/**
+	 * wpt_events function.
+	 * 
+	 * @access public
+	 * @param mixed $atts
+	 * @param mixed $content (default: null)
+	 * @return void
+	 */
 	function wpt_events($atts, $content=null) {
 		global $wp_theatre;
 		global $wp_query;
@@ -128,7 +136,7 @@ class WPT_Frontend {
 			'upcoming' => 'true',
 			'past' => false,
 			'paginateby'=>array(),
-			'category'=> false, // deprecated since v0.9.
+			'category'=> false, // deprecated since v0.8.4.
 			'cat'=>false,
 			'category_name'=>false,
 			'category__and'=>false,
@@ -190,7 +198,7 @@ class WPT_Frontend {
 		}
 
 		/**
-		 * Deprecated since v0.9.
+		 * Deprecated since v0.8.4.
 		 * Use `cat`, `category_name`, `category__and`, `category__in` or `category__not_in` instead.
 		 */
 
@@ -272,7 +280,7 @@ class WPT_Frontend {
 		}
 
 		/**
-		 * Deprecated since v0.9. 
+		 * Deprecated since v0.8.4. 
 		 * Use `cat`, `category_name`, `category__and`, `category__in` or `category__not_in` instead.
 		 */
 

@@ -91,7 +91,7 @@ class WPT_Productions extends WPT_Listing {
 
 		);
 		$args = wp_parse_args( $args, $defaults );
-		
+
 		$filters = array(
 			'post__in' => $args['post__in'],
 			'post__not_in' => $args['post__not_in'],
@@ -154,6 +154,13 @@ class WPT_Productions extends WPT_Listing {
 			!empty($args['paginateby']) || 
 			!empty($args['groupby']) ||
 			!empty($args['category']) ||
+			!empty($args['cat']) ||
+			!empty($args['category_name']) ||
+			!empty($args['category__and']) ||
+			!empty($args['category__in']) ||
+			!empty($args['category__not_in']) ||
+			!empty($args['post__in']) ||
+			!empty($args['post__not_in']) ||
 			!empty($args['season'])
 		) {
 			$filters['ignore_sticky_posts'] = true;	
@@ -333,6 +340,7 @@ class WPT_Productions extends WPT_Listing {
 			$key = $posts[$i]->ID;
 			$productions[] = new WPT_Production($posts[$i]->ID);
 		}
+		
 		return $productions;
 	}
 	
