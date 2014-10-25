@@ -1,22 +1,31 @@
 <?php
 
-	/*
+	/**
 	 * A calendar with upcoming events.
 	 * @since 0.8
 	 */
-
 	class WPT_Calendar {
+	
+		/**
+		 * Add hooks to init the [wpt_calendar] shortcode and the Theater Calendar widget.
+		 */
 	
 		function __construct() {
 			add_shortcode('wpt_calendar', array($this,'shortcode'));
 			add_action( 'widgets_init', array($this,'widgets_init'));
 		}
 		
-		/*
-		* Get the HTML version of the calendar.
-		* @since 0.8
-		*/
-		
+		/**
+		 * Get the HTML version of the calendar.
+		 * @see WPT_Calendar::check_dependencies()	To check if all dependencies are set.
+		 * @see WPT_Events::months()				To retrieve all months with upcoming events.
+		 * @see WPT_Events::load()					To retrieve all upcoming events.
+		 * @see WPT_Listing_Page::url()				To retrieve the URL of the listing page.
+		 * @see WPT_Event::datetime()				To collect the dates for upcoming events.
+		 * @see WPT_Production::permalink()			To get the permalink for an event.
+		 * @since 0.8
+		 * @return void
+		 */
 		function html() {
 			if (!$this->check_dependencies()) {
 				return '';
@@ -24,7 +33,7 @@
 		
 			global $wp_theatre;
 			
-			/*
+			/**
 			 * If no months are set, show all months between now and the month of the last event.
 			 */
 			 
@@ -203,12 +212,16 @@
 			return $everything_ok;
 		}
 		
-		/*
-		 * Handle the [wpt_category] shortcode.
+		/**
+		 * Handle the [wpt_calendar] shortcode.
+		 * @see WPT_Calendar::check_dependencies()	To check if all dependencies are set.
+		 * @see WPT_Calendar::html()				To generate the HTML output.
+		 * @see WPT_Transients::get()				To retrieve a cached version of the output.
+		 * @see WPT_Transients::set()				To store a cached version of the output.
 		 * @since 0.8
 		 */
 		
-		function shortcode($atts, $content=null) {
+		function shortcode() {
 			$html = '';
 			
 			if ($this->check_dependencies()) {
@@ -223,6 +236,13 @@
 			return $html;
 		}
 
+		/**
+		 * Register the Theater Calendar widget.
+		 * @see WPT_Calendar::check_dependencies()	To check if all dependencies are set.
+		 * @see WPT_Calendar_Widget					The Theater Calendar widget.
+		 * @since 0.8
+		 */
+		
 		function widgets_init() {
 			if ($this->check_dependencies()) {
 				register_widget( 'WPT_Calendar_Widget' );			
