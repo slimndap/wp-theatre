@@ -424,7 +424,12 @@ class WPT_Production {
 	 * @since 0.4
 	 *
 	 * @param array $args {
-	 *     @type bool $html Return HTML? Default <false>.
+	 *     @type bool 		$html 		Return HTML? Default <false>.
+	 *     @type string 	$size 		Either a string keyword (thumbnail, medium, large or full) or 
+	 *									a 2-item array representing width and height in pixels, 
+	 *									e.g. array(32,32). 
+	 * 									Default 'thumbnail'.
+	 *     @type array 		$filters 	Default array().
 	 * }
 	 * @return integer ID or string HTML.
 	 */
