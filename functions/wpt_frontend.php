@@ -136,7 +136,7 @@ class WPT_Frontend {
 			'upcoming' => 'true',
 			'past' => false,
 			'paginateby'=>array(),
-			'category'=> false, // deprecated since v0.8.4.
+			'category'=> false, // deprecated since v0.9.
 			'cat'=>false,
 			'category_name'=>false,
 			'category__and'=>false,
@@ -198,7 +198,7 @@ class WPT_Frontend {
 		}
 
 		/**
-		 * Deprecated since v0.8.4.
+		 * Deprecated since v0.9.
 		 * Use `cat`, `category_name`, `category__and`, `category__in` or `category__not_in` instead.
 		 */
 
@@ -280,7 +280,7 @@ class WPT_Frontend {
 		}
 
 		/**
-		 * Deprecated since v0.8.4. 
+		 * Deprecated since v0.9. 
 		 * Use `cat`, `category_name`, `category__and`, `category__in` or `category__not_in` instead.
 		 */
 

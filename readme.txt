@@ -2,7 +2,7 @@
 Contributors: slimndap
 Tags: theatre, stage, venue, events, shows, concerts, tickets, ticketing, sports, performances, calendar, workshops, theater, cinema
 Requires at least: 3.8
-Tested up to: 3.9
+Tested up to: 4.0
 Stable tag: trunk
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -75,6 +75,21 @@ If you are missing a feature that you really need for your website you can:
 The new feature may be added directly to the Theater plugin or as an extension so that others may benefit from this as well.
 
 == Changelog ==
+
+= 0.9 = 
+* Added support for start and end dates in `[wpt_events]` shortcode. You can throw anything at it that strtotime understands! Some examples:
+    * `[wpt_events start="now"]`
+    * `[wpt_events start="today"]`
+    * `[wpt_events start="2014-09-02"]`
+    * `[wpt_events end="now"]`
+    * `[wpt_events start="2014-09-01" end="2014-10-01"]`
+    * `[wpt_events start="now" end="+1 week"]`
+    * `[wpt_events start="next Monday" end="next Monday +1 week"]`
+* Removed WordPress SEO by Yoast meta box from event admin screens.
+
+
+= 0.8.3 =
+* Bugfixes.
 
 = 0.8.2 = 
 * New date filter for template placeholder: `{{datetime|date('D j')}}`. Thank you [Epco](http://wordpress.org/support/profile/epco)!

@@ -286,6 +286,35 @@ class WPT_Test extends WP_UnitTestCase {
 	}
 	
 	function test_shortcode_wpt_events_filter_category() {
+
+		// test with cat
+		$result = do_shortcode('[wpt_events cat="'.$this->category_film.','.$this->category_muziek.'"]');
+		$this->assertEquals(3, substr_count($result, '"wp_theatre_event"'), $result);
+
+		$result = do_shortcode('[wpt_events cat="-'.$this->category_film.','.$this->category_muziek.'"]');
+		$this->assertEquals(1, substr_count($result, '"wp_theatre_event"'), $result);
+		
+		// test with category_name
+		$this->assertEquals(3, substr_count(do_shortcode('[wpt_events category_name="muziek"]'), '"wp_theatre_event"'));
+
+		$result = do_shortcode('[wpt_events category_name="muziek,film"]');
+		$this->assertEquals(3, substr_count($result, '"wp_theatre_event"'), $result);
+		
+		// test with an excluded category__in
+		$this->assertEquals(2, substr_count(do_shortcode('[wpt_events category__in="'.$this->category_film.'"]'), '"wp_theatre_event"'));
+
+		// test with category__not_in
+		// should list events from all productions except 1.
+		$this->assertEquals(2, substr_count(do_shortcode('[wpt_events category__not_in="'.$this->category_film.'"]'), '"wp_theatre_event"'));
+
+		// test with category__and_in
+		$this->assertEquals(2, substr_count(do_shortcode('[wpt_events category__and="'.$this->category_film.','.$this->category_muziek.'"]'), '"wp_theatre_event"'));
+
+
+
+	}
+	
+	function test_shortcode_wpt_events_filter_category_deprecated() {
 		$this->assertEquals(3, substr_count(do_shortcode('[wpt_events category="muziek"]'), '"wp_theatre_event"'));
 	}
 	
