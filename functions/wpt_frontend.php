@@ -120,6 +120,14 @@ class WPT_Frontend {
 		return $content;
 	}
 
+	/**
+	 * wpt_events function.
+	 * 
+	 * @access public
+	 * @param mixed $atts
+	 * @param mixed $content (default: null)
+	 * @return void
+	 */
 	function wpt_events($atts, $content=null) {
 		global $wp_theatre;
 		global $wp_query;
@@ -128,7 +136,12 @@ class WPT_Frontend {
 			'upcoming' => 'true',
 			'past' => false,
 			'paginateby'=>array(),
-			'category'=> false,
+			'category'=> false, // deprecated since v0.8.4.
+			'cat'=>false,
+			'category_name'=>false,
+			'category__and'=>false,
+			'category__in'=>false,
+			'category__not_in'=>false,
 			'day' => false,
 			'month' => false,
 			'season'=> false,
@@ -140,14 +153,6 @@ class WPT_Frontend {
 		
 		if (!empty($wp_query->query_vars['wpt_category'])) {
 			$defaults['category']=$wp_query->query_vars['wpt_category'];
-		} else {
-			/*
-			 * For backward compatibility purposes.
-			 * Before v0.8 $_GET[__('category','wp_theatre')] was used for the category filter.
-			 */
-			if(!empty($_GET[__('category','wp_theatre')])) {
-				$defaults['category']=$_GET[__('category','wp_theatre')];
-			}
 		}
 
 		if (!empty($wp_query->query_vars['wpt_day'])) {
@@ -156,14 +161,6 @@ class WPT_Frontend {
 		
 		if (!empty($wp_query->query_vars['wpt_month'])) {
 			$defaults['month']=$wp_query->query_vars['wpt_month'];
-		} else {
-			/*
-			 * For backward compatibility purposes.
-			 * Before v0.8 $_GET[__('month','wp_theatre')] was used for the category filter.
-			 */
-			if(!empty($_GET[__('month','wp_theatre')])) {
-				$defaults['month']=$_GET[__('month','wp_theatre')];
-			}
 		}
 		
 		$atts = shortcode_atts( $defaults, $atts );
@@ -176,6 +173,35 @@ class WPT_Frontend {
 			$atts['paginateby'] = $fields;
 		}
 		
+		if(!empty($atts['month'])) {
+			$atts['start'] = date('Y-m-d',strtotime($atts['month']));
+			$atts['end'] = date('Y-m-d',strtotime($atts['month'].' + 1 month'));
+		}
+		
+		if(!empty($atts['day'])) {
+			$atts['start'] = date('Y-m-d',strtotime($atts['day']));
+			$atts['end'] = date('Y-m-d',strtotime($atts['day'].' + 1 day'));
+		}
+		
+		if (!empty($atts['category__in'])) {
+			$atts['category__in'] = explode(',',$atts['category__in']);
+		}
+		
+		if (!empty($atts['category__not_in'])) {
+			$atts['category__not_in'] = explode(',',$atts['category__not_in']);
+		}
+		
+		$atts['upcoming'] = 'true' === $atts['upcoming'];
+		
+		if (!is_null($content) && !empty($content)) {
+			$atts['template'] = html_entity_decode($content);
+		}
+
+		/**
+		 * Deprecated since v0.8.4.
+		 * Use `cat`, `category_name`, `category__and`, `category__in` or `category__not_in` instead.
+		 */
+
 		if (!empty($atts['category'])) {
 			$categories = array();
 			$fields = explode(',',$atts['category']);
@@ -189,15 +215,9 @@ class WPT_Frontend {
 					}
 				}
 			}
-			$atts['category'] = implode(',',$categories);
+			$atts['cat'] = implode(',',$categories);
 		}
 		
-		$atts['upcoming'] = 'true' === $atts['upcoming'];
-		
-		if (!is_null($content) && !empty($content)) {
-			$atts['template'] = html_entity_decode($content);
-		}
-
 		if ( ! ( $html = $wp_theatre->transient->get('e', array_merge($atts, $_GET)) ) ) {
 			$html = $wp_theatre->events->html($atts);
 			$wp_theatre->transient->set('e', array_merge($atts, $_GET), $html);
@@ -211,23 +231,22 @@ class WPT_Frontend {
 		
 		$defaults = array(
 			'paginateby' => array(),
+			'post__in' => false,
+			'post__not_in' => false,
 			'upcoming' => false,
 			'season'=> false,
-			'category'=> false,
+			'category'=> false, // deprecated since v0.9.
+			'cat'=>false,
+			'category_name'=>false,
+			'category__and'=>false,
+			'category__in'=>false,
+			'category__not_in'=>false,
 			'groupby'=>false,
 			'limit'=>false
 		);
 				
 		if (!empty($wp_query->query_vars['wpt_category'])) {
 			$defaults['category']=$wp_query->query_vars['wpt_category'];
-		} else {
-			/*
-			 * For backward compatibility purposes.
-			 * Before v0.8 $_GET[__('category','wp_theatre')] was used for the category filter.
-			 */
-			if(!empty($_GET[__('category','wp_theatre')])) {
-				$defaults['category']=$_GET[__('category','wp_theatre')];
-			}
 		}
 
 		$atts = shortcode_atts($defaults,$atts);
@@ -239,6 +258,31 @@ class WPT_Frontend {
 			}
 			$atts['paginateby'] = $fields;
 		}
+
+		if (!empty($atts['post__in'])) {
+			$atts['post__in'] = explode(',',$atts['post__in']);
+		}
+		
+		if (!empty($atts['post__not_in'])) {
+			$atts['post__not_in'] = explode(',',$atts['post__not_in']);
+		}
+		
+		if (!empty($atts['category__in'])) {
+			$atts['category__in'] = explode(',',$atts['category__in']);
+		}
+		
+		if (!empty($atts['category__not_in'])) {
+			$atts['category__not_in'] = explode(',',$atts['category__not_in']);
+		}
+		
+		if (!is_null($content) && !empty($content)) {
+			$atts['template'] = html_entity_decode($content);
+		}
+
+		/**
+		 * Deprecated since v0.8.4. 
+		 * Use `cat`, `category_name`, `category__and`, `category__in` or `category__not_in` instead.
+		 */
 
 		if (!empty($atts['category'])) {
 			$categories = array();
@@ -253,11 +297,7 @@ class WPT_Frontend {
 					}
 				}
 			}
-			$atts['category'] = implode(',',$categories);
-		}
-		
-		if (!is_null($content) && !empty($content)) {
-			$atts['template'] = html_entity_decode($content);
+			$atts['cat'] = implode(',',$categories);
 		}
 
 		if ( ! ( $html = $wp_theatre->transient->get('p', array_merge($atts, $_GET)) ) ) {

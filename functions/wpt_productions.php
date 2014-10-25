@@ -34,8 +34,14 @@ class WPT_Productions extends WPT_Listing {
 	function defaults() {
 		return array(
 			'limit' => false,
+			'post__in' => false,
+			'post__not_in' => false,
 			'upcoming' => false,
-			'category' => false,
+			'cat' => false,
+			'category_name' => false,
+			'category__and' => false,
+			'category__in' => false,
+			'category__not_in' => false,
 			'season' => false,
 			'ignore_sticky_posts' => false
 		);
@@ -70,8 +76,14 @@ class WPT_Productions extends WPT_Listing {
 
 		$defaults = array(
 			'limit' => false,
+			'post__in' => false,
+			'post__not_in' => false,
 			'upcoming' => false,
-			'category' => false,
+			'cat' => false,
+			'category_name' => false,
+			'category__and' => false,
+			'category__in' => false,
+			'category__not_in' => false,
 			'season' => false,
 			'paginateby' => array(),
 			'groupby' => false,
@@ -79,9 +91,15 @@ class WPT_Productions extends WPT_Listing {
 
 		);
 		$args = wp_parse_args( $args, $defaults );
-		
+
 		$filters = array(
-			'category' => $args['category'],
+			'post__in' => $args['post__in'],
+			'post__not_in' => $args['post__not_in'],
+			'cat' => $args['cat'],
+			'category_name' => $args['category_name'],
+			'category__and' => $args['category__and'],
+			'category__in' => $args['category__in'],
+			'category__not_in' => $args['category__not_in'],
 			'season' => $args['season'],
 			'limit' => $args['limit'],
 			'upcoming' => $args['upcoming']
@@ -136,6 +154,13 @@ class WPT_Productions extends WPT_Listing {
 			!empty($args['paginateby']) || 
 			!empty($args['groupby']) ||
 			!empty($args['category']) ||
+			!empty($args['cat']) ||
+			!empty($args['category_name']) ||
+			!empty($args['category__and']) ||
+			!empty($args['category__in']) ||
+			!empty($args['category__not_in']) ||
+			!empty($args['post__in']) ||
+			!empty($args['post__not_in']) ||
 			!empty($args['season'])
 		) {
 			$filters['ignore_sticky_posts'] = true;	
@@ -224,6 +249,14 @@ class WPT_Productions extends WPT_Listing {
 			'order' => 'asc'
 		);
 		
+		if ($filters['post__in']) {
+			$args['post__in'] = $filters['post__in'];
+		}
+		
+		if ($filters['post__not_in']) {
+			$args['post__not_in'] = $filters['post__not_in'];
+		}
+		
 		if ($filters['season']) {
 			$args['meta_query'][] = array (
 				'key' => WPT_Season::post_type_name,
@@ -232,15 +265,31 @@ class WPT_Productions extends WPT_Listing {
 			);
 		}
 		
-		if ($filters['category']) {
-			$args['cat'] = $filters['category'];
+		if ($filters['cat']) {
+			$args['cat'] = $filters['cat'];
+		}
+		
+		if ($filters['category_name']) {
+			$args['category_name'] = $filters['category_name'];
+		}
+		
+		if ($filters['category__and']) {
+			$args['category__and'] = $filters['category__and'];
+		}
+		
+		if ($filters['category__in']) {
+			$args['category__in'] = $filters['category__in'];
+		}
+		
+		if ($filters['category__not_in']) {
+			$args['category__not_in'] = $filters['category__not_in'];
 		}
 		
 		if ($filters['limit']) {
 			$args['posts_per_page'] = $filters['limit'];
 		} elseif (
 			!$filters['season'] &&
-			!$filters['category']
+			!$filters['cat']
 		) { 
 			$args['posts_per_page'] = get_option('posts_per_page');		
 		} else {
@@ -291,6 +340,7 @@ class WPT_Productions extends WPT_Listing {
 			$key = $posts[$i]->ID;
 			$productions[] = new WPT_Production($posts[$i]->ID);
 		}
+		
 		return $productions;
 	}
 	
