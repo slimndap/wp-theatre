@@ -1,22 +1,31 @@
 <?php
 
-	/*
+	/**
 	 * A calendar with upcoming events.
 	 * @since 0.8
 	 */
-
 	class WPT_Calendar {
+	
+		/**
+		 * Add hooks to init the [wpt_calendar] shortcode and the Theater Calendar widget.
+		 */
 	
 		function __construct() {
 			add_shortcode('wpt_calendar', array($this,'shortcode'));
 			add_action( 'widgets_init', array($this,'widgets_init'));
 		}
 		
-		/*
-		* Get the HTML version of the calendar.
-		* @since 0.8
-		*/
-		
+		/**
+		 * Get the HTML version of the calendar.
+		 * @see WPT_Calendar::check_dependencies()	To check if all dependencies are set.
+		 * @see WPT_Events::months()				To retrieve all months with upcoming events.
+		 * @see WPT_Events::load()					To retrieve all upcoming events.
+		 * @see WPT_Listing_Page::url()				To retrieve the URL of the listing page.
+		 * @see WPT_Event::datetime()				To collect the dates for upcoming events.
+		 * @see WPT_Production::permalink()			To get the permalink for an event.
+		 * @since 0.8
+		 * @return void
+		 */
 		function html() {
 			if (!$this->check_dependencies()) {
 				return '';
@@ -24,7 +33,7 @@
 		
 			global $wp_theatre;
 			
-			/*
+			/**
 			 * If no months are set, show all months between now and the month of the last event.
 			 */
 			 
@@ -101,13 +110,31 @@
 					$date = date('Y-m-d', $first_day + ($i * 60*60*24));
 					$days[$date] = array();
 				}
-	
-				$filters = array(
-					'month' => $month,
-					'upcoming' => true
-				);
-				$filters['month'] = $month;
-				$events = $wp_theatre->events->load($filters);
+
+				$events_filters = array();
+
+				/**
+				 * Set the start-filter for the events.
+				 * Start a first day of `$month` if `$month` is not the current month.
+				 * Start today if `$month` is the current month.
+				 */
+				 
+				$start_time = strtotime($month);
+				if ($start_time < time()) {
+					$events_filters['start'] = 'now';
+				} else {
+					$events_filters['start'] = date('Y-m-d', $start_time);					
+				}
+
+				/**
+				 * Set the end-filter for the events.
+				 * Use the first day of the next month for the end-filter.
+				 */
+
+				$events_filters['end'] = date('Y-m-d',strtotime($month.' + 1 month'));
+
+				$events = $wp_theatre->events->load($events_filters);
+				
 				foreach ($events as $event) {
 					$date = date('Y-m-d',$event->datetime());
 					$days[$date][] = $event;
@@ -185,12 +212,16 @@
 			return $everything_ok;
 		}
 		
-		/*
-		 * Handle the [wpt_category] shortcode.
+		/**
+		 * Handle the [wpt_calendar] shortcode.
+		 * @see WPT_Calendar::check_dependencies()	To check if all dependencies are set.
+		 * @see WPT_Calendar::html()				To generate the HTML output.
+		 * @see WPT_Transients::get()				To retrieve a cached version of the output.
+		 * @see WPT_Transients::set()				To store a cached version of the output.
 		 * @since 0.8
 		 */
 		
-		function shortcode($atts, $content=null) {
+		function shortcode() {
 			$html = '';
 			
 			if ($this->check_dependencies()) {
@@ -205,6 +236,13 @@
 			return $html;
 		}
 
+		/**
+		 * Register the Theater Calendar widget.
+		 * @see WPT_Calendar::check_dependencies()	To check if all dependencies are set.
+		 * @see WPT_Calendar_Widget					The Theater Calendar widget.
+		 * @since 0.8
+		 */
+		
 		function widgets_init() {
 			if ($this->check_dependencies()) {
 				register_widget( 'WPT_Calendar_Widget' );			
