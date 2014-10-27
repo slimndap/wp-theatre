@@ -624,11 +624,11 @@ class WPT_Test extends WP_UnitTestCase {
 		global $wp_theatre;
 		
 		add_filter('wpt_productions_load_args', function($args) {
-			$args['post__not_in'] = array($this->production_with_upcoming_event);
+			$args['category_name'] = 'muziek';
 			return $args;
 		});
 		
-		// Should return all productions except $this->production_with_upcoming_event.
+		// Should return 2 productions in the muziek category (+ 2 sticky productions).
 		$this->assertCount(4, $this->wp_theatre->productions->load());		
 		
 	}
@@ -637,7 +637,7 @@ class WPT_Test extends WP_UnitTestCase {
 		global $wp_theatre;
 		
 		add_filter('wpt_events_load_args', function($args) {
-			$args['cat'] = $this->category_muziek;
+			$args['category_name'] = 'muziek';
 			return $args;
 		});
 		
