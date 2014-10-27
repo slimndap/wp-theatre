@@ -623,10 +623,12 @@ class WPT_Test extends WP_UnitTestCase {
 	function test_wpt_productions_load_args_filter() {
 		global $wp_theatre;
 		
-		add_filter('wpt_productions_load_args', function($args) {
-			$args['category_name'] = 'muziek';
-			return $args;
-		});
+		$func = create_function(
+			'$args',
+			'$args["category_name"] = "muziek";	return $args;'
+		);
+		
+		add_filter('wpt_productions_load_args', $func);
 		
 		// Should return 2 productions in the muziek category (+ 2 sticky productions).
 		$this->assertCount(4, $this->wp_theatre->productions->load());		
@@ -636,10 +638,11 @@ class WPT_Test extends WP_UnitTestCase {
 	function test_wpt_events_load_args_filter() {
 		global $wp_theatre;
 		
-		add_filter('wpt_events_load_args', function($args) {
-			$args['category_name'] = 'muziek';
-			return $args;
-		});
+		$func = create_function(
+			'$args',
+			'$args["category_name"] = "muziek";	return $args;'
+		);
+		add_filter('wpt_events_load_args', $func);
 		
 		// Should only return all events of 2 productions that are in the muziek and film categories.
 		$this->assertCount(3, $this->wp_theatre->events->load());		
