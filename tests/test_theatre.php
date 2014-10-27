@@ -620,6 +620,32 @@ class WPT_Test extends WP_UnitTestCase {
 		
 	}
 	
+	function test_wpt_productions_load_args_filter() {
+		global $wp_theatre;
+		
+		add_filter('wpt_productions_load_args', function($args) {
+			$args['post__not_in'] = array($this->production_with_upcoming_event);
+			return $args;
+		});
+		
+		// Should return all productions except $this->production_with_upcoming_event.
+		$this->assertCount(4, $this->wp_theatre->productions->load());		
+		
+	}
+	
+	function test_wpt_events_load_args_filter() {
+		global $wp_theatre;
+		
+		add_filter('wpt_events_load_args', function($args) {
+			$args['cat'] = $this->category_muziek;
+			return $args;
+		});
+		
+		// Should only return all events of 2 productions that are in the muziek and film categories.
+		$this->assertCount(3, $this->wp_theatre->events->load());		
+		
+	}
+	
 	function test_theatre_class_is_global() {
 		global $wp_theatre;
 		$this->assertTrue( 
