@@ -188,9 +188,9 @@ class WPT_Productions extends WPT_Listing {
 			case 'category':
 				if (!in_array('category', $args['paginateby'])) {
 					$categories = $this->categories();
-					foreach($categories as $slug=>$name) {
-						if ($category = get_category_by_slug($slug)) {
-				  			$filters['category'] = $category->term_id;				
+					foreach($categories as $term_id=>$name) {
+						if ($category = get_category($term_id)) {
+				  			$filters['cat'] = $category->term_id;				
 						}
 						$productions = $this->get($filters);
 						if (!empty($productions)) {

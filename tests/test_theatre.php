@@ -619,6 +619,75 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertCount(3, $this->wp_theatre->productions->load($args));		
 		
 	}
+		
+	function test_wpt_events_groupby_day() {
+				
+		$html = do_shortcode('[wpt_events groupby="day"]');
+		
+		// should contain 'wpt_listing_group day'.
+		$this->assertEquals(4, substr_count($html, '<h3 class="wpt_listing_group day">'));
+		
+		//should show the same number of events as 'wpt_events'.
+		$this->assertEquals(4, substr_count($html, '"wp_theatre_event"'));
+		
+	}
+	
+	function test_wpt_events_groupby_month() {
+
+		$production_args = array(
+			'post_type'=>WPT_Production::post_type_name
+		);
+			
+		$event_args = array(
+			'post_type'=>WPT_Event::post_type_name
+		);
+
+		// one year from now.
+		$event_date = time() + YEAR_IN_SECONDS;
+
+		// create production with 1 upcoming event in a year.
+		$production_in_a_year = $this->factory->post->create($production_args);
+		$upcoming_event = $this->factory->post->create($event_args);
+		add_post_meta($upcoming_event, WPT_Production::post_type_name, $production_in_a_year);
+		add_post_meta($upcoming_event, 'event_date', date('Y-m-d H:i:s', $event_date));
+				
+		$html = do_shortcode('[wpt_events groupby="month"]');
+		
+		// should contain 'wpt_listing_group month'.
+		$this->assertContains('<h3 class="wpt_listing_group month">'.date_i18n('F',$event_date).'</h3>', $html);
+		
+		//should show the same number of events as 'wpt_events' (4) + the new event.
+		$this->assertEquals(5, substr_count($html, '"wp_theatre_event"'));
+		
+	}
+
+	function test_wpt_events_groupby_category() {
+				
+		$html = do_shortcode('[wpt_events groupby="category"]');
+		
+		// should contain 'wpt_listing_group day'.
+		$this->assertEquals(2, substr_count($html, '<h3 class="wpt_listing_group category">'));
+		$this->assertEquals(1, substr_count($html, '<h3 class="wpt_listing_group category">muziek'));
+		$this->assertEquals(1, substr_count($html, '<h3 class="wpt_listing_group category">film'));
+		
+		//should show the 2 events for film and 3 events for muziek.
+		$this->assertEquals(5, substr_count($html, '"wp_theatre_event"'));
+		
+	}
+	function test_wpt_productions_groupby_category() {
+				
+		$html = do_shortcode('[wpt_productions groupby="category"]');
+		
+		// should contain 'wpt_listing_group day'.
+		$this->assertEquals(2, substr_count($html, '<h3 class="wpt_listing_group category">'));
+		$this->assertEquals(1, substr_count($html, '<h3 class="wpt_listing_group category">muziek'));
+		$this->assertEquals(1, substr_count($html, '<h3 class="wpt_listing_group category">film'));
+		
+		//should show the 2 events for film and 3 events for muziek.
+		$this->assertEquals(3, substr_count($html, '"wp_theatre_prod"'));
+		
+	}
+	
 	
 	function test_theatre_class_is_global() {
 		global $wp_theatre;

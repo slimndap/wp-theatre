@@ -148,8 +148,25 @@ class WPT_Events extends WPT_Listing {
 				if (!in_array('day', $args['paginateby'])) {
 					$days = $this->days($filters);
 					foreach($days as $day=>$name) {
-						$filters['day'] = $day;
-						$filters['upcoming'] = true;
+
+						/*
+						 * Set the start filter to current day, except when viewing today. 
+						 * In that case, set the start filter to now.
+						 * This avoids this today's past events from showing.
+						 */
+ 
+						if ($day == date('Y-m-d')) {
+							$filters['start'] = "now";
+						} else {
+							$filters['start'] = $day;
+						}
+
+						/*
+						 * Set the end filter to the the next day.
+						 */
+						 
+						$filters['end'] = $day.' +1 day';
+						
 						$events = $this->get($filters);
 						if (!empty($events)) {
 							$html.= '<h3 class="wpt_listing_group day">'.date_i18n('l d F',strtotime($day)).'</h3>';
@@ -164,8 +181,27 @@ class WPT_Events extends WPT_Listing {
 				if (!in_array('month', $args['paginateby'])) {
 					$months = $this->months($filters);
 					foreach($months as $month=>$name) {
-						$filters['month'] = $month;
+
+						/*
+						 * Set the start filter to current month, except when viewing this month. 
+						 * In that case, set the start filter to now.
+						 * This avoids this month's past events from showing.
+						 */
+ 
+						if ($month == date('Y-m')) {
+							$filters['start'] = "now";
+						} else {
+							$filters['start'] = $month;
+						}
+
+						/*
+						 * Set the end filter to the first day of the next month.
+						 */
+						 
+						$filters['end'] = $month.' +1 month';
+						
 						$events = $this->get($filters);
+						
 						if (!empty($events)) {
 							$html.= '<h3 class="wpt_listing_group month">'.date_i18n('F',strtotime($month)).'</h3>';
 							foreach ($events as $event) {
@@ -178,9 +214,9 @@ class WPT_Events extends WPT_Listing {
 			case 'category':
 				if (!in_array('category', $args['paginateby'])) {
 					$categories = $this->categories($filters);
-					foreach($categories as $slug=>$name) {
-						if ($category = get_category_by_slug($slug)) {
-				  			$filters['category'] = $category->term_id;				
+					foreach($categories as $term_id=>$name) {
+						if ($category = get_category($term_id)) {
+				  			$filters['cat'] = $category->term_id;				
 						}
 						$events = $this->get($filters);
 						if (!empty($events)) {
