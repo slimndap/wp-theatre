@@ -304,6 +304,15 @@ class WPT_Productions extends WPT_Listing {
 			);
 		}
 
+		/**
+		 * Filter the $args before doing get_posts().
+		 *
+		 * @since 0.9.1
+		 *
+		 * @param array $args The arguments to use in get_posts to retrieve productions.
+		 */
+		$args = apply_filters('wpt_productions_load_args',$args);
+
 		$posts = get_posts($args);
 
 		// don't forget the stickies!

@@ -372,6 +372,15 @@ class WPT_Events extends WPT_Listing {
 			$args['numberposts'] = -1;
 		}
 
+		/**
+		 * Filter the $args before doing get_posts().
+		 *
+		 * @since 0.9.1
+		 *
+		 * @param array $args The arguments to use in get_posts to retrieve events.
+		 */
+		$args = apply_filters('wpt_events_load_args',$args);
+		
 		$posts = get_posts($args);
 
 		$events = array();
