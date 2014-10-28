@@ -487,6 +487,16 @@ class WPT_Event {
 	}
 	
 	/**
+	 * save function.
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	function save() {
+		return $this;
+	}
+	
+	/**
 	 * Event ticket link.
 	 * 
 	 * Returns the event ticket link as plain text of as an HTML element.
