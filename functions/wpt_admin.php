@@ -204,15 +204,25 @@ class WPT_Admin {
             'side'
         ); 	
 		add_meta_box(
-            'wp_theatre_sticky',
+            'wp_theatre_display',
             __('Display','wp_theatre'),
-            array($this,'meta_box_sticky'),
+            array($this,'meta_box_display'),
             WPT_Production::post_type()->name,
             'side'
-        ); 		
+        ); 	
 	}
 	
-	function meta_box_sticky($production) {
+	/**
+	 * Show a meta box with display settings for a production.
+	 * http://codex.wordpress.org/Function_Reference/add_meta_box
+	 * 
+	 * @access public
+	 * @param WP_Post $production
+	 * @param mixed $metabox
+	 * @see WPT_Admin::add_meta_boxes()
+	 * @return void
+	 */
+	function meta_box_display($production, $metabox) {
 		echo '<label>';
 		
 		echo '<input type="checkbox" name="sticky"';
@@ -223,6 +233,8 @@ class WPT_Admin {
 		echo __('Stick this production to all listings.','wp_theatre');
 		
 		echo '</label>';
+		
+		do_action('wpt_admin_meta_box_display', $production, $metabox);
 	}
 
 	function get_events($production_id) {
@@ -614,8 +626,8 @@ class WPT_Admin {
 
 		// rehook
 		add_action( 'save_post_'.WPT_Event::post_type_name, array( $this, 'save_event' ) );
-	
-		
+
+		do_action('wpt_admin_after_save_'.WPT_Production::post_type_name, $post_id);
 	}
 	
 	function flush_cache() {
