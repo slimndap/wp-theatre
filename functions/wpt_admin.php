@@ -217,6 +217,7 @@ class WPT_Admin {
 	 * http://codex.wordpress.org/Function_Reference/add_meta_box
 	 * 
 	 * @access public
+	 * @since 0.9.2
 	 * @param WP_Post $production
 	 * @param mixed $metabox
 	 * @see WPT_Admin::add_meta_boxes()
@@ -234,6 +235,11 @@ class WPT_Admin {
 		
 		echo '</label>';
 		
+		/**
+		 * Fires after the contents of the display settings meta box are echoed.
+		 *
+		 * @since 0.9.2
+		 */
 		do_action('wpt_admin_meta_box_display', $production, $metabox);
 	}
 
@@ -627,6 +633,11 @@ class WPT_Admin {
 		// rehook
 		add_action( 'save_post_'.WPT_Event::post_type_name, array( $this, 'save_event' ) );
 
+		/**
+		 * Fires after a production is saved through the admin screen.
+		 *
+		 * @since 0.9.2
+		 */
 		do_action('wpt_admin_after_save_'.WPT_Production::post_type_name, $post_id);
 	}
 	

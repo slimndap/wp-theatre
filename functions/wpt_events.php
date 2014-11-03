@@ -375,7 +375,7 @@ class WPT_Events extends WPT_Listing {
 		/**
 		 * Filter the $args before doing get_posts().
 		 *
-		 * @since 0.9.1
+		 * @since 0.9.2
 		 *
 		 * @param array $args The arguments to use in get_posts to retrieve events.
 		 */
