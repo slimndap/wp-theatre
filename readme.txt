@@ -205,6 +205,9 @@ The new feature may be added directly to the Theater plugin or as an extension s
 
 == Upgrade Notice ==
 
+= 0.9.3 = 
+* Bugfix: sometimes not all seasons were showing up in a listing.
+
 = 0.9.2 = 
 * Introduced some new hooks and filters.
 
