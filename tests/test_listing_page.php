@@ -464,9 +464,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		$html = do_shortcode('[wpt_calendar]');
 		$this->assertEquals(4, substr_count($html, '<td><a'), $html);		
 	}
-	
-	
-	
+		
 	/* 
 	 * Test backwards compatibility
 	 */

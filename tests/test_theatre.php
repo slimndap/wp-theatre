@@ -688,6 +688,14 @@ class WPT_Test extends WP_UnitTestCase {
 		
 	}
 	
+	function test_wpt_productions_groupby_season() {
+	
+		$html = do_shortcode('[wpt_productions groupby="season"]');
+		
+		$this->assertEquals(2, substr_count($html, '<h3 class="wpt_listing_group season">'));
+		
+	}
+	
 	
 	function test_wpt_productions_load_args_filter() {
 		global $wp_theatre;

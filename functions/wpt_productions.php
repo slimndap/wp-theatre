@@ -173,7 +173,7 @@ class WPT_Productions extends WPT_Listing {
 			case 'season':
 				if (!in_array('season', $args['paginateby'])) {
 					$seasons = $this->seasons();
-					foreach($seasons as  $title=>$season) {
+					foreach($seasons as $title=>$season) {
 						$filters['season'] = $season->ID;
 						$productions = $this->get($filters);
 						if (!empty($productions)) {
@@ -215,27 +215,28 @@ class WPT_Productions extends WPT_Listing {
 	}
 	
 	/**
-	 * All productions.
+	 * Get all productions.
 	 *
 	 * Returns an array of all productions.
 	 * 
 	 * Example:
 	 *
-	 * $productions = $wp_theatre->productions->all();
-	 *
-	 * @since 0.4
+	 * $productions = $wp_theatre->productions->load();
 	 *
 	 * @param array $args {
-	 *     An array of arguments. Optional.
-	 *
-	 *     @type int $wp_theatre_season Only return production that are linked to season <$wp_theatre_season>. No additional sticky productions get added. Default <false>.
-	 *     @type bool $grouped Order the list by season, so it can be grouped later. Default <false>.
-	 *     @type bool $upcoming Only show productions with upcoming events. Plus sticky productions. Default <false>.
-	 *     @type int $limit Limit the list to $limit productions. Use <false> for an unlimited list. Default <false>.
+	 *		int $season. Only return productions that are linked to season.
+	 *		int $limit. See WP_Query.
+	 *		$post__in. See WP_Query.
+	 * 		$post__not_in. See WP_Query.
+	 * 		$cat. See WP_Query.
+	 * 		$category_name. See WP_Query.
+	 *  	category__and. See WP_Query.
+	 * 		category__in. See WP_Query.
+	 * 		category__not_in. See WP_Query.
+	 * 		ignore_sticky_posts. See WP_Query.
 	 * }
 	 * @return mixed An array of WPT_Production objects.
 	 */
-
 	function load($filters=array()) {
 		global $wpdb;
 		global $wp_theatre;
@@ -287,11 +288,6 @@ class WPT_Productions extends WPT_Listing {
 		
 		if ($filters['limit']) {
 			$args['posts_per_page'] = $filters['limit'];
-		} elseif (
-			!$filters['season'] &&
-			!$filters['cat']
-		) { 
-			$args['posts_per_page'] = get_option('posts_per_page');		
 		} else {
 			$args['posts_per_page'] = -1;
 		}
@@ -353,6 +349,12 @@ class WPT_Productions extends WPT_Listing {
 		return $productions;
 	}
 	
+	/**
+	 * An array of all seasons with productions.
+	 * 
+	 * @access public
+	 * @return mixed An array of WPT_Season objects
+	 */
 	function seasons() {
 		$productions = $this->get();
 		$seasons = array();
