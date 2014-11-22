@@ -35,16 +35,10 @@
 		
 			global $wp_theatre;
 			
-			/**
-			 * If no months are set, show all months between now and the month of the last event.
-			 */
-			 
-			if (empty($args['month'])) {
-				$months = $wp_theatre->events->months();
-				$months = array_keys($months);			
-			}
-			
-			
+			// Get all months from now to the month of the last event.
+			$months = $wp_theatre->events->months();
+			$months = array_keys($months);			
+						
 			$start_of_week = get_option('start_of_week');
 	
 			$thead_html = '<thead><tr>';
