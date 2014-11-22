@@ -61,8 +61,8 @@ class WP_Theatre {
 			add_action('admin_init',array($this,'update'));
 		}
 		
-		// Loaded action
-		do_action( 'wpt_loaded' );
+		// Hook wpt_loaded action.
+		add_action ('plugins_loaded', array($this,'wpt_loaded') );
 	}
 		
 	/**
@@ -121,6 +121,20 @@ class WP_Theatre {
 		$this->activate();
 	}
 
+
+ 
+ 	/**
+ 	 * Fires the `wpt_loaded` action.
+ 	 * 
+ 	 * Use this to safely load plugins that depend on Theater.
+ 	 *
+ 	 * @access public
+ 	 * @return void
+ 	 */
+ 	function wpt_loaded() {
+		do_action('wpt_loaded');
+	}
+
 	/*
 	 * Private functions.
 	 */
@@ -140,6 +154,7 @@ class WP_Theatre {
 		}
 		return $seasons;
 	}
+
 
 	/**
 	 * Deprecated functions. 
