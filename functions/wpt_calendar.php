@@ -16,15 +16,17 @@
 		}
 		
 		/**
-		 * Get the HTML version of the calendar.
+		 * Gets the HTML version for the calendar.
+		 *
 		 * @see WPT_Calendar::check_dependencies()	To check if all dependencies are set.
 		 * @see WPT_Events::months()				To retrieve all months with upcoming events.
 		 * @see WPT_Events::load()					To retrieve all upcoming events.
 		 * @see WPT_Listing_Page::url()				To retrieve the URL of the listing page.
 		 * @see WPT_Event::datetime()				To collect the dates for upcoming events.
 		 * @see WPT_Production::permalink()			To get the permalink for an event.
+		 *
 		 * @since 0.8
-		 * @return void
+		 * @return string The HTML for the calendar.
 		 */
 		function html() {
 			if (!$this->check_dependencies()) {
@@ -33,16 +35,10 @@
 		
 			global $wp_theatre;
 			
-			/**
-			 * If no months are set, show all months between now and the month of the last event.
-			 */
-			 
-			if (empty($args['month'])) {
-				$months = $wp_theatre->events->months();
-				$months = array_keys($months);			
-			}
-			
-			
+			// Get all months from now to the month of the last event.
+			$months = $wp_theatre->events->months();
+			$months = array_keys($months);			
+						
 			$start_of_week = get_option('start_of_week');
 	
 			$thead_html = '<thead><tr>';
@@ -160,14 +156,28 @@
 					} else {
 						
 						if (count($events)==1) {
-							$url = htmlentities($events[0]->production()->permalink());
+							$day_url = htmlentities($events[0]->production()->permalink());
 						} else {
-							$url = htmlentities($wp_theatre->listing_page->url(array('wpt_day'=>$day)));
+							$day_url = htmlentities($wp_theatre->listing_page->url(array('wpt_day'=>$day)));
 						}
 	
-						$day_html.= '<a href="'.$url.'">';
-						$day_html.= $day_label;				
-						$day_html.= '</a>';
+						$day_link = '<a href="'.$day_url.'">';
+						$day_link.= $day_label;				
+						$day_link.= '</a>';
+						
+						/**
+						 * Filter the HTML link for a day.
+						 *
+						 * @since 0.9.4
+						 *
+						 * @param string  $day_link 	The HTML for the link for the day.
+						 * @param string  $day 			The day of the month being displayed in `yyyy-mm-dd` format.
+						 * @param string  $day_url 		The URL to the production page or the listing page.
+						 * @param string  $day_label 	The text being shown inside the link for the day.
+						 * @param array   $events		An array of WTP_Event objects. 
+						 * 								The events that take place on the day of the month being displayed.
+						 */
+						$day_html.= apply_filters('wpt_calendar_html_day_link',$day_link, $day, $day_url, $day_label, $events);
 					}
 	
 					if (date('Y-m',strtotime($day)) != $month) {
@@ -180,27 +190,60 @@
 						$day_html = '<td>'.$day_html.'</td>';
 					}
 					
-					$month_html.= $day_html;
+					/**
+					 * Filter the HTML output for a day.
+					 *
+					 * @since 0.9.4
+					 *
+					 * @param string  $day_html The HTML for the day.
+					 * @param string  $day 		The day of the month being displayed in `yyyy-mm-dd` format.
+					 * @param array   $events	An array of WTP_Event objects. 
+					 * 							The events that take place on the day of the month being displayed.
+					 */
+					$month_html.= apply_filters('wpt_calendar_html_day', $day_html, $day, $events);
 	
 					if (($day_index % 7) == 6) {
 						$month_html.= '</tr>';
 					}
-	
-	
-	
+		
 					$day_index++;
 				}
 	
 				$month_html.= '</tbody>';
 				
-				$html.= '<table class="wpt_month">'.$month_html.'</table>';
+				$month_html = '<table class="wpt_month">'.$month_html.'</table>';
+
+				/**
+				 * Filter the HTML output for the full month.
+				 *
+				 * @since 0.9.4
+				 *
+				 * @param string  $month_html The HTML for the full month.
+				 * @param string  $month The month being displayed in yyyy-mm format.
+				 */
+ 				$html.= apply_filters('wpt_calendar_html_month', $month_html, $month);
 	
 			}
 			$html = '<div class="wpt_calendar">'.$html.'</div>';
+
+			/**
+			 * Filter the HTML output for entire calendar.
+			 *
+			 * @since 0.9.4
+			 *
+			 * @param string  $html The HTML for the calendar.
+			 */
+			$html = apply_filters('wpt_calendar_html', $html);
 			
 			return $html;
 		}
 		
+		/**
+		 * check_dependencies function.
+		 * 
+		 * @access public
+		 * @return void
+		 */
 		function check_dependencies() {
 			global $wp_theatre;
 
