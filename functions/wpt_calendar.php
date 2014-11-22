@@ -160,14 +160,16 @@
 					} else {
 						
 						if (count($events)==1) {
-							$url = htmlentities($events[0]->production()->permalink());
+							$day_url = htmlentities($events[0]->production()->permalink());
 						} else {
-							$url = htmlentities($wp_theatre->listing_page->url(array('wpt_day'=>$day)));
+							$day_url = htmlentities($wp_theatre->listing_page->url(array('wpt_day'=>$day)));
 						}
 	
-						$day_html.= '<a href="'.$url.'">';
-						$day_html.= $day_label;				
-						$day_html.= '</a>';
+						$day_link = '<a href="'.$day_url.'">';
+						$day_link.= $day_label;				
+						$day_link.= '</a>';
+						
+						$day_html.= apply_filters('wpt_calendar_html_day_link',$day_link, $day, $day_url, $day_label, $events);
 					}
 	
 					if (date('Y-m',strtotime($day)) != $month) {
@@ -180,23 +182,25 @@
 						$day_html = '<td>'.$day_html.'</td>';
 					}
 					
-					$month_html.= $day_html;
+					$month_html.= apply_filters('wpt_calendar_html_day', $day_html, $day, $events);
 	
 					if (($day_index % 7) == 6) {
 						$month_html.= '</tr>';
 					}
-	
-	
-	
+		
 					$day_index++;
 				}
 	
 				$month_html.= '</tbody>';
 				
-				$html.= '<table class="wpt_month">'.$month_html.'</table>';
+				$month_html = '<table class="wpt_month">'.$month_html.'</table>';
+
+				$html.= apply_filters('wpt_calendar_html_month', $month_html, $month);
 	
 			}
 			$html = '<div class="wpt_calendar">'.$html.'</div>';
+
+			$html = apply_filters('wpt_calendar_html', $html);
 			
 			return $html;
 		}
