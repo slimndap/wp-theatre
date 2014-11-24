@@ -447,7 +447,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 	}
 	
 	function test_events_with_template_on_production_page() {
-		$this->options['listing_page_position_on_production_page'] = 'below';
+		$this->options['listing_page_position_on_production_page'] = 'above';
 		$this->options['listing_page_template_on_production_page'] = '{{title}}template!';
 		update_option('wpt_listing_page', $this->options);
 

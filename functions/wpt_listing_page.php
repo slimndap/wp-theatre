@@ -13,6 +13,8 @@
 				add_filter('wpt_admin_page_tabs', array($this,'wpt_admin_page_tabs'));
 			} else {
 				add_action('the_content', array($this, 'the_content'));
+				add_filter('wpt_production_content_before', array($this, 'wpt_production_content_before'));
+				add_filter('wpt_production_content_after', array($this, 'wpt_production_content_after'));
 				add_filter('wpt_listing_filter_pagination_url', array($this,'wpt_listing_filter_pagination_url'));	
 			}
 
@@ -26,6 +28,9 @@
 			add_action( 'widgets_init', array($this,'widgets_init'));
 
 			$this->options = get_option('wpt_listing_page');
+			
+
+			
 	 	}
 	 	
 	 	function admin_init() {
@@ -606,31 +611,7 @@
 		 			}
 	 			}
 	 		}
-	 		
-			if (is_singular(WPT_Production::post_type_name)) {
-				if (
-					isset( $this->options['listing_page_position_on_production_page'] ) &&
-					in_array($this->options['listing_page_position_on_production_page'], array('above','below'))
-				) {
-					$production = new WPT_Production();			
-					$events_html = '<h3>'.__('Events','wp_theatre').'</h3>';
-
-					$template = '{{remark}} {{datetime}} {{location}} {{tickets}}';
-					if (!empty($this->options['listing_page_template_on_production_page'])) {
-						$template = $this->options['listing_page_template_on_production_page'];
-					}
-					$events_html.= '[wpt_production_events]'.$template.'[/wpt_production_events]';
-					
-					switch ($this->options['listing_page_position_on_production_page']) {
-						case 'above' :
-							$content = $events_html.$content;
-							break;
-						case 'below' :
-							$content.= $events_html;
-					}
-				}
-			}
-		
+	 				
 		 	return $content;
 	 	}
 	 	
@@ -755,6 +736,66 @@
 		 		}
 	 		}
 		 	return $url;
+	 	}
+	 	
+
+	 	/**
+	 	 * Adds an event listing before the content of a production page.
+	 	 * 
+	 	 * @since 0.9.5
+	 	 * @see: WPT_Listing_Page::wpt_production_events_content
+	 	 * @param string $content_above The old content before the content of the production.
+	 	 * @return string The new content before the content of the production.
+	 	 */
+	 	function wpt_production_content_before($content_before) {
+		 	if (
+		 		!empty($this->options['listing_page_position_on_production_page']) &&
+		 		(in_array($this->options['listing_page_position_on_production_page'], array('before','above')))
+		 	) {
+			 	$content_before.= $this->wpt_production_events_content();
+		 	}
+		 	return $content_before;
+		}
+
+	 	/**
+	 	 * Adds an event listing after the content of a production page.
+	 	 * 
+	 	 * @since 0.9.5
+	 	 * @see: WPT_Listing_Page::wpt_production_events_content
+	 	 * @param string $content_below The old content after the content of the production.
+	 	 * @return string The new content after the content of the production.
+	 	 */
+	 	function wpt_production_content_after($content_after) {
+		 	if (
+		 		!empty($this->options['listing_page_position_on_production_page']) &&
+		 		(in_array($this->options['listing_page_position_on_production_page'], array('after','below')))
+		 	) {
+			 	$content_after.= $this->wpt_production_events_content();
+		 	}
+		 	
+		 	return $content_after;
+		}
+
+	 	/**
+	 	 * Gets an event listing for use on a production page.
+	 	 * 
+	 	 * @since 0.9.5
+	 	 * @access private
+	 	 * @return string
+	 	 */
+	 	private function wpt_production_events_content() {
+		 	
+			$production = new WPT_Production();			
+			$events_html = '<h3>'.__('Events','wp_theatre').'</h3>';
+
+			$template = '{{remark}} {{datetime}} {{location}} {{tickets}}';
+			if (!empty($this->options['listing_page_template_on_production_page'])) {
+				$template = $this->options['listing_page_template_on_production_page'];
+			}
+			$events_html.= '[wpt_production_events]'.$template.'[/wpt_production_events]';
+			
+		 	return $events_html;
+		 	
 	 	}
 	 	
 	 	/*

@@ -4,7 +4,8 @@ class WPT_Frontend {
 		add_action('init', array($this,'init'));
 		add_action('wp_head', array($this,'wp_head'));
 
-		add_action('the_content', array($this, 'the_content'));
+		add_filter('the_content', array($this, 'the_content'));
+
 		add_filter('pre_get_posts', array($this,'pre_get_posts') );
 
 		add_shortcode('wpt_events', array($this,'wpt_events'));
@@ -115,6 +116,37 @@ class WPT_Frontend {
 						$content.= $productions_html;
 				}
 			}
+		}
+		
+		if (is_singular(WPT_Production::post_type_name)) {
+
+			$content_before = '';
+
+			/**
+			 * Filter the content before the production content.
+			 *
+			 * @since 0.9.4
+			 *
+			 * @param string  $content_before 	The current content before the production content.
+			 */	
+			$content_before = apply_filters('wpt_production_content_before', $content_before);
+			$content_before = apply_filters('wpt_production_content_above', $content_before);
+
+			$content_after = '';
+
+			/**
+			 * Filter the content after the production content.
+			 *
+			 * @since 0.9.4
+			 *
+			 * @param string  $content_before 	The current content after the production content.
+			 */	
+			$content_after = apply_filters('wpt_production_content_below', $content_after);
+			$content_after = apply_filters('wpt_production_content_after', $content_after);
+
+			$content = $content_before.$content.$content_after;
+			$content = apply_filters('wpt_production_content', $content);
+
 		}
 		
 		return $content;
