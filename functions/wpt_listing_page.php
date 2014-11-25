@@ -788,7 +788,7 @@
 			$production = new WPT_Production();			
 			$events_html = '<h3>'.__('Events','wp_theatre').'</h3>';
 
-			$template = '{{remark}} {{datetime}} {{location}} {{tickets}}';
+			$template = '';
 			if (!empty($this->options['listing_page_template_on_production_page'])) {
 				$template = $this->options['listing_page_template_on_production_page'];
 			}

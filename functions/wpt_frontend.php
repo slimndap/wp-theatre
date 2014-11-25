@@ -123,28 +123,36 @@ class WPT_Frontend {
 			$content_before = '';
 
 			/**
-			 * Filter the content before the production content.
+			 * Filter the content before the content of a production page.
 			 *
-			 * @since 0.9.4
+			 * @since 0.9.5
 			 *
 			 * @param string  $content_before 	The current content before the production content.
 			 */	
 			$content_before = apply_filters('wpt_production_content_before', $content_before);
-			$content_before = apply_filters('wpt_production_content_above', $content_before);
+			//$content_before = apply_filters('wpt_production_content_above', $content_before);
 
 			$content_after = '';
 
 			/**
-			 * Filter the content after the production content.
+			 * Filter the content after the content of a production page.
 			 *
-			 * @since 0.9.4
+			 * @since 0.9.5
 			 *
-			 * @param string  $content_before 	The current content after the production content.
+			 * @param string  $content_after 	The current content after the production content.
 			 */	
-			$content_after = apply_filters('wpt_production_content_below', $content_after);
+			//$content_after = apply_filters('wpt_production_content_below', $content_after);
 			$content_after = apply_filters('wpt_production_content_after', $content_after);
 
 			$content = $content_before.$content.$content_after;
+
+			/**
+			 * Filter the content of a production page.
+			 *
+			 * @since 0.9.5
+			 *
+			 * @param string  $content 	The current content of the production.
+			 */	
 			$content = apply_filters('wpt_production_content', $content);
 
 		}
