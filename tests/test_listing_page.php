@@ -461,12 +461,15 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 	}
 	
 	function test_events_on_production_page_with_custom_heading() {
+		
+		function custom_heading() {
+			return '<h3>custom heading</h3>';
+		}
+		
 		$this->options['listing_page_position_on_production_page'] = 'below';
 		update_option('wpt_listing_page', $this->options);
 
-		add_filter('wpt_production_page_events_header', function() {
-			return '<h3>custom heading</h3>';
-		});
+		add_filter('wpt_production_page_events_header', 'custom_heading');
 
 		$this->go_to(
 			get_permalink($this->production_with_upcoming_events)
