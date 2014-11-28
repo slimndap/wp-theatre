@@ -13,8 +13,8 @@
 				add_filter('wpt_admin_page_tabs', array($this,'wpt_admin_page_tabs'));
 			} else {
 				add_action('the_content', array($this, 'the_content'));
-				add_filter('wpt_production_content_before', array($this, 'wpt_production_content_before'));
-				add_filter('wpt_production_content_after', array($this, 'wpt_production_content_after'));
+				add_filter('wpt_production_page_content_before', array($this, 'wpt_production_page_content_before'));
+				add_filter('wpt_production_page_content_after', array($this, 'wpt_production_page_content_after'));
 				add_filter('wpt_listing_filter_pagination_url', array($this,'wpt_listing_filter_pagination_url'));	
 			}
 
@@ -747,12 +747,12 @@
 	 	 * @param string $content_above The old content before the content of the production.
 	 	 * @return string The new content before the content of the production.
 	 	 */
-	 	function wpt_production_content_before($content_before) {
+	 	function wpt_production_page_content_before($content_before) {
 		 	if (
 		 		!empty($this->options['listing_page_position_on_production_page']) &&
 		 		(in_array($this->options['listing_page_position_on_production_page'], array('before','above')))
 		 	) {
-			 	$content_before.= $this->wpt_production_events_content();
+			 	$content_before.= $this->wpt_production_page_events_content();
 		 	}
 		 	return $content_before;
 		}
@@ -765,12 +765,12 @@
 	 	 * @param string $content_below The old content after the content of the production.
 	 	 * @return string The new content after the content of the production.
 	 	 */
-	 	function wpt_production_content_after($content_after) {
+	 	function wpt_production_page_content_after($content_after) {
 		 	if (
 		 		!empty($this->options['listing_page_position_on_production_page']) &&
 		 		(in_array($this->options['listing_page_position_on_production_page'], array('after','below')))
 		 	) {
-			 	$content_after.= $this->wpt_production_events_content();
+			 	$content_after.= $this->wpt_production_page_events_content();
 		 	}
 		 	
 		 	return $content_after;
@@ -783,10 +783,10 @@
 	 	 * @access private
 	 	 * @return string
 	 	 */
-	 	private function wpt_production_events_content() {
+	 	private function wpt_production_page_events_content() {
 		 	
 			$production = new WPT_Production();			
-			$events_html = '<h3>'.__('Events','wp_theatre').'</h3>';
+			$events_html = apply_filters('wpt_production_page_events_header','<h3>'.__('Events','wp_theatre').'</h3>');
 
 			$template = '';
 			if (!empty($this->options['listing_page_template_on_production_page'])) {

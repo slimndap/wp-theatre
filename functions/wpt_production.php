@@ -601,22 +601,6 @@ class WPT_Production {
 				default:
 					$replacement = $this->custom($field,array('html'=>true, 'filters'=>$filters));
 			}
-			/*
-			switch($filter) {
-				case 'permalink':
-					if (!empty($replacement)) {
-						$args = array(
-							'html'=>true,
-							'text'=> $replacement,
-							'inside'=>true
-						);
-						$replacement = $this->permalink($args);
-					}
-					break;
-				default:
-					$replacement = $replacement;
-			}
-			*/
 			$html = str_replace('{{'.$placeholder.'}}', $replacement, $html);
 		}
 
