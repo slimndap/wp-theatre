@@ -120,6 +120,15 @@ class WPT_Frontend {
 		
 		if (is_singular(WPT_Production::post_type_name)) {
 
+			/**
+			 * Filter the content of a production page.
+			 *
+			 * @since 0.9.5
+			 *
+			 * @param string  $content 	The current content of the production.
+			 */	
+			$content = apply_filters('wpt_production_page_content', $content);
+
 			$content_before = '';
 
 			/**
@@ -144,14 +153,6 @@ class WPT_Frontend {
 
 			$content = $content_before.$content.$content_after;
 
-			/**
-			 * Filter the content of a production page.
-			 *
-			 * @since 0.9.5
-			 *
-			 * @param string  $content 	The current content of the production.
-			 */	
-			$content = apply_filters('wpt_production_page_content', $content);
 
 		}
 		
