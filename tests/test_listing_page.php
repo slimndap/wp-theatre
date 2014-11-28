@@ -479,6 +479,25 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		$this->assertEquals(1, substr_count($html, '<h3>custom heading</h3>'), $html);
 	}
 	
+	function test_events_on_production_page_with_custom_content() {
+		
+		function custom_content() {
+			return '<p>custom content</p>';
+		}
+		
+		$this->options['listing_page_position_on_production_page'] = 'before';
+		update_option('wpt_listing_page', $this->options);
+
+		add_filter('wpt_production_page_content', 'custom_content');
+
+		$this->go_to(
+			get_permalink($this->production_with_upcoming_events)
+		);
+
+		$html= get_echo( 'the_content' );
+		$this->assertEquals(1, substr_count($html, '<p>custom content</p>'), $html);
+	}
+	
 	
 	
 	function test_shortcode_wpt_calendar() {
