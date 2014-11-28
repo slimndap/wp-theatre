@@ -24,9 +24,13 @@ __Missing features?__
 
 Submit a request on the [forum](http://wordpress.org/support/plugin/theatre).
 
+__Extending Theater for WordPress__
+
+Easy! Write your own plugins that extend Theater for WordPress. Check out my [example](https://github.com/slimndap/wp-theatre-example-extension) plugin on GitHub.
+
 __Contributors welcome__
 
-* Submit a [pull request on Github](https://github.com/slimndap/wp-theatre)
+* Submit a [pull request on GitHub](https://github.com/slimndap/wp-theatre)
 
 __Author__
 
@@ -204,6 +208,9 @@ The new feature may be added directly to the Theater plugin or as an extension s
 * Basic version of the plugin.
 
 == Upgrade Notice ==
+
+= 0.9.5 =
+* Added new filters to manipulate the content of a single production page.
 
 = 0.9.4 = 
 * Bugfix: `wpt_loaded` action hooks was fired too early.
