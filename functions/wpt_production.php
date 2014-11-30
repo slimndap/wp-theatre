@@ -132,14 +132,26 @@ class WPT_Production {
 		}
 
 		if ($args['html']) {
-			remove_action('the_content', array($wp_theatre->frontend, 'the_content'));
+			
+			/*
+			 * Temporarily unhook other Theater filters that hook into `the_content`
+			 * to avoid loops.
+			 */
+			 
+			remove_filter('the_content', array($wp_theatre->frontend, 'the_content'));
+			remove_filter('the_content', array($wp_theatre->listing_page, 'the_content'));
 
 			$html = '';
 			$html.= '<div class="'.self::post_type_name.'_content">';
 			$html.= apply_filters('the_content',$this->content);
 			$html.= '</div>';
 			
-			add_action('the_content', array($wp_theatre->frontend, 'the_content'));
+			/*
+			 * Re-hook other Theater filters that hook into `the_content`.
+			 */
+
+			add_filter('the_content', array($wp_theatre->frontend, 'the_content'));
+			add_filter('the_content', array($wp_theatre->listing_page, 'the_content'));
 
 			return apply_filters('wpt_production_content_html', $html, $this);				
 		} else {

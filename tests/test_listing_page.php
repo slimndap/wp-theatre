@@ -158,6 +158,22 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		$this->assertEquals(4, substr_count($html, '"wp_theatre_event"'), $html);
 	}
 	
+	function test_events_on_listing_page_with_content_field() {
+		$this->options['listing_page_type'] = WPT_Event::post_type_name;
+		$this->options['listing_page_template'] = '{{title}}{{content}}{{tickets}}';
+		$this->options['listing_page_position'] = 'above';
+
+		update_option('wpt_listing_page', $this->options);
+
+		$this->go_to( get_permalink( $this->wp_theatre->listing_page->page() ) );
+
+		$html = get_echo( 'the_content' );
+		
+		$this->assertEquals(4, substr_count($html, '"wp_theatre_event"'), $html);
+		$this->assertEquals(4, substr_count($html, '"wp_theatre_prod_content"'), $html);
+
+	}
+	
 	function test_events_are_paginated_by_day_on_listing_page() {
 		$this->options['listing_page_type'] = WPT_Event::post_type_name;
 		$this->options['listing_page_nav'] = 'paginated';
