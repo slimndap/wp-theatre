@@ -211,6 +211,7 @@ The new feature may be added directly to the Theater plugin or as an extension s
 
 = 0.9.6 =
 * Bugfix: The {{content}} placeholder was causing an infinite loop on some pages with event listings.
+* Bugfix: The output of the {{remark}} placeholder was lacking wrappers divs.
 
 = 0.9.5 =
 * Added new filters to manipulate the content of a single production page.
