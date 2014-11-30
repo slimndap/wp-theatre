@@ -475,7 +475,7 @@ class WPT_Event {
 			$this->remark = apply_filters('wpt_event_remark',get_post_meta($this->ID,'remark',true), $this);
 		}
 
-		if ($args['html'] && !empty($remark)) {
+		if ($args['html']) {
 			$html = '';
 			$html.= '<div class="'.self::post_type_name.'_remark">';
 			$html.= $wp_theatre->filter->apply($this->remark, $args['filters'], $this);
