@@ -21,8 +21,8 @@
 			add_action('update_option_'.$this->slug, array($this,'update_options'), 10 ,2);
 			add_action('wp_loaded', array( $this, 'handle_import_linked' ));
 
-			add_filter('admin_init',array($this,'admin_init'));
-			add_filter('wpt_admin_page_tabs',array($this,'wpt_admin_page_tabs'));
+			add_filter('admin_init',array($this,'add_settings_fields'));
+			add_filter('wpt_admin_page_tabs',array($this,'add_settings_tab'));
 			add_action($this->slug.'_import', array($this, 'execute' ));
 			
 		}
@@ -149,6 +149,44 @@
 		}
 		
 		/**
+		 * Gets an event based on the unique identifier.
+		 * 
+		 * Use this helper function to find a previously imported event while processing your feed.
+		 * 
+		 * @since 0.10
+		 *
+		 * @see WPT_Importer::update_event()
+		 *
+		 * @access protected
+		 * @param string $ref A unique identifier for the event.
+		 * @return WPT_Event The event. Returns `false` if no previously imported event was found.
+		 */
+		function get_event_by_ref($ref) {
+			$args = array(
+				'post_type' => WPT_Event::post_type_name,
+				'post_status' => 'any',
+				'meta_query' => array(
+					array(
+						'key' => '_wpt_source',
+						'value' => $this->slug,
+					),
+					array(
+						'key' => '_wpt_source_ref',
+						'value' => $ref
+					),
+				),
+			);
+			$events = get_posts($args);
+	
+			if (!empty($events[0])) {
+				return new WPT_Event($events[0]);
+			} else {
+				return false;
+			}
+			
+		}
+		
+		/**
 		 * Gets a production based on the unique identifier.
 		 * 
 		 * Use this helper function to find a previously imported production while processing your feed.
@@ -234,6 +272,53 @@
 
 			$this->stats['events_updated']++;
 			
+		}
+
+		/**
+		 * Updates the thumbnails of a production from a URL.
+		 *
+		 * Use this helper function to import thumbnails while processing your feed.
+		 * If no existing event is found then a new one is created.
+		 * 
+		 * @since 0.10
+		 *
+		 * @access protected
+		 * @param int $production_id
+		 * @param string $image_url
+		 * @param string $image_desc
+		 * @return int Post meta ID on success, false on failure.
+		 */
+		protected function update_production_thumbnail_from_url($production_id, $image_url, $image_desc) {
+
+			require_once(ABSPATH . 'wp-admin/includes/media.php');
+			require_once(ABSPATH . 'wp-admin/includes/file.php');
+			require_once(ABSPATH . 'wp-admin/includes/image.php');
+
+			$tmp = download_url( $image_url );
+			$file_array = array();
+			
+			// Set variables for storage
+			// fix file filename for query strings
+			preg_match('/[^\?]+\.(jpg|jpe|jpeg|gif|png)/i', $image_url, $matches);
+			$file_array['name'] = basename($matches[0]);
+			$file_array['tmp_name'] = $tmp;
+			
+			// If error storing temporarily, unlink
+			if ( is_wp_error( $tmp ) ) {
+				@unlink($file_array['tmp_name']);
+				$file_array['tmp_name'] = '';
+			}
+			
+			// do the validation and storage stuff
+			$thumbnail_id = media_handle_sideload( $file_array, $production_id, $image_desc );
+
+			// If error storing permanently, unlink
+			if ( is_wp_error($thumbnail_id) ) {
+				@unlink($file_array['tmp_name']);
+				return $thumbnail_id;
+			}
+
+			return set_post_thumbnail( $production_id, $thumbnail_id );
 		}
 
 		/**
@@ -466,71 +551,24 @@
 			}
 		}
 		
-
-		
-		
-		
-		
-
-		function get_event_by_ref($ref) {
-			$args = array(
-				'post_type' => WPT_Event::post_type_name,
-				'post_status' => 'any',
-				'meta_query' => array(
-					array(
-						'key' => '_wpt_source',
-						'value' => $this->slug,
-					),
-					array(
-						'key' => '_wpt_source_ref',
-						'value' => $ref
-					),
-				),
-			);
-			$productions = get_posts($args);
-	
-			if (!empty($productions[0])) {
-				return new WPT_Production($productions[0]);
-			} else {
-				return false;
-			}
-			
-		}
-		
-		function update_production_thumbnail_from_url($production_id, $image_url, $image_desc) {
-
-			require_once(ABSPATH . 'wp-admin/includes/media.php');
-			require_once(ABSPATH . 'wp-admin/includes/file.php');
-			require_once(ABSPATH . 'wp-admin/includes/image.php');
-
-			$tmp = download_url( $image_url );
-			$file_array = array();
-			
-			// Set variables for storage
-			// fix file filename for query strings
-			preg_match('/[^\?]+\.(jpg|jpe|jpeg|gif|png)/i', $image_url, $matches);
-			$file_array['name'] = basename($matches[0]);
-			$file_array['tmp_name'] = $tmp;
-			
-			// If error storing temporarily, unlink
-			if ( is_wp_error( $tmp ) ) {
-				@unlink($file_array['tmp_name']);
-				$file_array['tmp_name'] = '';
-			}
-			
-			// do the validation and storage stuff
-			$thumbnail_id = media_handle_sideload( $file_array, $production_id, $image_desc );
-
-			// If error storing permanently, unlink
-			if ( is_wp_error($thumbnail_id) ) {
-				@unlink($file_array['tmp_name']);
-				return $thumbnail_id;
-			}
-
-			return set_post_thumbnail( $production_id, $thumbnail_id );
+		/**
+		 * Adds a new tab to the Theater settings screen.
+		 *
+		 * Hooked into the `wpt_admin_page_tabs` action.
+		 * 
+		 * @since 0.10
+		 *
+		 * @see WPT_Importer::init()
+		 *
+		 * @param array $tabs The existing tabs on the Theater settings screen.
+		 * @return array The tabs, with a new tab added to the end.
+		 */
+		function add_settings_tab($tabs) {
+			$tabs[$this->slug] = $this->name;		
+			return $tabs;
 		}
 
-		function admin_init() {
+		function add_settings_fields() {
 	        register_setting($this->slug, $this->slug);
 	
 	        add_settings_section(
@@ -663,10 +701,6 @@
 			echo '</table>';
 		}
 		
-		function wpt_admin_page_tabs($tabs) {
-			$tabs[$this->slug] = $this->name;		
-			return $tabs;
-		}
 		
 		
 	}
