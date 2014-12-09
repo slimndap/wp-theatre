@@ -191,6 +191,27 @@ class WPT_Test extends WP_UnitTestCase {
 	}
 	
 	function test_event_inherits_season_from_production() {
+		$season_args = array(
+			'post_type'=>WPT_Season::post_type_name
+		);
+		$season = $this->factory->post->create($season_args);
+
+		$production_args = array(
+			'post_type'=>WPT_Production::post_type_name
+		);
+		$production = $this->factory->post->create($production_args);
+		add_post_meta($production, WPT_Season::post_type_name, $season);
+		
+		$event_args = array(
+			'post_type'=>WPT_Event::post_type_name
+		);
+		$event = $this->factory->post->create($event_args);
+		add_post_meta($event, WPT_Production::post_type_name, $production);
+		add_post_meta($event, 'event_date', date('Y-m-d H:i:s', strtotime('tomorrow')));
+		
+		$html = do_shortcode('[wpt_events season='.$season.']');
+
+		$this->assertEquals(1, substr_count($html, '"wp_theatre_event"'), $html);
 		
 	}
 	

@@ -12,8 +12,6 @@
 			
 			add_action( 'plugins_loaded', array($this,'plugins_loaded'));
 			
-			// make sure this runs after any save_post hooks in WPT_Admin (priority 10)
-			add_action('save_post_'.WPT_Production::post_type_name,array( $this,'save_production'), 20);
 			add_action('updated_post_meta', array($this,'updated_post_meta'), 20 ,4);
 			add_action('added_post_meta', array($this,'updated_post_meta'), 20 ,4);
 			add_action( 'set_object_terms', array($this,'set_object_terms'),20, 6);
@@ -183,19 +181,6 @@
 			return $vars;
 		}
 
-		function save_production($post_id) {
-			$production = new WPT_Production($post_id);
-			$events = $production->events();
-			
-			// give child events the same season
-			if ($season = $production->season()) {
-				foreach ($events as $event) {
-					delete_post_meta($event->ID, WPT_Season::post_type_name);
-					add_post_meta($event->ID, WPT_Season::post_type_name, $season->ID);
-				}
-			}
-		}
-		
 		/*
 		 * Give child events the same category as the parent production.
 		 * If the category of a production is set, walk through all connected events and
