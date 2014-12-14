@@ -1,5 +1,10 @@
 <?php
 	
+	/**
+	 * WPT_Importer class.
+	 *
+	 * @since 0.10
+	 */
 	class WPT_Importer {
 		
 		function init($args) {
@@ -554,7 +559,7 @@
 		/**
 		 * Adds a new tab to the Theater settings screen.
 		 *
-		 * Hooked into the `wpt_admin_page_tabs` action.
+		 * Hooked into the `wpt_admin_page_tabs` filter.
 		 * 
 		 * @since 0.10
 		 *
@@ -568,8 +573,31 @@
 			return $tabs;
 		}
 
+		/**
+		 * Add basic settings to the settings tab of your importer on the Theater settings screen.
+		 * 
+		 * Hooked into the `admin_init` action.
+		 *
+		 * @since 0.10
+		 *
+		 * @see WPT_Importer::init()
+		 * @see WPT_Importer::add_settings_tab()
+		 *
+		 * @return void
+		 */
 		function add_settings_fields() {
+			
+			/*
+			 * Register a new setting for your importer.
+			 * Use the slug of your importer for the name.
+			 */
 	        register_setting($this->slug, $this->slug);
+	
+			/*
+			 * Create an 'Import' section.
+			 * You can add any setting that is specific to your importer to this section.
+			 * Add a 'schedule' field.
+			 */
 	
 	        add_settings_section(
 	            $this->slug.'_settings', // ID
@@ -586,6 +614,12 @@
 	            $this->slug.'_settings' // Section           
 	        );      
 	        
+			/*
+			 * Create an 'Status' section.
+			 * You can add any status information specific to your importer to this section.
+			 * Add 'status', 'next import' and 'last import' fields.
+			 */
+	
 	        add_settings_section(
 	            $this->slug.'_status', // ID
 	            __('Status','wp_theatre'), // Title
@@ -619,6 +653,19 @@
 	        
 		}
 		
+		/**
+		 * Displays a schedule input for your importer.
+		 *
+		 * The user can select one of the available cron recurrences to schedule the import for your importer.
+		 * If `manual` is selected then no import is scheduled.
+		 * 
+		 * @since 0.10
+		 *
+		 * @see WPT_Importer::add_settings_fields()
+		 * @see WPT_Setup::cron_schedules()
+		 *
+		 * @return void
+		 */
 		function settings_field_schedule() {
 
 			$schedules = wp_get_schedules();
@@ -649,6 +696,16 @@
 			}
 		}
 	
+		/**
+		 * Displays the current status of your importer.
+		 *
+		 * @since 0.10
+		 *
+		 * @see WPT_Importer::add_settings_fields()
+		 * @see WPT_Importer::ready_for_import()
+		 *
+		 * @return void
+		 */
 		function settings_field_status() {
 			
 			echo '<p>';
@@ -663,6 +720,15 @@
 
 		}
 		
+		/**
+		 * Displays the time for the next scheduled import.
+		 *
+		 * @since 0.10
+		 *
+		 * @see WPT_Importer::add_settings_fields()
+		 *
+		 * @return void
+		 */
 		function settings_field_next_import() {
 			
 			if ($timestamp = wp_next_scheduled( $this->slug.'_import' )) {
@@ -670,6 +736,15 @@
 			}
 		}
 		
+		/**
+		 * Displays the stats of the last import.
+		 *
+		 * @since 0.10
+		 *
+		 * @see WPT_Importer::add_settings_fields()
+		 *
+		 * @return void
+		 */
 		function settings_field_last_import() {
 			
 			echo '<table>';
@@ -699,8 +774,5 @@
 			echo '</tbody>';
 
 			echo '</table>';
-		}
-		
-		
-		
+		}	
 	}
