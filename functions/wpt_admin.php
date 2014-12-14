@@ -173,41 +173,60 @@ class WPT_Admin {
 		add_submenu_page( 'theatre',__('Theater','wp_theatre').' '.__('Settings'), __('Settings'), 'manage_options', 'wpt_admin', array( $this, 'admin_page' ));
 	}
 	
+	/**
+	 * Adds Theater metaboxes to the admin pages of productions, events and seasons.
+	 * 
+	 * @since 0.1
+	 * @since 0.10 	Removed all static calls to public methods.
+	 *				Fixes #77: https://github.com/slimndap/wp-theatre/issues/77
+	 * @access public
+	 * @return void
+	 */
 	function add_meta_boxes() {
+		
+		// Add an 'Events' metabox to the production admin screen.
 		add_meta_box(
             'wp_theatre_events',
-            WPT_Event::post_type()->labels->name,
+            __( 'Events','wp_theatre'),
             array($this,'meta_box_events'),
-            WPT_Production::post_type()->name,
+            WPT_Production::post_type_name,
             'side',
             'core'
         ); 		
+
+		// Add an 'Event data' metabox to the event admin screen.
 		add_meta_box(
             'wp_theatre_event_data',
             __('Event data','wp_theatre'),
             array($this,'meta_box_event_data'),
-            WPT_Event::post_type()->name,
+            WPT_Event::post_type_name,
             'normal'
         ); 		
+
+		// Add a 'Tickets' metabox to the event admin screen.
 		add_meta_box(
             'wp_theatre_tickets',
             __('Tickets','wp_theatre'),
             array($this,'meta_box_tickets'),
-            WPT_Event::post_type()->name,
+            WPT_Event::post_type_name,
             'normal'
         ); 	
+
+		// Add a 'Seasons' metabox to the production admin screen.
 		add_meta_box(
             'wp_theatre_seasons',
-            WPT_Season::post_type()->labels->name,
+            __( 'Seasons','wp_theatre'),
             array($this,'meta_box_seasons'),
-            WPT_Production::post_type()->name,
+            WPT_Production::post_type_name,
             'side'
         ); 	
+        
+		// Add a 'Display' metabox to the production admin screen.
 		add_meta_box(
             'wp_theatre_display',
             __('Display','wp_theatre'),
             array($this,'meta_box_display'),
-            WPT_Production::post_type()->name,
+            WPT_Production::post_type_name,
             'side'
         ); 	
 	}
@@ -300,7 +319,7 @@ class WPT_Admin {
 				'post-new.php?post_type='.WPT_Event::post_type_name.'&'.
 				WPT_Production::post_type_name.'='.$production->ID
 			);
-			echo '<p><a href="'.$create_event_url.'" class="button button-primary">'.WPT_Event::post_type()->labels->new_item.'</a></p>';	
+			echo '<p><a href="'.$create_event_url.'" class="button button-primary">'.__('New event','wp_theatre').'</a></p>';	
 		}		
 	}
 
@@ -990,7 +1009,6 @@ class WPT_Admin {
     	return $views;
     }
 }
-
 
 
 ?>
