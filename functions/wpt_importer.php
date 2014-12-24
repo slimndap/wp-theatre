@@ -83,7 +83,7 @@
 		 *		@type string $event_date	The date of the event.
 		 * 		@type string $ref			A unique identifier for the event.
 		 * }
-		 * @return void
+		 * @return WPT_Event				The new event or <false> if there was a problem.
 		 */
 		function create_event($args) {
 			
@@ -113,7 +113,11 @@
 				add_post_meta($post_id, 'event_date', $args['event_date'], true);
 
 				$this->stats['events_created']++;
-			}			
+				
+				return new WPT_Event($post_id);
+			} else {
+				return false;
+			}
 		}
 
 		/**
@@ -129,7 +133,7 @@
 		 *		@type string $content	The post content for the production.
 		 * 		@type string $ref		A unique identifier for the production.
 		 * }
-		 * @return void
+		 * @return WPT_Production		The new production or <false> if there was a problem.
 		 */
 		protected function create_production($args) {
 			$defaults = array(
@@ -145,12 +149,15 @@
 				'post_title' => $args['title'],
 				'post_content' => $args['content'],
 			);
-			
+
 			if ($post_id = wp_insert_post($post)) {
 				add_post_meta($post_id, '_wpt_source', $this->slug, true);
 				add_post_meta($post_id, '_wpt_source_ref', sanitize_text_field($args['ref']), true);
 				$this->stats['productions_created']++;
-			}			
+				return new WPT_Production($post_id);
+			} else {
+				return false;
+			}		
 		}
 		
 		/**
@@ -218,7 +225,7 @@
 				),
 			);
 			$productions = get_posts($args);
-	
+
 			if (!empty($productions[0])) {
 				return new WPT_Production($productions[0]);
 			} else {
@@ -346,8 +353,7 @@
 		 *
 		 * @return void
 		 */
-		protected function execute() {
-			
+		function execute() {
 			$this->stats['start'] = time();
 			$this->stats['events_created'] = 0;
 			$this->stats['events_updated'] = 0;
