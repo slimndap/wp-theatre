@@ -28,9 +28,6 @@ class WPT_Events extends WPT_Listing {
 	 * @since 0.8
 	 */
 	function days($filters=array()) {
-		// get all event according to remaining filters
-		$filters['start'] = 'now';
-		$filters['end'] = false;
 		$events = $this->load($filters);		
 		$days = array();
 		foreach ($events as $event) {
@@ -123,6 +120,19 @@ class WPT_Events extends WPT_Listing {
 
 		$html = '';
 
+		$html.= $this->get_html_pagination($filters, $args);
+		$html.= $this->get_html_for_page($filters, $args['groupby'], $args['template']);
+		
+		// Wrapper
+		$html = '<div class="'.implode(' ',$classes).'">'.$html.'</div>'; 
+		
+		return $html;
+	}
+	
+
+	private function get_html_pagination($filters=array(), $args=array()) {
+		$html = '';
+
 		/*
 		 * Days navigation
 		 */
@@ -138,107 +148,135 @@ class WPT_Events extends WPT_Listing {
 		 */
 		$html.= $this->filter_pagination('category', $this->categories($filters), $args);
 
-		$event_args = array();
-		if (!empty($args['template'])) {
-			$event_args['template'] = $args['template']; 
-		}
-		
-		switch ($args['groupby']) {
+		return $html;		
+	}
+
+	private function get_html_grouped($filters=array(), $groupby=false, $template=NULL) {
+		$html = '';
+		switch ($groupby) {
 			case 'day':
-				if (!in_array('day', $args['paginateby'])) {
-					$days = $this->days($filters);
-					foreach($days as $day=>$name) {
-
-						/*
-						 * Set the start filter to current day, except when viewing today. 
-						 * In that case, set the start filter to now.
-						 * This avoids this today's past events from showing.
-						 */
- 
-						if ($day == date('Y-m-d')) {
-							$filters['start'] = "now";
-						} else {
-							$filters['start'] = $day;
-						}
-
-						/*
-						 * Set the end filter to the the next day.
-						 */
-						 
-						$filters['end'] = $day.' +1 day';
-						
-						$events = $this->get($filters);
-						if (!empty($events)) {
-							$html.= '<h3 class="wpt_listing_group day">'.date_i18n('l d F',strtotime($day)).'</h3>';
-							foreach ($events as $event) {
-								$html.=$event->html($event_args);							
-							}
-						}
+				$days = $this->days($filters);
+				foreach($days as $day=>$name) {
+					if ($day_html = $this->get_html_for_day($day, $filters, false, $template)) {
+						$html.= '<h3 class="wpt_listing_group day">';
+						$html.= apply_filters('wpt_listing_group_day',date_i18n('l d F',strtotime($day)),$day);
+						$html.= '</h3>';
+						$html.= $day_html;
 					}
-					break;					
 				}
+				break;					
 			case 'month':
-				if (!in_array('month', $args['paginateby'])) {
-					$months = $this->months($filters);
-					foreach($months as $month=>$name) {
-
-						/*
-						 * Set the start filter to current month, except when viewing this month. 
-						 * In that case, set the start filter to now.
-						 * This avoids this month's past events from showing.
-						 */
- 
-						if ($month == date('Y-m')) {
-							$filters['start'] = "now";
-						} else {
-							$filters['start'] = $month;
-						}
-
-						/*
-						 * Set the end filter to the first day of the next month.
-						 */
-						 
-						$filters['end'] = $month.' +1 month';
-						
-						$events = $this->get($filters);
-						
-						if (!empty($events)) {
-							$html.= '<h3 class="wpt_listing_group month">'.date_i18n('F',strtotime($month)).'</h3>';
-							foreach ($events as $event) {
-								$html.=$event->html($event_args);							
-							}
-						}
+				$months = $this->months($filters);
+				foreach($months as $month=>$name) {
+					if ($month_html = $this->get_html_for_month($month, $filters, false, $template)) {
+						$html.= '<h3 class="wpt_listing_group month">';
+						$html.= apply_filters('wpt_listing_group_month',date_i18n('F',strtotime($month)),$month);
+						$html.= '</h3>';
+						$html.= $month_html;
 					}
-					break;					
 				}
+				break;					
 			case 'category':
-				if (!in_array('category', $args['paginateby'])) {
-					$categories = $this->categories($filters);
-					foreach($categories as $term_id=>$name) {
-						if ($category = get_category($term_id)) {
-				  			$filters['cat'] = $category->term_id;				
-						}
-						$events = $this->get($filters);
-						if (!empty($events)) {
-							$html.= '<h3 class="wpt_listing_group category">'.$name.'</h3>';
-							foreach ($events as $event) {
-								$html.=$event->html($event_args);							
-							}							
-						}
+				$categories = $this->categories($filters);
+				foreach($categories as $cat_id=>$name) {
+					if ($cat_html = $this->get_html_for_category($cat_id, $filters, false, $template)) {
+						$html.= '<h3 class="wpt_listing_group category">';
+						$html.= apply_filters('wpt_listing_group_category',$name,$cat_id);
+						$html.= '</h3>';
+						$html.= $cat_html;						
 					}
-					break;					
 				}
+				break;					
 			default:
 				$events = $this->get($filters);
 				foreach ($events as $event) {
-					$html.=$event->html($event_args);							
-				}
+					$args = array();
+					if (!empty($template)) {
+						$args = array('template'=>$template);
+					}
+					$html.= $event->html($args);
+				}					
+		}
+		return $html;
+	}
+	
+	private function get_html_for_page($filters=array(), $groupby=false, $template=NULL) {
+		global $wp_query;
+		
+		if (!empty($wp_query->query_vars['wpt_month'])) {
+			return $this->get_html_for_month($wp_query->query_vars['wpt_month'], $filters, $groupby, $template);
+		} elseif (!empty($wp_query->query_vars['wpt_day'])) {
+			return $this->get_html_for_day($wp_query->query_vars['wpt_day'], $filters, $groupby, $template);			
+		} elseif (!empty($wp_query->query_vars['wpt_category'])) {
+			return $this->get_html_for_category($wp_query->query_vars['wpt_category'], $filters, $groupby, $template);			
+		} else {
+			return $this->get_html_grouped($filters, $groupby, $template);
+		}
+	}
+	
+	private function get_html_for_category($cat_id, $filters = array(), $groupby=false, $template=NULL) {
+		if ($category = get_category($cat_id)) {
+  			$filters['cat'] = $category->term_id;				
 		}
 
-		// Wrapper
-		$html = '<div class="'.implode(' ',$classes).'">'.$html.'</div>'; 
+		return $this->get_html_grouped($filters, $groupby, $template);
+	}
+	
+	private function get_html_for_day($day, $filters = array(), $groupby=false, $template=NULL) {
+				
+		/*
+		 * Set the `start`-filter to today.
+		 * Except when the active `start`-filter is set to a later date.
+		 */
+
+		if (
+			empty($filters['start']) ||
+			(strtotime($filters['start']) < strtotime($day))
+		) {
+			$filters['start'] = $day;			
+		}
 		
-		return $html;
+		/*
+		 * Set the `end`-filter to the next day.
+		 * Except when the active `end`-filter is set to an earlier date.
+		 */
+		 
+		if (
+			empty($filters['end']) ||
+			(strtotime($filters['end']) > strtotime($day.' +1 day'))
+		) {
+			$filters['end'] = $day.' +1 day';			
+		}
+		
+		return $this->get_html_grouped($filters, $groupby, $template);
+	}
+	
+	private function get_html_for_month($month, $filters = array(), $groupby=false, $template=NULL) {
+				
+		/*
+		 * Set the `start`-filter to the first day of the month.
+		 * Except when the active `start`-filter is set to a later date.
+		 */
+
+		if (
+			empty($filters['start']) ||
+			(strtotime($filters['start']) < strtotime($month))
+		) {
+			$filters['start'] = $month;			
+		}
+		
+		/*
+		 * Set the `end`-filter to the first day of the next month.
+		 * Except when the active `end`-filter is set to an earlier date.
+		 */
+		 
+		if (
+			empty($filters['end']) ||
+			(strtotime($filters['end']) > strtotime($month.' +1 month'))
+		) {
+			$filters['end'] = $month.' +1 month';			
+		}
+		return $this->get_html_grouped($filters, $groupby, $template);
 	}
 	
 	/* 
@@ -394,20 +432,22 @@ class WPT_Events extends WPT_Listing {
 	}
 
 	/**
-	 * An array of all months with upcoming events.
+	 * Gets all months that have events.
+	 *
 	 * @since 0.5
+	 * @since 0.10				No longer limits the output to months with upcoming events.
+	 *							See: https://github.com/slimndap/wp-theatre/issues/75
+	 *
+	 * @param array $filters	See WPT_Events::load() for possible values.
+	 @ return array 			Months.
 	 */
 	function months($filters=array()) {
-		// get all event according to remaining filters
-		$filters['start'] = 'now';
-		$filters['end'] = false;
 		$events = $this->load($filters);
 		$months = array();
 		foreach ($events as $event) {
 			$months[date('Y-m',$event->datetime())] = date_i18n('M Y',$event->datetime());
 		}
 		ksort($months);
-
 		return $months;
 	}
 	

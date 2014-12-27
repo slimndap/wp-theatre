@@ -51,23 +51,11 @@ class WPT_Listing {
 			 */
 
 			$is_current_page = false;
-			
-			if (!empty($args['start']) && $slug == $args['start']) {
-
-				/**
-				 * $option is the current page for a time-based pagination (eg. day or month).
-				 */
-			
-				$is_current_page = true;
-
-			} elseif ($slug == $args[$field]) {
-
-				/**
-				 * $option is the current page for a text-based pagination (eg. category).
-				 */
-			
+			if (
+				isset($wp_query->query_vars[$query_var]) &&
+				$slug == $wp_query->query_vars[$query_var]
+			) {
 				$is_current_page = true;				
-				
 			}
 
 			if ($is_current_page) {

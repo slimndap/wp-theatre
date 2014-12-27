@@ -190,18 +190,6 @@ class WPT_Frontend {
 			'limit'=>false,
 		);
 		
-		if (!empty($wp_query->query_vars['wpt_category'])) {
-			$defaults['category']=$wp_query->query_vars['wpt_category'];
-		}
-
-		if (!empty($wp_query->query_vars['wpt_day'])) {
-			$defaults['day']=$wp_query->query_vars['wpt_day'];
-		}
-		
-		if (!empty($wp_query->query_vars['wpt_month'])) {
-			$defaults['month']=$wp_query->query_vars['wpt_month'];
-		}
-		
 		$atts = shortcode_atts( $defaults, $atts );
 				
 		if (!empty($atts['paginateby'])) {
@@ -221,7 +209,7 @@ class WPT_Frontend {
 			$atts['start'] = date('Y-m-d',strtotime($atts['day']));
 			$atts['end'] = date('Y-m-d',strtotime($atts['day'].' + 1 day'));
 		}
-		
+
 		if (!empty($atts['category__in'])) {
 			$atts['category__in'] = explode(',',$atts['category__in']);
 		}

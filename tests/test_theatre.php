@@ -651,7 +651,7 @@ class WPT_Test extends WP_UnitTestCase {
 		add_post_meta($upcoming_event, WPT_Production::post_type_name, $production_in_a_year);
 		add_post_meta($upcoming_event, 'event_date', date('Y-m-d H:i:s', $event_date));
 				
-		$html = do_shortcode('[wpt_events groupby="month"]');
+		$html = do_shortcode('[wpt_events start="now" groupby="month"]');
 		
 		// should contain 'wpt_listing_group month'.
 		$this->assertContains('<h3 class="wpt_listing_group month">'.date_i18n('F',$event_date).'</h3>', $html);

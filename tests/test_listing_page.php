@@ -397,7 +397,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		$html= get_echo( 'the_content' );
 
 		// Is the active filter shown?
-		$this->assertEquals(1, substr_count($html, 'wpt_listing_filter_active"><a'), $html);
+		$this->assertEquals(1, substr_count($html, 'wpt_listing_filter_active"><a'));
 
 		// Are the filtered events shown?
 		$this->assertContains('"wp_theatre_event"',$html);
