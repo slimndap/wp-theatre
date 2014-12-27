@@ -172,8 +172,6 @@ class WPT_Frontend {
 		global $wp_query;
 		
 		$defaults = array(
-			'upcoming' => 'true',
-			'past' => false,
 			'paginateby'=>array(),
 			'category'=> false, // deprecated since v0.9.
 			'cat'=>false,
@@ -218,7 +216,12 @@ class WPT_Frontend {
 			$atts['category__not_in'] = explode(',',$atts['category__not_in']);
 		}
 		
-		$atts['upcoming'] = 'true' === $atts['upcoming'];
+		if (
+			empty($atts['start']) &&
+			empty($atts['end'])
+		) {
+			$atts['start'] = 'now';
+		}
 		
 		if (!is_null($content) && !empty($content)) {
 			$atts['template'] = html_entity_decode($content);
@@ -244,7 +247,7 @@ class WPT_Frontend {
 			}
 			$atts['cat'] = implode(',',$categories);
 		}
-		
+
 		if ( ! ( $html = $wp_theatre->transient->get('e', array_merge($atts, $_GET)) ) ) {
 			$html = $wp_theatre->events->html($atts);
 			$wp_theatre->transient->set('e', array_merge($atts, $_GET), $html);

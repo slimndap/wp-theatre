@@ -543,8 +543,6 @@ class WPT_Test extends WP_UnitTestCase {
 		 * Remove the quotes around 'true' for upcoming.
 		 */
 		$args = array(
-			'upcoming' => true,
-			'past' => false,
 			'paginateby'=>array(),
 			'category'=> false, // deprecated since v0.9.
 			'cat'=>false,
@@ -555,12 +553,11 @@ class WPT_Test extends WP_UnitTestCase {
 			'day' => false,
 			'month' => false,
 			'season'=> false,
-			'start' => false,
+			'start' => 'now',
 			'end' => false,
 			'groupby'=>false,
 			'limit'=>false,
 		);
-		
 		$this->assertEquals(4, substr_count($this->wp_theatre->transient->get('e',$args), '"wp_theatre_event"'));
 	}
 	
@@ -651,7 +648,7 @@ class WPT_Test extends WP_UnitTestCase {
 		add_post_meta($upcoming_event, WPT_Production::post_type_name, $production_in_a_year);
 		add_post_meta($upcoming_event, 'event_date', date('Y-m-d H:i:s', $event_date));
 				
-		$html = do_shortcode('[wpt_events start="now" groupby="month"]');
+		$html = do_shortcode('[wpt_events groupby="month"]');
 		
 		// should contain 'wpt_listing_group month'.
 		$this->assertContains('<h3 class="wpt_listing_group month">'.date_i18n('F',$event_date).'</h3>', $html);

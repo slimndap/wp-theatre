@@ -439,7 +439,7 @@ class WPT_Events extends WPT_Listing {
 	 *							See: https://github.com/slimndap/wp-theatre/issues/75
 	 *
 	 * @param array $filters	See WPT_Events::load() for possible values.
-	 @ return array 			Months.
+	 * @return array 			Months.
 	 */
 	function months($filters=array()) {
 		$events = $this->load($filters);
