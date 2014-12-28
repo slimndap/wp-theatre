@@ -3,6 +3,11 @@
 	/**
 	 * WPT_Importer class.
 	 *
+	 * Extend this class to write your own importer.
+	 * This class is still in development.
+	 * Play with it, but don't use it on your production site.
+	 * Always make backups!
+	 *
 	 * @since 0.10
 	 */
 	class WPT_Importer {
