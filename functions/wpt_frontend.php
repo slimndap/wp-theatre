@@ -331,7 +331,7 @@ class WPT_Frontend {
 		}
 
 		if ( ! ( $html = $wp_theatre->transient->get('p', array_merge($atts, $_GET)) ) ) {
-			$html = $wp_theatre->productions->html($atts);
+			$html = $wp_theatre->productions->get_html($atts);
 			$wp_theatre->transient->set('p', array_merge($atts, $_GET), $html);
 		}
 
@@ -399,7 +399,7 @@ class WPT_Frontend {
 				$atts['paginateby'] = $fields;
 			}
 
-			return $wp_theatre->events->html($atts);
+			return $wp_theatre->events->get_html($atts);
 		}
 	}
 	
@@ -429,7 +429,7 @@ class WPT_Frontend {
 				$atts['paginateby'] = $fields;
 			}
 
-			return $wp_theatre->productions->html($atts);
+			return $wp_theatre->productions->get_html($atts);
 		}
 	}
 	

@@ -318,6 +318,16 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertEquals(3, substr_count(do_shortcode('[wpt_events category="muziek"]'), '"wp_theatre_event"'));
 	}
 	
+	function test_shortcode_wpt_events_paginated_with_historic_events() {
+		$html = do_shortcode('[wpt_events end="tomorrow - 11 months" paginateby="month"]');
+
+		/*
+		 * Should produce a paginated list with only one page 
+		 * for $this->production_with_historic_event_sticky.
+		 */
+		$this->assertEquals(1, substr_count($html, '<span class="wpt_listing_filter"><a href="'));
+	}
+
 	function test_shortcode_wpt_season_production() {
 		$season = get_post($this->season1);
 	}

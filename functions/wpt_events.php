@@ -12,6 +12,19 @@
 class WPT_Events extends WPT_Listing {
 	
 	/**
+	 * Adds the page selectors for seasons and categories to the public query vars.
+	 * 
+	 * @param array $vars	The current public query vars.
+	 * @return array		The new public query vars.
+	 */
+	public function add_query_vars($vars) {
+		$vars[] = 'wpt_day';
+		$vars[] = 'wpt_month';
+		$vars[] = 'wpt_category';
+		return $vars;
+	}
+
+	/**
 	 * Gets an array of all categories events.
 	 *
 	 * @since 0.5
@@ -411,9 +424,6 @@ class WPT_Events extends WPT_Listing {
 		return $months;
 	}
 	
-	
-	
-	
 	/* 
 	 * Get the last event.
 	 *
@@ -446,7 +456,7 @@ class WPT_Events extends WPT_Listing {
  	 * @return array Events.
 	 */
 	 
-	function get($filters=array()) {
+	public function get($filters=array()) {
 		global $wp_theatre;
 
 		$defaults = array(

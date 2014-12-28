@@ -23,9 +23,6 @@
 			add_action('untrash_post',array( $this,'untrash_post'));
 			
 			add_filter( 'cron_schedules', array($this,'cron_schedules'));
-
-			add_filter( 'query_vars', array($this,'query_vars'));	 
-
 		}
 	
 		/**
@@ -171,18 +168,6 @@
 			load_plugin_textdomain('wp_theatre', false, dirname( plugin_basename( __FILE__ ) ) . '/../lang/' );
 		}
 		
-		/* 
-		 * Add listing filters to public query vars
-		 * Eg. $wp_query->query_vars['wpt_category']
-		 */
-		
-		function query_vars( $vars ){
-			$vars[] = 'wpt_day';
-			$vars[] = 'wpt_month';
-			$vars[] = 'wpt_category';
-			return $vars;
-		}
-
 		function save_production($post_id) {
 			$production = new WPT_Production($post_id);
 			$events = $production->events();

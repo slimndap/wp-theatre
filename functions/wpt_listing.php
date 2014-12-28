@@ -25,6 +25,25 @@ class WPT_Listing {
 		'template' => NULL,					
 	);
 
+	function __construct() {
+		add_filter( 'query_vars', array($this,'add_query_vars'));	 
+	}
+
+	/**
+	 * Adds the page selectors to the public query vars.
+	 *
+	 * This is needed to make `$wp_query->query_vars['wpt_category']` work.
+	 * Override this method to add your own page selectors.
+	 *
+	 * @since 0.10
+	 *
+	 * @param array $vars	The current public query vars.
+	 * @return array		The new public query vars.
+	 */
+	public function add_query_vars($vars) {
+		return $vars;
+	}
+
 	/*
 	 * Generate navigation for a listing filter.
 	 *
