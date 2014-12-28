@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Manages events listings.
+ * Manages event listings.
  *
  * Uses this class to compile lists of events or fully formatted HTML listings of events.
  *
@@ -14,12 +14,17 @@ class WPT_Events extends WPT_Listing {
 	/**
 	 * Adds the page selectors for seasons and categories to the public query vars.
 	 * 
+	 * This is needed to make `$wp_query->query_vars['wpt_category']` work.
+	 *
+	 * @since 0.10
+	 *
 	 * @param array $vars	The current public query vars.
 	 * @return array		The new public query vars.
 	 */
 	public function add_query_vars($vars) {
 		$vars[] = 'wpt_day';
 		$vars[] = 'wpt_month';
+		$vars[] = 'wpt_year';
 		$vars[] = 'wpt_category';
 		return $vars;
 	}
@@ -258,14 +263,54 @@ class WPT_Events extends WPT_Listing {
 	}
 
 	/**
-	 * Gets a list of events in HTML for a page.
+	 * Gets a list of events in HTML for a single year.
 	 * 
 	 * @since 0.10
 	 *
 	 * @see WPT_Events::get_html_grouped();
-	 * @see WPT_Events::get_html_for_month();
-	 * @see WPT_Events::get_html_for_day();
-	 * @see WPT_Events::get_html_for_category();
+	 *
+	 * @access private
+	 * @param 	string $day		The year in `YYYY` format.
+	 * @param 	array $args 	See WPT_Events::get_html() for possible values.
+	 * @return 	string			The HTML.
+	 */
+	private function get_html_for_year($year, $args=array()) {
+				
+		/*
+		 * Set the `start`-filter to the first day of the year.
+		 * Except when the active `start`-filter is set to a later date.
+		 */
+		if (
+			empty($args['start']) ||
+			(strtotime($args['start']) < strtotime($year.'-01-01'))
+		) {
+			$args['start'] = $year.'-01-01';			
+		}
+		
+		/*
+		 * Set the `end`-filter to the first day of the next year.
+		 * Except when the active `end`-filter is set to an earlier date.
+		 */		 
+		if (
+			empty($args['end']) ||
+			(strtotime($args['end']) > strtotime($year.'-01-01 +1 year'))
+		) {
+			$args['end'] = $year.'-01-01 +1 year';			
+		}
+
+		return $this->get_html_grouped($args);
+	}
+
+	/**
+	 * Gets a list of events in HTML for a page.
+	 * 
+	 * @since 0.10
+	 *
+	 * @see WPT_Events::get_html_grouped()
+	 * @see WPT_Events::get_html_for_year()
+	 * @see WPT_Events::get_html_for_month()
+	 * @see WPT_Events::get_html_for_day()
+	 * @see WPT_Events::get_html_for_category()
 	 *
 	 * @access protected
 	 * @param 	array $args 	See WPT_Events::get_html() for possible values.
@@ -280,6 +325,9 @@ class WPT_Events extends WPT_Listing {
 		 * @see WPT_Events::get_html_page_navigation().
 		 */
 		 
+		if (!empty($wp_query->query_vars['wpt_year']))
+			return $this->get_html_for_year($wp_query->query_vars['wpt_year'], $args);
+			
 		if (!empty($wp_query->query_vars['wpt_month']))
 			return $this->get_html_for_month($wp_query->query_vars['wpt_month'], $args);
 			
@@ -349,6 +397,17 @@ class WPT_Events extends WPT_Listing {
 					}
 				}
 				break;					
+			case 'year':
+				$years = $this->get_years($args);
+				foreach($years as $year=>$name) {
+					if ($year_html = $this->get_html_for_year($year, $args)) {
+						$html.= '<h3 class="wpt_listing_group year">';
+						$html.= apply_filters('wpt_listing_group_year',date_i18n('Y',strtotime($year.'-01-01')),$year);
+						$html.= '</h3>';
+						$html.= $year_html;
+					}
+				}
+				break;					
 			case 'category':
 				$categories = $this->get_categories($args);
 				foreach($categories as $cat_id=>$name) {
@@ -397,6 +456,9 @@ class WPT_Events extends WPT_Listing {
 		// Months navigation
 		$html.= $this->filter_pagination('month', $this->get_months($args), $args);
 
+		// Years navigation
+		$html.= $this->filter_pagination('year', $this->get_years($args), $args);
+
 		// Categories navigation
 		$html.= $this->filter_pagination('category', $this->get_categories($args), $args);
 
@@ -422,6 +484,24 @@ class WPT_Events extends WPT_Listing {
 		}
 		ksort($months);
 		return $months;
+	}
+	
+	/**
+	 * Gets all years that have events.
+	 *
+	 * @since 0.10
+	 *
+	 * @param 	array $filters	See WPT_Events::get() for possible values.
+	 * @return 	array 			Years.
+	 */
+	function get_years($filters=array()) {
+		$events = $this->get($filters);
+		$years = array();
+		foreach ($events as $event) {
+			$years[date('Y',$event->datetime())] = date_i18n('Y',$event->datetime());
+		}
+		ksort($years);
+		return $years;
 	}
 	
 	/* 
@@ -581,7 +661,7 @@ class WPT_Events extends WPT_Listing {
 		 */
 		$args = apply_filters('wpt_events_load_args',$args);
 		$args = apply_filters('wpt_events_get_args',$args);
-		
+
 		$posts = get_posts($args);
 
 		$events = array();

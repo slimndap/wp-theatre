@@ -562,6 +562,7 @@ class WPT_Test extends WP_UnitTestCase {
 			'category__not_in'=>false,
 			'day' => false,
 			'month' => false,
+			'year' => false,
 			'season'=> false,
 			'start' => 'now',
 			'end' => false,

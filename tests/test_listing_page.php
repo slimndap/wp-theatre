@@ -231,6 +231,26 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 	}
 	
 	function test_events_are_paginated_by_year_on_listing_page() {
+		$this->options['listing_page_type'] = WPT_Event::post_type_name;
+		$this->options['listing_page_nav'] = 'paginated';
+		$this->options['listing_page_groupby'] = 'year';
+		update_option('wpt_listing_page', $this->options);
+
+		$years = $this->wp_theatre->events->get_years(array('upcoming' => true));
+		$years = array_keys($years);
+		
+		$url = add_query_arg(
+			'wpt_year',
+			$years[0],
+			get_permalink( $this->wp_theatre->listing_page->page() )
+		);
+		
+		$this->go_to($url);
+		
+		$html = get_echo( 'the_content' );
+
+		$this->assertEquals(1, substr_count($html, '"wpt_listing_filter_pagination year"'), $html);
+		$this->assertContains('"wp_theatre_event"', $html);
 		
 	}
 	
@@ -404,6 +424,27 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 	}
 	
 	function test_events_are_filtered_by_year_on_listing_page() {
+		$this->options['listing_page_type'] = WPT_Event::post_type_name;
+		update_option('wpt_listing_page', $this->options);
+
+		$years = $this->wp_theatre->events->get_years(array('upcoming' => true));
+		$years = array_keys($years);
+		
+		$url = add_query_arg(
+			'wpt_year',
+			$years[0],
+			get_permalink( $this->wp_theatre->listing_page->page() )
+		);
+		
+		$this->go_to($url);
+
+		$html= get_echo( 'the_content' );
+
+		// Is the active filter shown?
+		$this->assertEquals(1, substr_count($html, 'wpt_listing_filter_active"><a'));
+
+		// Are the filtered events shown?
+		$this->assertContains('"wp_theatre_event"',$html);
 		
 	}
 	

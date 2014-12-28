@@ -181,6 +181,7 @@ class WPT_Frontend {
 			'category__not_in'=>false,
 			'day' => false,
 			'month' => false,
+			'year' => false,
 			'season'=> false,
 			'start' => false,
 			'end' => false,
@@ -196,6 +197,11 @@ class WPT_Frontend {
 				$fields[$i] = trim($fields[$i]);
 			}
 			$atts['paginateby'] = $fields;
+		}
+		
+		if(!empty($atts['year'])) {
+			$atts['start'] = date('Y-m-d',strtotime($atts['year'].'-01-01'));
+			$atts['end'] = date('Y-m-d',strtotime($atts['year'].'-01-01 + 1 year'));
 		}
 		
 		if(!empty($atts['month'])) {

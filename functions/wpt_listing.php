@@ -77,7 +77,6 @@ class WPT_Listing {
 		) {
 			return $html;
 		};
-
 		/*
 		 * Build the base url for all filters
 		 */

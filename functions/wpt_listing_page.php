@@ -440,6 +440,7 @@
 			$options_groupby = array(
 				'day' => __('day','wp_theatre'),
 				'month' => __('month','wp_theatre'),
+				'year' => __('year','wp_theatre'),
 				'category' => __('category','wp_theatre')
 			);
 			
@@ -543,7 +544,9 @@
 	 	
 	    public function settings_field_wpt_listing_page_groupby() {
 			$options = array(
+				'day' => __('day','wp_theatre'),
 				'month' => __('month','wp_theatre'),
+				'year' => __('year','wp_theatre'),
 				'category' => __('category','wp_theatre'),
 				'season' => __('season','wp_theatre')
 			);
