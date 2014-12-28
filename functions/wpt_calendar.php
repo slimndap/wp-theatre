@@ -19,8 +19,8 @@
 		 * Gets the HTML version for the calendar.
 		 *
 		 * @see WPT_Calendar::check_dependencies()	To check if all dependencies are set.
-		 * @see WPT_Events::months()				To retrieve all months with upcoming events.
-		 * @see WPT_Events::load()					To retrieve all upcoming events.
+		 * @see WPT_Events::get_months()				To retrieve all months with upcoming events.
+		 * @see WPT_Events::get()					To retrieve all upcoming events.
 		 * @see WPT_Listing_Page::url()				To retrieve the URL of the listing page.
 		 * @see WPT_Event::datetime()				To collect the dates for upcoming events.
 		 * @see WPT_Production::permalink()			To get the permalink for an event.
@@ -36,7 +36,7 @@
 			global $wp_theatre;
 			
 			// Get all months from now to the month of the last event.
-			$months = $wp_theatre->events->months();
+			$months = $wp_theatre->events->get_months();
 			$months = array_keys($months);			
 						
 			$start_of_week = get_option('start_of_week');
@@ -129,7 +129,7 @@
 
 				$events_filters['end'] = date('Y-m-d',strtotime($month.' + 1 month'));
 
-				$events = $wp_theatre->events->load($events_filters);
+				$events = $wp_theatre->events->get($events_filters);
 				
 				foreach ($events as $event) {
 					$date = date('Y-m-d',$event->datetime());

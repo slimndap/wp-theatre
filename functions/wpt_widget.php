@@ -131,7 +131,7 @@
 			<select class="widefat" id="<?php echo $this->get_field_id( 'production' ); ?>" name="<?php echo $this->get_field_name( 'production' ); ?>">
 				<option value=""></option>
 				<?php
-					$productions = $wp_theatre->productions->load();
+					$productions = $wp_theatre->productions->get();
 					
 					foreach ($productions as $production) {
 						echo '<option value="'.$production->ID.'"';

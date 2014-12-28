@@ -285,7 +285,7 @@ class WPT_Admin {
 				'status' => array('publish','draft')
 			);
 		
-			$events = $wp_theatre->events->load($args);
+			$events = $wp_theatre->events->get($args);
 			if (count($events)>0) {
 				echo '<ul>';
 				foreach ($events as $event) {

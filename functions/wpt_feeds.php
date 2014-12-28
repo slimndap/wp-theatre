@@ -42,7 +42,7 @@
 			$args = array(
 				'upcoming'=>true
 			);		
-			$productions = $wp_theatre->productions->load($args);
+			$productions = $wp_theatre->productions->get($args);
 			
 			$items = '';
 			foreach ($productions as $production) {
@@ -89,7 +89,7 @@
 			$args = array(
 				'upcoming'=>true
 			);		
-			$events = $wp_theatre->events->load($args);
+			$events = $wp_theatre->events->get($args);
 			
 			$items = '';
 			foreach ($events as $event) {

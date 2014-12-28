@@ -180,7 +180,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		$this->options['listing_page_groupby'] = 'day';
 		update_option('wpt_listing_page', $this->options);
 
-		$days = $this->wp_theatre->events->days(array('upcoming' => true));
+		$days = $this->wp_theatre->events->get_days(array('upcoming' => true));
 		$days = array_keys($days);
 		
 		$url = add_query_arg(
@@ -213,7 +213,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		$this->options['listing_page_groupby'] = 'month';
 		update_option('wpt_listing_page', $this->options);
 
-		$months = $this->wp_theatre->events->months(array('upcoming' => true));
+		$months = $this->wp_theatre->events->get_months(array('upcoming' => true));
 		$months = array_keys($months);
 		
 		$url = add_query_arg(
@@ -354,7 +354,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		$this->options['listing_page_type'] = WPT_Event::post_type_name;
 		update_option('wpt_listing_page', $this->options);
 
-		$days = $this->wp_theatre->events->days(array('upcoming' => true));
+		$days = $this->wp_theatre->events->get_days(array('upcoming' => true));
 		$days = array_keys($days);
 		
 		$url = add_query_arg(
@@ -383,7 +383,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		$this->options['listing_page_type'] = WPT_Event::post_type_name;
 		update_option('wpt_listing_page', $this->options);
 
-		$months = $this->wp_theatre->events->months(array('upcoming' => true));
+		$months = $this->wp_theatre->events->get_months(array('upcoming' => true));
 		$months = array_keys($months);
 		
 		$url = add_query_arg(

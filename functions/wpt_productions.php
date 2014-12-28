@@ -237,7 +237,7 @@ class WPT_Productions extends WPT_Listing {
 	 * }
 	 * @return mixed An array of WPT_Production objects.
 	 */
-	function load($filters=array()) {
+	function get($filters=array()) {
 		global $wpdb;
 		global $wp_theatre;
 
@@ -308,6 +308,7 @@ class WPT_Productions extends WPT_Listing {
 		 * @param array $args The arguments to use in get_posts to retrieve productions.
 		 */
 		$args = apply_filters('wpt_productions_load_args',$args);
+		$args = apply_filters('wpt_productions_get_args',$args);
 
 		$posts = get_posts($args);
 

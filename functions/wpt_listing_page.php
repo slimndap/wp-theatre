@@ -845,7 +845,7 @@
 			);
 			
 			if ( ! ( $html = $wp_theatre->transient->get('cat', $cat_args) ) ) {
-				$categories = $wp_theatre->events->categories($cat_args);
+				$categories = $wp_theatre->events->get_categories($cat_args);
 				
 				$html = '';
 				foreach($categories as $id=>$name) {

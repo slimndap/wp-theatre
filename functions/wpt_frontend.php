@@ -249,7 +249,7 @@ class WPT_Frontend {
 		}
 
 		if ( ! ( $html = $wp_theatre->transient->get('e', array_merge($atts, $_GET)) ) ) {
-			$html = $wp_theatre->events->html($atts);
+			$html = $wp_theatre->events->get_html($atts);
 			$wp_theatre->transient->set('e', array_merge($atts, $_GET), $html);
 		}
 		return $html;
@@ -482,7 +482,7 @@ class WPT_Frontend {
 			}
 			
 			if ( ! ( $html = $wp_theatre->transient->get('e', array_merge($args, $_GET)) ) ) {
-				$html = $wp_theatre->events->html($args);
+				$html = $wp_theatre->events->get_html($args);
 				$wp_theatre->transient->set('e', array_merge($args, $_GET), $html);
 			}
 
