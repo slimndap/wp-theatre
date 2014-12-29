@@ -12,11 +12,12 @@
 		public function widget( $args, $instance ) {
 			global $wp_theatre;
 			
-			$title = apply_filters( 'widget_title', $instance['title'], $instance, $this->id_base );
-			
 			echo $args['before_widget'];
-			if ( ! empty( $title ) )
+
+			if ( ! empty( $instance['title'] ) ) {			
+				$title = apply_filters( 'widget_title', $instance['title'], $instance, $this->id_base  );
 				echo $args['before_title'] . $title . $args['after_title'];
+			}
 				
 			$filters = array(
 				'limit'=>$instance['limit']
@@ -83,11 +84,14 @@
 			
 			
 			if (!empty($instance['production'])) {
-				$title = apply_filters( 'widget_title', $instance['title'], $instance, $this->id_base );
 				
 				echo $args['before_widget'];
-				if ( ! empty( $title ) )
+
+				if ( ! empty( $instance['title'] ) ) {			
+					$title = apply_filters( 'widget_title', $instance['title'], $instance, $this->id_base  );
 					echo $args['before_title'] . $title . $args['after_title'];
+				}
+				
 					
 				$filters = array(
 					'limit'=>$instance['limit']
@@ -177,12 +181,13 @@
 			global $post;
 			
 			if (is_singular(WPT_Production::post_type_name)) {
-				$title = apply_filters( 'widget_title', $instance['title'], $instance, $this->id_base );
-				
 				echo $args['before_widget'];
-				if ( ! empty( $title ) )
+
+				if ( ! empty( $instance['title'] ) ) {			
+					$title = apply_filters( 'widget_title', $instance['title'], $instance, $this->id_base  );
 					echo $args['before_title'] . $title . $args['after_title'];
-				
+				}
+								
 				$filters = array();
 				if (!empty($instance['template'])) {
 					$filters['template'] = $instance['template'];
@@ -239,12 +244,13 @@
 		public function widget( $args, $instance ) {
 			global $wp_theatre;
 
-			$title = apply_filters( 'widget_title', $instance['title'], $instance, $this->id_base );
-
 			echo $args['before_widget'];
-			if ( ! empty( $title ) )
+
+			if ( ! empty( $instance['title'] ) ) {			
+				$title = apply_filters( 'widget_title', $instance['title'], $instance, $this->id_base  );
 				echo $args['before_title'] . $title . $args['after_title'];
-				
+			}
+								
 			$filters = array(
 				'limit' => $instance['limit'],
 				'upcoming' => true
@@ -302,11 +308,14 @@
 		public function widget( $args, $instance ) {
 			global $wp_theatre;			
 			if (!$wp_theatre->cart->is_empty()) {
-				$title = apply_filters( 'widget_title', $instance['title'], $instance, $this->id_base );
-				
+
 				echo $args['before_widget'];
-				if ( ! empty( $title ) )
+
+				if ( ! empty( $instance['title'] ) ) {			
+					$title = apply_filters( 'widget_title', $instance['title'], $instance, $this->id_base  );
 					echo $args['before_title'] . $title . $args['after_title'];
+				}
+				
 				echo $wp_theatre->cart->render();
 				echo $args['after_widget'];
 			}

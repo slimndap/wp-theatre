@@ -311,12 +311,13 @@
 		public function widget($args,$instance) {
 			global $wp_theatre;
 			
-			$title = apply_filters( 'widget_title', $instance['title'] );
-			
 			echo $args['before_widget'];
-			if ( ! empty( $title ) )
+
+			if ( ! empty( $instance['title'] ) ) {			
+				$title = apply_filters( 'widget_title', $instance['title'], $instance, $this->id_base  );
 				echo $args['before_title'] . $title . $args['after_title'];
-				
+			}
+							
 			if ( ! ( $html = $wp_theatre->transient->get('c', array()) ) ) {
 				$html = $wp_theatre->calendar->html();
 				$wp_theatre->transient->set('c', array(), $html);

@@ -135,7 +135,6 @@ class WPT_Productions extends WPT_Listing {
 	 * @return 	string			The HTML.
 	 */
 	private function get_html_for_season($season_id, $args=array()) {
-		echo $season_id;
 		$args['season'] = $season_id;				
 		return $this->get_html_grouped($args);
 	}
