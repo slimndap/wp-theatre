@@ -540,6 +540,7 @@ class WPT_Events extends WPT_Listing {
 		global $wp_theatre;
 
 		$defaults = array(
+			'order' => 'asc',
 			'limit' => false,
 			'upcoming' => false,
 			'past' => false,
@@ -554,14 +555,13 @@ class WPT_Events extends WPT_Listing {
 			'production' => false,
 			'status' => array('publish'),
 		);
-
 		$filters = wp_parse_args( $filters, $defaults );
 
 		$args = array(
 			'post_type' => WPT_Event::post_type_name,
 			'post_status' => $filters['status'],
 			'meta_query' => array(),
-			'order' => 'asc'
+			'order' => $filters['order'],
 		);
 		
 		/**
@@ -643,6 +643,7 @@ class WPT_Events extends WPT_Listing {
 		if ($filters['category__not_in']) {
 			$args['category__not_in'] = $filters['category__not_in'];
 		}
+		
 		
 		if ($filters['limit']) {
 			$args['posts_per_page'] = $filters['limit'];

@@ -349,6 +349,26 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertEquals(1, substr_count($html, '<span class="wpt_listing_filter"><a href="'));
 	}
 
+	function test_shortcode_wpt_events_order() {
+
+		/*
+		 * Ascending (default).
+		 * Expect the production with the first upcoming event.
+		 */
+		$link = '<a href="'.get_permalink($this->production_with_upcoming_events).'">';
+		$output = do_shortcode('[wpt_events limit=1]');
+		$this->assertContains($link,$output);
+
+		/*
+		 * Descending.
+		 * Expect the production with the last upcoming event.
+		 */
+		$link = '<a href="'.get_permalink($this->production_with_upcoming_and_historic_events).'">';
+		$output = do_shortcode('[wpt_events limit=1 order=desc]');
+		$this->assertContains($link,$output);
+
+	}
+	
 	function test_shortcode_wpt_season_production() {
 		$season = get_post($this->season1);
 	}
@@ -520,20 +540,36 @@ class WPT_Test extends WP_UnitTestCase {
 		}
 		
 		$expected = array(
-			$this->production_with_historic_event,
-			$this->production_with_historic_event_sticky,
-			$this->production_with_upcoming_events,
-			$this->production_with_upcoming_event,
-			$this->production_with_upcoming_and_historic_events
+			$this->production_with_historic_event, // no upcoming events, follows creation order.
+			$this->production_with_historic_event_sticky, // no upcoming events, follows creation order.
+			$this->production_with_upcoming_events, // tomorrow
+			$this->production_with_upcoming_event, // in 2 days
+			$this->production_with_upcoming_and_historic_events // next week
 		);	
 		
 		$this->assertEquals($expected,$actual);
 	}
 	 
-	function test_order_events() {
-					
+	function test_order_productions_desc() {
+		$actual = array();
+		$args = array(
+			'order' => 'desc'
+		);
+		$productions = $this->wp_theatre->productions->get($args);
+		foreach($productions as $production) {
+			$actual[] = $production->ID;
+		}
+
+		$expected = array(
+			$this->production_with_upcoming_and_historic_events, // next week
+			$this->production_with_upcoming_event, // in 2 days
+			$this->production_with_upcoming_events, // tomorrow
+			$this->production_with_historic_event, // no upcoming events, follows creation order.
+			$this->production_with_historic_event_sticky, // no upcoming events, follows creation order.
+		);
+		$this->assertEquals($expected,$actual);
 	}
-	
+	 
 	// Test transients
 	function test_wpt_transient_productions() {
 		do_shortcode('[wpt_productions]');
@@ -551,7 +587,8 @@ class WPT_Test extends WP_UnitTestCase {
 			'category__in'=>false,
 			'category__not_in'=>false,
 			'groupby'=>false,
-			'limit'=>false
+			'limit'=>false,
+			'order'=>'asc',
 		);
 		
 		$this->assertEquals(5, substr_count($this->wp_theatre->transient->get('p',$args), '"wp_theatre_prod"'));
@@ -589,6 +626,7 @@ class WPT_Test extends WP_UnitTestCase {
 			'end' => false,
 			'groupby'=>false,
 			'limit'=>false,
+			'order'=>'asc',
 		);
 		$this->assertEquals(4, substr_count($this->wp_theatre->transient->get('e',$args), '"wp_theatre_event"'));
 	}
@@ -736,8 +774,8 @@ class WPT_Test extends WP_UnitTestCase {
 		
 		add_filter('wpt_productions_load_args', $func);
 		
-		// Should return 2 productions in the muziek category (+ 2 sticky productions).
-		$this->assertCount(4, $this->wp_theatre->productions->get());		
+		// Should return 2 productions in the muziek category.
+		$this->assertCount(2, $this->wp_theatre->productions->get());		
 		
 	}
 	

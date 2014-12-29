@@ -193,20 +193,11 @@ class WPT_Productions extends WPT_Listing {
 				break;					
 			default:
 				/*
-				 * No stickies in filtered, paginated or grouped views
+				 * No stickies in paginated or grouped views
 				 */
 				if (
 					!empty($args['paginateby']) || 
-					!empty($args['groupby']) ||
-					!empty($args['category']) ||
-					!empty($args['cat']) ||
-					!empty($args['category_name']) ||
-					!empty($args['category__and']) ||
-					!empty($args['category__in']) ||
-					!empty($args['category__not_in']) ||
-					!empty($args['post__in']) ||
-					!empty($args['post__not_in']) ||
-					!empty($args['season'])
+					!empty($args['groupby'])
 				) {
 					$args['ignore_sticky_posts'] = true;	
 				}
@@ -373,6 +364,7 @@ class WPT_Productions extends WPT_Listing {
 		global $wp_theatre;
 
 		$defaults = array(
+			'order' => 'asc',
 			'limit' => false,
 			'post__in' => false,
 			'post__not_in' => false,
@@ -391,7 +383,7 @@ class WPT_Productions extends WPT_Listing {
 			'post_type' => WPT_Production::post_type_name,
 			'post_status' => 'publish',
 			'meta_query' => array(),
-			'order' => 'asc'
+			'order' => $filters['order'],
 		);
 		
 		if ($filters['post__in']) {
@@ -456,8 +448,22 @@ class WPT_Productions extends WPT_Listing {
 
 		$posts = get_posts($args);
 
-		// don't forget the stickies!
-		if (!$filters['ignore_sticky_posts']) {
+		/*
+		 * Add sticky productions.
+		 * Unless in filtered, paginated or grouped views.
+		 */
+		if (
+			!$filters['ignore_sticky_posts'] &&
+			empty($args['cat']) &&
+			empty($args['category_name']) &&
+			empty($args['category__and']) &&
+			empty($args['category__in']) &&
+			empty($args['category__not_in']) &&
+			empty($args['post__in']) &&
+			empty($args['post__not_in']) &&
+			!$filters['season'] &&
+			$args['posts_per_page'] < 0
+		) {
 			$sticky_posts = get_option( 'sticky_posts' );
 			
 			if (!empty($sticky_posts)) {

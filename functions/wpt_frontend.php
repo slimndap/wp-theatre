@@ -187,10 +187,11 @@ class WPT_Frontend {
 			'end' => false,
 			'groupby'=>false,
 			'limit'=>false,
+			'order'=>'asc',
 		);
 		
 		$atts = shortcode_atts( $defaults, $atts );
-				
+
 		if (!empty($atts['paginateby'])) {
 			$fields = explode(',',$atts['paginateby']);
 			for ($i=0;$i<count($fields);$i++) {
@@ -278,7 +279,8 @@ class WPT_Frontend {
 			'category__in'=>false,
 			'category__not_in'=>false,
 			'groupby'=>false,
-			'limit'=>false
+			'limit'=>false,
+			'order'=>'asc'
 		);
 				
 		if (!empty($wp_query->query_vars['wpt_category'])) {
