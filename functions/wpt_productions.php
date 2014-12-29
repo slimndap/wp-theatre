@@ -337,30 +337,28 @@ class WPT_Productions extends WPT_Listing {
 	}
 	
 	/**
-	 * Get all productions.
-	 *
-	 * Returns an array of all productions.
+	 * Get a list of productions.
 	 * 
-	 * Example:
-	 *
-	 * $productions = $wp_theatre->productions->load();
+	 * @since 0.5
+	 * @since 0.10	Renamed method from `load()` to `get()`.
+	 * 				Added 'order' to $args.
 	 *
 	 * @param array $args {
-	 *		int $season. Only return productions that are linked to season.
-	 *		int $limit. See WP_Query.
-	 *		$post__in. See WP_Query.
-	 * 		$post__not_in. See WP_Query.
-	 * 		$cat. See WP_Query.
-	 * 		$category_name. See WP_Query.
-	 *  	category__and. See WP_Query.
-	 * 		category__in. See WP_Query.
-	 * 		category__not_in. See WP_Query.
-	 * 		ignore_sticky_posts. See WP_Query.
+	 *		string $order. 			See WP_Query.
+	 *		int $season. 			Only return productions that are linked to $season.
+	 *		int $limit. 			See WP_Query.
+	 *		$post__in. 				See WP_Query.
+	 * 		$post__not_in. 			See WP_Query.
+	 * 		$cat. 					See WP_Query.
+	 * 		$category_name. 		See WP_Query.
+	 *  	category__and. 			See WP_Query.
+	 * 		category__in. 			See WP_Query.
+	 * 		category__not_in. 		See WP_Query.
+	 * 		ignore_sticky_posts. 	See WP_Query.
 	 * }
-	 * @return mixed An array of WPT_Production objects.
+	 * @return array 	An array of WPT_Production objects.
 	 */
 	public function get($filters=array()) {
-		global $wpdb;
 		global $wp_theatre;
 
 		$defaults = array(

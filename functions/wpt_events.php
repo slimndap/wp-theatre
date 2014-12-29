@@ -528,10 +528,11 @@ class WPT_Events extends WPT_Listing {
 	}
 	
 	/**
-	 * Get a list of events.
+	 * Gets a list of events.
 	 * 
 	 * @since 0.5
 	 * @since 0.10	Renamed method from `load()` to `get()`.
+	 * 				Added 'order' to $args.
 	 *
  	 * @return array Events.
 	 */

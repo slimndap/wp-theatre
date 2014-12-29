@@ -82,6 +82,21 @@ The new feature may be added directly to the Theater plugin or as an extension s
 
 = 0.10 =
 
+Release Date: December 29th, 2014
+
+* Bugfixes
+    * Changed priority of some `save_post`-hooks to avoid conflicts with ACF's `save_post`-hooks. Thanks [paramir](https://github.com/paramir)!
+    * Fixed some PHP warnings.
+
+* Enhancements
+    * Event listings can be paginated or grouped by year: `[wpt_events paginateby=year]` or `[wpt_events groupby=year]`.
+    * Better support for past events. You can now create historic event listings paginated or grouped by day, month, year or category.
+    * You can change the order of events and production in listings: `[wpt_events order=desc]` or `[wpt_productions order=desc]`.
+
+* Experimental
+    * A new WPT_Importer class to easily create your own import for your ticketing system. Still a work in progress. Play with it, but don't use it on your production website. Always make backups!
+    
+
 = 0.9 = 
 * Added support for start and end dates in `[wpt_events]` shortcode. You can throw anything at it that strtotime understands! Some examples:
     * `[wpt_events start="now"]`
