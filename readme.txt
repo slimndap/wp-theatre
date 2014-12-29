@@ -2,7 +2,7 @@
 Contributors: slimndap
 Tags: theatre, stage, venue, events, shows, concerts, tickets, ticketing, sports, performances, calendar, workshops, theater, cinema
 Requires at least: 3.8
-Tested up to: 4.0.1
+Tested up to: 4.1
 Stable tag: trunk
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -79,6 +79,8 @@ If you are missing a feature that you really need for your website you can:
 The new feature may be added directly to the Theater plugin or as an extension so that others may benefit from this as well.
 
 == Changelog ==
+
+= 0.10 =
 
 = 0.9 = 
 * Added support for start and end dates in `[wpt_events]` shortcode. You can throw anything at it that strtotime understands! Some examples:

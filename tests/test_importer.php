@@ -89,13 +89,13 @@ class WPT_Test_Importer extends WP_UnitTestCase {
 	function test_productions_are_imported() {
 		$importer = new WPT_Demo_Importer();
 		$importer->execute();		
-		$this->assertCount(3, $this->wp_theatre->productions->load());
+		$this->assertCount(3, $this->wp_theatre->productions->get());
 	}
 	
 	function test_events_are_imported() {
 		$importer = new WPT_Demo_Importer();
 		$importer->execute();		
-		$this->assertCount(4, $this->wp_theatre->events->load());		
+		$this->assertCount(4, $this->wp_theatre->events->get());		
 	}
 	
 	function test_events_from_other_source_are_not_overwritten() {
@@ -118,7 +118,7 @@ class WPT_Test_Importer extends WP_UnitTestCase {
 
 		$importer = new WPT_Demo_Importer();
 		$importer->execute();		
-		$this->assertCount(5, $this->wp_theatre->events->load());		
+		$this->assertCount(5, $this->wp_theatre->events->get());		
 	}
 	
 	// re-import
@@ -133,7 +133,7 @@ class WPT_Test_Importer extends WP_UnitTestCase {
 
 		$importer->execute();		
 
-		$this->assertCount(2, $this->wp_theatre->events->load());		
+		$this->assertCount(2, $this->wp_theatre->events->get());		
 		
 	}
 
