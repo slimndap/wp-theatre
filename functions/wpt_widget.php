@@ -20,7 +20,8 @@
 			}
 				
 			$filters = array(
-				'limit'=>$instance['limit']
+				'limit'=>$instance['limit'],
+				'start'=>'now',
 			);
 			
 			if (!empty($instance['template'])) {
