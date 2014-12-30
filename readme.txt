@@ -226,6 +226,10 @@ Release Date: December 29th, 2014
 
 == Upgrade Notice ==
 
+=0.10.1=
+* Bugfix: Events widget was showing old events. Thanks [Epco](http://wordpress.org/support/profile/epco)!
+* Bugfix: Time-based pagination (day/month/year) for event listings wasn't respecting the sorting order of the events.
+
 = 0.9.6 =
 * Bugfix: The {{content}} placeholder was causing an infinite loop on some pages with event listings.
 * Bugfix: The output of the {{remark}} placeholder was lacking wrappers divs.
