@@ -332,7 +332,7 @@ class WPT_Productions extends WPT_Listing {
 				$seasons[$production->season()->ID] = $production->season()->title();
 			}
 		}
-		krsort($seasons);
+		arsort($seasons);
 		return $seasons;
 	}
 	
