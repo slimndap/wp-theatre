@@ -39,7 +39,8 @@ class WPT_Event_Editor {
 		
 		
 		$html.= '<a href="'.get_edit_post_link($event->ID).'">'.__('Edit').'</a>';
-		$html.= '<a href="'.get_delete_post_link($event->ID,'',true).'">'.__('Trash').'</a>';
+		$html.= ' | ';
+		$html.= '<a href="'.get_delete_post_link($event->ID,'',true).'">'.__('Delete').'</a>';
 		
 		echo apply_filters('wpt_event_editor_event_actions', $html, $event);
 
@@ -52,7 +53,7 @@ class WPT_Event_Editor {
 		if (empty($events)) {
 			echo __('No events yet.','wp_theatre');
 		} else {
-			echo '<table class="form-table">';
+			echo '<table class="widefat">';
 			for ($i=0;$i<count($events);$i++) {
 				$event = $events[$i];					
 
@@ -62,9 +63,7 @@ class WPT_Event_Editor {
 					echo '<tr>';						
 				}
 
-				echo '<td class="wpt_event_editor_event">';
 				$this->render_event($event);
-				echo '</td>';
 				do_action('wpt_event_editor_event_after', $event);
 				
 				echo '<td class="wpt_event_editor_event_actions">';
@@ -86,13 +85,19 @@ class WPT_Event_Editor {
 			'html' => true,	
 		);
 		
+		$html.= '<td>';
 		$html.= $event->date($args);
 		$html.= $event->time($args);
+		$html.= '</td>';
 
+		$html.= '<td>';
 		$html.= $event->venue($args);
 		$html.= $event->city($args);
+		$html.= '</td>';
 		
+		$html.= '<td>';
 		$html.= $event->tickets($args);
+		$html.= '</td>';
 		
 		echo apply_filters('wpt_event_editor_event', $html, $event);
 	}
