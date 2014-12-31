@@ -30,7 +30,8 @@ class WPT_Productions extends WPT_Listing {
 	 * Gets an array of all categories with productions.
 	 *
 	 * @since 0.5
-	 * @since 0.10	Renamed method from `categories()` to `get_categories()`.
+	 * @since 0.10		Renamed method from `categories()` to `get_categories()`.
+ 	 * @since 0.10.2	Now returns the slug instead of the term_id as the array keys.
 	 *
 	 * @param 	array $filters	See WPT_Productions::get() for possible values.
 	 * @return 	array 			Categories.
@@ -42,7 +43,7 @@ class WPT_Productions extends WPT_Listing {
 			$post_categories = wp_get_post_categories( $production->ID );
 			foreach($post_categories as $c){
 				$cat = get_category( $c );
-				$categories[$cat->term_id] = $cat->name;
+				$categories[$cat->slug] = $cat->name;
 			}
 		}
 		asort($categories);
@@ -272,16 +273,17 @@ class WPT_Productions extends WPT_Listing {
 	 * Gets a list of productions in HTML for a single category.
 	 * 
 	 * @since 0.10
+ 	 * @since 0.10.2	Category now uses slug instead of term_id.
 	 *
 	 * @see WPT_Productions::get_html_grouped();
 	 *
 	 * @access private
-	 * @param 	int $cat_id		ID of the category.
-	 * @param 	array $args 	See WPT_Productions::get_html() for possible values.
-	 * @return 	string			The HTML.
+	 * @param 	string $category_slug	Slug of the category.
+	 * @param 	array $args 			See WPT_Productions::get_html() for possible values.
+	 * @return 	string					The HTML.
 	 */
-	private function get_html_for_category($cat_id, $args=array()) {
-		if ($category = get_category($cat_id)) {
+	private function get_html_for_category($category_slug, $args=array()) {
+		if ($category = get_category_by_slug($category_slug)) {
   			$args['cat'] = $category->term_id;				
 		}
 		
