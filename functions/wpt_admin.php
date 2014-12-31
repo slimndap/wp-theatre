@@ -184,16 +184,6 @@ class WPT_Admin {
 	 */
 	function add_meta_boxes() {
 		
-		// Add an 'Events' metabox to the production admin screen.
-		add_meta_box(
-            'wp_theatre_events',
-            __( 'Events','wp_theatre'),
-            array($this,'meta_box_events'),
-            WPT_Production::post_type_name,
-            'side',
-            'core'
-        ); 		
-
 		// Add an 'Event data' metabox to the event admin screen.
 		add_meta_box(
             'wp_theatre_event_data',
@@ -289,38 +279,6 @@ class WPT_Admin {
 		ksort($events);
 		return array_values($events);
 
-	}
-
-	function meta_box_events($production) {
-		global $wp_theatre;
-		$production = new WPT_Production(get_the_id());
-		
-		
-		if (get_post_status($production->ID) == 'auto-draft') {
-			echo __('You need to save this production before you can add events.','wp_theatre');
-		} else {
-			$args = array(
-				'production' => $production->ID,
-				'status' => array('publish','draft')
-			);
-		
-			$events = $wp_theatre->events->get($args);
-			if (count($events)>0) {
-				echo '<ul>';
-				foreach ($events as $event) {
-					echo '<li>';
-					echo $this->render_event($event);
-					echo '</li>';
-					
-				}
-				echo '</ul>';	
-			}	
-			$create_event_url = admin_url(
-				'post-new.php?post_type='.WPT_Event::post_type_name.'&'.
-				WPT_Production::post_type_name.'='.$production->ID
-			);
-			echo '<p><a href="'.$create_event_url.'" class="button button-primary">'.__('New event','wp_theatre').'</a></p>';	
-		}		
 	}
 
 	function meta_box_event_data($event) {
