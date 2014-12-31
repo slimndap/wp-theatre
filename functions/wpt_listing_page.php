@@ -620,16 +620,18 @@
 	 	
 	 	/*
 	 	 * Get the URL for the listing page.
+	 	 *
 	 	 * @since 0.8
+	 	 * @since 0.10.2	Category now uses slug instead of term_id.
 	 	 * 
 	     * @param array $args {
 	     *     An array of arguments. Optional.
 	     *
-	     *     @type string $wpt_month     Month to filter on. No month-filter when set to <false>. 
-	     *                                 Accepts <yyyy-mm> or <false>.
-	     *                                 Default <false>.
-	     *     @type integer $wpt_category Category to filter on. No category-filter when set to <false>.
-	     *                                 Default <false>.
+	     *     @type string $wpt_month      Month to filter on. No month-filter when set to <false>. 
+	     *                                 	Accepts <yyyy-mm> or <false>.
+	     *                                 	Default <false>.
+	     *     @type string $wpt_category 	Category slug to filter on. No category-filter when set to <false>.
+	     *                                 	Default <false>.
 	     * }
 	     * @return string URL.
 	 	 */
@@ -646,7 +648,7 @@
 
 	 			if (get_option('permalink_structure')) {	
 			 		if ($args['wpt_category']) {
-			 			if ($category=get_category($args['wpt_category'])) {
+			 			if ($category=get_category_by_slug($args['wpt_category'])) {
 					 		$url.= $category->slug.'/';
 			 			}
 			 		}

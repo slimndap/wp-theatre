@@ -226,6 +226,10 @@ Release Date: December 29th, 2014
 
 == Upgrade Notice ==
 
+=0.10.2=
+* Bugfix: Category pagination stopped working on listing page. Thanks [Oscar](https://wordpress.org/support/profile/ossiesayshi)!
+* Bugfix: Seasons were not sorted properly in list views.
+
 =0.10.1=
 * Bugfix: Events widget was showing old events. Thanks [Epco](http://wordpress.org/support/profile/epco)!
 * Bugfix: Time-based pagination (day/month/year) for event listings wasn't respecting the sorting order of the events.
