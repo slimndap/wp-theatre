@@ -381,6 +381,14 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertEquals(2, substr_count(do_shortcode('[wpt_production_events production="'.$this->production_with_upcoming_events.'"]'), '"wp_theatre_event"'));		
 	}
 	
+	/**
+	 * Tests if [wpt_production_events] only shows upcoming events 
+	 * when no time filters are set.
+	 */
+	function test_shortcode_production_events_defaults_to_upcoming() {
+		$this->assertEquals(1, substr_count(do_shortcode('[wpt_production_events production="'.$this->production_with_upcoming_and_historic_events.'"]'), '"wp_theatre_event"'));		
+	}
+	
 	// Test templates
 	
 	function test_wpt_events_template_permalink_filter() {
@@ -684,6 +692,38 @@ class WPT_Test extends WP_UnitTestCase {
 			'ignore_sticky_posts' => TRUE
 		);
 		$this->assertCount(3, $this->wp_theatre->productions->get($args));		
+		
+	}
+	
+	function test_sticky_productions_with_post__not_in() {
+
+		/*
+		 * Exclude a regular production.
+		 * Expect all productions (5), except $this->production_with_upcoming_event.
+		 */
+		$html = do_shortcode('[wpt_productions post__not_in="'.$this->production_with_upcoming_event.'"]');
+		$this->assertEquals(4, substr_count($html, '"wp_theatre_prod"'));
+
+		/*
+		 * Exclude a sticky production.
+		 * Expect all productions (5), except $this->production_with_historic_event_sticky.
+		 */
+		$html = do_shortcode('[wpt_productions post__not_in="'.$this->production_with_historic_event_sticky.'"]');
+		$this->assertEquals(4, substr_count($html, '"wp_theatre_prod"'));
+	}
+		
+	function test_sticky_productions_with_category__not_in() {
+
+
+		// Give one of the sticky productions a category as well.
+		wp_set_post_categories($this->production_with_historic_event_sticky, array($this->category_film));
+
+		/*
+		 * Expect all productions (5), except productions in the film category (2).
+		 */
+		$html = do_shortcode('[wpt_productions category__not_in="'.$this->category_film.'"]');
+		$this->assertEquals(3, substr_count($html, '"wp_theatre_prod"'));
+
 		
 	}
 		

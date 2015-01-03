@@ -226,11 +226,16 @@ Release Date: December 29th, 2014
 
 == Upgrade Notice ==
 
-=0.10.2=
+= 0.10.3 =
+* Bugfix: 'Events' header was showing on the page for a production without events.
+* Bugfix: Sticky productions didn't show when 'post__not_in' was used.
+* Bugfix: Old events were showing in the list with upcoming events on the production page. 
+
+= 0.10.2 =
 * Bugfix: Category pagination stopped working on listing page. Thanks [Oscar](https://wordpress.org/support/profile/ossiesayshi)!
 * Bugfix: Seasons were not sorted properly in list views.
 
-=0.10.1=
+= 0.10.1 =
 * Bugfix: Events widget was showing old events. Thanks [Epco](http://wordpress.org/support/profile/epco)!
 * Bugfix: Time-based pagination (day/month/year) for event listings wasn't respecting the sorting order of the events.
 
