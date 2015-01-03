@@ -585,6 +585,34 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 	}
 	
 	
+	/**
+	 * Tests if the 'events' header is not showing on a the page
+	 * of a production without events.
+	 */
+	function test_events_on_production_page_for_production_without_events() {
+		
+		$production_args = array(
+			'post_type'=>WPT_Production::post_type_name,
+			'post_content' => 'hallo',
+		);
+		
+		// create production with upcoming event
+		$production_without_events = $this->factory->post->create($production_args);
+
+		$this->options['listing_page_position_on_production_page'] = 'below';
+		update_option('wpt_listing_page', $this->options);
+
+		$this->go_to(
+			get_permalink($production_without_events)
+		);
+
+		$html= get_echo( 'the_content' );
+
+		$this->assertEquals(0, substr_count($html, '<h3>Events</h3>'), $html);
+		
+	}
+	
+	
 	
 	function test_shortcode_wpt_calendar() {
 		$html = do_shortcode('[wpt_calendar]');
