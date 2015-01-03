@@ -791,13 +791,17 @@
 	 	private function wpt_production_page_events_content() {
 		 	
 			$production = new WPT_Production();			
-			$events_html = apply_filters('wpt_production_page_events_header','<h3>'.__('Events','wp_theatre').'</h3>');
 
 			$template = '';
 			if (!empty($this->options['listing_page_template_on_production_page'])) {
 				$template = $this->options['listing_page_template_on_production_page'];
 			}
-			$events_html.= '[wpt_production_events]'.$template.'[/wpt_production_events]';
+			$events_html = do_shortcode('[wpt_production_events]'.$template.'[/wpt_production_events]');
+
+			if (!empty($events_html)) {
+				$events_header_html = apply_filters('wpt_production_page_events_header','<h3>'.__('Events','wp_theatre').'</h3>');
+				$events_html = $events_header_html.$events_html;
+			}
 			
 		 	return $events_html;
 		 	

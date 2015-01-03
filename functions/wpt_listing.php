@@ -151,10 +151,13 @@ class WPT_Listing {
 	 */
 	protected function get_html($args=array()) {
 		$html = '';
-		$html.= $this->get_html_page_navigation($args);
-		$html.= $this->get_html_for_page($args);
 		
-		$html = '<div class="'.implode(' ',$this->get_classes_for_html($args)).'">'.$html.'</div>'; 
+		$html_page_navigation = $this->get_html_page_navigation($args);
+		$html_for_page = $this->get_html_for_page($args);
+		
+		if (!empty($html_page_navigation) || !empty($html_for_page)) {
+			$html = '<div class="'.implode(' ',$this->get_classes_for_html($args)).'">'.$html_page_navigation.$html_for_page.'</div>';
+		}
 		
 		return apply_filters('wpt_listing_html', $html, $args);
 	}
