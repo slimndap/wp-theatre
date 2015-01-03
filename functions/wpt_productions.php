@@ -458,35 +458,62 @@ class WPT_Productions extends WPT_Listing {
 			empty($args['category_name']) &&
 			empty($args['category__and']) &&
 			empty($args['category__in']) &&
-			empty($args['category__not_in']) &&
 			empty($args['post__in']) &&
-			empty($args['post__not_in']) &&
 			!$filters['season'] &&
 			$args['posts_per_page'] < 0
 		) {
 			$sticky_posts = get_option( 'sticky_posts' );
-			
+
 			if (!empty($sticky_posts)) {
 				$sticky_offset = 0;
-	
+
 				foreach($posts as $post) {
 					if (in_array($post->ID,$sticky_posts)) {
 						$offset = array_search($post->ID, $sticky_posts);
 						unset($sticky_posts[$offset]);
 					}
 				}
-	
+
 				if (!empty($sticky_posts)) {
-					$stickies = get_posts( array(
-						'post__in' => $sticky_posts,
-						'post_type' => WPT_Production::post_type_name,
-						'post_status' => 'publish',
-						'nopaging' => true
-					) );
-					foreach ( $stickies as $sticky_post ) {
-						array_splice( $posts, $sticky_offset, 0, array( $sticky_post ) );
-						$sticky_offset++;
-					}			                              
+					/*
+					 * Respect $args['post__not_in']. Remove them from $sticky_posts.
+					 * We can't just add it to the `$sticky_args` below, because
+					 * `post__not_in` is overruled by `post__in'.
+					 */
+					if (!empty($args['post__not_in'])) {
+						foreach ($args['post__not_in'] as $post__not_in_id) {
+							if (in_array($post__not_in_id,$sticky_posts)) {
+								$offset = array_search($post__not_in_id, $sticky_posts);
+								unset($sticky_posts[$offset]);
+							}
+						}
+					}
+
+					/*
+					 * Continue if there are any $sticky_posts left.
+					 */
+					if (!empty($sticky_posts)) {						
+						$sticky_args = array(
+							'post__in' => $sticky_posts,
+							'post_type' => WPT_Production::post_type_name,
+							'post_status' => 'publish',
+							'nopaging' => true
+						);
+						
+						/*
+						 * Respect $args['category__not_in'].
+						 */
+						if (!empty($args['category__not_in'])) {
+							$sticky_args['category__not_in'] = $args['category__not_in'];
+						}
+						
+						$stickies = get_posts($sticky_args);
+						foreach ( $stickies as $sticky_post ) {
+							array_splice( $posts, $sticky_offset, 0, array( $sticky_post ) );
+							$sticky_offset++;
+						}			                              
+					}
+
 				}
 			}
 		}

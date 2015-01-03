@@ -480,7 +480,8 @@ class WPT_Frontend {
 
 		if ($production) {			
 			$args = array(
-				'production' => $production
+				'production' => $production,
+				'start' => 'now'
 			);
 		
 			if (!is_null($content) && !empty($content)) {
