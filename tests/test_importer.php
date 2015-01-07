@@ -58,6 +58,12 @@ class WPT_Demo_Importer extends WPT_Importer {
 					'ref' => $event_ref,
 				);		
 				$event = $this->update_event($event_args);
+
+				wp_update_post( array(
+					'ID' => $event->ID,
+					'post_status' => 'publish'
+				));
+			
 			}
 		}
 		
