@@ -348,7 +348,8 @@ class WPT_Test extends WP_UnitTestCase {
 		 */
 		 
 		$expected_production = new WPT_Production($this->production_with_historic_event_sticky);
-		$expected_event = $expected_production->events()[0];
+		$expected_events = $expected_production->events();
+		$expected_event = $expected_events[0];
 		$expected_class = 'month-'.date('Y-m',$expected_event->datetime());
 
 		$this->assertEquals(1, substr_count($html, '<span class="wpt_listing_filter '.$expected_class.'"><a href="'));
