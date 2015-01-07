@@ -51,6 +51,9 @@ class WPT_Listing {
 	 * @see WPT_Events::get_html()
 	 *
 	 * @since 0.8
+	 * @since 0.10.4	Added an extra class to the filter tabs.
+	 *					The class is based on $field and the tab.
+	 *					Useful for styling and automated tests.
 	 *
 	 * @access protected
 	 */
@@ -77,6 +80,7 @@ class WPT_Listing {
 		) {
 			return $html;
 		};
+		
 		/*
 		 * Build the base url for all filters
 		 */
@@ -89,10 +93,13 @@ class WPT_Listing {
 		foreach($options as $slug=>$name) {
 		
 			$url = remove_query_arg($query_var, $current_url);
-			$classes = array('wpt_listing_filter');
+			$classes = array(
+				'wpt_listing_filter',
+				$field.'-'.$slug,
+			);
 
 			/**
-			 * Check if $option is the current page.
+			 * Check if $option is the current tab.
 			 */
 
 			$is_current_page = false;

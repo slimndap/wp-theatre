@@ -255,9 +255,15 @@ class WPT_Frontend {
 			$atts['cat'] = implode(',',$categories);
 		}
 
-		if ( ! ( $html = $wp_theatre->transient->get('e', array_merge($atts, $_GET)) ) ) {
+		/*
+		 * Base the $args parameter for the transient on $atts and $wp_query,
+		 * to create unique keys for every page of paginated lists.
+		 */
+		$unique_args = array_merge($atts, $wp_query->query_vars);
+
+		if ( ! ( $html = $wp_theatre->transient->get('e', $unique_args) ) ) {
 			$html = $wp_theatre->events->get_html($atts);
-			$wp_theatre->transient->set('e', array_merge($atts, $_GET), $html);
+			$wp_theatre->transient->set('e', $unique_args, $html);
 		}
 		return $html;
 	}
@@ -283,10 +289,6 @@ class WPT_Frontend {
 			'order'=>'asc'
 		);
 				
-		if (!empty($wp_query->query_vars['wpt_category'])) {
-			$defaults['category']=$wp_query->query_vars['wpt_category'];
-		}
-
 		$atts = shortcode_atts($defaults,$atts);
 				
 		if (!empty($atts['paginateby'])) {
@@ -338,9 +340,15 @@ class WPT_Frontend {
 			$atts['cat'] = implode(',',$categories);
 		}
 
-		if ( ! ( $html = $wp_theatre->transient->get('p', array_merge($atts, $_GET)) ) ) {
+		/*
+		 * Base the $args parameter for the transient on $atts and $wp_query,
+		 * to create unique keys for every page of paginated lists.
+		 */
+		$unique_args = array_merge($atts, $wp_query->query_vars);
+
+		if ( ! ( $html = $wp_theatre->transient->get('p', $unique_args) ) ) {
 			$html = $wp_theatre->productions->get_html($atts);
-			$wp_theatre->transient->set('p', array_merge($atts, $_GET), $html);
+			$wp_theatre->transient->set('p', $unique_args, $html);
 		}
 
 		return $html;

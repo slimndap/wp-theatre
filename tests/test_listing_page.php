@@ -261,7 +261,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 
 		$url = add_query_arg(
 			'wpt_category',
-			$this->category_film,
+			'film',
 			get_permalink( $this->wp_theatre->listing_page->page() )
 		);
 

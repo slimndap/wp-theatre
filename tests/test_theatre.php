@@ -346,7 +346,12 @@ class WPT_Test extends WP_UnitTestCase {
 		 * Should produce a paginated list with only one page 
 		 * for $this->production_with_historic_event_sticky.
 		 */
-		$this->assertEquals(1, substr_count($html, '<span class="wpt_listing_filter"><a href="'));
+		 
+		$expected_production = new WPT_Production($this->production_with_historic_event_sticky);
+		$expected_event = $expected_production->events()[0];
+		$expected_class = 'month-'.date('Y-m',$expected_event->datetime());
+
+		$this->assertEquals(1, substr_count($html, '<span class="wpt_listing_filter '.$expected_class.'"><a href="'));
 	}
 
 	function test_shortcode_wpt_events_order() {
@@ -611,6 +616,28 @@ class WPT_Test extends WP_UnitTestCase {
 		wp_set_current_user(0);		
 	}
 	
+	/*
+	 * Tests if the transients don't mess up paginated views.
+	 * See: https://github.com/slimndap/wp-theatre/issues/88
+	 */
+	function test_wpt_transient_productions_with_pagination() {
+		global $wp_query;
+		
+		/*
+		 * Test if the film tab is active.
+		 */
+		$wp_query->query_vars['wpt_category'] = 'film';
+		$html = do_shortcode('[wpt_productions paginateby=category]');
+		$this->assertContains('category-film wpt_listing_filter_active',$html);
+
+		/*
+		 * Test if the muziek tab is active.
+		 */
+		$wp_query->query_vars['wpt_category'] = 'muziek';
+		$html = do_shortcode('[wpt_productions paginateby=category]');
+		$this->assertContains('category-muziek wpt_listing_filter_active',$html);
+	}
+	
 	function test_wpt_transient_events() {
 		do_shortcode('[wpt_events]');
 		
@@ -637,6 +664,28 @@ class WPT_Test extends WP_UnitTestCase {
 			'order'=>'asc',
 		);
 		$this->assertEquals(4, substr_count($this->wp_theatre->transient->get('e',$args), '"wp_theatre_event"'));
+	}
+	
+	/*
+	 * Tests if the transients don't mess up paginated views.
+	 * See: https://github.com/slimndap/wp-theatre/issues/88
+	 */
+	function test_wpt_transient_events_with_pagination() {
+		global $wp_query;
+		
+		/*
+		 * Test if the film tab is active.
+		 */
+		$wp_query->query_vars['wpt_category'] = 'film';
+		$html = do_shortcode('[wpt_events paginateby=category]');
+		$this->assertContains('category-film wpt_listing_filter_active',$html);
+
+		/*
+		 * Test if the muziek tab is active.
+		 */
+		$wp_query->query_vars['wpt_category'] = 'muziek';
+		$html = do_shortcode('[wpt_events paginateby=category]');
+		$this->assertContains('category-muziek wpt_listing_filter_active',$html);
 	}
 	
 	function test_wpt_transient_reset() {
