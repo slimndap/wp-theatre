@@ -310,7 +310,7 @@ class WPT_Production {
 	function permalink($args=array()) {
 		$defaults = array(
 			'html' => false,
-			'text' => $this->post()->post_title,
+			'text' => $this->title(),
 			'inside' => false
 		);
 
@@ -495,7 +495,13 @@ class WPT_Production {
 		$args = wp_parse_args( $args, $defaults );
 
 		if (!isset($this->title)) {
-			$this->title = apply_filters('wpt_production_title',$this->post()->post_title,$this);
+			$post = $this->post();
+			if (empty($post)) {
+				$title = '';
+			} else {
+				$title = $this->post()->post_title;
+			}
+			$this->title = apply_filters('wpt_production_title', $title, $this);
 		}
 		
 		if ($args['html']) {

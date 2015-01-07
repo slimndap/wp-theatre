@@ -324,7 +324,7 @@ class WPT_Admin {
 	}
 
 	function meta_box_event_data($event) {
-		wp_nonce_field(WPT_Event::post_type()->name, WPT_Event::post_type()->name.'_nonce' );
+		wp_nonce_field(WPT_Event::post_type_name, WPT_Event::post_type_name.'_nonce' );
 
 		echo '<table class="form-table">';
 		echo '<tbody>';
@@ -332,7 +332,7 @@ class WPT_Admin {
 		echo '<tr class="form-field">';		
 		echo '<th>';
 		echo '<label>';
-		echo WPT_Production::post_type()->labels->singular_name;
+		_e('Production','wp_theatre');
 		echo '</label> ';
 		echo '</th>';
 		
@@ -702,7 +702,7 @@ class WPT_Admin {
 		$html.= '</div>'; // .date
 		
 		$html.= '<div class="content">';
-		$html.= '<div class="title">'.$event->production()->post()->post_title.'</div>';
+		$html.= '<div class="title">'.$event->title().'</div>';
 		
 		$remark = get_post_meta($event->ID,'remark',true);
 		if ($remark!='') {
