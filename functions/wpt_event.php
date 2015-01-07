@@ -105,9 +105,9 @@ class WPT_Event {
 
 		if (!isset($this->{$field})) {
 			$custom_value = get_post_meta($this->ID, $field, true);
-			if (empty($custom_value)) {
-				$custom_value = get_post_meta($this->production->ID, $field, true);			
-			}
+	        if (empty($custom_value)) {
+	            $custom_value = $this->production()->custom($field, $args, true);
+	        }
 
 			$this->{$field} = apply_filters(
 				'wpt_event_'.$field, 
