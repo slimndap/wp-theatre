@@ -226,6 +226,9 @@ Release Date: December 29th, 2014
 
 == Upgrade Notice ==
 
+= 0.10.5 =
+* Tweak: Improved the HTML output for custom event fields. 
+
 = 0.10.4 =
 * Bugfix: Paginated lists sometimes showed the same content on every page.
 
