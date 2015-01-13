@@ -29,7 +29,7 @@
 			}
 
 			if ( ! ( $html = $wp_theatre->transient->get('e', array_merge($filters)) ) ) {
-				$html = $wp_theatre->events->html($filters);
+				$html = $wp_theatre->events->get_html($filters);
 				$wp_theatre->transient->set('e', array_merge($filters), $html);
 			}
 
@@ -197,7 +197,7 @@
 				$filters['production'] = $post->ID;
 				
 				if ( ! ( $html = $wp_theatre->transient->get('e', array_merge($filters)) ) ) {
-					$html = $wp_theatre->events->html($filters);
+					$html = $wp_theatre->events->get_html($filters);
 					$wp_theatre->transient->set('e', array_merge($filters), $html);
 				}
 	

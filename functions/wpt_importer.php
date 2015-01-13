@@ -105,7 +105,7 @@
 
 			$post = array(
 				'post_type' => WPT_Event::post_type_name,
-				'post_status' => 'publish',
+				'post_status' => 'draft',
 			);
 			
 			if ($post_id = wp_insert_post($post)) {
@@ -153,6 +153,7 @@
 				'post_type' => WPT_Production:: post_type_name,
 				'post_title' => $args['title'],
 				'post_content' => $args['content'],
+				'post_status' => 'draft',
 			);
 
 			if ($post_id = wp_insert_post($post)) {
@@ -245,6 +246,7 @@
 		 * If no existing event is found then a new one is created.
 		 * 
 		 * @since 0.10
+		 * @since tbd.	Method now returns a WPT_Event object.
 		 *
 		 * @see WPT_Importer::get_event_by_ref()
 		 * @see WPT_Importer::create_event()
@@ -258,7 +260,8 @@
 		 *		@type string $event_date	The date of the event.
 		 * 		@type string $ref			A unique identifier for the event.
 		 * }
-		 * @return void
+		 * @return WPT_Event				The new or updated event.
+		 *									Or <false> if there was a problem creating a new event.
 		 */
 		function update_event($args) {
 
@@ -288,6 +291,8 @@
 			delete_post_meta($event->ID, $this->marker);
 
 			$this->stats['events_updated']++;
+			
+			return new WPT_Event($event->ID);
 			
 		}
 
