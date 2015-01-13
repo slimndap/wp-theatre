@@ -2,6 +2,10 @@
 class WPT_Event_Editor {
 	
 	function __construct() {
+
+		add_action( 'admin_init', array($this,'enqueue_scripts'));
+
+
 		add_action('add_meta_boxes_'.WPT_Production::post_type_name, array($this, 'add_meta_box'));
 		
 		/*
@@ -21,6 +25,17 @@ class WPT_Event_Editor {
 			WPT_Production::post_type_name, 
 			'normal', 
 			'high'
+		);
+	}
+	
+	public function enqueue_scripts() {
+		wp_enqueue_script(
+			'wp_theatre_admin', 
+			plugins_url( '../js/admin.js', __FILE__ ), 
+			array(
+				'jquery',
+				'jquery-ui-datepicker',
+			) 
 		);
 	}
 	
@@ -93,6 +108,7 @@ class WPT_Event_Editor {
 		$html.= '<td>';
 		$html.= $event->venue($args);
 		$html.= $event->city($args);
+		$html.= $event->remark($args);
 		$html.= '</td>';
 		
 		$html.= '<td>';
@@ -108,19 +124,110 @@ class WPT_Event_Editor {
 
 		echo '<table class="form-table">';
 
-
 		/*
 		 * Start date/time for event.
 		 */
+		$field = 'datetime_start';
 		$html = '';
 		$html.= '<tr>';
-		$html.= '<th><label for="wpt_event_editor_start_date_field">'.__('Start','wp_theatre').'</label></th>';
+		$html.= '<th><label for="wpt_event_editor_event_date">'.__('Start','wp_theatre').'</label></th>';
 		$html.= '<td>';
-		$html.= '<input type="text" id="wpt_event_editor_start_date_field" name="wpt_event_editor_start_date" class="all-options" />';
+		$html.= '<input type="text" id="wpt_event_editor_event_date" name="wpt_event_editor_event_date" />';
 		$html.= '</td>';
 		$html.= '</tr>';
-		echo apply_filters('wpt_event_editor_form_datetime', $html);
-		do_action('wpt_event_editor_form_datetime_after');
+		echo apply_filters('wpt_event_editor_event_date', $html);
+		do_action('wpt_event_editor_event_date_after');
+	
+		/*
+		 * End date/time for event.
+		 */
+		$html = '';
+		$html.= '<tr>';
+		$html.= '<th><label for="wpt_event_editor_enddate">'.__('End','wp_theatre').'</label></th>';
+		$html.= '<td>';
+		$html.= '<input type="text" id="wpt_event_editor_enddate" name="wpt_event_editor_enddate" />';
+		$html.= '</td>';
+		$html.= '</tr>';
+		echo apply_filters('wpt_event_editor_enddate', $html);
+		do_action('wpt_event_editor_enddate_after');
+	
+		/*
+		 * Venue for event.
+		 */
+		$html = '';
+		$html.= '<tr>';
+		$html.= '<th><label for="wpt_event_editor_venue">'.__('Venue','wp_theatre').'</label></th>';
+		$html.= '<td>';
+		$html.= '<input type="text" id="wpt_event_editor_venue" name="wpt_event_editor_venue" />';
+		$html.= '</td>';
+		$html.= '</tr>';
+		echo apply_filters('wpt_event_editor_venue', $html);
+		do_action('wpt_event_editor_venue_after');
+	
+		/*
+		 * City for event.
+		 */
+		$html = '';
+		$html.= '<tr>';
+		$html.= '<th><label for="wpt_event_editor_city">'.__('City','wp_theatre').'</label></th>';
+		$html.= '<td>';
+		$html.= '<input type="text" id="wpt_event_editor_city" name="wpt_event_editor_city" />';
+		$html.= '</td>';
+		$html.= '</tr>';
+		echo apply_filters('wpt_event_editor_city', $html);
+		do_action('wpt_event_editor_city_after');
+	
+		/*
+		 * Remark for event.
+		 */
+		$html = '';
+		$html.= '<tr>';
+		$html.= '<th><label for="wpt_event_editor_remark">'.__('Remark','wp_theatre').'</label></th>';
+		$html.= '<td>';
+		$html.= '<input type="text" id="wpt_event_editor_remark" name="wpt_event_editor_remark" placeholder="'.__('e.g. Premiere or Try-out','wp_theatre').'" />';
+		$html.= '</td>';
+		$html.= '</tr>';
+		echo apply_filters('wpt_event_editor_remark', $html);
+		do_action('wpt_event_editor_remark_after');
+	
+		/*
+		 * Tickets URL for event.
+		 */
+		$html = '';
+		$html.= '<tr>';
+		$html.= '<th><label for="wpt_event_editor_tickets_url">'.__('Tickets URL','wp_theatre').'</label></th>';
+		$html.= '<td>';
+		$html.= '<input type="text" id="wpt_event_editor_tickets_url" name="wpt_event_editor_tickets_url" />';
+		$html.= '</td>';
+		$html.= '</tr>';
+		echo apply_filters('wpt_event_editor_tickets_url', $html);
+		do_action('wpt_event_editor_tickets_url_after');
+	
+		/*
+		 * Text on button for event.
+		 */
+		$html = '';
+		$html.= '<tr>';
+		$html.= '<th><label for="wpt_event_editor_tickets_button">'.__('Text on button','wp_theatre').'</label></th>';
+		$html.= '<td>';
+		$html.= '<input type="text" id="wpt_event_editor_tickets_button" name="wpt_event_editor_tickets_button" />';
+		$html.= '</td>';
+		$html.= '</tr>';
+		echo apply_filters('wpt_event_editor_tickets_button', $html);
+		do_action('wpt_event_editor_tickets_button_after');
+	
+		/*
+		 * Prices for event.
+		 */
+		$html = '';
+		$html.= '<tr>';
+		$html.= '<th><label for="wpt_event_editor_prices">'.__('Prices','wp_theatre').'</label></th>';
+		$html.= '<td>';
+		$html.= '<input type="text" id="wpt_event_editor_prices" name="wpt_event_editor_prices" />';
+		$html.= '</td>';
+		$html.= '</tr>';
+		echo apply_filters('wpt_event_editor_prices', $html);
+		do_action('wpt_event_editor_prices_after');
 	
 		echo '</table>';
 	}
@@ -148,7 +255,13 @@ class WPT_Event_Editor {
 		
 		if ($event_id = wp_insert_post($post)) {
 			add_post_meta($event_id, WPT_Production::post_type_name, $post_id, true);
-			add_post_meta($event_id, 'event_date', $_POST['wpt_event_editor_start_date'], true);
+			add_post_meta($event_id, 'event_date', $_POST['wpt_event_editor_event_date'], true);
+			add_post_meta($event_id, 'enddate', $_POST['wpt_event_editor_enddate'], true);
+			add_post_meta($event_id, 'venue', $_POST['wpt_event_editor_venue'], true);
+			add_post_meta($event_id, 'city', $_POST['wpt_event_editor_city'], true);
+			add_post_meta($event_id, 'remark', $_POST['wpt_event_editor_remark'], true);
+			add_post_meta($event_id, 'tickets_url', $_POST['wpt_event_editor_tickets_url'], true);
+			add_post_meta($event_id, 'tickets_button', $_POST['wpt_event_editor_tickets_button'], true);
 
 			return new WPT_Event($post_id);
 

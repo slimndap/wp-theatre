@@ -1,3 +1,5 @@
+# @codekit-prepend 'wpt_editor.coffee';
+
 class wpt_admin_ticketspage
 	constructor: ->
 		@.ticketspage = jQuery('select#iframepage').parents 'tr'
