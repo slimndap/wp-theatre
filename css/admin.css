@@ -1,4 +1,3 @@
-/* css for timepicker */
 .ui-timepicker-div .ui-widget-header {
   margin-bottom: 8px;
 }
@@ -11,7 +10,7 @@
   padding: 0 0 0 5px;
 }
 .ui-timepicker-div dl dd {
-  margin: 0 10px 10px 45%;
+  margin: 0 10px 10px 40%;
 }
 .ui-timepicker-div td {
   font-size: 90%;
@@ -22,6 +21,20 @@
   margin: 0;
   padding: 0;
 }
+.ui-timepicker-rtl {
+  direction: rtl;
+}
+.ui-timepicker-rtl dl {
+  text-align: right;
+  padding: 0 5px 0 0;
+}
+.ui-timepicker-rtl dl dt {
+  float: right;
+  clear: right;
+}
+.ui-timepicker-rtl dl dd {
+  margin: 0 40% 10px 10px;
+}
 #poststuff .wp_theatre_event > div {
   float: none;
   width: auto;
@@ -31,6 +44,58 @@
 }
 .wpt_settings_radio_with_selects {
   line-height: 2em;
+}
+#wpt_event_editor .inside {
+  padding: 0;
+  margin: 0;
+}
+#wpt_event_editor .inside .wpt_event_editor_event_listing table {
+  width: 100%;
+  border-spacing: 0;
+  color: #555;
+}
+#wpt_event_editor .inside .wpt_event_editor_event_listing table tr.alternate {
+  background-color: #f9f9f9;
+}
+#wpt_event_editor .inside .wpt_event_editor_event_listing table tr td {
+  padding: 8px 12px;
+  vertical-align: top;
+  border-bottom: 1px solid #F0F0F0;
+}
+#wpt_event_editor .inside h4 {
+  padding: 0 12px;
+}
+#wpt_event_editor .inside .wpt_event_editor_event_form {
+  width: 100%;
+  border-spacing: 0;
+  color: #555;
+}
+#wpt_event_editor .inside .wpt_event_editor_event_form tr th,
+#wpt_event_editor .inside .wpt_event_editor_event_form tr td {
+  border-top: 1px solid #F0F0F0;
+  border-left: 1px solid #E1E1E1;
+  text-align: left;
+  vertical-align: top;
+  padding: 8px 12px;
+}
+#wpt_event_editor .inside .wpt_event_editor_event_form tr th {
+  background: #F9F9F9;
+  border-left: none;
+  width: 24%;
+}
+#wpt_event_editor .inside .wpt_event_editor_event_form tr th p {
+  color: #777;
+  font-weight: normal;
+  font-style: normal;
+}
+#wpt_event_editor .inside .wpt_event_editor_event_form tr td {
+  border-right: none;
+}
+#wpt_event_editor .inside .wpt_event_editor_event_form tr td input[type=text] {
+  width: 100%;
+}
+#wpt_event_editor .inside .wpt_event_editor_event_form tr td input[type=text][name=wpt_event_editor_tickets_status_other] {
+  width: auto;
 }
 @font-face {
   font-family: "theatre-webfont";

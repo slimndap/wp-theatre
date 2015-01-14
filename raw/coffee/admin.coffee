@@ -1,4 +1,5 @@
-# @codekit-prepend 'wpt_editor.coffee';
+# @codekit-prepend '../js/jquery-ui-timepicker-addon.js'
+# @codekit-prepend 'wpt_editor.coffee'
 
 class wpt_admin_ticketspage
 	constructor: ->
