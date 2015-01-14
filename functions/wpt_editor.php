@@ -33,9 +33,20 @@ class WPT_Event_Editor {
 	
 	public function enqueue_scripts() {
 		wp_localize_script( 'wp_theatre_admin', 'wpt_editor_defaults', $this->get_defaults() ); 
+		
+		wp_localize_script( 
+			'wp_theatre_admin', 
+			'wpt_editor_security', 
+			array(
+				'nonce' => wp_create_nonce('wpt_editor_nonce'),
+			)
+		);
 	}
 	
 	public function delete_event_over_ajax() {
+
+		check_ajax_referer( 'wpt_editor_nonce', 'nonce' , true);
+
 		$event_id = $_POST['event_id'];
 
 		// Check if this is a real event.
@@ -78,7 +89,6 @@ class WPT_Event_Editor {
 	
 	private function render_event_actions($event) {
 		$html = '';
-		
 		
 		$html.= '<a class="wpt_event_editor_edit_link" href="'.get_edit_post_link($event->ID).'">'.__('Edit').'</a>';
 		$html.= ' | ';

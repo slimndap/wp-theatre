@@ -2255,7 +2255,8 @@
           if (confirm(wpt_editor_defaults.confirm_delete_message)) {
             data = {
               'action': 'wpt_event_editor_delete_event',
-              'event_id': jQuery(e.currentTarget).data('event_id')
+              'event_id': jQuery(e.currentTarget).data('event_id'),
+              'nonce': wpt_editor_security.nonce
             };
             jQuery('.wpt_event_editor_event_listing').load(ajaxurl, data, function() {
               return _this.init_delete_links();
