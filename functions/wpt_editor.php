@@ -17,7 +17,7 @@ class WPT_Event_Editor {
 		add_action('save_post', array( $this, 'save_event' ) );
 		
 		add_action( 'wp_ajax_wpt_event_editor_delete_event', array($this,'delete_event_over_ajax'));
-
+		
 	}
 	
 	public function add_meta_box() {
@@ -88,13 +88,26 @@ class WPT_Event_Editor {
 	}
 	
 	private function render_event_actions($event) {
+		
+		$actions = array(
+			'edit' => 		array(
+								'label' => __('Edit'),
+								'link' => get_edit_post_link($event->ID),
+							),	
+			'delete' => 	array(
+								'label' => __('Delete'),
+								'link' => get_delete_post_link($event->ID,'',true),
+							),	
+		);
+		$actions = apply_filters('wpt_event_editor_event_actions', $actions, $event);
+		
 		$html = '';
 		
-		$html.= '<a class="wpt_event_editor_edit_link" href="'.get_edit_post_link($event->ID).'">'.__('Edit').'</a>';
-		$html.= ' | ';
-		$html.= '<a class="wpt_event_editor_delete_link" data-event_id="'.$event->ID.'" href="'.get_delete_post_link($event->ID,'',true).'">'.__('Delete').'</a>';
+		foreach ($actions as $action=>$action_args) {
+			$html.= '<a class="wpt_event_editor_event_action_'.$action.'" href="'.$action_args['link'].'">'.$action_args['label'].'</a> ';
+		}
 		
-		echo apply_filters('wpt_event_editor_event_actions', $html, $event);
+		echo apply_filters('wpt_event_editor_event_actions_html', $html, $event);
 
 	}
 	
@@ -108,9 +121,9 @@ class WPT_Event_Editor {
 				$event = $events[$i];					
 
 				if ($i%2 == 1) {
-					echo '<tr class="alternate">';
+					echo '<tr class="alternate" data-event_id="'.$event->ID.'">';
 				} else {
-					echo '<tr>';						
+					echo '<tr data-event_id="'.$event->ID.'">';						
 				}
 
 				$this->render_event($event);
@@ -303,7 +316,10 @@ class WPT_Event_Editor {
 		 */
 		$html = '';
 		$html.= '<tr>';
-		$html.= '<th><label for="wpt_event_editor_prices">'.__('Ticket prices','wp_theatre').'</label></th>';
+		$html.= '<th>';
+		$html.= '<label for="wpt_event_editor_prices">'.__('Ticket prices','wp_theatre').'</label>';
+		$html.= '<p class="description">'.sprintf(__('Seperate multiple prices by semicolon (;)','wp_theatre'), $defaults['tickets_button']).'</p>';
+		$html.= '</th>';
 		$html.= '<td>';
 		$html.= '<input type="text" id="wpt_event_editor_prices" name="wpt_event_editor_prices" />';
 		$html.= '</td>';
@@ -351,6 +367,17 @@ class WPT_Event_Editor {
 			add_post_meta($event_id, 'remark', $_POST['wpt_event_editor_remark'], true);
 			add_post_meta($event_id, 'tickets_url', $_POST['wpt_event_editor_tickets_url'], true);
 			add_post_meta($event_id, 'tickets_button', $_POST['wpt_event_editor_tickets_button'], true);
+
+			// Prices
+			delete_post_meta($post_id, '_wpt_event_tickets_price');
+	
+			$prices = explode(',',$_POST['wpt_event_editor_prices']);
+			for ($p=0;$p<count($prices);$p++) {
+				$price = (float) $prices[$p];
+				if ($price>0) {
+					add_post_meta($post_id,'_wpt_event_tickets_price', $price);			
+				}
+			}
 
 			// Tickets status
 			$tickets_status = $_POST['wpt_event_editor_tickets_status'];

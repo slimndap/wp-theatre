@@ -15,11 +15,11 @@ class wpt_editor
 				@endtime.datetimepicker 'setDate', event_date_value
 
 	init_delete_links : ->
-		jQuery('.wpt_event_editor_delete_link').click (e) =>
+		jQuery('.wpt_event_editor_event_action_delete').click (e) =>
 			if confirm wpt_editor_defaults.confirm_delete_message
 				data =
 					'action': 'wpt_event_editor_delete_event'
-					'event_id': jQuery(e.currentTarget).data 'event_id'
+					'event_id': jQuery(e.currentTarget).parents('tr').data 'event_id'
 					'nonce': wpt_editor_security.nonce
 				jQuery('.wpt_event_editor_event_listing').load ajaxurl, data, =>
 					@init_delete_links()
