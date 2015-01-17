@@ -98,6 +98,9 @@ class WPT_Events extends WPT_Listing {
 	 *							See: https://github.com/slimndap/wp-theatre/issues/75
 	 * 							Renamed method from `days()` to `get_days()`.
 	 * @since 0.10.1			Removed custom sorting. Rely on the sorting order of the events instead.
+	 * @since 0.10.6			Added custom sorting again. 
+	 *							Can't rely on sorting order of events, because historic events have no
+	 *							`_wpt_order` set.
 	 *
 	 * @param 	array $filters	See WPT_Events::get() for possible values.
 	 * @return 	array 			Days.
@@ -108,6 +111,13 @@ class WPT_Events extends WPT_Listing {
 		foreach ($events as $event) {
 			$days[date('Y-m-d',$event->datetime())] = date_i18n('D j M',$event->datetime());
 		}
+
+		if (!empty($filters['order']) && 'desc'==$filters['order']) {
+			krsort($days);
+		} else {
+			ksort($days);		
+		}
+		
 		return $days;
 	}
 
@@ -475,6 +485,9 @@ class WPT_Events extends WPT_Listing {
 	 *							See: https://github.com/slimndap/wp-theatre/issues/75
 	 * 							Renamed method from `months()` to `get_months()`.
 	 * @since 0.10.1			Removed custom sorting. Rely on the sorting order of the events instead.
+	 * @since 0.10.6			Added custom sorting again. 
+	 *							Can't rely on sorting order of events, because historic events have no
+	 *							`_wpt_order` set.
 	 *
 	 * @param array $filters	See WPT_Events::get() for possible values.
 	 * @return array 			Months.
@@ -485,6 +498,13 @@ class WPT_Events extends WPT_Listing {
 		foreach ($events as $event) {
 			$months[date('Y-m',$event->datetime())] = date_i18n('M Y',$event->datetime());
 		}
+		
+		if (!empty($filters['order']) && 'desc'==$filters['order']) {
+			krsort($months);
+		} else {
+			ksort($months);		
+		}
+		
 		return $months;
 	}
 	
@@ -493,6 +513,9 @@ class WPT_Events extends WPT_Listing {
 	 *
 	 * @since 0.10
 	 * @since 0.10.1			Removed custom sorting. Rely on the sorting order of the events instead.
+	 * @since 0.10.6			Added custom sorting again. 
+	 *							Can't rely on sorting order of events, because historic events have no
+	 *							`_wpt_order` set.
 	 *
 	 * @param 	array $filters	See WPT_Events::get() for possible values.
 	 * @return 	array 			Years.
@@ -503,6 +526,13 @@ class WPT_Events extends WPT_Listing {
 		foreach ($events as $event) {
 			$years[date('Y',$event->datetime())] = date_i18n('Y',$event->datetime());
 		}
+
+		if (!empty($filters['order']) && 'desc'==$filters['order']) {
+			krsort($years);
+		} else {
+			ksort($years);		
+		}
+		
 		return $years;
 	}
 	

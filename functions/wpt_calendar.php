@@ -19,13 +19,16 @@
 		 * Gets the HTML version for the calendar.
 		 *
 		 * @see WPT_Calendar::check_dependencies()	To check if all dependencies are set.
-		 * @see WPT_Events::get_months()				To retrieve all months with upcoming events.
+		 * @see WPT_Events::get_months()			To retrieve all months with upcoming events.
 		 * @see WPT_Events::get()					To retrieve all upcoming events.
 		 * @see WPT_Listing_Page::url()				To retrieve the URL of the listing page.
 		 * @see WPT_Event::datetime()				To collect the dates for upcoming events.
 		 * @see WPT_Production::permalink()			To get the permalink for an event.
 		 *
 		 * @since 0.8
+		 * @since 0.10.6	Bugfix: calendar was showing months that have historic events.
+		 *					See https://wordpress.org/support/topic/calendar-wrong-month-shown-again.
+		 *
 		 * @return string The HTML for the calendar.
 		 */
 		function html() {
@@ -36,7 +39,10 @@
 			global $wp_theatre;
 			
 			// Get all months from now to the month of the last event.
-			$months = $wp_theatre->events->get_months();
+			$filters = array(
+				'start' => 'now',
+			);
+			$months = $wp_theatre->events->get_months($filters);
 			$months = array_keys($months);			
 						
 			$start_of_week = get_option('start_of_week');
