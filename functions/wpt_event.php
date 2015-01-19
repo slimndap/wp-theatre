@@ -413,7 +413,7 @@ class WPT_Event {
 				$summary = '';
 				if (count($this->prices)>0) {
 					if (count($this->prices)==1) {
-						$summary = $wp_theatre->wpt_tickets_options['currencysymbol'].'&nbsp;'.number_format_i18n($this->prices[0],2);
+						$summary = $wp_theatre->wpt_tickets_options['currencysymbol'].'&nbsp;'.number_format_i18n((float) $this->prices[0],2);
 					} else {
 						$lowest = $this->prices[0];
 						for($p=1;$p<count($this->prices);$p++) {
@@ -422,7 +422,7 @@ class WPT_Event {
 							}
 						}
 						$summary = __('from','wp_theatre').' '.$wp_theatre->wpt_tickets_options['currencysymbol'].
-							'&nbsp;'.number_format_i18n($lowest,2);
+							'&nbsp;'.number_format_i18n((float) $lowest,2);
 					}
 				}
 				return $summary;

@@ -226,6 +226,9 @@ Release Date: December 29th, 2014
 
 == Upgrade Notice ==
 
+= 0.10.6 =
+* Bugfix: Event calendar was showing months with historic events. Thanks [kulturbrigad](https://wordpress.org/support/profile/kulturbrigad)!
+
 = 0.10.5 =
 * Tweak: Improved the HTML output for custom event fields. 
 
