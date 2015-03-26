@@ -56,6 +56,7 @@ class WPT_Demo_Importer extends WPT_Importer {
 					'tickets_url' => 'http://slimndap.com',
 					'event_date' => date_i18n('Y-m-d H:i:s',$event_date),
 					'ref' => $event_ref,
+					'prices' => array(1,2,'3|kids',4),
 				);		
 				$event = $this->update_event($event_args);
 
@@ -141,6 +142,19 @@ class WPT_Test_Importer extends WP_UnitTestCase {
 
 		$this->assertCount(2, $this->wp_theatre->events->get());		
 		
+	}
+	
+	function test_event_prices_are_set() {
+		global $wp_theatre;
+		
+		$importer = new WPT_Demo_Importer();
+		
+		$importer->execute();
+		
+		$events = $wp_theatre->events->get();
+		$prices = $events[0]->prices();
+		
+		$this->assertCount(4, $prices);
 	}
 
 }
