@@ -395,7 +395,13 @@ class WPT_Event {
 		$args = wp_parse_args( $args, $defaults );
 
 		if (!isset($this->prices)) {
-			$this->prices = apply_filters('wpt_event_prices',get_post_meta($this->ID,'_wpt_event_tickets_price'), $this);
+			$prices = get_post_meta($this->ID,'_wpt_event_tickets_price');
+			$prices_sanitized = array();
+			for($p=0;$p<count($prices);$p++) {
+				$price_parts = explode('|',$prices[$p]);
+				$prices_sanitized[] = (float) $price_parts[0];
+			}
+			$this->prices = apply_filters('wpt_event_prices',$prices_sanitized, $this);
 		}
 
 		if ($args['html']) {

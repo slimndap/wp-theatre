@@ -497,6 +497,17 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertContains('8.50', $event->prices($args));
 	}
 	
+	/**
+	 * Test if named prices are sanitized.
+	 */
+	function test_wpt_event_tickets_prices_named() {
+		add_post_meta($this->upcoming_event_with_prices, '_wpt_event_tickets_price', '1123|named_price');
+		
+		$event = new WPT_Event($this->upcoming_event_with_prices);
+		$prices = $event->prices();
+		$this->assertNotContains("1123|named_price",implode('',$prices));		
+
+	}
 	
 	function test_wpt_events_content() {
 		$my_post = array(

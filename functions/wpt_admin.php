@@ -584,9 +584,20 @@ class WPT_Admin {
 
 		$prices = explode(',',$_POST['_wpt_event_tickets_prices']);
 		for ($p=0;$p<count($prices);$p++) {
-			$price = (float) $prices[$p];
-			if ($price>0) {
-				add_post_meta($post_id,'_wpt_event_tickets_price', (float) $prices[$p]);			
+			
+			$price_parts = explode('|',$prices[$p]);
+			
+			// Sanitize the amount.
+			$price_parts[0] = (float) $price_parts[0];
+			
+			// Sanitize the name.
+			if (!empty($prices_parts[1])) {
+				$price_parts[1] = trim($price_parts[1]);
+			}
+			
+			// Check if the price is valid.
+			if ($price_parts[0]>0) {
+				add_post_meta($post_id,'_wpt_event_tickets_price', implode('|',$price_parts));			
 			}
 		}
 		
