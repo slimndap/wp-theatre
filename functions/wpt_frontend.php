@@ -82,10 +82,17 @@ class WPT_Frontend {
 		return $query;
 	}
 
-	function the_content($content) {
+	/**
+	 * the_content function.
+	 * 
+	 * @since 0.11	
+	 * @param string $content
+	 * @return void
+	 */
+	pbulic function the_content($content) {
 		global $wp_theatre;
 		
-		if (is_singular(WPT_Production::post_type_name)) {
+		if (is_singular(WPT_Production::post_type_name) && is_main_query()) {
 			if (
 				isset( $wp_theatre->options['show_season_events'] ) &&
 				in_array($wp_theatre->options['show_season_events'], array('above','below'))
@@ -118,7 +125,7 @@ class WPT_Frontend {
 			}
 		}
 		
-		if (is_singular(WPT_Production::post_type_name)) {
+		if (is_singular(WPT_Production::post_type_name) && is_main_query()) {
 
 			/**
 			 * Filter the content of a production page.
