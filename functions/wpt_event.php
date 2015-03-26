@@ -633,7 +633,7 @@ class WPT_Event {
 				
 			}
 
-			return $html;					
+			return apply_filters('wpt_event_tickets_url_html', $html, $this);
 		
 		} else {
 			return $this->tickets_url;
