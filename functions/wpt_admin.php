@@ -6,8 +6,6 @@ class WPT_Admin {
 			add_action( 'admin_init', array($this,'admin_init'));
 			add_action( 'admin_menu', array($this, 'admin_menu' ));
 			add_action( 'add_meta_boxes', array($this, 'add_meta_boxes'));
-			add_action( 'edit_post', array( $this, 'edit_post' ));
-			add_action( 'delete_post',array( $this, 'delete_post' ));
 			add_filter( 'wpt_event', array($this,'wpt_event'), 10 ,2);
 			add_action( 'quick_edit_custom_box', array($this,'quick_edit_custom_box'), 10, 2 );
 			add_action( 'wp_dashboard_setup', array($this,'wp_dashboard_setup' ));
@@ -518,14 +516,6 @@ class WPT_Admin {
 	
 	}
 	
-	function edit_post( $post_id ) {
-		$this->flush_cache();
-	}
-	
-	function delete_post( $post_id ) {
-		$this->flush_cache();	
-	}
-	
 	function save_event( $post_id ) {
 		/*
 		 * We need to verify this came from the our screen and with proper authorization,
@@ -671,20 +661,6 @@ class WPT_Admin {
 		do_action('wpt_admin_after_save_'.WPT_Production::post_type_name, $post_id);
 	}
 	
-	function flush_cache() {
-		if(!class_exists('W3_Plugin_TotalCacheAdmin'))		
-			return;	
-		if (
-			!in_array(
-				get_post_type($post_id),
-				array(WPT_Production::post_type_name,WPT_Event::post_type_name,WPT_Season::post_type_name)
-			)
-		) return;   
-			
-		if (function_exists('w3tc_pgcache_flush')) { w3tc_pgcache_flush(); }		
-	}
-
-
     function wp_dashboard_setup() {
 		wp_add_dashboard_widget(
              'dashboard_wp_theatre',         // Widget slug.
