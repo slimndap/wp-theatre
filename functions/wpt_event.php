@@ -330,44 +330,6 @@ class WPT_Event {
 		}
 	}
 	
-	function meta() {
-		$html = '';
-		
-		$html.= '<span itemscope itemtype="http://data-vocabulary.org/Event">';	
-
-		// image
-		// Thumbnail
-		if ($this->production()->thumbnail()!='') {
-			$html.= '<meta itemprop="image" content="'.wp_get_attachment_url($this->production()->thumbnail()).'" />';
-		}
-
-		// startDate
-		$html.= '<meta itemprop="startDate" content="'.date('c',$this->datetime()).'" />';
-		
-		// summary
-		$html.= '<meta itemprop="summary" content="'.$this->production()->title().'" />';
-		
-		// url
-		$html.= '<meta itemprop="url" content="'.get_permalink($this->production()->ID).'" />';
-
-		//location
-		$html.= '<span itemprop="location" itemscope itemtype="http://data-vocabulary.org/Organization">';
-		if ($this->venue()!='') {
-			$html.= '<meta itemprop="name" content="'.$this->venue().'" />';
-		}
-		if ($this->city()!='') {
-			$html.= '<span itemprop="address" itemscope itemtype="http://data-vocabulary.org/Address">';
-			$html.= '<meta itemprop="locality" content="'.$this->city().'" />';
-			$html.= '</span>';
-		}
-		
-		$html.= '</span>'; // .location
-
-		$html.= '</span>';
-		
-		return $html;
-	}
-
 	function permalink($args=array()) {
 		return $this->production()->permalink($args);
 	}
@@ -828,8 +790,6 @@ class WPT_Event {
 			$html = str_replace('{{tickets}}', $tickets, $html);
 		}
 		
-		$html.= $this->meta();
-
 		// Filters
 		$html = apply_filters('wpt_event_html',$html, $this);
 		$classes = apply_filters('wpt_event_classes',$classes, $this);

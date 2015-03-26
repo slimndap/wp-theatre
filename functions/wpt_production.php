@@ -624,15 +624,6 @@ class WPT_Production {
 			$html = str_replace('{{'.$placeholder.'}}', $replacement, $html);
 		}
 
-
-		// Microdata for events
-		if (!is_singular(WPT_Production::post_type_name)) {		
-			$filters = array(
-				'production' => $this->ID
-			);
-			$html.= $wp_theatre->events->meta($filters);
-		}
-
 		// Filters
 		$html = apply_filters('wpt_production_html',$html, $this);
 		$classes = apply_filters('wpt_production_classes',$classes, $this);

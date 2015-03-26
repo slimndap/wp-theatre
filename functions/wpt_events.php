@@ -708,33 +708,6 @@ class WPT_Events extends WPT_Listing {
 		return $events;
 	}
 
-	
-	public function meta($args=array()) {
-		$defaults = array(
-			'paged' => false,
-			'grouped' => false,
-			'production' => false,
-		);
-		$args = wp_parse_args( $args, $defaults );
-
-		$html = '';
-
-		$filters = array(
-			'upcoming' => true,
-			'production' => $args['production']
-		);
-
-		$events = $this->get($filters);
-		
-		$uniqid = uniqid();
-		
-		for($i=0;$i<count($events);$i++) {
-			$html.= $events[$i]->meta();
-		}
-
-		return $html;
-	}
-		
 	/**
 	 * @deprecated 0.10
 	 * @see WPT_Events::get_categories()

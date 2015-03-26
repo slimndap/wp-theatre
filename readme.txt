@@ -226,6 +226,11 @@ Release Date: December 29th, 2014
 
 == Upgrade Notice ==
 
+= 0.10.7 =
+* Removed useless microdata from HTML output. Will be replaced by JSON-LD in a future release.
+* Added a 'wpt_event_tickets_url_html'-filter.
+* Removed some W3TC code that never worked.
+
 = 0.10.6 =
 * Bugfix: Event calendar was showing months with historic events. Thanks [kulturbrigad](https://wordpress.org/support/profile/kulturbrigad)!
 
