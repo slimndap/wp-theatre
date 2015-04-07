@@ -511,6 +511,29 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertEquals(1, substr_count(do_shortcode('[wpt_events]'), 'wp_theatre_event_prices'));		
 	}
 	
+	function test_wpt_event_tickets_url() {
+		add_post_meta($this->upcoming_event_with_prices, 'tickets_url', 'http://slimndap.com');
+		$this->assertEquals(1, substr_count(do_shortcode('[wpt_events]'), 'wp_theatre_event_tickets_url'));			
+	}
+	
+	function test_wpt_event_tickets_url_with_iframe() {
+		
+		global $wp_theatre;
+		
+		$wp_theatre->wpt_tickets_options = 	array(
+			'integrationtype' => 'iframe',
+			'iframepage' => '',
+			'currencysymbol' => '$',
+		);
+		
+		add_post_meta($this->upcoming_event_with_prices, 'tickets_url', 'http://slimndap.com');
+		
+		$html = do_shortcode('[wpt_events]');
+		
+		$this->assertEquals(1, substr_count($html, 'wp_theatre_integrationtype_iframe'));			
+		$this->assertNotContains('http://slimndap.com', $html);
+	}
+	
 	function test_wpt_event_tickets_prices_summary() {
 		$event = new WPT_Event($this->upcoming_event_with_prices);
 		$args = array(
