@@ -220,6 +220,17 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertEquals(5, substr_count(do_shortcode('[wpt_productions]'), '"wp_theatre_prod"'));
 	}
 	
+	function test_shortcode_wpt_productions_default_template_filter() {
+		$func = create_function(
+			'$template',
+			'$template = "{{title}} test content";	return $template;'
+		);
+		
+		add_filter('wpt_production_template_default', $func);
+		
+		$this->assertContains('test content', do_shortcode('[wpt_productions]'));
+	}
+	
 	function test_shortcode_wpt_productions_filter_season() {
 		$this->assertEquals(1, substr_count(do_shortcode('[wpt_productions season="'.$this->season1.'"]'), '"wp_theatre_prod"'));
 	}
@@ -274,6 +285,17 @@ class WPT_Test extends WP_UnitTestCase {
 	
 	function test_shortcode_wpt_events() {
 		$this->assertEquals(4, substr_count(do_shortcode('[wpt_events]'), '"wp_theatre_event"'));
+	}
+	
+	function test_shortcode_wpt_events_default_template_filter() {
+		$func = create_function(
+			'$template',
+			'$template = "{{title}} test content";	return $template;'
+		);
+		
+		add_filter('wpt_event_template_default', $func);
+		
+		$this->assertContains('test content', do_shortcode('[wpt_events]'));
 	}
 	
 	function test_shortcode_wpt_events_magic_dates() {

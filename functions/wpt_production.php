@@ -570,6 +570,7 @@ class WPT_Production {
 	 * HTML version of the production.
 	 *
 	 * @since 0.4
+	 * @since 0.10.8	Added a filter to the default template.
 	 *
 	 * @param array $args {
 	 *
@@ -582,8 +583,12 @@ class WPT_Production {
 		global $wp_theatre;
 		
 		$defaults = array(
-			'template' => '{{thumbnail|permalink}} {{title|permalink}} {{dates}} {{cities}}'
+			'template' => apply_filters(
+				'wpt_production_template_default',
+				'{{thumbnail|permalink}} {{title|permalink}} {{dates}} {{cities}}'
+			),
 		);
+
 		$args = wp_parse_args( $args, $defaults );
 		$html = $args['template'];
 

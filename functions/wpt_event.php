@@ -714,6 +714,7 @@ class WPT_Event {
 	 * HTML version of the event.
 	 *
 	 * @since 0.4
+	 * @since 0.10.8	Added a filter to the default template.
 	 *
 	 * @param array $args {
 	 *
@@ -725,7 +726,10 @@ class WPT_Event {
 	 */
 	function html($args=array()) {
 		$defaults = array(
-			'template' => '{{thumbnail|permalink}} {{title|permalink}} {{remark}} {{datetime}} {{location}} {{tickets}}'
+			'template' => apply_filters(
+				'wpt_event_template_default',
+				'{{thumbnail|permalink}} {{title|permalink}} {{remark}} {{datetime}} {{location}} {{tickets}}'
+			),
 		);
 		$args = wp_parse_args( $args, $defaults );
 
