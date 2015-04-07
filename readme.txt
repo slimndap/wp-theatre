@@ -226,6 +226,11 @@ Release Date: December 29th, 2014
 
 == Upgrade Notice ==
 
+= 0.10.8 =
+* Bugfix: The tickets button was always showing if you chose to show your ticketing screens inside an iframe. Even when there is no tickets url present.
+* Added a `wpt_event_template_default`-filter.
+* Added a `wpt_production_template_default`-filter.
+
 = 0.10.7 =
 * Removed useless microdata from HTML output. Will be replaced by JSON-LD in a future release.
 * Added a 'wpt_event_tickets_url_html'-filter.
