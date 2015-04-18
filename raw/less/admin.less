@@ -1,0 +1,62 @@
+@import "../../bower_components/lesshat/build/lesshat.less";
+@import "admin/datetimepicker.less";
+@import "admin/event.less";
+@import "admin/settings.less";
+
+@font-face {
+	.font-face('theatre-webfont', ~'../font/theatre-webfont',normal, normal);
+}
+
+#toplevel_page_theatre {
+	.wp-menu-image {
+		&:before {
+			font-family: 'theatre-webfont' !important;
+			content: '\e808';
+		}
+	}
+}
+
+textarea#wpt_custom_css {
+	width: 500px;
+	height: 200px;
+}
+
+// Admin listings
+.wp-list-table {
+	&.fixed {
+		.column-thumbnail {
+			width: 6em;
+			figure {
+				margin: 0;
+				padding: 0;
+				img {
+					width: 100%;
+					height: auto;
+				}
+			}
+		}	
+	}
+}
+
+// Row actions
+.wptheatre_prod, .wp_theatre_event {
+	.row-actions {
+		visibility: hidden;
+	}
+	&:hover {
+		.row-actions {
+			visibility: visible;
+		}
+		
+	}
+}
+
+// Events meta box on production admin page
+#poststuff {
+	.wp_theatre_event {
+		> * {
+			margin: 0;
+		}
+	}
+}
+

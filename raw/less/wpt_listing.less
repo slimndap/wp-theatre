@@ -1,0 +1,31 @@
+.wpt_listing {
+	margin-bottom: 1em;
+}
+
+.wpt_listing_filter_pagination {
+	.wpt_listing_filter {
+		padding: 0;
+		margin-right: .25em;
+		white-space: nowrap;
+		&.wpt_listing_filter_active {
+			background-color:rgba(0, 0, 0, 0.1);
+			font-weight: bold;
+			padding: 0 .5em;
+			a {
+				color: inherit;
+				text-decoration: none;
+				&:after {
+					content: '\00D7';
+					padding: 0 0 0 0.5em;
+					opacity: .5;
+				}
+				&:hover {
+					&:after {
+						opacity: 1;
+					}
+				}
+			}
+		}
+	}
+	
+}

@@ -1,0 +1,576 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Theater v0.7.4\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2014-04-26 20:44:09+0000\n"
+"Last-Translator: slimndap <jeroen@slimndap.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: CSL v1.x\n"
+"X-Poedit-Language: English\n"
+"X-Poedit-Country: UNITED STATES\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;_n_noop:1,2;_c,_nc:4c,1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;\n"
+"X-Poedit-Basepath: ../\n"
+"X-Poedit-Bookmarks: \n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Textdomain-Support: yes"
+
+#: functions/wpt_admin.php:39
+#@ default
+msgid "General"
+msgstr ""
+
+#: functions/wpt_admin.php:40
+#: functions/wpt_admin.php:130
+#@ wp_theatre
+msgid "Language"
+msgstr ""
+
+#: functions/wpt_admin.php:62
+#: functions/wpt_admin.php:201
+#@ wp_theatre
+msgid "Display"
+msgstr ""
+
+#: functions/wpt_admin.php:69
+#@ wp_theatre
+msgid "Event listings on production page"
+msgstr ""
+
+#: functions/wpt_admin.php:77
+#@ wp_theatre
+msgid "Stylesheet"
+msgstr ""
+
+#: functions/wpt_admin.php:85
+#@ wp_theatre
+msgid "Custom CSS"
+msgstr ""
+
+#: functions/wpt_admin.php:93
+#@ wp_theatre
+msgid "Tickets integration"
+msgstr ""
+
+#: functions/wpt_admin.php:100
+#@ wp_theatre
+msgid "Currency symbol"
+msgstr ""
+
+#: functions/wpt_admin.php:108
+#@ wp_theatre
+msgid "Open tickets screens in"
+msgstr ""
+
+#: functions/wpt_admin.php:116
+#@ wp_theatre
+msgid "Iframe page"
+msgstr ""
+
+#: functions/wpt_admin.php:137
+#: functions/wpt_admin.php:187
+#: functions/wpt_event.php:438
+#@ wp_theatre
+msgid "Tickets"
+msgstr ""
+
+#: functions/wpt_admin.php:145
+#: functions/wpt_frontend.php:108
+#: functions/wpt_setup.php:71
+#@ wp_theatre
+msgid "Events"
+msgstr ""
+
+#: functions/wpt_admin.php:153
+#@ wp_theatre
+msgid "Categories"
+msgstr ""
+
+#: functions/wpt_admin.php:165
+#: functions/wpt_admin.php:627
+#: functions/wpt_admin.php:788
+#@ wp_theatre
+msgid "Theatre"
+msgstr "Theater"
+
+#: functions/wpt_admin.php:166
+#: functions/wpt_admin.php:788
+#: functions/wpt_setup.php:38
+#@ default
+msgid "Settings"
+msgstr ""
+
+#: functions/wpt_admin.php:180
+#@ wp_theatre
+msgid "Event data"
+msgstr ""
+
+#: functions/wpt_admin.php:216
+#@ wp_theatre
+msgid "Stick this production to all listings."
+msgstr ""
+
+#: functions/wpt_admin.php:256
+#@ wp_theatre
+msgid "You need to save this production before you can add events."
+msgstr ""
+
+#: functions/wpt_admin.php:323
+#@ wp_theatre
+msgid "Start date"
+msgstr ""
+
+#: functions/wpt_admin.php:331
+#@ wp_theatre
+msgid "End date"
+msgstr ""
+
+#: functions/wpt_admin.php:339
+#@ wp_theatre
+msgid "Venue"
+msgstr ""
+
+#: functions/wpt_admin.php:347
+#@ wp_theatre
+msgid "City"
+msgstr ""
+
+#: functions/wpt_admin.php:355
+#@ wp_theatre
+msgid "Remark"
+msgstr ""
+
+#: functions/wpt_admin.php:357
+#@ wp_theatre
+msgid "e.g. Premiere or Try-out"
+msgstr ""
+
+#: functions/wpt_admin.php:370
+#@ wp_theatre
+msgid "Tickets URL"
+msgstr ""
+
+#: functions/wpt_admin.php:378
+#@ wp_theatre
+msgid "Status"
+msgstr ""
+
+#: functions/wpt_admin.php:386
+#@ wp_theatre
+msgid "On sale"
+msgstr ""
+
+#: functions/wpt_admin.php:387
+#@ wp_theatre
+msgid "Sold Out"
+msgstr ""
+
+#: functions/wpt_admin.php:388
+#: functions/wpt_event.php:455
+#@ wp_theatre
+msgid "Cancelled"
+msgstr ""
+
+#: functions/wpt_admin.php:389
+#@ wp_theatre
+msgid "Hidden"
+msgstr ""
+
+#: functions/wpt_admin.php:411
+#@ wp_theatre
+msgid "Other"
+msgstr ""
+
+#: functions/wpt_admin.php:418
+#@ wp_theatre
+msgid "Text on button"
+msgstr ""
+
+#: functions/wpt_admin.php:429
+#@ wp_theatre
+msgid "Prices"
+msgstr ""
+
+#: functions/wpt_admin.php:713
+#@ wp_theatre
+msgid "Thumbnail"
+msgstr ""
+
+#: functions/wpt_admin.php:715
+#@ wp_theatre
+msgid "Dates"
+msgstr ""
+
+#: functions/wpt_admin.php:731
+#: functions/wpt_event.php:408
+#: functions/wpt_frontend.php:337
+#: functions/wpt_frontend.php:338
+#: functions/wpt_setup.php:72
+#@ wp_theatre
+msgid "Event"
+msgstr ""
+
+#: functions/wpt_admin.php:810
+#@ wp_theatre
+msgid "show above content"
+msgstr ""
+
+#: functions/wpt_admin.php:811
+#@ wp_theatre
+msgid "show below content"
+msgstr ""
+
+#: functions/wpt_admin.php:812
+#@ wp_theatre
+msgid "don't show (use <code>[wpt_production_events]</code> shortcode instead)"
+msgstr ""
+
+#: functions/wpt_admin.php:843
+#@ wp_theatre
+msgid "Enable built-in Theatre stylesheet"
+msgstr "Enable built-in Theater stylesheet"
+
+#: functions/wpt_admin.php:850
+#@ wp_theatre
+msgid "Displayed on ticket buttons."
+msgstr ""
+
+#: functions/wpt_admin.php:851
+#@ wp_theatre
+msgid "Can be overruled on a per-event basis."
+msgstr ""
+
+#: functions/wpt_admin.php:858
+#@ wp_theatre
+msgid "Displayed above event listings."
+msgstr ""
+
+#: functions/wpt_admin.php:865
+#@ wp_theatre
+msgid "Displayed in category listings."
+msgstr ""
+
+#: functions/wpt_admin.php:871
+#@ wp_theatre
+msgid "same window"
+msgstr ""
+
+#: functions/wpt_admin.php:872
+#@ wp_theatre
+msgid "iframe"
+msgstr ""
+
+#: functions/wpt_admin.php:873
+#@ wp_theatre
+msgid "new window"
+msgstr ""
+
+#: functions/wpt_admin.php:874
+#@ wp_theatre
+msgid "lightbox"
+msgstr ""
+
+#: functions/wpt_admin.php:903
+#@ wp_theatre
+msgid "Select the page that embeds all Ticketmatic iframes."
+msgstr ""
+
+#: functions/wpt_admin.php:904
+#@ wp_theatre
+msgid "The page must contain the following shortcode:"
+msgstr ""
+
+#: functions/wpt_admin.php:943
+#: functions/wpt_admin.php:951
+#@ default
+msgid "Edit"
+msgstr ""
+
+#: functions/wpt_admin.php:944
+#: functions/wpt_admin.php:952
+#@ default
+msgid "Trash"
+msgstr ""
+
+#: functions/wpt_event.php:165
+#@ wp_theatre
+msgid "minute"
+msgid_plural "minutes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: functions/wpt_event.php:321
+#@ wp_theatre
+msgid "from"
+msgstr ""
+
+#: functions/wpt_event.php:452
+#@ wp_theatre
+msgid "Sold out"
+msgstr ""
+
+#: functions/wpt_events.php:93
+#: functions/wpt_events.php:94
+#: functions/wpt_events.php:102
+#: functions/wpt_events.php:103
+#@ wp_theatre
+msgid "month"
+msgstr ""
+
+#: functions/wpt_events.php:121
+#: functions/wpt_events.php:122
+#: functions/wpt_events.php:133
+#: functions/wpt_events.php:139
+#: functions/wpt_events.php:140
+#: functions/wpt_events.php:142
+#: functions/wpt_productions.php:131
+#: functions/wpt_productions.php:132
+#: functions/wpt_productions.php:143
+#: functions/wpt_productions.php:149
+#: functions/wpt_productions.php:150
+#: functions/wpt_productions.php:153
+#@ wp_theatre
+msgid "category"
+msgstr ""
+
+#: functions/wpt_events.php:131
+#: functions/wpt_events.php:134
+#: functions/wpt_productions.php:141
+#: functions/wpt_productions.php:144
+#@ wp_theatre
+msgid "All"
+msgstr ""
+
+#: functions/wpt_events.php:131
+#: functions/wpt_events.php:134
+#: functions/wpt_productions.php:141
+#: functions/wpt_productions.php:144
+#@ wp_theatre
+msgid "categories"
+msgstr ""
+
+#: functions/wpt_events.php:156
+#: functions/wpt_events.php:157
+#: functions/wpt_events.php:166
+#: functions/wpt_events.php:167
+#: functions/wpt_productions.php:9
+#: functions/wpt_productions.php:10
+#: functions/wpt_productions.php:102
+#: functions/wpt_productions.php:103
+#: functions/wpt_productions.php:112
+#: functions/wpt_productions.php:113
+#@ wp_theatre
+msgid "season"
+msgstr ""
+
+#: functions/wpt_feeds.php:26
+#@ wp_theatre
+msgid "New productions"
+msgstr ""
+
+#: functions/wpt_feeds.php:27
+#: functions/wpt_feeds.php:65
+#: functions/wpt_widget.php:105
+#@ wp_theatre
+msgid "Upcoming productions"
+msgstr ""
+
+#: functions/wpt_feeds.php:28
+#: functions/wpt_feeds.php:111
+#: functions/wpt_widget.php:39
+#@ wp_theatre
+msgid "Upcoming events"
+msgstr ""
+
+#: functions/wpt_frontend.php:123
+#: functions/wpt_setup.php:49
+#@ wp_theatre
+msgid "Productions"
+msgstr ""
+
+#: functions/wpt_production.php:93
+#: functions/wpt_production.php:96
+#@ wp_theatre
+msgid "and"
+msgstr ""
+
+#: functions/wpt_production.php:102
+#@ wp_theatre
+msgid "ao"
+msgstr ""
+
+#: functions/wpt_production.php:152
+#@ wp_theatre
+msgid "to"
+msgstr ""
+
+#: functions/wpt_production.php:155
+#@ wp_theatre
+msgid "until"
+msgstr ""
+
+#: functions/wpt_production.php:348
+#@ wp_theatre
+msgid "in"
+msgstr ""
+
+#: functions/wpt_setup.php:39
+#@ wp_theatre
+msgid "Docs"
+msgstr ""
+
+#: functions/wpt_setup.php:50
+#@ wp_theatre
+msgid "Production"
+msgstr ""
+
+#: functions/wpt_setup.php:51
+#@ wp_theatre
+msgctxt "production"
+msgid "Add New"
+msgstr ""
+
+#: functions/wpt_setup.php:52
+#@ wp_theatre
+msgid "New production"
+msgstr ""
+
+#: functions/wpt_setup.php:53
+#@ default
+msgid "Add new"
+msgstr ""
+
+#: functions/wpt_setup.php:53
+#: functions/wpt_setup.php:63
+#@ wp_theatre
+msgid "production"
+msgstr ""
+
+#: functions/wpt_setup.php:54
+#@ wp_theatre
+msgid "Edit production"
+msgstr ""
+
+#: functions/wpt_setup.php:73
+#@ wp_theatre
+msgid "New event"
+msgstr ""
+
+#: functions/wpt_setup.php:74
+#@ wp_theatre
+msgid "Add new event"
+msgstr ""
+
+#: functions/wpt_setup.php:75
+#@ wp_theatre
+msgid "Edit event"
+msgstr ""
+
+#: functions/wpt_setup.php:89
+#@ wp_theatre
+msgid "Seasons"
+msgstr ""
+
+#: functions/wpt_setup.php:90
+#@ wp_theatre
+msgid "Season"
+msgstr ""
+
+#: functions/wpt_setup.php:105
+#@ wp_theatre
+msgid "Every 5 minutes"
+msgstr ""
+
+#: functions/wpt_widget.php:6
+#@ wp_theatre
+msgid "Theatre Events"
+msgstr "Theater Events"
+
+#: functions/wpt_widget.php:7
+#@ wp_theatre
+msgid "List of upcoming events"
+msgstr ""
+
+#: functions/wpt_widget.php:49
+#: functions/wpt_widget.php:115
+#: functions/wpt_widget.php:159
+#@ default
+msgid "Title:"
+msgstr ""
+
+#: functions/wpt_widget.php:53
+#@ wp_theatre
+msgid "Number of events to show:"
+msgstr ""
+
+#: functions/wpt_widget.php:72
+#@ wp_theatre
+msgid "Theatre Productions"
+msgstr "Theater Events"
+
+#: functions/wpt_widget.php:73
+#@ wp_theatre
+msgid "List of upcoming productions"
+msgstr ""
+
+#: functions/wpt_widget.php:119
+#@ wp_theatre
+msgid "Number of productions to show:"
+msgstr ""
+
+#: functions/wpt_widget.php:130
+#@ wp_theatre
+msgid "Theatre Cart"
+msgstr "Theater Cart"
+
+#: functions/wpt_widget.php:131
+#@ wp_theatre
+msgid "Contents of the shopping cart."
+msgstr ""
+
+#: functions/wpt_widget.php:155
+#@ wp_theatre
+msgid "Cart"
+msgstr ""
+
+#. translators: plugin header field 'Name'
+#: theater.php:0
+#@ wp_theatre
+msgid "Theater"
+msgstr ""
+
+#. translators: plugin header field 'PluginURI'
+#: theater.php:0
+#@ wp_theatre
+msgid "http://wordpress.org/plugins/theatre/"
+msgstr ""
+
+#. translators: plugin header field 'Description'
+#: theater.php:0
+#@ wp_theatre
+msgid "Turn your Wordpress website into a theater website."
+msgstr ""
+
+#. translators: plugin header field 'Author'
+#: theater.php:0
+#@ wp_theatre
+msgid "Jeroen Schmit, Slim & Dapper"
+msgstr ""
+
+#. translators: plugin header field 'AuthorURI'
+#: theater.php:0
+#@ wp_theatre
+msgid "http://slimndap.com/"
+msgstr ""
+
+#. translators: plugin header field 'Version'
+#: theater.php:0
+#@ wp_theatre
+msgid "0.7.4"
+msgstr ""
+

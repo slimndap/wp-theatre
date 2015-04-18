@@ -1,0 +1,55 @@
+.wpt_calendar {
+	&.navigate {
+		.wpt_month {
+			&:first-child {
+				display: none;
+			}
+			&.active {
+				display: table;
+			}			
+		}
+	}
+	.wpt_month {
+		line-height: 2em;
+		display: none;
+		top: 0;
+		left: 0;
+		&:first-child {
+			display: table;
+		}
+		thead {
+			tr {
+				th {
+					text-align: center;
+					background-color: rgba(0, 0, 0, 0.02);
+					text-transform: uppercase;
+				}
+			}
+		}
+		tfoot {
+			tr {
+				.prev {
+					text-align: left;
+					padding-left: 5px;
+				}
+				.next {
+					text-align: right;
+					padding-right: 5px;
+				}
+			}
+		}
+		tr {
+			overflow: auto;
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+			td {
+				text-align: center;
+				&.trailing {
+					color: rgba(0, 0, 0, 0.1);
+				}
+			}
+			
+		}
+	}
+}
