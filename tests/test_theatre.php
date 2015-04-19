@@ -518,14 +518,13 @@ class WPT_Test extends WP_UnitTestCase {
 			'$status, $event',
 			'$status = "new status";	return $status;'
 		);
-		add_filter('wpt_event_tickets_status', $func);
+		add_filter( 'wpt_event_tickets_status', $func, 10 , 2 );
 		
 		$event = new WPT_Event($this->upcoming_event_with_prices);
 		$args = array(
 			'html' => true,
 		);
 		$html = $event->tickets($args);
-		echo $html;
 		$this->assertContains('new status', $event->tickets($args));
 
 		
