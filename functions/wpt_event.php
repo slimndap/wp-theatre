@@ -487,6 +487,15 @@ class WPT_Event {
 			$html = '<div class="'.self::post_type_name.'_tickets">';
 			
 			$status = get_post_meta($this->ID,'tickets_status',true);
+
+			/**
+			 * Filter the tickets status value for an event.
+			 *
+			 * @since 0.10.9
+			 * 
+			 * @param	string 		$status	 The current value of the tickets status.
+			 * @param	WPT_Event	$this	 The event object.
+			 */
 			$status = apply_filters('wpt_event_tickets_status', $status, $this);
 
 			if (empty($status) || $status==self::tickets_status_onsale) {
