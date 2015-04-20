@@ -160,12 +160,15 @@ class WPT_Frontend {
 	}
 
 	/**
-	 * wpt_events function.
+	 * Gets output for the [wpt_events] shortcode.
+	 *
+	 * @since ?
+	 * @since 0.10.9	Improved the unique key for transients.
+	 *					Fixes issue #97.
 	 * 
-	 * @access public
-	 * @param mixed $atts
-	 * @param mixed $content (default: null)
-	 * @return void
+	 * @param 	array 	$atts
+	 * @param 	string 	$content (default: null)
+	 * @return 	string 	The HTML output.
 	 */
 	function wpt_events($atts, $content=null) {
 		global $wp_theatre;
@@ -259,7 +262,10 @@ class WPT_Frontend {
 		 * Base the $args parameter for the transient on $atts and $wp_query,
 		 * to create unique keys for every page of paginated lists.
 		 */
-		$unique_args = array_merge($atts, $wp_query->query_vars);
+		$unique_args = array_merge(
+			array( 'atts' => $atts ), 
+			array( 'wp_query' => $wp_query->query_vars )
+		);
 
 		if ( ! ( $html = $wp_theatre->transient->get('e', $unique_args) ) ) {
 			$html = $wp_theatre->events->get_html($atts);
@@ -268,6 +274,17 @@ class WPT_Frontend {
 		return $html;
 	}
 
+	/**
+	 * Gets output for the [wpt_productions] shortcode.
+	 *
+	 * @since ?
+	 * @since 0.10.9	Improved the unique key for transients.
+	 *					Fixes issue #97.
+	 * 
+	 * @param 	array 	$atts
+	 * @param 	string 	$content (default: null)
+	 * @return 	string 	The HTML output.
+	 */
 	function wpt_productions($atts, $content=null) {
 		global $wp_theatre;
 		global $wp_query;
@@ -344,7 +361,10 @@ class WPT_Frontend {
 		 * Base the $args parameter for the transient on $atts and $wp_query,
 		 * to create unique keys for every page of paginated lists.
 		 */
-		$unique_args = array_merge($atts, $wp_query->query_vars);
+		$unique_args = array_merge(
+			array( 'atts' => $atts ), 
+			array( 'wp_query' => $wp_query->query_vars )
+		);
 
 		if ( ! ( $html = $wp_theatre->transient->get('p', $unique_args) ) ) {
 			$html = $wp_theatre->productions->get_html($atts);

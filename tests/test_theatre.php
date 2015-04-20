@@ -642,6 +642,8 @@ class WPT_Test extends WP_UnitTestCase {
 	 
 	// Test transients
 	function test_wpt_transient_productions() {
+		global $wp_query;
+		
 		do_shortcode('[wpt_productions]');
 		
 		$args = array(
@@ -660,8 +662,12 @@ class WPT_Test extends WP_UnitTestCase {
 			'limit'=>false,
 			'order'=>'asc',
 		);
+		$unique_args = array_merge(
+			array( 'atts' => $args ), 
+			array( 'wp_query' => $wp_query->query_vars )
+		);
 		
-		$this->assertEquals(5, substr_count($this->wp_theatre->transient->get('p',$args), '"wp_theatre_prod"'));
+		$this->assertEquals(5, substr_count($this->wp_theatre->transient->get('p',$unique_args), '"wp_theatre_prod"'));
 		
 		/* 
 		 * Test if transients are off for logged in users 
@@ -696,6 +702,8 @@ class WPT_Test extends WP_UnitTestCase {
 	}
 	
 	function test_wpt_transient_events() {
+		global $wp_query;
+		
 		do_shortcode('[wpt_events]');
 		
 		/** 
@@ -720,7 +728,12 @@ class WPT_Test extends WP_UnitTestCase {
 			'limit'=>false,
 			'order'=>'asc',
 		);
-		$this->assertEquals(4, substr_count($this->wp_theatre->transient->get('e',$args), '"wp_theatre_event"'));
+		$unique_args = array_merge(
+			array( 'atts' => $args ), 
+			array( 'wp_query' => $wp_query->query_vars )
+		);
+		
+		$this->assertEquals(4, substr_count($this->wp_theatre->transient->get('e',$unique_args), '"wp_theatre_event"'));
 	}
 	
 	/*
@@ -945,6 +958,25 @@ class WPT_Test extends WP_UnitTestCase {
 			is_object($wp_theatre) && 
 			get_class($wp_theatre) == 'WP_Theatre'
 		);
+	}
+	
+	function test_wpt_events_unique_args() {
+		global $wp_query;
+		$wp_query->query_vars['category__in'] = array(123);
+		
+		$html_with_one_event = do_shortcode('[wpt_events category__in="'.$this->category_muziek.'"]');
+		$html_with_two_events = do_shortcode('[wpt_events post__in="'.$this->category_muziek.','.$this->category_film.'"]');
+		$this->assertNotEquals($html_with_one_event, $html_with_two_events);
+		
+	}
+	
+	function test_wpt_productions_unique_args() {
+		global $wp_query;
+		$wp_query->query_vars['post__in'] = array(123);
+		
+		$html_with_one_production = do_shortcode('[wpt_productions post__in="'.$this->production_with_upcoming_event.'"]');
+		$html_with_two_productions = do_shortcode('[wpt_productions post__in="'.$this->production_with_upcoming_event.','.$this->production_with_upcoming_events.'"]');
+		$this->assertNotEquals($html_with_one_production, $html_with_two_productions);
 	}
 	
 }
