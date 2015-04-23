@@ -615,6 +615,21 @@ class WPT_Event {
 		}			
 	}
 
+	/**
+	 * Gets the title of the event.
+	 *
+	 * The title is taken from the parent production, since event don't have titles.
+	 * 
+	 * @since ?.?
+	 * @since 0.10.10	Fixed the name of the 'wpt_event_title'-filter.
+	 *					Closes #114. 
+	 *
+	 * @param array $args {
+	 * 		@type bool 	$html 		Return HTML? Default <false>.
+	 *		@type array	$filters
+	 * }
+	 * @return string text or HTML.
+	 */
 	function title($args=array()) {
 		global $wp_theatre;
 		
@@ -625,7 +640,7 @@ class WPT_Event {
 		$args = wp_parse_args( $args, $defaults );
 
 		if (!isset($this->title)) {
-			$this->title = apply_filters('wpt_production_title',$this->production()->title(),$this);
+			$this->title = apply_filters('wpt_event_title',$this->production()->title(),$this);
 		}
 		
 		if ($args['html']) {
