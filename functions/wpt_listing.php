@@ -54,6 +54,8 @@ class WPT_Listing {
 	 * @since 0.10.4	Added an extra class to the filter tabs.
 	 *					The class is based on $field and the tab.
 	 *					Useful for styling and automated tests.
+	 * @since 0.10.10	XSS Vulnerability fix. See:
+	 *					https://make.wordpress.org/plugins/2015/04/20/fixing-add_query_arg-and-remove_query_arg-usage/
 	 *
 	 * @access protected
 	 */
@@ -120,7 +122,7 @@ class WPT_Listing {
 			}
 			
 			$url = apply_filters('wpt_listing_filter_pagination_url', $url);
-			$html.= '<span class="'.implode(' ',$classes).'"><a href="'.htmlentities($url).'">'.$name.'</a></span> ';
+			$html.= '<span class="'.implode(' ',$classes).'"><a href="'.esc_url($url).'">'.$name.'</a></span> ';
 		}
 
 		return '<div class="wpt_listing_filter_pagination '.$field.'">'.$html.'</div>';
