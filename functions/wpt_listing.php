@@ -120,7 +120,57 @@ class WPT_Listing {
 			}
 			
 			$url = apply_filters('wpt_listing_filter_pagination_url', $url);
-			$html.= '<span class="'.implode(' ',$classes).'"><a href="'.htmlentities($url).'">'.$name.'</a></span> ';
+			
+			/**
+			 * Filter the name of an option in the navigation for a listing filter.
+			 *
+			 * @since 0.10.10
+			 * 
+			 * @param	string 	$name	The name of the option.
+			 * @param	string	$field	The field being filtered.
+			 *							Eg. 'month' or 'category'.
+			 * @param	string	$slug	The slug op the option.
+			 */
+			$name = apply_filters( 'wpt_listing_filter_pagination_option_name', $name, $field, $slug);
+			$name = apply_filters( 'wpt_listing_filter_pagination_'.$field.'_option_name', $name, $slug);
+			
+			/**
+			 * Filter the url of an option in the navigation for a listing filter.
+			 *
+			 * @since 0.10.10
+			 * 
+			 * @param	string 	$url	The url of the option.
+			 * @param	string	$field	The field being filtered.
+			 *							Eg. 'month' or 'category'.
+			 * @param	string 	$name	The name of the option.
+			 * @param	string	$slug	The slug op the option.
+			 */
+			$url = apply_filters( 'wpt_listing_filter_pagination_option_url', $url, $field, $name, $slug);
+			$url = apply_filters( 'wpt_listing_filter_pagination_'.$field.'_option_url', $url, $name, $slug);
+
+			/**
+			 * @deprecated 0.10.10
+			 * Use 'wpt_listing_filter_pagination_option_url'.
+			 */
+			$url = apply_filters('wpt_listing_filter_pagination_url', $url);
+
+			$option_html = '<span class="'.implode(' ',$classes).'"><a href="'.htmlentities($url).'">'.$name.'</a></span> ';
+
+			/**
+			 * Filter the html of an option in the navigation for a listing filter.
+			 *
+			 * @since 0.10.10
+			 * 
+			 * @param	string 	$html	The html of the option.
+			 * @param	string	$field	The field being filtered.
+			 *							Eg. 'month' or 'category'.
+			 * @param	string 	$name	The name of the option.
+			 * @param	string	$slug	The slug op the option.
+			 */
+			$option_html = apply_filters( 'wpt_listing_filter_pagination_option_html', $option_html, $field, $name, $slug);
+			$option_html = apply_filters( 'wpt_listing_filter_pagination_'.$field.'_option_html', $option_html, $name, $slug);
+			
+			$html.= $option_html;
 		}
 
 		return '<div class="wpt_listing_filter_pagination '.$field.'">'.$html.'</div>';
