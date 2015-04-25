@@ -226,6 +226,15 @@ Release Date: December 29th, 2014
 
 == Upgrade Notice ==
 
+= 0.10.10 =
+* New filters: 
+    * `wpt_listing_filter_pagination_option_name`
+    * `wpt_listing_filter_pagination_option_url`
+    * `wpt_listing_filter_pagination_option_html`
+* Fix: Name of the `wpt_event_title`-filter was wrong.
+* Fix: Removed an [XSS Vulnerability]:(https://make.wordpress.org/plugins/2015/04/20/fixing-add_query_arg-and-remove_query_arg-usage/).
+* Fix: jQuery Date and Time picker wasn't working on websites that use https.
+
 = 0.10.9 =
 * Bugfix: The cart wasn't working when using AJAX.
 * Bugfix: Different shortcodes for listings sometimes showed the same listing.

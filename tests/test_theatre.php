@@ -998,4 +998,77 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertNotEquals($html_with_one_production, $html_with_two_productions);
 	}
 	
+	function test_wpt_listing_filter_pagination_option_name_filter() {
+		$func = create_function(
+			'$name, $field',
+			'$name = "filtered_name"; return $name;'
+		);
+		add_filter('wpt_listing_filter_pagination_option_name', $func, 10, 3 );
+		
+		$html = do_shortcode('[wpt_events paginateby=month]');
+		
+		$this->assertContains('filtered_name', $html);
+	}
+	
+	function test_wpt_listing_filter_pagination_month_option_name_filter() {
+		$func = create_function(
+			'$name',
+			'$name = "filtered_name"; return $name;'
+		);
+		add_filter('wpt_listing_filter_pagination_month_option_name', $func, 10, 2 );
+		
+		$html = do_shortcode('[wpt_events paginateby=month]');
+		
+		$this->assertContains('filtered_name', $html);
+	}
+	
+	function test_wpt_listing_filter_pagination_option_url_filter() {
+		$func = create_function(
+			'$url, $field, $name, $slug',
+			'$url = "filtered_url"; return $url;'
+		);
+		add_filter('wpt_listing_filter_pagination_option_url', $func, 10, 4 );
+		
+		$html = do_shortcode('[wpt_events paginateby=month]');
+		
+		$this->assertContains('filtered_url', $html);
+	}
+	
+	function test_wpt_listing_filter_pagination_month_option_url_filter() {
+		$func = create_function(
+			'$url, $name, $slug',
+			'$url = "filtered_url"; return $url;'
+		);
+		add_filter('wpt_listing_filter_pagination_month_option_url', $func, 10, 3);
+		
+		$html = do_shortcode('[wpt_events paginateby=month]');
+		
+		$this->assertContains('filtered_url', $html);
+	}
+	
+	function test_wpt_listing_filter_pagination_option_html_filter() {
+		$func = create_function(
+			'$html, $field, $name, $slug',
+			'$html = "filtered_html"; return $html;'
+		);
+		add_filter('wpt_listing_filter_pagination_option_html', $func, 10, 4 );
+		
+		$html = do_shortcode('[wpt_events paginateby=month]');
+		
+		$this->assertContains('filtered_html', $html);
+	}
+	
+	function test_wpt_listing_filter_pagination_month_option_html_filter() {
+		$func = create_function(
+			'$html, $name, $slug',
+			'$html = "filtered_html"; return $html;'
+		);
+		add_filter('wpt_listing_filter_pagination_month_option_html', $func, 10, 3);
+		
+		$html = do_shortcode('[wpt_events paginateby=month]');
+		
+		$this->assertContains('filtered_html', $html);
+	}
+	
+	
 }

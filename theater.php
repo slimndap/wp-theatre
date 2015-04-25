@@ -1,18 +1,34 @@
 <?php
 /*
-Plugin Name: Theater
-Plugin URI: http://wordpress.org/plugins/theatre/
-Description: Turn your Wordpress website into a theater website.
-Author: Jeroen Schmit, Slim & Dapper
-Version: 0.10.9
-Author URI: http://slimndap.com/
-Text Domain: wp_theatre
-Domain Path: /lang
+	
+	Plugin Name: Theater
+	Plugin URI: http://wordpress.org/plugins/theatre/
+	Description: Turn your Wordpress website into a theater website.
+	Author: Jeroen Schmit, Slim & Dapper
+	Version: 0.10.10
+	Author URI: http://slimndap.com/
+	Text Domain: wp_theatre
+	Domain Path: /lang
+
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+	
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+	
+	You should have received a copy of the GNU General Public License along
+	with this program; if not, write to the Free Software Foundation, Inc.,
+	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
 */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	
-$wpt_version = '0.10.9';
+$wpt_version = '0.10.10';
 
 class WP_Theatre {
 	function __construct() {
