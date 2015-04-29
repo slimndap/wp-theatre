@@ -226,6 +226,9 @@ Release Date: December 29th, 2014
 
 == Upgrade Notice ==
 
+= 0.10.11 =
+* Fix: Navigation for a listing filter was broken on the dedicated listing page.
+
 = 0.10.10 =
 * New filters: 
     * `wpt_listing_filter_pagination_option_name`
