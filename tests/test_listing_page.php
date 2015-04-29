@@ -612,6 +612,26 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		
 	}
 	
+	function test_filter_pagination_urls_on_listing_page() {
+		$this->options['listing_page_type'] = WPT_Event::post_type_name;
+		$this->options['listing_page_nav'] = 'paginated';
+		$this->options['listing_page_groupby'] = 'month';
+		update_option('wpt_listing_page', $this->options);
+
+		$months = $this->wp_theatre->events->get_months(array('upcoming' => true));
+		$months = array_keys($months);
+		
+		$listing_page_url = get_permalink( $this->wp_theatre->listing_page->page() );
+		$month_url = $listing_page_url.str_replace('-','/',$months[0]);
+				
+		$this->go_to($listing_page_url);
+		
+		$html = get_echo( 'the_content' );
+
+		$this->assertContains($month_url, $html);
+		
+	}
+	
 	
 	
 	function test_shortcode_wpt_calendar() {

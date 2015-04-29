@@ -120,9 +120,7 @@ class WPT_Listing {
 				}
 				$url = add_query_arg($query_var, $slug , $url);
 			}
-			
-			$url = apply_filters('wpt_listing_filter_pagination_url', $url);
-			
+						
 			/**
 			 * Filter the name of an option in the navigation for a listing filter.
 			 *
