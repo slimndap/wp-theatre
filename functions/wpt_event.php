@@ -487,6 +487,15 @@ class WPT_Event {
 			$html = '<div class="'.self::post_type_name.'_tickets">';
 			
 			$status = get_post_meta($this->ID,'tickets_status',true);
+
+			/**
+			 * Filter the tickets status value for an event.
+			 *
+			 * @since 0.10.9
+			 * 
+			 * @param	string 		$status	 The current value of the tickets status.
+			 * @param	WPT_Event	$this	 The event object.
+			 */
 			$status = apply_filters('wpt_event_tickets_status', $status, $this);
 
 			if (empty($status) || $status==self::tickets_status_onsale) {
@@ -606,6 +615,21 @@ class WPT_Event {
 		}			
 	}
 
+	/**
+	 * Gets the title of the event.
+	 *
+	 * The title is taken from the parent production, since event don't have titles.
+	 * 
+	 * @since ?.?
+	 * @since 0.10.10	Fixed the name of the 'wpt_event_title'-filter.
+	 *					Closes #114. 
+	 *
+	 * @param array $args {
+	 * 		@type bool 	$html 		Return HTML? Default <false>.
+	 *		@type array	$filters
+	 * }
+	 * @return string text or HTML.
+	 */
 	function title($args=array()) {
 		global $wp_theatre;
 		
@@ -616,7 +640,7 @@ class WPT_Event {
 		$args = wp_parse_args( $args, $defaults );
 
 		if (!isset($this->title)) {
-			$this->title = apply_filters('wpt_production_title',$this->production()->title(),$this);
+			$this->title = apply_filters('wpt_event_title',$this->production()->title(),$this);
 		}
 		
 		if ($args['html']) {

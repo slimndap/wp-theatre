@@ -2,7 +2,7 @@
 Contributors: slimndap
 Tags: theatre, stage, venue, events, shows, concerts, tickets, ticketing, sports, performances, calendar, workshops, theater, cinema
 Requires at least: 3.8
-Tested up to: 4.1
+Tested up to: 4.2
 Stable tag: trunk
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -225,6 +225,23 @@ Release Date: December 29th, 2014
 * Basic version of the plugin.
 
 == Upgrade Notice ==
+
+= 0.10.11 =
+* Fix: Navigation for a listing filter was broken on the dedicated listing page.
+
+= 0.10.10 =
+* New filters: 
+    * `wpt_listing_filter_pagination_option_name`
+    * `wpt_listing_filter_pagination_option_url`
+    * `wpt_listing_filter_pagination_option_html`
+* Fix: Name of the `wpt_event_title`-filter was wrong.
+* Fix: Removed an [XSS Vulnerability]:(https://make.wordpress.org/plugins/2015/04/20/fixing-add_query_arg-and-remove_query_arg-usage/).
+* Fix: jQuery Date and Time picker wasn't working on websites that use https.
+
+= 0.10.9 =
+* Bugfix: The cart wasn't working when using AJAX.
+* Bugfix: Different shortcodes for listings sometimes showed the same listing.
+* Added a `wpt_event_tickets_status`-filter. Thanks [Menno](https://www.linkedin.com/in/mennoluitjes)!
 
 = 0.10.8 =
 * Bugfix: The tickets button was always showing if you chose to show your ticketing screens inside an iframe. Even when there is no tickets url present.

@@ -511,6 +511,25 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertEquals(1, substr_count(do_shortcode('[wpt_events]'), 'wp_theatre_event_prices'));		
 	}
 	
+	function test_wpt_event_tickets_status_filter() {
+		global $wp_theatre;
+		
+		$func = create_function(
+			'$status, $event',
+			'$status = "new status";	return $status;'
+		);
+		add_filter( 'wpt_event_tickets_status', $func, 10 , 2 );
+		
+		$event = new WPT_Event($this->upcoming_event_with_prices);
+		$args = array(
+			'html' => true,
+		);
+		$html = $event->tickets($args);
+		$this->assertContains('new status', $event->tickets($args));
+
+		
+	}
+	
 	function test_wpt_event_tickets_url() {
 		add_post_meta($this->upcoming_event_with_prices, 'tickets_url', 'http://slimndap.com');
 		$this->assertEquals(1, substr_count(do_shortcode('[wpt_events]'), 'wp_theatre_event_tickets_url'));			
@@ -642,6 +661,8 @@ class WPT_Test extends WP_UnitTestCase {
 	 
 	// Test transients
 	function test_wpt_transient_productions() {
+		global $wp_query;
+		
 		do_shortcode('[wpt_productions]');
 		
 		$args = array(
@@ -660,8 +681,12 @@ class WPT_Test extends WP_UnitTestCase {
 			'limit'=>false,
 			'order'=>'asc',
 		);
+		$unique_args = array_merge(
+			array( 'atts' => $args ), 
+			array( 'wp_query' => $wp_query->query_vars )
+		);
 		
-		$this->assertEquals(5, substr_count($this->wp_theatre->transient->get('p',$args), '"wp_theatre_prod"'));
+		$this->assertEquals(5, substr_count($this->wp_theatre->transient->get('p',$unique_args), '"wp_theatre_prod"'));
 		
 		/* 
 		 * Test if transients are off for logged in users 
@@ -696,6 +721,8 @@ class WPT_Test extends WP_UnitTestCase {
 	}
 	
 	function test_wpt_transient_events() {
+		global $wp_query;
+		
 		do_shortcode('[wpt_events]');
 		
 		/** 
@@ -720,7 +747,12 @@ class WPT_Test extends WP_UnitTestCase {
 			'limit'=>false,
 			'order'=>'asc',
 		);
-		$this->assertEquals(4, substr_count($this->wp_theatre->transient->get('e',$args), '"wp_theatre_event"'));
+		$unique_args = array_merge(
+			array( 'atts' => $args ), 
+			array( 'wp_query' => $wp_query->query_vars )
+		);
+		
+		$this->assertEquals(4, substr_count($this->wp_theatre->transient->get('e',$unique_args), '"wp_theatre_event"'));
 	}
 	
 	/*
@@ -946,5 +978,97 @@ class WPT_Test extends WP_UnitTestCase {
 			get_class($wp_theatre) == 'WP_Theatre'
 		);
 	}
+	
+	function test_wpt_events_unique_args() {
+		global $wp_query;
+		$wp_query->query_vars['category__in'] = array(123);
+		
+		$html_with_one_event = do_shortcode('[wpt_events category__in="'.$this->category_muziek.'"]');
+		$html_with_two_events = do_shortcode('[wpt_events post__in="'.$this->category_muziek.','.$this->category_film.'"]');
+		$this->assertNotEquals($html_with_one_event, $html_with_two_events);
+		
+	}
+	
+	function test_wpt_productions_unique_args() {
+		global $wp_query;
+		$wp_query->query_vars['post__in'] = array(123);
+		
+		$html_with_one_production = do_shortcode('[wpt_productions post__in="'.$this->production_with_upcoming_event.'"]');
+		$html_with_two_productions = do_shortcode('[wpt_productions post__in="'.$this->production_with_upcoming_event.','.$this->production_with_upcoming_events.'"]');
+		$this->assertNotEquals($html_with_one_production, $html_with_two_productions);
+	}
+	
+	function test_wpt_listing_filter_pagination_option_name_filter() {
+		$func = create_function(
+			'$name, $field',
+			'$name = "filtered_name"; return $name;'
+		);
+		add_filter('wpt_listing_filter_pagination_option_name', $func, 10, 3 );
+		
+		$html = do_shortcode('[wpt_events paginateby=month]');
+		
+		$this->assertContains('filtered_name', $html);
+	}
+	
+	function test_wpt_listing_filter_pagination_month_option_name_filter() {
+		$func = create_function(
+			'$name',
+			'$name = "filtered_name"; return $name;'
+		);
+		add_filter('wpt_listing_filter_pagination_month_option_name', $func, 10, 2 );
+		
+		$html = do_shortcode('[wpt_events paginateby=month]');
+		
+		$this->assertContains('filtered_name', $html);
+	}
+	
+	function test_wpt_listing_filter_pagination_option_url_filter() {
+		$func = create_function(
+			'$url, $field, $name, $slug',
+			'$url = "filtered_url"; return $url;'
+		);
+		add_filter('wpt_listing_filter_pagination_option_url', $func, 10, 4 );
+		
+		$html = do_shortcode('[wpt_events paginateby=month]');
+		
+		$this->assertContains('filtered_url', $html);
+	}
+	
+	function test_wpt_listing_filter_pagination_month_option_url_filter() {
+		$func = create_function(
+			'$url, $name, $slug',
+			'$url = "filtered_url"; return $url;'
+		);
+		add_filter('wpt_listing_filter_pagination_month_option_url', $func, 10, 3);
+		
+		$html = do_shortcode('[wpt_events paginateby=month]');
+		
+		$this->assertContains('filtered_url', $html);
+	}
+	
+	function test_wpt_listing_filter_pagination_option_html_filter() {
+		$func = create_function(
+			'$html, $field, $name, $slug',
+			'$html = "filtered_html"; return $html;'
+		);
+		add_filter('wpt_listing_filter_pagination_option_html', $func, 10, 4 );
+		
+		$html = do_shortcode('[wpt_events paginateby=month]');
+		
+		$this->assertContains('filtered_html', $html);
+	}
+	
+	function test_wpt_listing_filter_pagination_month_option_html_filter() {
+		$func = create_function(
+			'$html, $name, $slug',
+			'$html = "filtered_html"; return $html;'
+		);
+		add_filter('wpt_listing_filter_pagination_month_option_html', $func, 10, 3);
+		
+		$html = do_shortcode('[wpt_events paginateby=month]');
+		
+		$this->assertContains('filtered_html', $html);
+	}
+	
 	
 }

@@ -751,7 +751,7 @@
 				$import_url = add_query_arg('wpt_import', $this->slug);
 				$import_url = wp_nonce_url( $import_url, 'wpt_import' );
 	
-				echo '<p><a href="'.$import_url.'">'.__('Run import now','wp_theatre').'</a></>';				
+				echo '<p><a href="'.esc_url($import_url).'">'.__('Run import now','wp_theatre').'</a></>';				
 				
 			}
 		}
