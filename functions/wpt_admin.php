@@ -2,28 +2,26 @@
 class WPT_Admin {
 	function __construct() {
 		// Hooks (only in admin screens)
-		if (is_admin()) {
-			add_action( 'admin_init', array($this,'admin_init'));
-			add_action( 'admin_menu', array($this, 'admin_menu' ));
-			add_action( 'add_meta_boxes', array($this, 'add_meta_boxes'));
-			add_filter( 'wpt_event', array($this,'wpt_event'), 10 ,2);
-			add_action( 'quick_edit_custom_box', array($this,'quick_edit_custom_box'), 10, 2 );
-			add_action( 'wp_dashboard_setup', array($this,'wp_dashboard_setup' ));
+		add_action( 'admin_init', array($this,'admin_init'));
+		add_action( 'admin_menu', array($this, 'admin_menu' ));
+		add_action( 'add_meta_boxes', array($this, 'add_meta_boxes'));
+		add_filter( 'wpt_event', array($this,'wpt_event'), 10 ,2);
+		add_action( 'quick_edit_custom_box', array($this,'quick_edit_custom_box'), 10, 2 );
+		add_action( 'wp_dashboard_setup', array($this,'wp_dashboard_setup' ));
 
-			add_action( 'save_post', array( $this, 'save_production' ));
-			add_action( 'save_post', array( $this, 'save_event' ));
+		add_action( 'save_post', array( $this, 'save_production' ));
+		add_action( 'save_post', array( $this, 'save_event' ));
 
-			add_filter('manage_wp_theatre_prod_posts_columns', array($this,'manage_wp_theatre_prod_posts_columns'), 10, 2);
-			add_filter('manage_wp_theatre_event_posts_columns', array($this,'manage_wp_theatre_event_posts_columns'), 10, 2);
-			add_action('manage_wp_theatre_prod_posts_custom_column', array($this,'manage_wp_theatre_prod_posts_custom_column'), 10, 2);
-			add_action('manage_wp_theatre_event_posts_custom_column', array($this,'manage_wp_theatre_event_posts_custom_column'), 10, 2);	
-			add_filter('manage_edit-wp_theatre_prod_sortable_columns', array($this,'manage_edit_wp_theatre_prod_sortable_columns') );
-			
-			add_filter('wpt_event_html',array($this,'wpt_event_html'), 10 , 2);
-			add_filter('wpt_production_html',array($this,'wpt_production_html'), 10 , 2);
-			
-			add_filter('views_edit-'.WPT_Production::post_type_name,array($this,'views_productions'));
-		}
+		add_filter('manage_wp_theatre_prod_posts_columns', array($this,'manage_wp_theatre_prod_posts_columns'), 10, 2);
+		add_filter('manage_wp_theatre_event_posts_columns', array($this,'manage_wp_theatre_event_posts_columns'), 10, 2);
+		add_action('manage_wp_theatre_prod_posts_custom_column', array($this,'manage_wp_theatre_prod_posts_custom_column'), 10, 2);
+		add_action('manage_wp_theatre_event_posts_custom_column', array($this,'manage_wp_theatre_event_posts_custom_column'), 10, 2);	
+		add_filter('manage_edit-wp_theatre_prod_sortable_columns', array($this,'manage_edit_wp_theatre_prod_sortable_columns') );
+		
+		add_filter('wpt_event_html',array($this,'wpt_event_html'), 10 , 2);
+		add_filter('wpt_production_html',array($this,'wpt_production_html'), 10 , 2);
+		
+		add_filter('views_edit-'.WPT_Production::post_type_name,array($this,'views_productions'));
 		
 		// More hooks (always load, necessary for bulk editing through AJAX)
 		add_filter('request', array($this,'request'));
@@ -969,18 +967,22 @@ class WPT_Admin {
 	}
 
     function wpt_event_html($html, $event) {
-		$html.= '<div class="row-actions">';
-		$html.= '<span><a href="'.get_edit_post_link($event->production->ID).'">'.__('Edit').'</a></span>';;
-		$html.= '<span> | <a href="'.get_delete_post_link($event->production->ID).'">'.__('Trash').'</a></span>';;
-		$html.= '</div>'; //.row-actions
+	    if (is_admin()) {
+			$html.= '<div class="row-actions">';
+			$html.= '<span><a href="'.get_edit_post_link($event->production->ID).'">'.__('Edit').'</a></span>';;
+			$html.= '<span> | <a href="'.get_delete_post_link($event->production->ID).'">'.__('Trash').'</a></span>';;
+			$html.= '</div>'; //.row-actions		    
+	    }
 		return $html;
     }
 
     function wpt_production_html($html, $production) {
-		$html.= '<div class="row-actions">';
-		$html.= '<span><a href="'.get_edit_post_link($production->ID).'">'.__('Edit').'</a></span>';;
-		$html.= '<span> | <a href="'.get_delete_post_link($production->ID).'">'.__('Trash').'</a></span>';;
-		$html.= '</div>'; //.row-actions
+	    if (is_admin()) {
+			$html.= '<div class="row-actions">';
+			$html.= '<span><a href="'.get_edit_post_link($production->ID).'">'.__('Edit').'</a></span>';;
+			$html.= '<span> | <a href="'.get_delete_post_link($production->ID).'">'.__('Trash').'</a></span>';;
+			$html.= '</div>'; //.row-actions
+	    }
 		return $html;
     }
     
