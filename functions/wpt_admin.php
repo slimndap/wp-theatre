@@ -299,7 +299,7 @@ class WPT_Admin {
 		} else {
 			$args = array(
 				'production' => $production->ID,
-				'status' => array('publish','draft')
+				'status' => array('publish','draft','future')
 			);
 		
 			$events = $wp_theatre->events->get($args);
@@ -641,13 +641,24 @@ class WPT_Admin {
 		// unhook to avoid loops
 		remove_action( 'save_post_'.WPT_Event::post_type_name, array( $this, 'save_event' ) );
 
+		$post_status = get_post_status($post_id);
+		$post_date = get_the_date('Y-m-d H:i:s', $post_id);
+
 		$events = $this->get_events($post_id);
 		foreach($events as $event) {
-			$post = array(
-				'ID'=>$event->ID,
-				'post_status'=>get_post_status($post_id)
-			);
-			wp_update_post($post);
+			$event_obj = get_post($event->ID);
+			if ('trash' != $event_obj->post_status) {
+				// only sync production post_status to event when event is not in trash
+				// when in trash, leave it there
+				$post = array(
+					'ID'=>$event->ID,
+					'post_status'=>$post_status,
+					'edit_date'=>true,
+					'post_date'=>$post_date,
+					'post_date_gmt'=>get_gmt_from_date($post_date),
+				);
+				wp_update_post($post);
+			}
 		}
 
 		// rehook
