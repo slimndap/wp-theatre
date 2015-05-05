@@ -653,9 +653,6 @@ class WPT_Admin {
 			$post = array(
 				'ID'=>$event->ID,
 				'post_status'=>$post_status,
-				'edit_date'=>true,
-				'post_date'=>$post_date,
-				'post_date_gmt'=>get_gmt_from_date($post_date),
 			);
 			wp_update_post($post);
 		}
