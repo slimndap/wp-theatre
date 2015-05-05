@@ -1070,5 +1070,83 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertContains('filtered_html', $html);
 	}
 	
+	/**
+	 * Tests if the events are hidden from listings if you set the post_date of 
+	 * a production to a date in the future.
+	 * See: https://github.com/slimndap/wp-theatre/issues/109
+	 */
+	function test_scheduled_productions_dont_show_in_listings() {
+		
+		global $current_screen, $wp_theatre;
+		
+		// Switch to an admin screen so is_admin() is true.
+		$screen = WP_Screen::get( 'admin_init' );
+        $current_screen = $screen;
+        
+        // Assume the role of admin.
+		$user = new WP_User( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
+		wp_set_current_user( $user->ID );		
+
+		// Fake a production admin screen submit.
+		$nonce = wp_create_nonce(WPT_Production::post_type_name);
+		$_POST[WPT_Production::post_type_name.'_nonce'] = $nonce;
+		$_POST[WPT_Season::post_type_name] = '';
+
+		$post_date = date('Y-m-d H:i:s',strtotime('next year'));
+		$post = array(
+			'ID' => $this->production_with_upcoming_event,
+			'post_date' => $post_date,
+			'post_date_gmt'=>get_gmt_from_date($post_date)
+		);
+		
+		wp_update_post($post);
+		
+		$events = $wp_theatre->events->get(
+			array(
+				'start' => 'now',
+			)
+		);
+		
+		$this->assertCount(3,$events);
+		
+	}
+	
+	/**
+	 * Tests if a trashed event is not accidentally untrashed when you update a production.
+	 * See: https://github.com/slimndap/wp-theatre/issues/47
+	 */
+	function test_trashed_event_remains_trashed_when_production_is_updated() {
+		
+		global $current_screen;
+		
+		// Trash the event.
+		wp_trash_post($this->upcoming_event_with_prices);
+
+		// Switch to an admin screen so is_admin() is true.
+		$screen = WP_Screen::get( 'admin_init' );
+        $current_screen = $screen;
+        
+        // Assume the role of admin.
+		$user = new WP_User( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
+		wp_set_current_user( $user->ID );		
+
+		// Fake a production admin screen submit.
+		$nonce = wp_create_nonce(WPT_Production::post_type_name);
+		$_POST[WPT_Production::post_type_name.'_nonce'] = $nonce;
+		$_POST[WPT_Season::post_type_name] = '';
+		
+		//Update the production.
+		$post = array(
+			'ID' => $this->production_with_upcoming_event,
+			'post_title' => 'hallo',
+		);
+		wp_update_post($post);
+
+		$production = new WPT_Production($this->production_with_upcoming_event);
+		$events = $production->events();
+		
+		$this->assertCount(0,$events);
+		
+	}
 	
 }
