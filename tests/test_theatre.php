@@ -1091,7 +1091,6 @@ class WPT_Test extends WP_UnitTestCase {
 		$nonce = wp_create_nonce(WPT_Production::post_type_name);
 		$_POST[WPT_Production::post_type_name.'_nonce'] = $nonce;
 		$_POST[WPT_Season::post_type_name] = '';
-		$_POST['post_ID'] = $this->production_with_upcoming_event;
 
 		$post_date = date('Y-m-d H:i:s',strtotime('next year'));
 		$post = array(

@@ -646,9 +646,9 @@ class WPT_Admin {
 		// unhook to avoid loops
 		remove_action( 'save_post_'.WPT_Event::post_type_name, array( $this, 'save_event' ) );
 
-		$post_date = get_the_date('Y-m-d H:i:s', $post_id);
-
+		$post = get_post($post_id);
 		$events = $this->get_events($post_id);
+
 		foreach($events as $event) {
 			
 			// Keep trashed events in the trash.
@@ -660,8 +660,8 @@ class WPT_Admin {
 				'ID'=>$event->ID,
 				'post_status'=>get_post_status($post_id),
 				'edit_date'=>true,
-				'post_date'=>$post_date,
-				'post_date_gmt'=>get_gmt_from_date($post_date),
+				'post_date'=>$post->post_date,
+				'post_date_gmt'=>get_gmt_from_date($post->post_date),
 			);
 
 			wp_update_post($post);
