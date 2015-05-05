@@ -639,9 +639,6 @@ class WPT_Admin {
 		// unhook to avoid loops
 		remove_action( 'save_post_'.WPT_Event::post_type_name, array( $this, 'save_event' ) );
 
-		$post_status = get_post_status($post_id);
-		$post_date = get_the_date('Y-m-d H:i:s', $post_id);
-
 		$events = $this->get_events($post_id);
 		foreach($events as $event) {
 			
@@ -652,7 +649,7 @@ class WPT_Admin {
 			
 			$post = array(
 				'ID'=>$event->ID,
-				'post_status'=>$post_status,
+				'post_status'=>get_post_status($post_id),
 			);
 			wp_update_post($post);
 		}
