@@ -1,18 +1,34 @@
 <?php
 /*
-Plugin Name: Theater
-Plugin URI: http://wordpress.org/plugins/theatre/
-Description: Turn your Wordpress website into a theater website.
-Author: Jeroen Schmit, Slim & Dapper
-Version: 0.10.6
-Author URI: http://slimndap.com/
-Text Domain: wp_theatre
-Domain Path: /lang
+	
+	Plugin Name: Theater
+	Plugin URI: http://wordpress.org/plugins/theatre/
+	Description: Turn your Wordpress website into a theater website.
+	Author: Jeroen Schmit, Slim & Dapper
+	Version: 0.10.11
+	Author URI: http://slimndap.com/
+	Text Domain: wp_theatre
+	Domain Path: /lang
+
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+	
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+	
+	You should have received a copy of the GNU General Public License along
+	with this program; if not, write to the Free Software Foundation, Inc.,
+	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
 */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	
-$wpt_version = '0.10.6';
+$wpt_version = '0.10.11';
 
 class WP_Theatre {
 	function __construct() {
@@ -36,10 +52,10 @@ class WP_Theatre {
 		$this->calendar = new WPT_Calendar();
 		$this->filter = new WPT_Filter();
 		$this->editor = new WPT_Event_Editor();
+		$this->cart = new WPT_Cart();
 		if (is_admin()) {
 		} else {
 			$this->frontend = new WPT_Frontend();
-			$this->cart = new WPT_Cart();
 		}
 		
 		// Options
@@ -90,10 +106,10 @@ class WP_Theatre {
 		require_once(dirname(__FILE__) . '/functions/wpt_filter.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_editor.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_importer.php');	
+		require_once(dirname(__FILE__) . '/functions/wpt_cart.php');	
 		if (is_admin()) {
 		} else {
 			require_once(dirname(__FILE__) . '/functions/wpt_frontend.php');
-			require_once(dirname(__FILE__) . '/functions/wpt_cart.php');	
 		}
 		require_once(dirname(__FILE__) . '/integrations/wordpress-seo.php');
 		require_once(dirname(__FILE__) . '/integrations/jetpack-featured-content.php');

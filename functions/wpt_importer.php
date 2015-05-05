@@ -75,6 +75,7 @@
 		 * Use this helper function to create a new event while processing your feed.
 		 * 
 		 * @since 0.10
+		 * @since 0.11 Added support for event prices.
 		 *
 		 * @see WPT_Importer::get_event_by_ref()
 		 * @see WPT_Importer::update_event()
@@ -87,6 +88,7 @@
 		 *		@type string $tickets_url	The tickets url of the event.
 		 *		@type string $event_date	The date of the event.
 		 * 		@type string $ref			A unique identifier for the event.
+		 *		@type array $prices			The prices of the event.
 		 * }
 		 * @return WPT_Event				The new event or <false> if there was a problem.
 		 */
@@ -99,6 +101,7 @@
 				'tickets_url' => '',
 				'event_date' => '',
 				'ref' => '',
+				'prices' => array(),
 			);
 			
 			$args = wp_parse_args($args, $defaults);
@@ -116,6 +119,8 @@
 				add_post_meta($post_id, 'city', $args['city'], true);
 				add_post_meta($post_id, 'tickets_url', $args['tickets_url'], true);
 				add_post_meta($post_id, 'event_date', $args['event_date'], true);
+
+				$this->set_event_prices($post_id, $args['prices']);
 
 				$this->stats['events_created']++;
 				
@@ -240,13 +245,48 @@
 		}
 		
 		/**
+		 * Sets the prices of an event.
+		 * 
+		 * @since 0.10.7
+		 *
+		 * @access private
+		 * @param int $event_id
+		 * @param array $prices
+		 * @return void
+		 */
+		private function set_event_prices($event_id, $prices) {
+			
+			delete_post_meta($event_id, '_wpt_event_tickets_price');
+	
+			for ($p=0;$p<count($prices);$p++) {
+				
+				$price_parts = explode('|',$prices[$p]);
+				
+				// Sanitize the amount.
+				$price_parts[0] = (float) $price_parts[0];
+				
+				// Sanitize the name.
+				if (!empty($prices_parts[1])) {
+					$price_parts[1] = trim($price_parts[1]);
+				}
+				
+				// Check if the price is valid.
+				if ($price_parts[0]>0) {
+					add_post_meta($event_id,'_wpt_event_tickets_price', implode('|',$price_parts));			
+				}
+			}
+			
+		}
+		
+		/**
 		 * Updates a previously imported event.
 		 *
 		 * Use this helper function to update existing events while processing your feed.
 		 * If no existing event is found then a new one is created.
 		 * 
 		 * @since 0.10
-		 * @since tbd.	Method now returns a WPT_Event object.
+		 * @since 0.10.7	Method now returns a WPT_Event object.
+		 * 					Added support for event prices.
 		 *
 		 * @see WPT_Importer::get_event_by_ref()
 		 * @see WPT_Importer::create_event()
@@ -259,6 +299,7 @@
 		 *		@type string $tickets_url	The tickets url of the event.
 		 *		@type string $event_date	The date of the event.
 		 * 		@type string $ref			A unique identifier for the event.
+		 *		@type array $prices			The prices of the event.
 		 * }
 		 * @return WPT_Event				The new or updated event.
 		 *									Or <false> if there was a problem creating a new event.
@@ -272,6 +313,7 @@
 				'tickets_url' => '',
 				'event_date' => '',
 				'ref' => '',
+				'prices' => array(),
 			);
 			
 			$args = wp_parse_args($args, $defaults);
@@ -288,6 +330,8 @@
 			update_post_meta($event->ID, 'tickets_url', $args['tickets_url']);
 			update_post_meta($event->ID, 'event_date', $args['event_date']);
 			
+			$this->set_event_prices($event->ID, $args['prices']);
+
 			delete_post_meta($event->ID, $this->marker);
 
 			$this->stats['events_updated']++;
@@ -707,7 +751,7 @@
 				$import_url = add_query_arg('wpt_import', $this->slug);
 				$import_url = wp_nonce_url( $import_url, 'wpt_import' );
 	
-				echo '<p><a href="'.$import_url.'">'.__('Run import now','wp_theatre').'</a></>';				
+				echo '<p><a href="'.esc_url($import_url).'">'.__('Run import now','wp_theatre').'</a></>';				
 				
 			}
 		}

@@ -1,0 +1,11 @@
+/raw					export-ignore
+/tests					export-ignore
+/bower_components		export-ignore
+/bin					export-ignore
+/multisite.xml			export-ignore
+/phpunit.xml			export-ignore
+/phpunit.xml.dist		export-ignore
+/.travis.yml			export-ignore
+/codekit-config.json	export-ignore
+/readme.md				export-ignore
+/LICENSE				export-ignore

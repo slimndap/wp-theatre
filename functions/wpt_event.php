@@ -330,44 +330,6 @@ class WPT_Event {
 		}
 	}
 	
-	function meta() {
-		$html = '';
-		
-		$html.= '<span itemscope itemtype="http://data-vocabulary.org/Event">';	
-
-		// image
-		// Thumbnail
-		if ($this->production()->thumbnail()!='') {
-			$html.= '<meta itemprop="image" content="'.wp_get_attachment_url($this->production()->thumbnail()).'" />';
-		}
-
-		// startDate
-		$html.= '<meta itemprop="startDate" content="'.date('c',$this->datetime()).'" />';
-		
-		// summary
-		$html.= '<meta itemprop="summary" content="'.$this->production()->title().'" />';
-		
-		// url
-		$html.= '<meta itemprop="url" content="'.get_permalink($this->production()->ID).'" />';
-
-		//location
-		$html.= '<span itemprop="location" itemscope itemtype="http://data-vocabulary.org/Organization">';
-		if ($this->venue()!='') {
-			$html.= '<meta itemprop="name" content="'.$this->venue().'" />';
-		}
-		if ($this->city()!='') {
-			$html.= '<span itemprop="address" itemscope itemtype="http://data-vocabulary.org/Address">';
-			$html.= '<meta itemprop="locality" content="'.$this->city().'" />';
-			$html.= '</span>';
-		}
-		
-		$html.= '</span>'; // .location
-
-		$html.= '</span>';
-		
-		return $html;
-	}
-
 	function permalink($args=array()) {
 		return $this->production()->permalink($args);
 	}
@@ -395,7 +357,13 @@ class WPT_Event {
 		$args = wp_parse_args( $args, $defaults );
 
 		if (!isset($this->prices)) {
-			$this->prices = apply_filters('wpt_event_prices',get_post_meta($this->ID,'_wpt_event_tickets_price'), $this);
+			$prices = get_post_meta($this->ID,'_wpt_event_tickets_price');
+			$prices_sanitized = array();
+			for($p=0;$p<count($prices);$p++) {
+				$price_parts = explode('|',$prices[$p]);
+				$prices_sanitized[] = (float) $price_parts[0];
+			}
+			$this->prices = apply_filters('wpt_event_prices',$prices_sanitized, $this);
 		}
 
 		if ($args['html']) {
@@ -519,6 +487,17 @@ class WPT_Event {
 			$html = '<div class="'.self::post_type_name.'_tickets">';
 			
 			$status = get_post_meta($this->ID,'tickets_status',true);
+
+			/**
+			 * Filter the tickets status value for an event.
+			 *
+			 * @since 0.10.9
+			 * 
+			 * @param	string 		$status	 The current value of the tickets status.
+			 * @param	WPT_Event	$this	 The event object.
+			 */
+			$status = apply_filters('wpt_event_tickets_status', $status, $this);
+
 			if (empty($status) || $status==self::tickets_status_onsale) {
 				if (!empty($this->tickets)) {
 					$tickets_url_args = array('html'=>true);
@@ -585,9 +564,13 @@ class WPT_Event {
 		$args = wp_parse_args( $args, $defaults );
 
 		if (!isset($this->tickets_url)) {
+			
+			$url = get_post_meta($this->ID,'tickets_url',true);
+
 			if (
 				!empty($wp_theatre->wpt_tickets_options['integrationtype']) && 
-				$wp_theatre->wpt_tickets_options['integrationtype']=='iframe'
+				$wp_theatre->wpt_tickets_options['integrationtype']=='iframe' &&
+				!empty($url)
 			) {
 				$url = get_permalink($wp_theatre->wpt_tickets_options['iframepage']);
 				$url = add_query_arg(
@@ -595,8 +578,6 @@ class WPT_Event {
 						__('Event','wp_theatre') => $this->ID
 					) , $url
 				);
-			} else {
-				$url = get_post_meta($this->ID,'tickets_url',true);
 			}
 			$this->tickets_url = apply_filters('wpt_event_tickets_url',$url,$this);
 		}
@@ -627,13 +608,28 @@ class WPT_Event {
 				
 			}
 
-			return $html;					
+			return apply_filters('wpt_event_tickets_url_html', $html, $this);
 		
 		} else {
 			return $this->tickets_url;
 		}			
 	}
 
+	/**
+	 * Gets the title of the event.
+	 *
+	 * The title is taken from the parent production, since event don't have titles.
+	 * 
+	 * @since ?.?
+	 * @since 0.10.10	Fixed the name of the 'wpt_event_title'-filter.
+	 *					Closes #114. 
+	 *
+	 * @param array $args {
+	 * 		@type bool 	$html 		Return HTML? Default <false>.
+	 *		@type array	$filters
+	 * }
+	 * @return string text or HTML.
+	 */
 	function title($args=array()) {
 		global $wp_theatre;
 		
@@ -644,7 +640,7 @@ class WPT_Event {
 		$args = wp_parse_args( $args, $defaults );
 
 		if (!isset($this->title)) {
-			$this->title = apply_filters('wpt_production_title',$this->production()->title(),$this);
+			$this->title = apply_filters('wpt_event_title',$this->production()->title(),$this);
 		}
 		
 		if ($args['html']) {
@@ -746,6 +742,7 @@ class WPT_Event {
 	 * HTML version of the event.
 	 *
 	 * @since 0.4
+	 * @since 0.10.8	Added a filter to the default template.
 	 *
 	 * @param array $args {
 	 *
@@ -757,7 +754,10 @@ class WPT_Event {
 	 */
 	function html($args=array()) {
 		$defaults = array(
-			'template' => '{{thumbnail|permalink}} {{title|permalink}} {{remark}} {{datetime}} {{location}} {{tickets}}'
+			'template' => apply_filters(
+				'wpt_event_template_default',
+				'{{thumbnail|permalink}} {{title|permalink}} {{remark}} {{datetime}} {{location}} {{tickets}}'
+			),
 		);
 		$args = wp_parse_args( $args, $defaults );
 
@@ -822,8 +822,6 @@ class WPT_Event {
 			$html = str_replace('{{tickets}}', $tickets, $html);
 		}
 		
-		$html.= $this->meta();
-
 		// Filters
 		$html = apply_filters('wpt_event_html',$html, $this);
 		$classes = apply_filters('wpt_event_classes',$classes, $this);
