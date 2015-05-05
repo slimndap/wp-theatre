@@ -656,7 +656,6 @@ class WPT_Admin {
 				continue;
 			}
 			
-
 			$post = array(
 				'ID'=>$event->ID,
 				'post_status'=>get_post_status($post_id),
@@ -666,7 +665,6 @@ class WPT_Admin {
 			);
 
 			wp_update_post($post);
-
 
 		}
 

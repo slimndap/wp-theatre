@@ -226,7 +226,7 @@ class WPT_Production {
 
 		$defaults = array(
 			'production'=>$this->ID,
-			'status'=>$this->post()->post_type
+			'status'=>$this->post()->post_status
 		);			
 
 		$filters = wp_parse_args( $filters, $defaults );

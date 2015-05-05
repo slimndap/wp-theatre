@@ -1077,7 +1077,7 @@ class WPT_Test extends WP_UnitTestCase {
 	 */
 	function test_scheduled_productions_dont_show_in_listings() {
 		
-		global $current_screen;
+		global $current_screen, $wp_theatre;
 		
 		// Switch to an admin screen so is_admin() is true.
 		$screen = WP_Screen::get( 'admin_init' );
@@ -1091,6 +1091,7 @@ class WPT_Test extends WP_UnitTestCase {
 		$nonce = wp_create_nonce(WPT_Production::post_type_name);
 		$_POST[WPT_Production::post_type_name.'_nonce'] = $nonce;
 		$_POST[WPT_Season::post_type_name] = '';
+		$_POST['post_ID'] = $this->production_with_upcoming_event;
 
 		$post_date = date('Y-m-d H:i:s',strtotime('next year'));
 		$post = array(
@@ -1101,14 +1102,13 @@ class WPT_Test extends WP_UnitTestCase {
 		
 		wp_update_post($post);
 		
-		$production = new WPT_Production($this->production_with_upcoming_event);
-		$events = $production->events(
+		$events = $wp_theatre->events->get(
 			array(
-				'status' => 'publish', // Needed, because of #108.
+				'start' => 'now',
 			)
 		);
-
-		$this->assertCount(0,$events);
+		
+		$this->assertCount(3,$events);
 		
 	}
 	
@@ -1144,11 +1144,7 @@ class WPT_Test extends WP_UnitTestCase {
 		wp_update_post($post);
 
 		$production = new WPT_Production($this->production_with_upcoming_event);
-		$events = $production->events(
-			array(
-				'status' => 'publish', // Needed, because of #108.
-			)
-		);
+		$events = $production->events();
 		
 		$this->assertCount(0,$events);
 		
