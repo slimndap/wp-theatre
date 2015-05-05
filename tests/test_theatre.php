@@ -1070,5 +1070,26 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertContains('filtered_html', $html);
 	}
 	
-	
+		
+	/**
+	 * Tests if the events of a planned production don't show up in listings.
+	 * See: https://github.com/slimndap/wp-theatre/issues/109
+	 */
+	function test_scheduled_productions_dont_show_in_listings() {
+		
+		$post_date = date('Y-m-d H:i:s',strtotime('next year'));
+		$post = array(
+			'ID' => $this->production_with_upcoming_event,
+			'post_date' => $post_date,
+			'post_date_gmt'=>get_gmt_from_date($post_date)
+		);
+		
+		wp_update_post($post);
+		
+		$production = new WPT_Production($this->production_with_upcoming_event);
+		$events = $production->events();
+
+		$this->assertCount(0,$events);
+		
+	}
 }
