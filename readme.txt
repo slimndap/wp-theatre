@@ -226,6 +226,11 @@ Release Date: December 29th, 2014
 
 == Upgrade Notice ==
 
+= 0.10.12 =
+* Fix: Trashed events were visible on production detail pages. Thanks [Menno](https://www.linkedin.com/in/mennoluitjes)!
+* Fix: When saving a production, it now correctly syncs the 'future' post_status to all its events. Thanks [Menno](https://www.linkedin.com/in/mennoluitjes)!
+* Fix: Trashed events will remain trashed. Thanks [Menno](https://www.linkedin.com/in/mennoluitjes)!
+
 = 0.10.11 =
 * Fix: Navigation for a listing filter was broken on the dedicated listing page.
 
