@@ -4,16 +4,25 @@ class wpt_editor
 		@init_delete_links()
 		
 	init_datetime_inputs : ->
-		@event_date = jQuery('#wpt_event_editor_event_date').datetimepicker
+	
+		@event_date = jQuery '#wpt_event_editor_event_date'
+		@enddate = jQuery '#wpt_event_editor_enddate'
+	
+		@event_date.datetimepicker
 			defaultValue: wpt_editor_defaults.event_date
-		@endtime = jQuery('#wpt_event_editor_enddate').datetimepicker()	
+			format : wpt_editor_defaults.datetime_format
+			step: 15
+			onChangeDateTime: (event_date, input) =>
+				if event_date?
+					enddate = new Date @enddate.val()	
+					if not @enddate.val() or (enddate < event_date)
+						enddate = new Date event_date.getTime() + wpt_editor_defaults.duration * 1000					
+						@enddate.val enddate.dateFormat wpt_editor_defaults.datetime_format
+			
+		@enddate.datetimepicker	
+			format : wpt_editor_defaults.datetime_format
+			step: 15
 		
-		@event_date.change =>
-			event_date_value = @event_date.datetimepicker 'getDate'
-			if event_date_value?
-				event_date_value.setSeconds event_date_value.getSeconds() + wpt_editor_defaults.duration
-				@endtime.datetimepicker 'setDate', event_date_value
-
 	init_delete_links : ->
 		jQuery('.wpt_event_editor_event_action_delete').click (e) =>
 			if confirm wpt_editor_defaults.confirm_delete_message

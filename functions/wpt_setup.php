@@ -6,6 +6,10 @@
 	
 			// Hooks
 			add_action( 'init', array($this,'init'));
+
+			add_action( 'init', array($this,'register_post_types'));
+			add_action( 'init', array($this,'register_event_meta'));
+			
 			add_filter( 'gettext', array($this,'gettext'), 20, 3 );
 			
 			add_action( 'widgets_init', array($this,'widgets_init'));
@@ -40,7 +44,72 @@
 			return array_merge( $plugin_links, $links );
 		}
 	
+		/**
+		 * Why is this here?.
+		 */
 		function init() {
+			do_action('wpt_rewrite_rules');
+		}
+	
+		/**
+		 * Registers all event meta fields and their sanitization callbacks.
+		 * 
+		 * By defining this globally it is no longer necessary to manually sanitize data when
+		 * saving it to the database (eg. in the admin or during the import).
+		 *
+		 * @since 0.11
+		 * @return void
+		 */
+		public function register_event_meta() {
+			register_meta(
+				'post',
+				'event_date',
+				array($this, 'sanitize_event_date')
+			);
+			register_meta(
+				'post',
+				'enddate',
+				array($this, 'sanitize_enddate')
+			);
+			register_meta(
+				'post',
+				'venue',
+				'sanitize_text_field'
+			);
+			register_meta(
+				'post',
+				'city',
+				'sanitize_text_field'
+			);
+			register_meta(
+				'post',
+				'remark',
+				'sanitize_text_field'
+			);
+			register_meta(
+				'post',
+				'tickets_url',
+				'sanitize_text_field'
+			);
+			register_meta(
+				'post',
+				'tickets_button',
+				'sanitize_text_field'
+			);
+			register_meta(
+				'post',
+				'tickets_status',
+				'sanitize_text_field'
+			);
+			register_meta(
+				'post',
+				'_wpt_event_tickets_price',
+				array($this, 'sanitize_event_tickets_price')
+			);
+		}
+	
+		public function register_post_types() {
+			
 			register_post_type( WPT_Production::post_type_name,
 				array(
 					'labels' => array(
@@ -60,9 +129,9 @@
 		  			'rewrite' => array(
 		  				'slug' => sanitize_title(__('production','wp_theatre'))
 		  			)
-		  			
 				)
 			);
+			
 			register_post_type( WPT_Event::post_type_name,
 				array(
 					'labels' => array(
@@ -81,6 +150,7 @@
 					'show_in_nav_menus'=> false
 				)
 			);
+			
 			register_post_type( 'wp_theatre_season',
 				array(
 					'labels' => array(
@@ -94,10 +164,31 @@
 				)
 			);
 
-
-			do_action('wpt_rewrite_rules');
-
 		}	
+		
+		public function sanitize_event_date( $value ) {
+			return date( 'Y-m-d H:i', strtotime($value) );
+		}
+		
+		public function sanitize_enddate( $value ) {
+			return date( 'Y-m-d H:i', strtotime($value) );
+		}
+		
+		public function sanitize_event_tickets_price( $value) {
+			
+			$price_parts = explode( '|', $value );
+			
+			// Sanitize the amount.
+			$price_parts[0] = (float) $price_parts[0];
+			
+			// Sanitize the name.
+			if (!empty($prices_parts[1])) {
+				$price_parts[1] = trim($price_parts[1]);
+			}
+			
+			return implode('|',$price_parts);
+			
+		}
 	
 		function cron_schedules( $schedules ) {
 			// Adds once weekly to the existing schedules.

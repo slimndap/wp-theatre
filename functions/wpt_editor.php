@@ -5,8 +5,7 @@ class WPT_Event_Editor {
 
 		add_action( 'admin_init', array($this,'enqueue_scripts'));
 
-
-		add_action('add_meta_boxes_'.WPT_Production::post_type_name, array($this, 'add_meta_box'));
+		add_action('add_meta_boxes_'.WPT_Production::post_type_name, array($this, 'add_events_meta_box'));
 		
 		/*
 		 * Process the form by hooking into the `save_post`-action.
@@ -20,11 +19,11 @@ class WPT_Event_Editor {
 		
 	}
 	
-	public function add_meta_box() {
+	public function add_events_meta_box() {
 		add_meta_box(
 			'wpt_event_editor', 
 			__('Event dates','wp_theatre'), 
-			array($this,'render_meta_box'), 
+			array($this,'events_meta_box'), 
 			WPT_Production::post_type_name, 
 			'normal', 
 			'high'
@@ -66,16 +65,87 @@ class WPT_Event_Editor {
 	private function get_defaults() {
 		$defaults = array(
 			'duration' => 2 * HOUR_IN_SECONDS,
-			'event_date' => date('m/d/Y H:i',strtotime('Today 8 PM')),
+			'datetime_format' => 'Y-m-d H:i',
+			'event_date' => date('Y-m-d H:i',strtotime('Today 8 PM')),
 			'tickets_button' => __('Tickets', 'wp_theatre'),
 			'tickets_status' => WPT_Event::tickets_status_onsale,
 			'confirm_delete_message' => __('Are you sure that you want to delete this event?','wp_theatre'),
 		);
 		
-		return apply_filters('wpt_event_editor_defaults', $defaults);
+		return apply_filters('wpt/event_editor/defaults', $defaults);
 	}
 	
-	public function render_meta_box($post) {
+	public function get_fields() {
+		$defaults = $this->get_defaults();
+		
+		$event_fields = array(
+			array(
+				'id' => 'event_date',
+				'title' => __('Start time','wp_theatre'),
+			),
+			array(
+				'id' => 'enddate',
+				'title' => __('End time','wp_theatre'),
+				'save' => array(
+					'callback' => array($this, 'save_field_enddate'),
+				),
+			),
+			array(
+				'id' => 'venue',
+				'title' => __('Venue','wp_theatre'),
+			),
+			array(
+				'id' => 'city',
+				'title' => __('City','wp_theatre'),
+			),
+			array(
+				'id' => 'remark',
+				'title' => __('Remark','wp_theatre'),
+				'edit' => array(
+					'placeholder' => __('e.g. Premiere or Try-out','wp_theatre'),
+				),
+			),
+			array(
+				'id' => 'tickets_status',
+				'title' => __('Tickets status','wp_theatre'),
+				'edit' => array(
+					'callback' => array($this, 'get_control_tickets_status'),
+				),
+				'save' => array(
+					'callback' => array($this, 'save_field_tickets_status'),
+				),
+			),
+			array(
+				'id' => 'tickets_url',
+				'title' => __('Tickets URL','wp_theatre'),
+				'edit' => array(
+					'placeholder' => 'http://',
+				),
+			),
+			array(
+				'id' => 'tickets_button',
+				'title' => __('Text for tickets link','wp_theatre'),
+				'edit' => array(
+					'description' => sprintf(__('Leave blank for \'%s\'','wp_theatre'), $defaults['tickets_button']),
+				),
+			),
+			array(
+				'id' => '_wpt_event_tickets_price',
+				'title' => __('Prices','wp_theatre'),
+				'edit' => array(
+					'callback' => array($this, 'get_control_prices'),
+					'description' => __('Place extra prices on a new line.','wp_theatre'),
+				),
+				'save' => array(
+					'callback' => array($this, 'save_field_prices'),
+				),
+			),
+		);
+		
+		return apply_filters('wpt/event_editor/fields', $event_fields);
+	}
+	
+	public function events_meta_box($post) {
 		
 		$production = new WPT_Production($post);
 		
@@ -111,8 +181,119 @@ class WPT_Event_Editor {
 
 	}
 	
-	private function render_event_listing($production) {
+	public function get_control($field, $event_id=false) {		
 		
+		$html = '';
+		
+		if (!empty($field['edit']['callback'])) {
+			$html.= call_user_func_array($field['edit']['callback'], array($field, $event_id) );
+		} else {
+			$html.= '<input type="text" id="wpt_event_editor_'.$field['id'].'" name="wpt_event_editor_'.$field['id'].'"';
+			
+			if (!empty($field['edit']['placeholder'])) {
+				$html.= ' placeholder="'.$field['edit']['placeholder'].'"';
+			}
+			
+			if(is_numeric($event_id)) {
+				$value = get_post_meta($event_id, $field['id'], true);
+				
+				$html.= ' value="'.esc_attr($value).'"';
+			}
+			
+			$html.= ' />';
+		}
+		
+		$html = apply_filters('wpt/event_editor/control/field='.$field['id'], $html);
+		$html = apply_filters('wpt/event_editor/control', $html, $field);
+		
+		return $html;
+	}
+		
+	public function get_control_label($field) {
+		$html = '';
+		
+
+		$label = apply_filters('wpt/event_editor/control/label/field='.$field['id'], $field['title']);
+		$label = apply_filters('wpt/event_editor/control/label/', $field['title'], $field);
+		$html.= '<label for="wpt_event_editor_'.$event_field['id'].'">'.$label.'</label>';
+		
+		if (!empty($field['edit']['description'])) {
+			$html.= '<p class="description">'.$field['edit']['description'].'</p>';
+		}
+		
+		return $html;
+	}
+	
+	public function get_control_prices($field, $event_id=false) {
+		$html = '';
+		$html.= '<textarea id="wpt_event_editor_'.$field['id'].'" name="wpt_event_editor_'.$field['id'].'">';
+
+		if(is_numeric($event_id)) {
+			$values = get_post_meta($event_id, $field['id'], false);
+			$html.= implode("\n",$values);
+		}
+
+		$html.= '</textarea>';
+		return $html;
+	}
+	
+	public function get_control_tickets_status($field, $event_id=false) {
+		
+		$defaults = $this->get_defaults();
+		
+		$html = '';
+
+		$tickets_status_options = array(
+			WPT_Event::tickets_status_onsale => __('On sale','wp_theatre'),
+			WPT_Event::tickets_status_soldout => __('Sold Out','wp_theatre'),
+			WPT_Event::tickets_status_cancelled => __('Cancelled','wp_theatre'),
+			WPT_Event::tickets_status_hidden => __('Hidden','wp_theatre'),	
+		);
+		$tickets_status_options = apply_filters('wpt_event_editor_tickets_status_options', $tickets_status_options);
+
+		if(is_numeric($event_id)) {
+			$value = get_post_meta($event_id, $field['id'], true);
+		}
+		
+		if (empty($value)) {
+			$value = $defaults['tickets_status'];
+		}
+
+		foreach ($tickets_status_options as $status=>$name) {
+			$html.= '<label>';
+			$html.= '<input type="radio" name="wpt_event_editor_'.$field['id'].'" value="'.$status.'"';
+			$html.= checked($value, $status, false);
+			$html.= ' />';
+			$html.= '<span>'.$name.'</span>';
+			$html.= '</label><br />	';
+		}
+
+		$html.= '<label>';
+		$html.= '<input type="radio" name="wpt_event_editor_'.$field['id'].'" value="'.WPT_Event::tickets_status_other.'"';
+		$html.= checked(
+			in_array(
+				$value, 
+				array_keys($tickets_status_options)
+			), 
+			false, 
+			false
+		);
+		$html.= '/>';
+		$html.= '<span>'.__('Other','wp_theatre').': </span>';
+		$html.= '</label>';
+		$html.= '<input type="text" name="wpt_event_editor_'.$field['id'].'_other"';
+		if (!in_array($value, array_keys($tickets_status_options))) {
+			$html.= ' value="'.esc_attr($value).'"';
+		}
+		$html.= ' />';
+
+		$html = apply_filters('wpt/editor/event/control/tickets_status', $html, $field);
+
+		return $html;
+	}
+	
+	private function render_event_listing($production) {
+
 		$events = $production->events();
 		
 		if (!empty($events)) {
@@ -181,151 +362,22 @@ class WPT_Event_Editor {
 
 		echo '<table class="wpt_event_editor_event_form">';
 
-		/*
-		 * Start date/time for event.
-		 */
-		$field = 'datetime_start';
-		$html = '';
-		$html.= '<tr>';
-		$html.= '<th><label for="wpt_event_editor_event_date">'.__('Start time','wp_theatre').'</label></th>';
-		$html.= '<td>';
-		$html.= '<input type="text" id="wpt_event_editor_event_date" name="wpt_event_editor_event_date" />';
-		$html.= '</td>';
-		$html.= '</tr>';
-		echo apply_filters('wpt_event_editor_event_date', $html);
-		do_action('wpt_event_editor_event_date_after');
-	
-		/*
-		 * End date/time for event.
-		 */
-		$html = '';
-		$html.= '<tr>';
-		$html.= '<th><label for="wpt_event_editor_enddate">'.__('End time','wp_theatre').'</label></th>';
-		$html.= '<td>';
-		$html.= '<input type="text" id="wpt_event_editor_enddate" name="wpt_event_editor_enddate" />';
-		$html.= '</td>';
-		$html.= '</tr>';
-		echo apply_filters('wpt_event_editor_enddate', $html);
-		do_action('wpt_event_editor_enddate_after');
-	
-		/*
-		 * Venue for event.
-		 */
-		$html = '';
-		$html.= '<tr>';
-		$html.= '<th><label for="wpt_event_editor_venue">'.__('Venue','wp_theatre').'</label></th>';
-		$html.= '<td>';
-		$html.= '<input type="text" id="wpt_event_editor_venue" name="wpt_event_editor_venue" />';
-		$html.= '</td>';
-		$html.= '</tr>';
-		echo apply_filters('wpt_event_editor_venue', $html);
-		do_action('wpt_event_editor_venue_after');
-	
-		/*
-		 * City for event.
-		 */
-		$html = '';
-		$html.= '<tr>';
-		$html.= '<th><label for="wpt_event_editor_city">'.__('City','wp_theatre').'</label></th>';
-		$html.= '<td>';
-		$html.= '<input type="text" id="wpt_event_editor_city" name="wpt_event_editor_city" />';
-		$html.= '</td>';
-		$html.= '</tr>';
-		echo apply_filters('wpt_event_editor_city', $html);
-		do_action('wpt_event_editor_city_after');
-	
-		/*
-		 * Remark for event.
-		 */
-		$html = '';
-		$html.= '<tr>';
-		$html.= '<th><label for="wpt_event_editor_remark">'.__('Remark','wp_theatre').'</label></th>';
-		$html.= '<td>';
-		$html.= '<input type="text" id="wpt_event_editor_remark" name="wpt_event_editor_remark" placeholder="'.__('e.g. Premiere or Try-out','wp_theatre').'" />';
-		$html.= '</td>';
-		$html.= '</tr>';
-		echo apply_filters('wpt_event_editor_remark', $html);
-		do_action('wpt_event_editor_remark_after');
-	
-		/*
-		 * Tickets Status for event.
-		 */
-		$html = '';
-		$html.= '<tr>';
-		$html.= '<th><label for="wpt_event_editor_tickets_status">'.__('Tickets status','wp_theatre').'</label></th>';
-		$html.= '<td>';
+		$event_fields = $this->get_fields();
+		foreach ($event_fields as $field) {
+			
+			$html = '';
+			$html.= '<tr>';
+			$html.= '<th>'.$this->get_control_label($field).'</th>';
+			$html.= '<td>';
+			$html.= $this->get_control($field);
+			$html.= '</td>';
+			$html.= '</tr>';
 
-		$tickets_status_options = array(
-			WPT_Event::tickets_status_onsale => __('On sale','wp_theatre'),
-			WPT_Event::tickets_status_soldout => __('Sold Out','wp_theatre'),
-			WPT_Event::tickets_status_cancelled => __('Cancelled','wp_theatre'),
-			WPT_Event::tickets_status_hidden => __('Hidden','wp_theatre'),	
-		);
-		$tickets_status_options = apply_filters('wpt_event_editor_tickets_status_options', $tickets_status_options);
+			$html = apply_filters('wpt/editor/form/event_control/field='.$field['id'], $html);
+			$html = apply_filters('wpt/editor/form/event_control', $html);
 
-		foreach ($tickets_status_options as $status=>$name) {
-			$html.= '<label>';
-			$html.= '<input type="radio" name="wpt_event_editor_tickets_status" value="'.$status.'"';
-			$html.= checked($defaults['tickets_status'], $status, false);
-			$html.= '>';
-			$html.= '<span>'.$name.'</span>';
-			$html.= '</label><br />	';
+			echo $html;
 		}
-
-		$html.= '<label>';
-		$html.= '<input type="radio" name="wpt_event_editor_tickets_status" value="'.WPT_Event::tickets_status_other.'" />';
-		$html.= '<span>'.__('Other','wp_theatre').': </span>';
-		$html.= '</label><input type="text" name="wpt_event_editor_tickets_status_other" />';
-
-		$html.= '</td>';
-		$html.= '</tr>';
-		echo apply_filters('wpt_event_editor_tickets_status', $html);
-		do_action('wpt_event_editor_tickets_status_after');
-		
-		/*
-		 * Tickets URL for event.
-		 */
-		$html = '';
-		$html.= '<tr>';
-		$html.= '<th><label for="wpt_event_editor_tickets_url">'.__('Tickets URL','wp_theatre').'</label></th>';
-		$html.= '<td>';
-		$html.= '<input type="text" id="wpt_event_editor_tickets_url" name="wpt_event_editor_tickets_url" placeholder="http://" />';
-		$html.= '</td>';
-		$html.= '</tr>';
-		echo apply_filters('wpt_event_editor_tickets_url', $html);
-		do_action('wpt_event_editor_tickets_url_after');
-	
-		/*
-		 * Text on button for event.
-		 */
-		$html = '';
-		$html.= '<tr>';
-		$html.= '<th>';
-		$html.= '<label for="wpt_event_editor_tickets_button">'.__('Text for tickets link','wp_theatre').'</label>';
-		$html.= '<p class="description">'.sprintf(__('Leave blank for \'%s\'','wp_theatre'), $defaults['tickets_button']).'</p>';
-		$html.= '</th>';
-		$html.= '<td>';
-		$html.= '<input type="text" id="wpt_event_editor_tickets_button" name="wpt_event_editor_tickets_button" />';
-		$html.= '</td>';
-		$html.= '</tr>';
-		echo apply_filters('wpt_event_editor_tickets_button', $html);
-		do_action('wpt_event_editor_tickets_button_after');
-	
-		/*
-		 * Prices for event.
-		 */
-		$html = '';
-		$html.= '<tr>';
-		$html.= '<th>';
-		$html.= '<label for="wpt_event_editor_prices">'.__('Ticket prices','wp_theatre').'</label>';
-		$html.= '<p class="description">'.sprintf(__('Seperate multiple prices by semicolon (;)','wp_theatre'), $defaults['tickets_button']).'</p>';
-		$html.= '</th>';
-		$html.= '<td>';
-		$html.= '<input type="text" id="wpt_event_editor_prices" name="wpt_event_editor_prices" />';
-		$html.= '</td>';
-		$html.= '</tr>';
-		echo apply_filters('wpt_event_editor_prices', $html);
-		do_action('wpt_event_editor_prices_after');
 	
 		echo '</table>';
 	}
@@ -350,7 +402,7 @@ class WPT_Event_Editor {
 			return $post_id;
 		}
 		
-		// unhook to avoid loops
+		// Unhook to avoid loops
 		remove_action( 'save_post', array( $this, 'save_event' ) );
 
 		$post = array(
@@ -359,33 +411,13 @@ class WPT_Event_Editor {
 		);
 		
 		if ($event_id = wp_insert_post($post)) {
+			
 			add_post_meta($event_id, WPT_Production::post_type_name, $post_id, true);
-			add_post_meta($event_id, 'event_date', $_POST['wpt_event_editor_event_date'], true);
-			add_post_meta($event_id, 'enddate', $_POST['wpt_event_editor_enddate'], true);
-			add_post_meta($event_id, 'venue', $_POST['wpt_event_editor_venue'], true);
-			add_post_meta($event_id, 'city', $_POST['wpt_event_editor_city'], true);
-			add_post_meta($event_id, 'remark', $_POST['wpt_event_editor_remark'], true);
-			add_post_meta($event_id, 'tickets_url', $_POST['wpt_event_editor_tickets_url'], true);
-			add_post_meta($event_id, 'tickets_button', $_POST['wpt_event_editor_tickets_button'], true);
 
-			// Prices
-			delete_post_meta($post_id, '_wpt_event_tickets_price');
-	
-			$prices = explode(',',$_POST['wpt_event_editor_prices']);
-			for ($p=0;$p<count($prices);$p++) {
-				$price = (float) $prices[$p];
-				if ($price>0) {
-					add_post_meta($post_id,'_wpt_event_tickets_price', $price);			
-				}
+			foreach ($this->get_fields() as $field) {
+				$this->save_field($field, $event_id);
 			}
-
-			// Tickets status
-			$tickets_status = $_POST['wpt_event_editor_tickets_status'];
-			if ($tickets_status==WPT_Event::tickets_status_other) {
-				$tickets_status = $_POST['wpt_event_editor_tickets_status_other'];
-			}
-			update_post_meta( $event_id, 'tickets_status', $tickets_status );
-
+			
 			return new WPT_Event($post_id);
 
 		} else {
@@ -393,4 +425,76 @@ class WPT_Event_Editor {
 		}
 
 	}	
+	
+	public function save_field($field, $event_id) {
+
+		if (!empty($field['save']['callback'])) {
+			call_user_func_array( $field['save']['callback'], array($field, $event_id) );
+		} else {
+			$value = $_POST[ 'wpt_event_editor_'.$field[ 'id' ] ];
+			
+			$value = apply_filters( 'wpt/event_editor/save/field/value/field='.$field['id'], $value, $event_id);
+			$value = apply_filters( 'wpt/event_editor/save/field/value', $value, $field, $event_id);
+			
+			$field_id = update_post_meta($event_id, $field['id'], $value);			
+		}
+
+		do_action( 'wpt/event_editor/save/field/field='.$field['id'], $value, $event_id );
+		do_action( 'wpt/event_editor/save/field', $value, $field, $event_id );
+		
+		return $field_id;
+			
+	}
+	
+	public function save_field_enddate($field, $event_id) {
+		
+		$defaults = $this->get_defaults();
+		
+		$value = $_POST['wpt_event_editor_'.$field['id']];
+		
+		$event_date = strtotime( $_POST['wpt_event_editor_event_date'] );
+		$enddate = strtotime( $value );
+		if ($enddate < $event_date) {
+			$value = date( 'Y-m-d H:i', $event_date + $defaults['duration'] );
+		}
+		
+		$field_id = update_post_meta($event_id, $field['id'], $value);
+		
+		do_action( 'wpt/event_editor/save/field/enddate', $value, $field, $event_id );
+		
+		return $field_id;
+		
+	}
+	
+	public function save_field_prices($field, $event_id) {
+
+		delete_post_meta($event_id, $field['id']);
+
+		$values = explode("\n",$_POST['wpt_event_editor_'.$field['id']]);
+		
+		foreach($values as $value) {
+			$value = apply_filters( 'wpt/event_editor/save/field/prices/value', $value, $field, $event_id);
+			add_post_meta($event_id, $field['id'], $value);			
+		}		
+		
+		do_action( 'wpt/event_editor/save/field/prices', $value, $field, $event_id );
+		
+	}
+	
+	public function save_field_tickets_status($field, $event_id) {
+
+		$value = $_POST['wpt_event_editor_'.$field['id']];
+
+		if ($value==WPT_Event::tickets_status_other) {
+			$value = $_POST['wpt_event_editor_'.$field['id'].'_other'];
+		}
+
+		$value = apply_filters( 'wpt/editor/event/save/field/tickets_status/value', $value, $field, $event_id);
+
+		update_post_meta( $event_id, $field['id'], $value );
+
+		do_action( 'wpt/event_editor/save/field/tickets_status', $value, $field, $event_id );
+		
+	}
+	
 }

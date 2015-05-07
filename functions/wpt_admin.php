@@ -37,14 +37,10 @@ class WPT_Admin {
 			'wp_theatre_admin', 
 			plugins_url( '../js/admin.js', __FILE__ ), 
 			array(
-				'jquery',
-				'jquery-ui-datepicker',
-				'jquery-ui-slider',
+				'jquery'
 			) 
 		);
 		wp_enqueue_style( 'wp_theatre_admin', plugins_url( '../css/admin.css', __FILE__ ) );
-		wp_enqueue_script( 'jquery-ui-timepicker', plugins_url( '../js/jquery-ui-timepicker-addon.js', __FILE__ ), array('jquery-ui-datepicker','jquery-ui-slider')  );
-		wp_enqueue_style('jquery-style', '//ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css');
 		wp_enqueue_style( 'wp_theatre', plugins_url( '../css/style.css', __FILE__ ) );
 
 
@@ -183,28 +179,21 @@ class WPT_Admin {
 	 * @since 0.1
 	 * @since 0.10 	Removed all static calls to public methods.
 	 *				Fixes #77: https://github.com/slimndap/wp-theatre/issues/77
+	 * @since 0.11	Replaced the 'Event data' and 'Tickets' forms with 
+	 *				the new WPT_Event_Editor form.
 	 * @access public
 	 * @return void
 	 */
 	function add_meta_boxes() {
 		
-		// Add an 'Event data' metabox to the event admin screen.
 		add_meta_box(
-            'wp_theatre_event_data',
-            __('Event data','wp_theatre'),
-            array($this,'meta_box_event_data'),
-            WPT_Event::post_type_name,
-            'normal'
-        ); 		
-
-		// Add a 'Tickets' metabox to the event admin screen.
-		add_meta_box(
-            'wp_theatre_tickets',
-            __('Tickets','wp_theatre'),
-            array($this,'meta_box_tickets'),
-            WPT_Event::post_type_name,
-            'normal'
-        ); 	
+			'wpt_event_editor', 
+			__('Event dates','wp_theatre'), 
+			array($this,'event_meta_box'), 
+			WPT_Event::post_type_name, 
+			'normal', 
+			'high'
+		);
 
 		// Add a 'Seasons' metabox to the production admin screen.
 		add_meta_box(
@@ -285,13 +274,14 @@ class WPT_Admin {
 
 	}
 
-	function meta_box_event_data($event) {
+	function event_meta_box($event) {
+		global $wp_theatre;
+		
 		wp_nonce_field(WPT_Event::post_type_name, WPT_Event::post_type_name.'_nonce' );
 
-		echo '<table class="form-table">';
-		echo '<tbody>';
+		echo '<table class="wpt_event_editor_event_form">';
 
-		echo '<tr class="form-field">';		
+		echo '<tr>';		
 		echo '<th>';
 		echo '<label>';
 		_e('Production','wp_theatre');
@@ -329,130 +319,24 @@ class WPT_Admin {
 		echo '</td>';
 		echo '</tr>';
 		
-		echo '<tr class="form-field">';
-		echo '<th><label>'.__('Start date','wp_theatre').'</label></th>';	
-		echo '<td>';
-		echo '<input type="text" class="wp_theatre_datepicker" name="event_date"';
-        echo ' value="' . get_post_meta($event->ID,'event_date',true) . '" />';
- 		echo '</td>';
-		echo '</tr>';
-       
-		echo '<tr class="form-field">';
-		echo '<th><label>'.__('End date','wp_theatre').'</label></th>';	
-		echo '<td>';
-		echo '<input type="text" class="wp_theatre_datepicker" name="enddate"';
-        echo ' value="' . get_post_meta($event->ID,'enddate',true) . '" />';
- 		echo '</td>';
-		echo '</tr>';
-       
-		echo '<tr class="form-field">';
-		echo '<th><label>'.__('Venue','wp_theatre').'</label></th>';	
-		echo '<td>';
-		echo '<input type="text" name="venue"';
-        echo ' value="' . get_post_meta($event->ID,'venue',true) . '" />';
- 		echo '</td>';
-		echo '</tr>';
-       
-		echo '<tr class="form-field">';
-		echo '<th><label>'.__('City','wp_theatre').'</label></th>';	
-		echo '<td>';
-		echo '<input type="text" name="city"';
-        echo ' value="' . get_post_meta($event->ID,'city',true) . '" />';
- 		echo '</td>';
-		echo '</tr>';
-       
-		echo '<tr class="form-field">';
-		echo '<th><label>'.__('Remark','wp_theatre').'</label></th>';	
-		echo '<td>';
-		echo '<input type="text" name="remark" value="' . get_post_meta($event->ID,'remark',true) . '" placeholder="'.__('e.g. Premiere or Try-out','wp_theatre').'" />';
- 		echo '</td>';
-		echo '</tr>';
-       
-        echo '</tbody>';
+		$event_fields = $wp_theatre->event_editor->get_fields();
+		
+		foreach ($event_fields as $field) {
+			
+			$html = '';
+			$html.= '<tr>';
+			$html.= '<th>'.$wp_theatre->event_editor->get_control_label($field).'</th>';
+			$html.= '<td>';
+			$html.= $wp_theatre->event_editor->get_control($field, $event->ID);
+			$html.= '</td>';
+			$html.= '</tr>';
+
+			echo $html;
+		}
+		       
         echo '</table>';		
 	}
 	
-	function meta_box_tickets($event) {
-		echo '<table class="form-table">';
-		echo '<tbody>';
-		
-		echo '<tr class="form-field">';
-		echo '<th><label>'.__('Tickets URL','wp_theatre').'</label></th>';	
-		echo '<td>';
-		echo '<input type="url" name="tickets_url"';
-        echo ' value="' . get_post_meta($event->ID,'tickets_url',true) . '" />';
- 		echo '</td>';
-		echo '</tr>';
-       
-  		echo '<tr>';
-		echo '<th><label>'.__('Status','wp_theatre').'</label></th>';	
-		echo '<td>';
-				
-		$current_status = get_post_meta($event->ID,'tickets_status',true);
-		if (empty($current_status)) {
-			$current_status=WPT_Event::tickets_status_onsale;
-		}
-		$statusses = array(
-			WPT_Event::tickets_status_onsale => __('On sale','wp_theatre'),
-			WPT_Event::tickets_status_soldout => __('Sold Out','wp_theatre'),
-			WPT_Event::tickets_status_cancelled => __('Cancelled','wp_theatre'),
-			WPT_Event::tickets_status_hidden => __('Hidden','wp_theatre'),	
-		);
-		foreach ($statusses as $status=>$name) {
-			echo '<label>';
-			echo '<input type="radio" name="tickets_status" value="'.$status.'"';
-			if ($current_status==$status) {
-				echo ' checked="checked"';
-			}
-			echo '>';
-			echo '<span>'.$name.'</span>';
-			echo '</label><br />	';
-		}
-				
-		echo '<label>';
-		
-		$checked = '';
-		$value = '';
-		if (!in_array($current_status, array_keys($statusses))) {
-			$checked = ' checked="checked"';
-			$value = $current_status;
-		}
-		echo '<input type="radio" name="tickets_status" value="'.WPT_Event::tickets_status_other.'" '.$checked.' />';
-		echo '<span>'.__('Other','wp_theatre').': </span>';
-		echo '</label><input type="text" name="tickets_status_other" value="'.$value.'" /><br />';
-		
- 		echo '</td>';
-		echo '</tr>';
-		
-  		echo '<tr>';
-		echo '<th><label>'.__('Text on button','wp_theatre').'</label></th>';	
-		echo '<td>';
-						
-		echo '<input type="text" name="tickets_button"';
-        echo ' value="' . get_post_meta($event->ID,'tickets_button',true) . '" />';
- 		echo '</td>';
-		echo '</tr>';
-       
-       
-       
-  		// Prices
-  		$label = __('Prices','wp_theatre');
-  		if (!empty($this->options['currencysymbol'])) {
-	  		$label.= ' ('.$this->options['currencysymbol'].')';
-  		}
-  		echo '<tr>';
-		echo '<th><label>'.$label.'</label></th>';	
-		echo '<td>';
-						
-		echo '<input type="text" name="_wpt_event_tickets_prices"';
-        echo ' value="' . implode(', ',get_post_meta($event->ID,'_wpt_event_tickets_price')) . '" />';
- 		echo '</td>';
-		echo '</tr>';
-       
-        echo '</tbody>';
-        echo '</table>';		
-	}
-
 	function meta_box_seasons($production) {
 		wp_nonce_field(WPT_Production::post_type_name, WPT_Production::post_type_name.'_nonce' );
 
@@ -481,6 +365,9 @@ class WPT_Admin {
 	}
 	
 	function save_event( $post_id ) {
+		
+		global $wp_theatre;
+		
 		/*
 		 * We need to verify this came from the our screen and with proper authorization,
 		 * because save_post can be triggered at other times.
@@ -509,59 +396,12 @@ class WPT_Admin {
 		/* OK, its safe for us to save the data now. */
 
 		// Sanitize the user input.
-		$production = sanitize_text_field( $_POST[WPT_Production::post_type_name] );
+		update_post_meta( $post_id, WPT_Production::post_type_name, $_POST[WPT_Production::post_type_name] );
 		
-		$event_date = strtotime($_POST['event_date']);
-		$enddate = strtotime($_POST['enddate']);
-		if ($enddate<$event_date) {
-			$enddate = $event_date;
+		foreach ($wp_theatre->event_editor->get_fields() as $field) {
+			$wp_theatre->event_editor->save_field($field, $post_id);
 		}
-
-		$venue = sanitize_text_field( $_POST['venue'] );
-		$city = sanitize_text_field( $_POST['city'] );
-		$remark = sanitize_text_field( $_POST['remark'] );
-		$tickets_url = esc_url( $_POST['tickets_url'] );
-		$tickets_button = sanitize_text_field( $_POST['tickets_button'] );
-		
-		// Update the meta field.
-		update_post_meta( $post_id, WPT_Production::post_type_name, $production );
-		update_post_meta( $post_id, 'event_date', date('Y-m-d H:i:s',$event_date) );
-		update_post_meta( $post_id, 'enddate', date('Y-m-d H:i:s',$enddate) );
-		update_post_meta( $post_id, 'venue', $venue );
-		update_post_meta( $post_id, 'city', $city );
-		update_post_meta( $post_id, 'remark', $remark );
-		update_post_meta( $post_id, 'tickets_url', $tickets_url );
-		update_post_meta( $post_id, 'tickets_button', $tickets_button );
-		
-		// Prices
-		delete_post_meta($post_id, '_wpt_event_tickets_price');
-
-		$prices = explode(',',$_POST['_wpt_event_tickets_prices']);
-		for ($p=0;$p<count($prices);$p++) {
 			
-			$price_parts = explode('|',$prices[$p]);
-			
-			// Sanitize the amount.
-			$price_parts[0] = (float) $price_parts[0];
-			
-			// Sanitize the name.
-			if (!empty($prices_parts[1])) {
-				$price_parts[1] = trim($price_parts[1]);
-			}
-			
-			// Check if the price is valid.
-			if ($price_parts[0]>0) {
-				add_post_meta($post_id,'_wpt_event_tickets_price', implode('|',$price_parts));			
-			}
-		}
-		
-		// Tickets status
-		$tickets_status = $_POST['tickets_status'];
-		if ($tickets_status==WPT_Event::tickets_status_other) {
-			$tickets_status = sanitize_text_field($_POST['tickets_status_other']);
-		}
-		update_post_meta( $post_id, 'tickets_status', $tickets_status );
-		
 	}
 	
 	function save_production( $post_id ) {
@@ -603,7 +443,7 @@ class WPT_Admin {
 		 */
 		
 		// unhook to avoid loops
-		remove_action( 'save_post_'.WPT_Event::post_type_name, array( $this, 'save_event' ) );
+		remove_action( 'save_post', array( $this, 'save_event' ) );
 
 		$post = get_post($post_id);
 		$events = $this->get_events($post_id);
@@ -628,7 +468,7 @@ class WPT_Admin {
 		}
 
 		// rehook
-		add_action( 'save_post_'.WPT_Event::post_type_name, array( $this, 'save_event' ) );
+		add_action( 'save_post', array( $this, 'save_event' ) );
 
 		/**
 		 * Fires after a production is saved through the admin screen.

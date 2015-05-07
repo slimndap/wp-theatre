@@ -51,7 +51,7 @@ class WP_Theatre {
 		$this->listing_page = new WPT_Listing_Page();
 		$this->calendar = new WPT_Calendar();
 		$this->filter = new WPT_Filter();
-		$this->editor = new WPT_Event_Editor();
+		$this->event_editor = new WPT_Event_Editor();
 		$this->cart = new WPT_Cart();
 		if (is_admin()) {
 		} else {
