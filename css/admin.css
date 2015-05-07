@@ -527,6 +527,9 @@
   vertical-align: top;
   border-bottom: 1px solid #F0F0F0;
 }
+#wpt_event_editor .inside .wpt_event_editor_event_listing table tr td.wpt_event_editor_event_actions {
+  text-align: right;
+}
 #wpt_event_editor .inside h4 {
   padding: 0 12px;
 }
