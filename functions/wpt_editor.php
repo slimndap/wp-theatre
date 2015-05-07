@@ -157,28 +157,34 @@ class WPT_Event_Editor {
 		
 	}
 	
-	private function render_event_actions($event) {
-		
+	private function get_actions($event_id) {
+
 		$actions = array(
-			'edit' => 		array(
-								'label' => __('Edit'),
-								'link' => get_edit_post_link($event->ID),
-							),	
-			'delete' => 	array(
-								'label' => __('Delete'),
-								'link' => get_delete_post_link($event->ID,'',true),
-							),	
+			'edit' => 	array(
+				'label' => __('Edit'),
+				'link' => get_edit_post_link($event_id),
+			),	
+			'delete' => array(
+				'label' => __('Delete'),
+				'link' => get_delete_post_link($event_id,'',true),
+			),	
 		);
-		$actions = apply_filters('wpt_event_editor_event_actions', $actions, $event);
+
+		return apply_filters('wpt/event_editor/actions', $actions, $event_id);
+		
+
+	}
+
+	private function get_actions_html($event_id) {
 		
 		$html = '';
 		
-		foreach ($actions as $action=>$action_args) {
+		foreach ($this->get_actions($event_id) as $action=>$action_args) {
 			$html.= '<a class="wpt_event_editor_event_action_'.$action.'" href="'.$action_args['link'].'">'.$action_args['label'].'</a> ';
 		}
 		
-		echo apply_filters('wpt_event_editor_event_actions_html', $html, $event);
-
+		return apply_filters('wpt/event_editor/actions/html', $html, $event_id, $actions);
+		
 	}
 	
 	public function get_control($field, $event_id=false) {		
@@ -203,8 +209,8 @@ class WPT_Event_Editor {
 			$html.= ' />';
 		}
 		
-		$html = apply_filters('wpt/event_editor/control/field='.$field['id'], $html);
-		$html = apply_filters('wpt/event_editor/control', $html, $field);
+		$html = apply_filters('wpt/event_editor/control/html/field='.$field['id'], $html);
+		$html = apply_filters('wpt/event_editor/control/html', $html, $field);
 		
 		return $html;
 	}
@@ -215,6 +221,7 @@ class WPT_Event_Editor {
 
 		$label = apply_filters('wpt/event_editor/control/label/field='.$field['id'], $field['title']);
 		$label = apply_filters('wpt/event_editor/control/label/', $field['title'], $field);
+		
 		$html.= '<label for="wpt_event_editor_'.$event_field['id'].'">'.$label.'</label>';
 		
 		if (!empty($field['edit']['description'])) {
@@ -287,7 +294,7 @@ class WPT_Event_Editor {
 		}
 		$html.= ' />';
 
-		$html = apply_filters('wpt/editor/event/control/tickets_status', $html, $field);
+		$html = apply_filters('wpt/event_editor/control/tickets_status/html', $html, $field);
 
 		return $html;
 	}
@@ -308,13 +315,15 @@ class WPT_Event_Editor {
 				}
 
 				$this->render_event($event);
-				do_action('wpt_event_editor_event_after', $event);
 				
-				echo '<td class="wpt_event_editor_event_actions">';
-				$this->render_event_actions($event);
-				echo '</td>';
-				do_action('wpt_event_editor_event_actions_after', $event);
+				$html_actions = '';
+				$html_actions.= '<td class="wpt_event_editor_event_actions">';
+				$html_actions.= $this->get_actions_html($event->ID);
+				$html_actions.= '</td>';
+				$html_actions = apply_filters('wpt/event_editor/listing/event/actions', $html_actions, $event->ID);
 				
+				echo $html_actions;
+
 				echo '</tr>';
 			}
 			echo '</table>';
