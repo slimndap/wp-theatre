@@ -19,9 +19,10 @@ class WPT_Admin {
 		add_filter('manage_edit-wp_theatre_prod_sortable_columns', array($this,'manage_edit_wp_theatre_prod_sortable_columns') );
 		
 		add_filter('wpt_event_html',array($this,'wpt_event_html'), 10 , 2);
-		add_filter('wpt_production_html',array($this,'wpt_production_html'), 10 , 2);
 		
 		add_filter('views_edit-'.WPT_Production::post_type_name,array($this,'views_productions'));
+
+		add_filter('wpt/event_editor/fields', array($this, 'add_production_to_event_editor'));
 		
 		// More hooks (always load, necessary for bulk editing through AJAX)
 		add_filter('request', array($this,'request'));
@@ -214,6 +215,27 @@ class WPT_Admin {
         ); 	
 	}
 	
+	public function add_production_to_event_editor($fields, $event_id) {
+		
+		$current_screen = get_current_screen();
+		
+		if (WPT_Event::post_type_name == $current_screen->id) {
+			array_unshift(
+				$fields,
+				array(
+					'id' => WPT_Production::post_type_name,
+					'title' => __('Production','wp_theatre'),
+					'edit' => array(
+						'callback' => array($this, 'get_control_production'),
+					),
+				)
+			);				
+		}
+		
+		return $fields;
+		
+	}
+
 	/**
 	 * Show a meta box with display settings for a production.
 	 * http://codex.wordpress.org/Function_Reference/add_meta_box
@@ -274,67 +296,34 @@ class WPT_Admin {
 
 	}
 
+	public function get_control_production($field, $event_id) {
+		
+		$html = '';
+		
+		$production_id = get_post_meta($event_id, $field['id'], true);
+		
+		if (!empty($production_id)) {
+			
+			$production = new WPT_Production( $production_id );
+			
+			$html.= '<input type="hidden" id="wpt_event_editor_'.$field['id'].'" name="wpt_event_editor_'.$field['id'].'" value="'.$production->ID.'" />';
+			$html.= '<a href="'.get_edit_post_link($production->ID).'">'.$production->title().'</a>';
+			
+			
+		}
+		
+		
+		
+		return $html;		
+	}
+	
 	function event_meta_box($event) {
 		global $wp_theatre;
 		
 		wp_nonce_field(WPT_Event::post_type_name, WPT_Event::post_type_name.'_nonce' );
 
-		echo '<table class="wpt_event_editor_event_form">';
-
-		echo '<tr>';		
-		echo '<th>';
-		echo '<label>';
-		_e('Production','wp_theatre');
-		echo '</label> ';
-		echo '</th>';
-		
-		echo '<td>';
-
-		if (isset($_GET[WPT_Production::post_type_name])) {
-			$current_production = (int) $_GET[WPT_Production::post_type_name];
-		} else {
-			$current_production = get_post_meta($event->ID,WPT_Production::post_type_name,true);
-		}
-
-		if (is_numeric($current_production)) {
-			$production = new WPT_Production($current_production);
-			echo '<input type="hidden" name="'.WPT_Production::post_type_name.'" value="'.$current_production.'" />';
-			echo $production->html();
-		} else {
-			echo '<select name="'.WPT_Production::post_type_name.'">';
-			$args = array(
-				'post_type'=>WPT_Production::post_type_name,
-				'posts_per_page' => -1
-			);
-			$productions = get_posts($args);
-			foreach ($productions as $production) {
-				echo '<option value="'.$production->ID.'">';
-				echo get_the_title($production->ID);
-				echo '</option>';
-			}
-			echo '</select>';
-			
-		}	
-		
-		echo '</td>';
-		echo '</tr>';
-		
-		$event_fields = $wp_theatre->event_editor->get_fields();
-		
-		foreach ($event_fields as $field) {
-			
-			$html = '';
-			$html.= '<tr>';
-			$html.= '<th>'.$wp_theatre->event_editor->get_control_label($field).'</th>';
-			$html.= '<td>';
-			$html.= $wp_theatre->event_editor->get_control($field, $event->ID);
-			$html.= '</td>';
-			$html.= '</tr>';
-
-			echo $html;
-		}
+		echo $wp_theatre->event_editor->get_form($production->ID, $event->ID);
 		       
-        echo '</table>';		
 	}
 	
 	function meta_box_seasons($production) {
@@ -795,16 +784,6 @@ class WPT_Admin {
 		return $html;
     }
 
-    function wpt_production_html($html, $production) {
-	    if (is_admin()) {
-			$html.= '<div class="row-actions">';
-			$html.= '<span><a href="'.get_edit_post_link($production->ID).'">'.__('Edit').'</a></span>';;
-			$html.= '<span> | <a href="'.get_delete_post_link($production->ID).'">'.__('Trash').'</a></span>';;
-			$html.= '</div>'; //.row-actions
-	    }
-		return $html;
-    }
-    
     function views_productions($views) {
     	$url = add_query_arg( 
     		array(

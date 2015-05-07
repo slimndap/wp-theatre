@@ -9,7 +9,7 @@ class wpt_editor
 		@enddate = jQuery '#wpt_event_editor_enddate'
 	
 		@event_date.datetimepicker
-			defaultValue: wpt_editor_defaults.event_date
+			defaultDate: wpt_editor_defaults.event_date
 			format : wpt_editor_defaults.datetime_format
 			step: 15
 			onChangeDateTime: (event_date, input) =>

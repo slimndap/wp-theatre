@@ -22,7 +22,7 @@ class WPT_Event_Editor {
 	public function add_events_meta_box() {
 		add_meta_box(
 			'wpt_event_editor', 
-			__('Event dates','wp_theatre'), 
+			__('Events','wp_theatre'), 
 			array($this,'events_meta_box'), 
 			WPT_Production::post_type_name, 
 			'normal', 
@@ -75,7 +75,7 @@ class WPT_Event_Editor {
 		return apply_filters('wpt/event_editor/defaults', $defaults);
 	}
 	
-	public function get_fields() {
+	public function get_fields($event_id=false) {
 		$defaults = $this->get_defaults();
 		
 		$event_fields = array(
@@ -142,7 +142,7 @@ class WPT_Event_Editor {
 			),
 		);
 		
-		return apply_filters('wpt/event_editor/fields', $event_fields);
+		return apply_filters('wpt/event_editor/fields', $event_fields, $event_id);
 	}
 	
 	public function events_meta_box($post) {
@@ -206,6 +206,10 @@ class WPT_Event_Editor {
 				$html.= ' value="'.esc_attr($value).'"';
 			}
 			
+			if (!empty($field['disabled'])) {
+				$html.= ' disabled';
+			}
+			
 			$html.= ' />';
 		}
 		
@@ -233,7 +237,14 @@ class WPT_Event_Editor {
 	
 	public function get_control_prices($field, $event_id=false) {
 		$html = '';
-		$html.= '<textarea id="wpt_event_editor_'.$field['id'].'" name="wpt_event_editor_'.$field['id'].'">';
+		$html.= '<textarea id="wpt_event_editor_'.$field['id'].'" name="wpt_event_editor_'.$field['id'].'"';
+
+		if (!empty($field['disabled'])) {
+			$html.= ' disabled';
+		}
+			
+		
+		$html.= '>';
 
 		if(is_numeric($event_id)) {
 			$values = get_post_meta($event_id, $field['id'], false);
@@ -301,7 +312,10 @@ class WPT_Event_Editor {
 	
 	private function render_event_listing($production) {
 
-		$events = $production->events();
+		$args = array(
+			'status' => 'all',
+		);
+		$events = $production->events($args);
 		
 		if (!empty($events)) {
 			echo '<table>';
@@ -315,6 +329,8 @@ class WPT_Event_Editor {
 				}
 
 				$this->render_event($event);
+				
+				echo $this->get_source($event->ID);
 				
 				$html_actions = '';
 				$html_actions.= '<td class="wpt_event_editor_event_actions">';
@@ -364,31 +380,49 @@ class WPT_Event_Editor {
 		wp_nonce_field( 'wpt_event_editor', 'wpt_event_editor_nonce' );
 
 		if (empty($events)) {
-			echo '<h4>'.__('Add the first date:','wp_theatre').'</h4>';					
+			echo '<h4>'.__('Add the first event:','wp_theatre').'</h4>';					
 		} else {
-			echo '<h4>'.__('Add a new date','wp_theatre').'</h4>';		
+			echo '<h4>'.__('Add a new event','wp_theatre').'</h4>';		
 		}
 
-		echo '<table class="wpt_event_editor_event_form">';
-
-		$event_fields = $this->get_fields();
-		foreach ($event_fields as $field) {
-			
-			$html = '';
-			$html.= '<tr>';
-			$html.= '<th>'.$this->get_control_label($field).'</th>';
-			$html.= '<td>';
-			$html.= $this->get_control($field);
-			$html.= '</td>';
-			$html.= '</tr>';
-
-			$html = apply_filters('wpt/editor/form/event_control/field='.$field['id'], $html);
-			$html = apply_filters('wpt/editor/form/event_control', $html);
-
-			echo $html;
-		}
+		echo $this->get_form($production->ID);
+	}
 	
-		echo '</table>';
+	public function get_form($production_id, $event_id=false) {
+		
+		$html = '';
+		
+		$fields = $this->get_fields($event_id);
+		
+		foreach($fields as $field) {
+			
+			$label = $this->get_control_label($field);
+			
+			$control_html = $this->get_control($field, $event_id);
+			
+			$field_html = '<tr><th>'.$label.'</th><td>'.$control_html.'</td></tr>';
+			$field_html = apply_filters( 'wpt/event_editor/form/field/html/field='.$field['id'], $field_html );
+			$field_html = apply_filters('wpt/event_editor/form/field/html', $field_html, $field);
+			
+			$html.= $field_html;
+		}
+
+		$html = '<table class="wpt_event_editor_event_form">'.$html.'</table>';
+
+		return apply_filters('wpt/event_editor/form/html', $html, $production_id, $event_id);
+	}
+	
+	public function get_source($event_id) {
+		
+		$html = '';
+		$html.= '<td class="wpt_event_editor_source">';
+		
+		$html.= apply_filters('wpt/event_editor/source', '', $event_id);
+		
+		$html.= '</td>';
+		
+		return apply_filters('wpt/event_editor/source/html', $html, $event_id);
+		
 	}
 	
 	public function save_event($post_id) {
