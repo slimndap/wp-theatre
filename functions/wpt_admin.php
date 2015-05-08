@@ -644,7 +644,7 @@ class WPT_Admin {
 		 */
 		
 		// unhook to avoid loops
-		remove_action( 'save_post_'.WPT_Event::post_type_name, array( $this, 'save_event' ) );
+		remove_action( 'save_post', array( $this, 'save_production' ) );
 
 		$post = get_post($post_id);
 		$events = $this->get_events($post_id);
@@ -669,7 +669,7 @@ class WPT_Admin {
 		}
 
 		// rehook
-		add_action( 'save_post_'.WPT_Event::post_type_name, array( $this, 'save_event' ) );
+		add_action( 'save_post', array( $this, 'save_production' ) );
 
 		/**
 		 * Fires after a production is saved through the admin screen.
