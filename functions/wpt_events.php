@@ -585,8 +585,10 @@ class WPT_Events extends WPT_Listing {
 	 * Gets a list of events.
 	 * 
 	 * @since 0.5
-	 * @since 0.10	Renamed method from `load()` to `get()`.
-	 * 				Added 'order' to $args.
+	 * @since 0.10		Renamed method from `load()` to `get()`.
+	 * 					Added 'order' to $args.
+	 * @since 0.10.14	Preload events with their productions.
+	 *					This dramatically decreases the number of queries needed to show a listing of events.
 	 *
  	 * @return array Events.
 	 */
@@ -725,12 +727,23 @@ class WPT_Events extends WPT_Listing {
 			$events[] = $event;
 		}
 		
-		$events = $this->populate_productions($events);
+		$events = $this->preload_events_with_productions($events);
 
 		return $events;
 	}
 	
-	private function populate_productions($events) {
+	/**
+	 * Preloads events with their productions.
+	 *
+	 * Sets the production of a each event in a list of events with a single query.
+	 * This dramatically decreases the number of queries needed to show a listing of events.
+	 * 
+	 * @since 	0.10.14
+	 * @access 	private
+	 * @param 	array	$events		An array of WPT_Event objects.
+	 * @return 	array				An array of WPT_Event objects, with the production preloaded.
+	 */
+	private function preload_events_with_productions($events) {
 		
 		$production_ids = array();
 		
