@@ -22,7 +22,7 @@ class WPT_Admin {
 		
 		add_filter('views_edit-'.WPT_Production::post_type_name,array($this,'views_productions'));
 
-		add_filter('wpt/event_editor/fields', array($this, 'add_production_to_event_editor'));
+		add_filter('wpt/event_editor/fields', array($this, 'add_production_to_event_editor'), 10, 2);
 		
 		// More hooks (always load, necessary for bulk editing through AJAX)
 		add_filter('request', array($this,'request'));
@@ -215,6 +215,14 @@ class WPT_Admin {
         ); 	
 	}
 	
+	/**
+	 * Adds a production field to the event editor on the event admin page.
+	 * 
+	 * @since	0.11
+	 * @param 	array 	$fields		The currently defined fields for the event editor.
+	 * @param 	int 	$event_id	The event that being edited.
+	 * @return 	array				The fields, with a production field added at the beginning.
+	 */
 	public function add_production_to_event_editor($fields, $event_id) {
 		
 		$current_screen = get_current_screen();
@@ -226,7 +234,7 @@ class WPT_Admin {
 					'id' => WPT_Production::post_type_name,
 					'title' => __('Production','wp_theatre'),
 					'edit' => array(
-						'callback' => array($this, 'get_control_production'),
+						'callback' => array($this, 'get_control_production_html'),
 					),
 				)
 			);				
@@ -296,7 +304,19 @@ class WPT_Admin {
 
 	}
 
-	public function get_control_production($field, $event_id) {
+	/**
+	 * Gets the HTML for a production input control of an event.
+	 *
+	 * The input control consists of:
+	 * 1. A hidden input with the production_id and
+	 * 2. A link to the admin page of the production.	 
+	 *
+	 * @since 	0.11
+	 * @param 	array 	$field		The field.
+	 * @param 	int     $event_id   The event that is being edited.
+	 * @return 	string				The HTML.
+	 */
+	public function get_control_production_html($field, $event_id) {
 		
 		$html = '';
 		
@@ -312,8 +332,6 @@ class WPT_Admin {
 			
 		}
 		
-		
-		
 		return $html;		
 	}
 	
@@ -322,7 +340,7 @@ class WPT_Admin {
 		
 		wp_nonce_field(WPT_Event::post_type_name, WPT_Event::post_type_name.'_nonce' );
 
-		echo $wp_theatre->event_editor->get_form($production->ID, $event->ID);
+		echo $wp_theatre->event_editor->get_form_html($production->ID, $event->ID);
 		       
 	}
 	
