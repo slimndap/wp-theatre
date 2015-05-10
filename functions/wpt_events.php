@@ -460,20 +460,42 @@ class WPT_Events extends WPT_Listing {
 	 * @return 	string			The HTML for the page navigation.
 	 */
 	protected function get_html_page_navigation($args=array()) {
+		global $wp_query;
+		
 		$html = '';
-
-		// Days navigation
-		$html.= $this->filter_pagination('day', $this->get_days($args), $args);
+		
+		// Days navigation		
+		if (
+			(!empty($args['paginateby']) && in_array('day', $args['paginateby'])) || 
+			!empty($wp_query->query_vars['wpt_day'])
+		) {
+			$html.= $this->filter_pagination('day', $this->get_days($args), $args);
+		}
 
 		// Months navigation
-		$html.= $this->filter_pagination('month', $this->get_months($args), $args);
+		if (
+			(!empty($args['paginateby']) && in_array('month', $args['paginateby'])) || 
+			!empty($wp_query->query_vars['wpt_month'])
+		) {
+			$html.= $this->filter_pagination('month', $this->get_months($args), $args);		
+		}
 
 		// Years navigation
-		$html.= $this->filter_pagination('year', $this->get_years($args), $args);
+		if (
+			(!empty($args['paginateby']) && in_array('year', $args['paginateby'])) || 
+			!empty($wp_query->query_vars['wpt_year'])
+		) {
+			$html.= $this->filter_pagination('year', $this->get_years($args), $args);
+		}
 
 		// Categories navigation
-		$html.= $this->filter_pagination('category', $this->get_categories($args), $args);
-
+		if (
+			(!empty($args['paginateby']) && in_array('category', $args['paginateby'])) || 
+			!empty($wp_query->query_vars['wpt_category'])
+		) {
+			$html.= $this->filter_pagination('category', $this->get_categories($args), $args);
+		}
+		
 		return $html;		
 	}
 
@@ -615,7 +637,7 @@ class WPT_Events extends WPT_Listing {
 			$args['meta_query'][] = array (
 				'key' => WPT_Production::post_type_name,
 				'value' => $filters['production'],
-				'compare' => '='
+				'compare' => '=',
 			);
 		}
 		
@@ -677,7 +699,6 @@ class WPT_Events extends WPT_Listing {
 			$args['category__not_in'] = $filters['category__not_in'];
 		}
 		
-		
 		if ($filters['limit']) {
 			$args['posts_per_page'] = $filters['limit'];
 			$args['numberposts'] = $filters['limit'];
@@ -685,7 +706,7 @@ class WPT_Events extends WPT_Listing {
 			$args['posts_per_page'] = -1;
 			$args['numberposts'] = -1;
 		}
-
+		
 		/**
 		 * Filter the $args before doing get_posts().
 		 *
@@ -700,12 +721,46 @@ class WPT_Events extends WPT_Listing {
 
 		$events = array();
 		for ($i=0;$i<count($posts);$i++) {
-			$key = $posts[$i]->ID;
-			$event = new WPT_Event($posts[$i]->ID);
+			$event = new WPT_Event($posts[$i]);
 			$events[] = $event;
 		}
+		
+		$events = $this->populate_productions($events);
 
 		return $events;
+	}
+	
+	private function populate_productions($events) {
+		
+		$production_ids = array();
+		
+		foreach ($events as $event) {
+			$production_ids[] = get_post_meta($event->ID, WPT_Production::post_type_name, true);			
+		}
+		
+		$production_ids = array_unique($production_ids);
+		
+		$productions = get_posts(
+			array(
+				'post_type' => WPT_Production::post_type_name,
+				'post__in' => array_unique( $production_ids ),
+				'posts_per_page' => -1,
+			)	
+		);
+		
+		$productions_with_keys = array();
+		
+		foreach ($productions as $production) {
+			$productions_with_keys[$production->ID] = $production;
+		}
+		
+		for ($i=0; $i<count($events);$i++) {
+			$production_id = get_post_meta( $events[$i]->ID, WPT_Production::post_type_name, true );
+			if (in_array($production_id, array_keys($productions_with_keys)) ) {
+				$events[$i]->production = new WPT_Production($productions_with_keys[$production_id]);
+			}
+		}
+		 return $events;
 	}
 
 	/**
