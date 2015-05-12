@@ -35,23 +35,24 @@ class WPT_Events extends WPT_Listing {
 	 * @since 0.5
 	 * @since 0.10		Renamed method from `categories()` to `get_categories()`.
  	 * @since 0.10.2	Now returns the slug instead of the term_id as the array keys.
+ 	 * @since 0.10.14	Significally decreased the number of queries used.
 	 *
 	 * @param 	array $filters	See WPT_Events::get() for possible values.
 	 * @return 	array 			Categories.
 	 */
 	function get_categories($filters=array()) {
 		$filters['category'] = false;
-		$events = $this->get($filters);		
+		$events = $this->get($filters);	
+		$event_ids = wp_list_pluck($events, 'ID');
+		$terms = wp_get_object_terms($event_ids, 'category');
 		$categories = array();
-		foreach ($events as $event) {
-			$post_categories = wp_get_post_categories( $event->production()->ID );
-			foreach($post_categories as $c){
-				$cat = get_category( $c );
-				$categories[$cat->slug] = $cat->name;
-			}
+
+		foreach ($terms as $term) {
+			$categories[$term->slug] = $term->name;
 		}
+		
 		asort($categories);
-		return $categories;
+		return $categories;	
 	}
 		
 	/**

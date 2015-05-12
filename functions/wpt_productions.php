@@ -32,6 +32,7 @@ class WPT_Productions extends WPT_Listing {
 	 * @since 0.5
 	 * @since 0.10		Renamed method from `categories()` to `get_categories()`.
  	 * @since 0.10.2	Now returns the slug instead of the term_id as the array keys.
+ 	 * @since 0.10.14	Significally decreased the number of queries used.
 	 *
 	 * @param 	array $filters	See WPT_Productions::get() for possible values.
 	 * @return 	array 			Categories.
