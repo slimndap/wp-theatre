@@ -336,7 +336,7 @@ class WPT_Events extends WPT_Listing {
 		 * Then revert to the corresponding WPT_Events::get_html_for_* method.
 		 * @see WPT_Events::get_html_page_navigation().
 		 */
-		 
+		
 		if (!empty($wp_query->query_vars['wpt_year']))
 			return $this->get_html_for_year($wp_query->query_vars['wpt_year'], $args);
 			
@@ -433,6 +433,7 @@ class WPT_Events extends WPT_Listing {
 				break;					
 			default:
 				$events = $this->get($args);
+				$events = $this->preload_events_with_productions($events);
 				foreach ($events as $event) {
 					$event_args = array();
 					if (!empty($args['template'])) {
@@ -727,8 +728,6 @@ class WPT_Events extends WPT_Listing {
 			$events[] = $event;
 		}
 		
-		$events = $this->preload_events_with_productions($events);
-
 		return $events;
 	}
 	
