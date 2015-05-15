@@ -35,23 +35,24 @@ class WPT_Events extends WPT_Listing {
 	 * @since 0.5
 	 * @since 0.10		Renamed method from `categories()` to `get_categories()`.
  	 * @since 0.10.2	Now returns the slug instead of the term_id as the array keys.
+ 	 * @since 0.10.14	Significally decreased the number of queries used.
 	 *
 	 * @param 	array $filters	See WPT_Events::get() for possible values.
 	 * @return 	array 			Categories.
 	 */
 	function get_categories($filters=array()) {
 		$filters['category'] = false;
-		$events = $this->get($filters);		
+		$events = $this->get($filters);	
+		$event_ids = wp_list_pluck($events, 'ID');
+		$terms = wp_get_object_terms($event_ids, 'category');
 		$categories = array();
-		foreach ($events as $event) {
-			$post_categories = wp_get_post_categories( $event->production()->ID );
-			foreach($post_categories as $c){
-				$cat = get_category( $c );
-				$categories[$cat->slug] = $cat->name;
-			}
+
+		foreach ($terms as $term) {
+			$categories[$term->slug] = $term->name;
 		}
+		
 		asort($categories);
-		return $categories;
+		return $categories;	
 	}
 		
 	/**
@@ -336,7 +337,7 @@ class WPT_Events extends WPT_Listing {
 		 * Then revert to the corresponding WPT_Events::get_html_for_* method.
 		 * @see WPT_Events::get_html_page_navigation().
 		 */
-		 
+		
 		if (!empty($wp_query->query_vars['wpt_year']))
 			return $this->get_html_for_year($wp_query->query_vars['wpt_year'], $args);
 			
@@ -433,6 +434,7 @@ class WPT_Events extends WPT_Listing {
 				break;					
 			default:
 				$events = $this->get($args);
+				$events = $this->preload_events_with_productions($events);
 				foreach ($events as $event) {
 					$event_args = array();
 					if (!empty($args['template'])) {
@@ -460,20 +462,42 @@ class WPT_Events extends WPT_Listing {
 	 * @return 	string			The HTML for the page navigation.
 	 */
 	protected function get_html_page_navigation($args=array()) {
+		global $wp_query;
+		
 		$html = '';
-
-		// Days navigation
-		$html.= $this->filter_pagination('day', $this->get_days($args), $args);
+		
+		// Days navigation		
+		if (
+			(!empty($args['paginateby']) && in_array('day', $args['paginateby'])) || 
+			!empty($wp_query->query_vars['wpt_day'])
+		) {
+			$html.= $this->filter_pagination('day', $this->get_days($args), $args);
+		}
 
 		// Months navigation
-		$html.= $this->filter_pagination('month', $this->get_months($args), $args);
+		if (
+			(!empty($args['paginateby']) && in_array('month', $args['paginateby'])) || 
+			!empty($wp_query->query_vars['wpt_month'])
+		) {
+			$html.= $this->filter_pagination('month', $this->get_months($args), $args);		
+		}
 
 		// Years navigation
-		$html.= $this->filter_pagination('year', $this->get_years($args), $args);
+		if (
+			(!empty($args['paginateby']) && in_array('year', $args['paginateby'])) || 
+			!empty($wp_query->query_vars['wpt_year'])
+		) {
+			$html.= $this->filter_pagination('year', $this->get_years($args), $args);
+		}
 
 		// Categories navigation
-		$html.= $this->filter_pagination('category', $this->get_categories($args), $args);
-
+		if (
+			(!empty($args['paginateby']) && in_array('category', $args['paginateby'])) || 
+			!empty($wp_query->query_vars['wpt_category'])
+		) {
+			$html.= $this->filter_pagination('category', $this->get_categories($args), $args);
+		}
+		
 		return $html;		
 	}
 
@@ -563,8 +587,10 @@ class WPT_Events extends WPT_Listing {
 	 * Gets a list of events.
 	 * 
 	 * @since 0.5
-	 * @since 0.10	Renamed method from `load()` to `get()`.
-	 * 				Added 'order' to $args.
+	 * @since 0.10		Renamed method from `load()` to `get()`.
+	 * 					Added 'order' to $args.
+	 * @since 0.10.14	Preload events with their productions.
+	 *					This dramatically decreases the number of queries needed to show a listing of events.
 	 *
  	 * @return array Events.
 	 */
@@ -615,7 +641,7 @@ class WPT_Events extends WPT_Listing {
 			$args['meta_query'][] = array (
 				'key' => WPT_Production::post_type_name,
 				'value' => $filters['production'],
-				'compare' => '='
+				'compare' => '=',
 			);
 		}
 		
@@ -677,7 +703,6 @@ class WPT_Events extends WPT_Listing {
 			$args['category__not_in'] = $filters['category__not_in'];
 		}
 		
-		
 		if ($filters['limit']) {
 			$args['posts_per_page'] = $filters['limit'];
 			$args['numberposts'] = $filters['limit'];
@@ -685,7 +710,7 @@ class WPT_Events extends WPT_Listing {
 			$args['posts_per_page'] = -1;
 			$args['numberposts'] = -1;
 		}
-
+		
 		/**
 		 * Filter the $args before doing get_posts().
 		 *
@@ -700,12 +725,55 @@ class WPT_Events extends WPT_Listing {
 
 		$events = array();
 		for ($i=0;$i<count($posts);$i++) {
-			$key = $posts[$i]->ID;
-			$event = new WPT_Event($posts[$i]->ID);
+			$event = new WPT_Event($posts[$i]);
 			$events[] = $event;
 		}
-
+		
 		return $events;
+	}
+	
+	/**
+	 * Preloads events with their productions.
+	 *
+	 * Sets the production of a each event in a list of events with a single query.
+	 * This dramatically decreases the number of queries needed to show a listing of events.
+	 * 
+	 * @since 	0.10.14
+	 * @access 	private
+	 * @param 	array	$events		An array of WPT_Event objects.
+	 * @return 	array				An array of WPT_Event objects, with the production preloaded.
+	 */
+	private function preload_events_with_productions($events) {
+		
+		$production_ids = array();
+		
+		foreach ($events as $event) {
+			$production_ids[] = get_post_meta($event->ID, WPT_Production::post_type_name, true);			
+		}
+		
+		$production_ids = array_unique($production_ids);
+		
+		$productions = get_posts(
+			array(
+				'post_type' => WPT_Production::post_type_name,
+				'post__in' => array_unique( $production_ids ),
+				'posts_per_page' => -1,
+			)	
+		);
+		
+		$productions_with_keys = array();
+		
+		foreach ($productions as $production) {
+			$productions_with_keys[$production->ID] = $production;
+		}
+		
+		for ($i=0; $i<count($events);$i++) {
+			$production_id = get_post_meta( $events[$i]->ID, WPT_Production::post_type_name, true );
+			if (in_array($production_id, array_keys($productions_with_keys)) ) {
+				$events[$i]->production = new WPT_Production($productions_with_keys[$production_id]);
+			}
+		}
+		 return $events;
 	}
 
 	/**

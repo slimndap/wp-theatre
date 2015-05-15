@@ -233,8 +233,8 @@ class WPT_Production {
 
 		if (!isset($this->events)) {
 			$this->events = $wp_theatre->events->get($filters);
-			
 		}
+		
 		return $this->events;
 	}
 	
