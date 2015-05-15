@@ -283,7 +283,7 @@ class WPT_Test extends WP_UnitTestCase {
 		
 	}
 	
-	function test_shortcode_wpt_events() {
+	function test_shortcode_wpt_event_tickets() {
 		$this->assertEquals(4, substr_count(do_shortcode('[wpt_events]'), '"wp_theatre_event"'));
 	}
 	
@@ -526,8 +526,59 @@ class WPT_Test extends WP_UnitTestCase {
 		);
 		$html = $event->tickets($args);
 		$this->assertContains('new status', $event->tickets($args));
+	}
+	
+	function test_wpt_event_tickets_prices_filter() {
+		global $wp_theatre;
+		
+		$func = create_function(
+			'$html, $event',
+			'return "tickets prices";'
+		);
+		add_filter( 'wpt_event_tickets_prices_html', $func, 10 , 2 );
+		
+		$event = new WPT_Event($this->upcoming_event_with_prices);
+		$args = array(
+			'html' => true,
+		);
+		$this->assertContains('tickets prices', $event->tickets($args));
+	}
+	
+	
+	function test_wpt_event_tickets() {
+		$url = 'http://slimndap.com';
+		update_post_meta($this->upcoming_event_with_prices,'tickets_url',$url);
+		$event = new WPT_Event($this->upcoming_event_with_prices);
+		$this->assertEquals($url, $event->tickets());
+	}
+	
+	function test_wpt_event_tickets_filter() {
+		global $wp_theatre;
+		
+		$func = create_function(
+			'$url, $event',
+			'return "tickets url";'
+		);
+		add_filter( 'wpt_event_tickets', $func, 10 , 2 );
+		
+		add_post_meta($this->upcoming_event_with_prices, 'tickets_url', 'http://slimndap.com');
 
 		
+		$event = new WPT_Event($this->upcoming_event_with_prices);
+		$this->assertContains('tickets url', $event->tickets());
+	}
+	
+	function test_wpt_event_tickets_html_filter() {
+		global $wp_theatre;
+		
+		$func = create_function(
+			'$html, $event',
+			'return "tickets button";'
+		);
+		add_filter( 'wpt_event_tickets_html', $func, 10 , 2 );
+		
+		$event = new WPT_Event($this->upcoming_event_with_prices);
+		$this->assertContains('tickets button', $event->tickets(array('html'=>true)));
 	}
 	
 	function test_wpt_event_tickets_url() {
@@ -559,6 +610,39 @@ class WPT_Test extends WP_UnitTestCase {
 			'summary'=>true
 		);
 		$this->assertContains('8.50', $event->prices($args));
+	}
+	
+	function test_wpt_event_tickets_for_past_events_are_hiddedn() {
+
+		$event_args = array(
+			'post_type'=>WPT_Event::post_type_name
+		);
+
+		$event_id = $this->factory->post->create($event_args);
+		add_post_meta($event_id, WPT_Production::post_type_name, $this->production_with_historic_event);
+		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() - 2 * DAY_IN_SECONDS));
+		add_post_meta($event_id, '_wpt_event_tickets_price', 12);
+		
+		$event = new WPT_Event($event_id);
+		$this->assertEmpty($event->tickets());
+		
+	}
+	
+	function test_wpt_event_tickets_html_for_past_events_are_hiddedn() {
+
+		$event_args = array(
+			'post_type'=>WPT_Event::post_type_name
+		);
+
+		$event_id = $this->factory->post->create($event_args);
+		add_post_meta($event_id, WPT_Production::post_type_name, $this->production_with_historic_event);
+		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() - 2 * DAY_IN_SECONDS));
+		add_post_meta($event_id, '_wpt_event_tickets_price', 12);
+		
+		$html = do_shortcode('[wpt_events end="now"]');
+		
+		$this->assertNotContains('wp_theatre_event_prices',$html);
+		
 	}
 	
 	/**
