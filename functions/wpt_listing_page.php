@@ -242,7 +242,7 @@
 	 	/*
 	 	 * Get the page with upcoming events.
 	 	 * @return WP_Post Page if page is set and if page exists.
-	 	 * @retrun false otherwise. 
+	 	 * @return false otherwise. 
 	 	 */
 	 	
 	 	function page() {
