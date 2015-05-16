@@ -96,12 +96,12 @@
 			
 			$defaults = array(
 				'production' => false,
-				'venue' => '',
-				'city' => '',
-				'tickets_url' => '',
-				'event_date' => '',
+				'venue' => false,
+				'city' => false,
+				'tickets_url' => false,
+				'event_date' => false,
 				'ref' => '',
-				'prices' => array(),
+				'prices' => false,
 			);
 			
 			$args = wp_parse_args($args, $defaults);
@@ -114,13 +114,26 @@
 			if ($post_id = wp_insert_post($post)) {
 				add_post_meta($post_id, '_wpt_source', $this->slug, true);
 				add_post_meta($post_id, '_wpt_source_ref', sanitize_text_field($args['ref']), true);
-				add_post_meta($post_id, WPT_Production::post_type_name, $args['production'], true);
-				add_post_meta($post_id, 'venue', $args['venue'], true);
-				add_post_meta($post_id, 'city', $args['city'], true);
-				add_post_meta($post_id, 'tickets_url', $args['tickets_url'], true);
-				add_post_meta($post_id, 'event_date', $args['event_date'], true);
+				
+				if (false !== $args['production']) {
+					add_post_meta($post_id, WPT_Production::post_type_name, $args['production'], true);				
+				}
+				if (false !== $args['venue']) {
+					add_post_meta($post_id, 'venue', $args['venue'], true);
+				}
+				if (false !== $args['city']) {
+					add_post_meta($post_id, 'city', $args['city'], true);
+				}
+				if (false !== $args['tickets_url']) {
+					add_post_meta($post_id, 'tickets_url', $args['tickets_url'], true);
+				}
+				if (false !== $args['event_date']) {
+					add_post_meta($post_id, 'event_date', $args['event_date'], true);
+				}
 
-				$this->set_event_prices($post_id, $args['prices']);
+				if (is_array($args['prices'])) {
+					$this->set_event_prices($post_id, $args['prices']);				
+				}
 
 				$this->stats['events_created']++;
 				
