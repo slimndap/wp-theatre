@@ -226,6 +226,12 @@ Release Date: December 29th, 2014
 
 == Upgrade Notice ==
 
+= 0.10.14 =
+* Fix: Past events still showed tickets buttons. Thanks [Menno](https://www.linkedin.com/in/mennoluitjes)!
+* Fix: Importer emptied fields that were not part of the import.
+* Fix: Tickets button for events wasn't properly showing the ticket status when called directly in PHP. Thanks [paramir](https://github.com/paramir)!
+* Improvement: Significally decreased the number of queries used for listings.
+
 = 0.10.13 =
 * Fix: Removed a loop when saving a production.
 
