@@ -57,7 +57,8 @@ class WPT_Demo_Importer extends WPT_Importer {
 					'event_date' => date_i18n('Y-m-d H:i:s',$event_date),
 					'ref' => $event_ref,
 					'prices' => array(1,2,'3|kids',4),
-				);		
+				);
+				$event_args = apply_filters('wpt/test/importer/process_feed/event/args', $event_args, $this->feed[$p][$e]);
 				$event = $this->update_event($event_args);
 
 				wp_update_post( array(
@@ -155,6 +156,34 @@ class WPT_Test_Importer extends WP_UnitTestCase {
 		$prices = $events[0]->prices();
 		
 		$this->assertCount(4, $prices);
+	}
+	
+	function test_fields_not_part_of_import_are_not_overwritten() {
+		global $wp_theatre;
+		
+		$func = create_function(
+			'$event_args, $event_data',
+			'unset($event_args[\'prices\']); unset($event_args[\'venue\']); return $event_args;'
+		);
+		
+		add_filter('wpt/test/importer/process_feed/event/args', $func, 10 ,2 );
+		
+		$importer = new WPT_Demo_Importer();
+		
+		$importer->execute();		
+
+		$events = $wp_theatre->events->get();
+		
+		update_post_meta($events[0]->ID, '_wpt_event_tickets_price', 10);
+		update_post_meta($events[0]->ID, 'venue', 'Paradiso');
+
+		$importer->execute();		
+
+		$prices = $events[0]->prices();
+		$this->assertCount(1, $prices);
+		
+		$venue = $events[0]->venue();
+		$this->assertEquals('Paradiso', $events[0]->venue());
 	}
 
 }

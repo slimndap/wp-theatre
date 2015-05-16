@@ -32,24 +32,24 @@ class WPT_Productions extends WPT_Listing {
 	 * @since 0.5
 	 * @since 0.10		Renamed method from `categories()` to `get_categories()`.
  	 * @since 0.10.2	Now returns the slug instead of the term_id as the array keys.
+ 	 * @since 0.10.14	Significally decreased the number of queries used.
 	 *
 	 * @param 	array $filters	See WPT_Productions::get() for possible values.
 	 * @return 	array 			Categories.
 	 */
 	function get_categories() {
-		$productions = $this->get();		
+		$productions = $this->get();
+		$production_ids = wp_list_pluck($productions, 'ID');
+		$terms = wp_get_object_terms($production_ids, 'category');
+		
 		$categories = array();
-		foreach ($productions as $production) {
-			$post_categories = wp_get_post_categories( $production->ID );
-			foreach($post_categories as $c){
-				$cat = get_category( $c );
-				$categories[$cat->slug] = $cat->name;
-			}
+
+		foreach ($terms as $term) {
+			$categories[$term->slug] = $term->name;
 		}
+		
 		asort($categories);
-		
-		return $categories;
-		
+		return $categories;		
 	}
 
 	/**
@@ -204,6 +204,8 @@ class WPT_Productions extends WPT_Listing {
 				}
 		
 				$productions = $this->get($args);
+				$productions = $this->preload_productions_with_events($productions);
+				
 				foreach ($productions as $production) {
 					$production_args = array();
 					if (!empty($args['template'])) {
@@ -306,13 +308,25 @@ class WPT_Productions extends WPT_Listing {
 	 * @return 	string			The HTML for the page navigation.
 	 */
 	protected function get_html_page_navigation($args=array()) {
+		global $wp_query;
+
 		$html = '';
 
-		// Seasons navigation
-		$html.= $this->filter_pagination('season', $this->get_seasons($args), $args);
+		// Seasons navigation		
+		if (
+			(!empty($args['paginateby']) && in_array('season', $args['paginateby'])) || 
+			!empty($wp_query->query_vars['wpt_season'])
+		) {
+			$html.= $this->filter_pagination('season', $this->get_seasons($args), $args);
+		}
 
-		// Categories navigation
-		$html.= $this->filter_pagination('category', $this->get_categories($args), $args);
+		// Categories navigation		
+		if (
+			(!empty($args['paginateby']) && in_array('category', $args['paginateby'])) || 
+			!empty($wp_query->query_vars['wpt_category'])
+		) {
+			$html.= $this->filter_pagination('category', $this->get_categories($args), $args);
+		}
 
 		return $html;		
 	}
@@ -523,9 +537,70 @@ class WPT_Productions extends WPT_Listing {
 			$key = $posts[$i]->ID;
 			$productions[] = new WPT_Production($posts[$i]->ID);
 		}
+		
+		
 		return $productions;
 	}
 	
+	/**
+	 * Preloads productions with their events.
+	 *
+	 * Sets the events of a each production in a list of productions with a single query.
+	 * This dramatically decreases the number of queries needed to show a listing of productions.
+	 * 
+	 * @since 	0.10.14
+	 * @access 	private
+	 * @param 	array	$productions	An array of WPT_Production objects.
+	 * @return 	array					An array of WPT_Production objects, with the events preloaded.
+	 */
+	private function preload_productions_with_events($productions) {
+		global $wp_theatre;
+		$event_ids = array();
+		
+		foreach ($productions as $production) {
+			$production_ids[] = $production->ID;			
+		}
+		
+		$production_ids = array_unique($production_ids);
+		
+		$events = get_posts(
+			array(
+				'post_type' => WPT_Event::post_type_name,
+				'posts_per_page' => -1,
+				'post_status' => 'publish',
+				'meta_query' => array (
+					array (
+						'key' => WPT_Production::post_type_name,
+						'value' => array_unique($production_ids),
+						'compare' => 'IN',
+					),
+					array(
+						'key' => $wp_theatre->order->meta_key,
+						'value' => time(),
+						'compare' => '>='						
+					)
+				),
+				'order' => 'ASC',
+			)	
+		);
+		
+		$productions_with_keys = array();
+		
+		foreach ($events as $event) {
+			$production_id = get_post_meta( $event->ID, WPT_Production::post_type_name, true );
+			if (!empty($production_id)) {
+				$productions_with_keys[$production_id][] = new WPT_Event($event);
+			}
+		}
+		
+		for ($i=0; $i<count($productions);$i++) {
+			if (in_array($productions[$i]->ID, array_keys($productions_with_keys)) ) {
+				$productions[$i]->events = $productions_with_keys[$productions[$i]->ID];
+			}
+		}
+		 return $productions;
+	}
+
 	/**
 	 * @deprecated 0.10
 	 * @see WPT_Productions::get_categories()

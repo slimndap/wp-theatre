@@ -347,57 +347,78 @@ class WPT_Event {
 	 * }
 	 * @return array Prices or string HTML.
 	 */
-	function prices($args=array()) {
+	function prices($deprecated=array()) {
+		
+		if (!empty($deprecated['html'])) {
+			return $this->prices_html();
+		}
+		
+		if (!empty($deprecated['summary'])) {
+			return $this->prices_summary();
+		}
+		
+		$prices = get_post_meta($this->ID,'_wpt_event_tickets_price');
+		
+		for($p=0;$p<count($prices);$p++) {
+			$price_parts = explode('|',$prices[$p]);
+			$prices[$p] = (float) $price_parts[0];
+		}
+
+		$prices = apply_filters('wpt/event/prices',$prices, $this);
+		$prices = apply_filters('wpt_event_prices',$prices, $this);
+		
+		return $prices;
+	}
+	
+	public function prices_html() {
+		
+		$html = '';
+		
+		$prices_summary_html = $this->prices_summary_html();
+
+		if (!empty($prices_summary_html)) {
+			$html = '<div class="'.self::post_type_name.'_prices">'.$prices_summary_html.'</div>';
+		}
+		
+		$html = apply_filters('wpt/event/prices/html', $html, $this);
+		$html = apply_filters('wpt_event_prices_html', $html, $this);
+		
+		return $html;
+		
+	}
+	
+	public function prices_summary() {
+		
 		global $wp_theatre;
-		$defaults = array(
-			'html' => false,
-			'summary' => false
-		);
-
-		$args = wp_parse_args( $args, $defaults );
-
-		if (!isset($this->prices)) {
-			$prices = get_post_meta($this->ID,'_wpt_event_tickets_price');
-			$prices_sanitized = array();
-			for($p=0;$p<count($prices);$p++) {
-				$price_parts = explode('|',$prices[$p]);
-				$prices_sanitized[] = (float) $price_parts[0];
+		
+		$prices = $this->prices();
+		
+		$prices_summary = '';
+		
+		if (count($prices)) {
+			if (count($prices) > 1 ) {
+				$prices_summary .= __('from','wp_theatre').' ';
 			}
-			$this->prices = apply_filters('wpt_event_prices',$prices_sanitized, $this);
+			if (!empty($wp_theatre->wpt_tickets_options['currencysymbol'])) {
+				$prices_summary .= $wp_theatre->wpt_tickets_options['currencysymbol'].' ';
+			}
+			$prices_summary .= number_format_i18n((float) min($prices), 2);
 		}
-
-		if ($args['html']) {
-			$prices_args = array(
-				'summary' => true
-			);
-			$html = $this->prices($prices_args);
-
-			if (!empty($html)) {
-				$html= '<div class="'.self::post_type_name.'_prices">'.$html.'</div>';
-			}
-			return apply_filters('wpt_event_prices_html', $html, $this);				
-		} else {
-			if ($args['summary']) {
-				$summary = '';
-				if (count($this->prices)>0) {
-					if (count($this->prices)==1) {
-						$summary = $wp_theatre->wpt_tickets_options['currencysymbol'].'&nbsp;'.number_format_i18n((float) $this->prices[0],2);
-					} else {
-						$lowest = $this->prices[0];
-						for($p=1;$p<count($this->prices);$p++) {
-							if ($lowest > $this->prices[$p]) {
-								$lowest = $this->prices[$p];
-							}
-						}
-						$summary = __('from','wp_theatre').' '.$wp_theatre->wpt_tickets_options['currencysymbol'].
-							'&nbsp;'.number_format_i18n((float) $lowest,2);
-					}
-				}
-				return $summary;
-			} else {
-				return $this->prices;								
-			}
-		}
+		
+		$prices_summary = apply_filters('wpt/event/prices/summary',$prices_summary, $this);
+		
+		return $prices_summary;
+	}
+	
+	public function prices_summary_html() {
+		
+		$html = $this->prices_summary();
+		$html = esc_html($html);
+		$html = str_replace(' ', '&nbsp;', $html);
+		
+		$html = apply_filters('wpt/event/prices/summary/html', $html, $this);
+		
+		return $html;
 	}
 	
 	/**
@@ -457,87 +478,132 @@ class WPT_Event {
 	/**
 	 * Event ticket link.
 	 * 
-	 * Returns the event ticket link as plain text of as an HTML element.
-	 * The HTML version includes a summary of the event prices.
+	 * Returns the event tickets URL for events that are on sales and take
+	 * place in the future.
 	 *
-	 * @since 0.4
+	 * @since 	0.4
+	 * @since 	0.10.14	Deprecated the HTML argument.
+	 *					Use WPT_Event::tickets_html() instead.
 	 *
-	 * @param array $args {
-	 *     @type bool $html Return HTML? Default <false>.
-	 * }
-	 *
-	 * @see WPT_Event::prices().
-	 * @see WPT_Event::tickets_url().
-	 *
-	 * @return string text or HTML.
+	 * @return 	string	The tickets URL or ''.
 	 */
-	function tickets($args=array()) {
-		global $wp_theatre;
-		
-		$defaults = array(
-			'html' => false
-		);
-		$args = wp_parse_args( $args, $defaults );
+	function tickets($deprecated=array()) {
 
-		if (!isset($this->tickets)) {
-			$this->tickets = apply_filters('wpt_event_tickets',$this->tickets_url(),$this);
-		}	
-		
-		if ($args['html']) {
-			$html = '<div class="'.self::post_type_name.'_tickets">';
-			
-			$status = get_post_meta($this->ID,'tickets_status',true);
-
-			/**
-			 * Filter the tickets status value for an event.
-			 *
-			 * @since 0.10.9
-			 * 
-			 * @param	string 		$status	 The current value of the tickets status.
-			 * @param	WPT_Event	$this	 The event object.
-			 */
-			$status = apply_filters('wpt_event_tickets_status', $status, $this);
-
-			if (empty($status) || $status==self::tickets_status_onsale) {
-				if (!empty($this->tickets)) {
-					$tickets_url_args = array('html'=>true);
-					$tickets_button = get_post_meta($this->ID,'tickets_button',true);
-					if (!empty($tickets_button)) {
-						$tickets_url_args['text'] = $tickets_button;
-					}
-					$html.= $this->tickets_url($tickets_url_args);
-				}
-				
-				$prices_args = array(
-					'html'=>true,
-					'summary'=>true
-				);
-				$html.= apply_filters('wpt_event_tickets_prices_html', $this->prices($prices_args), $this);				
-			} else {
-				switch ($status) {
-					case self::tickets_status_soldout :
-						$label = __('Sold out','wp_theatre');
-						break;
-					case self::tickets_status_cancelled :
-						$label = __('Cancelled','wp_theatre');
-						break;
-					case self::tickets_status_hidden :
-						$label = '';
-						break;
-					default :
-						$label = $status;
-						$status = self::tickets_status_other;
-				}
-				if (!empty($label)) {
-					$html.= '<span class="'.self::post_type_name.'_tickets_status '.self::post_type_name.'_tickets_status'.$status.'">'.$label.'</span>';
-				}
-			}
-			
-			$html.= '</div>'; // .tickets		
-			return apply_filters('wpt_event_tickets_html', $html, $this);
-		} else {
-			return $this->tickets;			
+		if ( ! empty($deprecated['html'] ) ) {
+			return $this->tickets_html();
 		}
+
+		$tickets = '';
+		
+		if ( 
+			self::tickets_status_onsale == $this->tickets_status() && 
+			$this->datetime() > current_time('timestamp')
+		) {
+			$tickets = $this->tickets_url();
+		}
+
+		$tickets = apply_filters('wpt/event/tickets',$tickets,$this);
+		$tickets = apply_filters('wpt_event_tickets',$tickets,$this);
+
+		return $tickets;			
+	}
+	
+	public function tickets_button() {
+		$tickets_button = get_post_meta($this->ID,'tickets_button',true);
+		
+		if (empty($tickets_button)) {
+			$tickets_button = __('Tickets', 'wp_theatre');
+		}
+		
+		$tickets_button = apply_filters('wpt/event/tickets/button', $tickets_button, $this);
+		
+		return ($tickets_button);
+	}
+	
+	public function tickets_html() {
+		
+		$html = '';
+		
+		$tickets_status = $this->tickets_status();
+
+		$html .= '<div class="'.self::post_type_name.'_tickets">';
+		
+		if ( 
+			self::tickets_status_onsale == $this->tickets_status() && 
+			$this->datetime() > current_time('timestamp')
+		) {
+
+			$html .= $this->tickets_url_html();
+			
+			$prices_html = $this->prices_html();
+			$prices_html = apply_filters('wpt_event_tickets_prices_html', $prices_html, $this);
+			$html .= $prices_html;
+			
+		} else {
+			$html .= $this->tickets_status_html();
+		}
+			
+		$html.= '</div>'; // .tickets		
+
+		$html = apply_filters('wpt/event/tickets/html', $html, $this);
+		$html = apply_filters('wpt_event_tickets_html', $html, $this);
+		
+		return $html;
+		
+	}
+
+	public function tickets_status() {
+		$tickets_status = get_post_meta($this->ID,'tickets_status',true);
+		
+		if (empty($tickets_status)) {
+			$tickets_status = self::tickets_status_onsale;
+		}
+		
+		/**
+		 * Filter the tickets status value for an event.
+		 *
+		 * @since 0.10.9
+		 * @since 0.10.14	Renamed filter.
+		 * 
+		 * @param	string 		$status	 The current value of the tickets status.
+		 * @param	WPT_Event	$this	 The event object.
+		 */
+		$tickets_status = apply_filters('wpt/event/tickets/status', $tickets_status, $this);
+		$tickets_status = apply_filters('wpt_event_tickets_status', $tickets_status, $this);
+
+		return $tickets_status;
+	}
+	
+	public function tickets_status_html() {
+		$tickets_status = $this->tickets_status();
+		
+		switch ($tickets_status) {
+			case self::tickets_status_onsale :
+				$label = __('On sale','wp_theatre');
+				break;
+			case self::tickets_status_soldout :
+				$label = __('Sold out','wp_theatre');
+				break;
+			case self::tickets_status_cancelled :
+				$label = __('Cancelled','wp_theatre');
+				break;
+			case self::tickets_status_hidden :
+				$label = '';
+				break;
+			default :
+				$label = $tickets_status;
+				$tickets_status = self::tickets_status_other;
+		}
+		
+		$html = '';
+		
+		if ( ! empty($label)) {
+			$html .= '<span class="'.self::post_type_name.'_tickets_status '.self::post_type_name.'_tickets_status'.$tickets_status.'">'.$label.'</span>';
+		}
+		
+		$html = apply_filters('wpt/event/tickets/status/html', $html, $this);
+		
+		return $html;
 	}
 
 	/**
@@ -554,67 +620,72 @@ class WPT_Event {
 	 */
 
 	function tickets_url($args = array()) {
+		
+		global $wp_theatre;
+
+		if (!empty($args['html'])) {
+			return $this->tickets_url_html();
+		}
+				
+		$tickets_url = get_post_meta($this->ID,'tickets_url',true);
+
+		if (
+			!empty($wp_theatre->wpt_tickets_options['integrationtype']) && 
+			$wp_theatre->wpt_tickets_options['integrationtype']=='iframe' &&
+			!empty($tickets_url)
+		) {
+			$tickets_url = get_permalink($wp_theatre->wpt_tickets_options['iframepage']);
+			$tickets_url = add_query_arg(
+				array(
+					__('Event','wp_theatre') => $this->ID
+				) , $tickets_url
+			);
+		}
+
+		$tickets_url = apply_filters('wpt/event/tickets/url',$tickets_url,$this);
+		$tickets_url = apply_filters('wpt_event_tickets_url',$tickets_url,$this);
+		
+		return $tickets_url;
+	}
+	
+	public function tickets_url_html() {
 		global $wp_theatre;
 		
-		$defaults = array(
-			'html' => false,
-			'text' => __('Tickets','wp_theatre')
-		);
+		$html = '';
 		
-		$args = wp_parse_args( $args, $defaults );
+		$tickets_url = $this->tickets_url();
+		
+		if (!empty($tickets_url)) {
 
-		if (!isset($this->tickets_url)) {
+			$html.= '<a href="'.$tickets_url.'" rel="nofollow"';
 			
-			$url = get_post_meta($this->ID,'tickets_url',true);
-
-			if (
-				!empty($wp_theatre->wpt_tickets_options['integrationtype']) && 
-				$wp_theatre->wpt_tickets_options['integrationtype']=='iframe' &&
-				!empty($url)
-			) {
-				$url = get_permalink($wp_theatre->wpt_tickets_options['iframepage']);
-				$url = add_query_arg(
-					array(
-						__('Event','wp_theatre') => $this->ID
-					) , $url
-				);
+			/**
+			 * Add classes to tickets link.
+			 */
+			 
+			$classes = array();
+			$classes[] = self::post_type_name.'_tickets_url';
+			if (!empty($wp_theatre->wpt_tickets_options['integrationtype'])) {
+				$classes[] = 'wp_theatre_integrationtype_'.$wp_theatre->wpt_tickets_options['integrationtype'];
 			}
-			$this->tickets_url = apply_filters('wpt_event_tickets_url',$url,$this);
+			
+			$classes = apply_filters('wpt/event/tickets/url/classes',$classes,$this);
+			$classes = apply_filters('wpt_event_tickets__url_classes',$classes,$this);
+
+			$html.= ' class="'.implode(' ' ,$classes).'"';
+			
+			$html.= '>';
+			$html.= $this->tickets_button();
+			$html.= '</a>';	
+			
 		}
-		
-		if ($args['html']) {
-		
-			$html = '';
-			
-			if (!empty($this->tickets_url)) {
 
-				$html.= '<a href="'.$this->tickets_url.'" rel="nofollow"';
-				
-				/**
-				 * Add classes to tickets link.
-				 */
-				 
-				$classes = array();
-				$classes[] = self::post_type_name.'_tickets_url';
-				if (!empty($wp_theatre->wpt_tickets_options['integrationtype'])) {
-					$classes[] = 'wp_theatre_integrationtype_'.$wp_theatre->wpt_tickets_options['integrationtype'];
-				}
-				$classes = apply_filters('wpt_event_tickets__url_classes',$classes,$this);
-				$html.= ' class="'.implode(' ' ,$classes).'"';
-				
-				$html.= '>';
-				$html.= $args['text'];
-				$html.= '</a>';	
-				
-			}
-
-			return apply_filters('wpt_event_tickets_url_html', $html, $this);
-		
-		} else {
-			return $this->tickets_url;
-		}			
+		$html = apply_filters('wpt/event/tickets/url/html', $html, $this);
+		$html = apply_filters('wpt_event_tickets_url_html', $html, $this);
+	
+		return $html;
 	}
-
+	
 	/**
 	 * Gets the title of the event.
 	 *

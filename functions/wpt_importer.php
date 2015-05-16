@@ -273,6 +273,8 @@
 		 * @since 0.10
 		 * @since 0.10.7	Method now returns a WPT_Event object.
 		 * 					Added support for event prices.
+		 * @since 0.10.14	Only updates fields that are explicitly set in $args 
+		 * 					by the importer. Fixes #113.
 		 *
 		 * @see WPT_Importer::get_event_by_ref()
 		 * @see WPT_Importer::create_event()
@@ -294,12 +296,12 @@
 
 			$defaults = array(
 				'production' => false,
-				'venue' => '',
-				'city' => '',
-				'tickets_url' => '',
-				'event_date' => '',
+				'venue' => false,
+				'city' => false,
+				'tickets_url' => false,
+				'event_date' => false,
 				'ref' => '',
-				'prices' => array(),
+				'prices' => false,
 			);
 			
 			$args = wp_parse_args($args, $defaults);
@@ -311,12 +313,25 @@
 			}
 			
 			update_post_meta($event->ID, WPT_Production::post_type_name, $args['production']);
-			update_post_meta($event->ID, 'venue', $args['venue']);
-			update_post_meta($event->ID, 'city', $args['city']);
-			update_post_meta($event->ID, 'tickets_url', $args['tickets_url']);
-			update_post_meta($event->ID, 'event_date', $args['event_date']);
 			
-			$this->set_event_prices($event->ID, $args['prices']);
+			if ($args['venue']!==false) {
+				update_post_meta($event->ID, 'venue', $args['venue']);			
+			}
+			
+			if ($args['city']!==false) {
+				update_post_meta($event->ID, 'city', $args['city']);
+			}
+			
+			if ($args['tickets_url']!==false) {
+				update_post_meta($event->ID, 'tickets_url', $args['tickets_url']);
+			}
+			if ($args['event_date']!==false) {
+				update_post_meta($event->ID, 'event_date', $args['event_date']);
+			}
+			
+			if (is_array($args['prices'])) {
+				$this->set_event_prices($event->ID, $args['prices']);
+			}
 
 			delete_post_meta($event->ID, $this->marker);
 
