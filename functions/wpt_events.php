@@ -591,6 +591,8 @@ class WPT_Events extends WPT_Listing {
 	 * 					Added 'order' to $args.
 	 * @since 0.10.14	Preload events with their productions.
 	 *					This dramatically decreases the number of queries needed to show a listing of events.
+	 * @since 0.10.15	'Start' and 'end' $args now account for timezones.
+	 *					Fixes #117.
 	 *
  	 * @return array Events.
 	 */
@@ -655,7 +657,7 @@ class WPT_Events extends WPT_Listing {
 		if ($filters['start']) {
 			$args['meta_query'][] = array (
 				'key' => $wp_theatre->order->meta_key,
-				'value' => strtotime($filters['start']),
+				'value' => strtotime($filters['start'], current_time( 'timestamp' )) - get_option('gmt_offset') * 3600,
 				'compare' => '>='
 			);
 		}
@@ -670,7 +672,7 @@ class WPT_Events extends WPT_Listing {
 		if ($filters['end']) {
 			$args['meta_query'][] = array (
 				'key' => $wp_theatre->order->meta_key,
-				'value' => strtotime($filters['end']),
+				'value' => strtotime($filters['end'], current_time( 'timestamp' )) - get_option('gmt_offset') * 3600,
 				'compare' => '<='
 			);
 		}

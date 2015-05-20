@@ -1233,4 +1233,35 @@ class WPT_Test extends WP_UnitTestCase {
 		
 	}
 	
+	/**
+	 * Test is relative date filters use the right time offset.
+	 *
+	 * Tricky situation: displaying all events that start today.
+	 * Solution: use 'Yesterday 23:59' for the 'start' argument.
+	 * Problem: UTC may give a different value for yesterday than your local timezone.
+	 * See: https://github.com/slimndap/wp-theatre/issues/117
+	 */
+	function test_timezones() {
+		global $wp_theatre;
+		
+		// Set the timezone to a problematic offset.
+		update_option('gmt_offset', (date('H')+1) * -1 );
+		
+		// Recalculate the post orders, based on the new time offset.
+		$wp_theatre->order->update_post_order();
+		
+		$html = do_shortcode('[wpt_events start="-2 days 23:59" end="now"]');
+		
+		$this->assertEquals(1, substr_count($html, '"wp_theatre_event"'));
+		
+		/*
+		 * More possible tests:
+		 * event yesterday 23:59
+		 * event today 00:00
+		 * event today 23:59
+		 * event tomorrow 00:00
+		 */
+		
+	}
+	
 }
