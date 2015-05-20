@@ -110,7 +110,7 @@ class WPT_Events extends WPT_Listing {
 		$events = $this->get($filters);		
 		$days = array();
 		foreach ($events as $event) {
-			$days[date('Y-m-d',$event->datetime())] = date_i18n('D j M',$event->datetime());
+			$days[ date('Y-m-d',$event->datetime() + get_option('gmt_offset') * HOUR_IN_SECONDS) ] = date_i18n('D j M',$event->datetime() + get_option('gmt_offset') * HOUR_IN_SECONDS);
 		}
 
 		if (!empty($filters['order']) && 'desc'==$filters['order']) {
@@ -520,7 +520,7 @@ class WPT_Events extends WPT_Listing {
 		$events = $this->get($filters);
 		$months = array();
 		foreach ($events as $event) {
-			$months[date('Y-m',$event->datetime())] = date_i18n('M Y',$event->datetime());
+			$months[ date('Y-m',$event->datetime() + get_option('gmt_offset') * HOUR_IN_SECONDS) ] = date_i18n('M Y',$event->datetime() + get_option('gmt_offset') * HOUR_IN_SECONDS);
 		}
 		
 		if (!empty($filters['order']) && 'desc'==$filters['order']) {
@@ -548,7 +548,7 @@ class WPT_Events extends WPT_Listing {
 		$events = $this->get($filters);
 		$years = array();
 		foreach ($events as $event) {
-			$years[date('Y',$event->datetime())] = date_i18n('Y',$event->datetime());
+			$years[date('Y',$event->datetime() + get_option('gmt_offset') * HOUR_IN_SECONDS)] = date_i18n('Y',$event->datetime() + get_option('gmt_offset') * HOUR_IN_SECONDS);
 		}
 
 		if (!empty($filters['order']) && 'desc'==$filters['order']) {
