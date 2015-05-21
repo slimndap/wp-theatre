@@ -135,6 +135,7 @@ class WPT_Event {
 	 * Returns the event date as plain text or as an HTML element.
 	 *
 	 * @since 0.4
+	 * @since 0.10.15	Now accounts for timezones.
 	 *
 	 * @param array $args {
 	 *     @type bool $html Return HTML? Default <false>.
@@ -159,7 +160,14 @@ class WPT_Event {
 
 		if ( ! isset($this->date[ $field ]) ) {
 			$datetime_args = array( 'start' => $args['start'] );
-			$this->date[ $field ] = apply_filters( 'wpt_event_date',date_i18n( get_option( 'date_format' ),$this->datetime( $datetime_args ) ),$this );
+			$this->date[ $field ] = apply_filters(
+				'wpt_event_date',
+				date_i18n( 
+					get_option( 'date_format' ),
+					$this->datetime( $datetime_args ) + get_option('gmt_offset') * 3600
+				),
+				$this
+			);
 		}
 
 		if ( $args['html'] ) {
@@ -189,6 +197,7 @@ class WPT_Event {
 	 * Returns the event date and time combined as plain text or as an HTML element.
 	 *
 	 * @since 0.4
+	 * @since 0.10.15	Always return the datetime in UTC.
 	 *
 	 * @param array $args {
 	 *     @type bool $html Return HTML? Default <false>.
@@ -216,7 +225,17 @@ class WPT_Event {
 		}
 
 		if ( ! isset($this->datetime[ $field ]) ) {
-			$this->datetime[ $field ] = apply_filters( 'wpt_event_datetime',date_i18n( 'U',strtotime( $this->post()->{$field} ),true ), $this );
+			$this->datetime[ $field ] = apply_filters(
+				'wpt_event_datetime',
+				date_i18n( 
+					'U',
+					strtotime(
+						$this->post()->{$field},
+						current_time( 'timestamp' )
+					) - get_option('gmt_offset') * 3600
+				), 
+				$this 
+			);
 		}
 
 		if ( $args['html'] ) {
@@ -887,6 +906,7 @@ class WPT_Event {
 	 * Returns the event time as plain text of as an HTML element.
 	 *
 	 * @since 0.4
+	 * @since 0.10.15	Now accounts for timezones.
 	 *
 	 * @param array $args {
 	 *     @type bool $html Return HTML? Default <false>.
@@ -911,7 +931,14 @@ class WPT_Event {
 
 		if ( ! isset($this->time[ $field ]) ) {
 			$datetime_args = array( 'start' => $args['start'] );
-			$this->time[ $field ] = apply_filters( 'wpt_event_time',date_i18n( get_option( 'time_format' ),$this->datetime( $datetime_args ) ),$this );
+			$this->time[ $field ] = apply_filters(
+				'wpt_event_time',
+				date_i18n( 
+					get_option( 'time_format' ),
+					$this->datetime( $datetime_args ) + get_option('gmt_offset') * 3600
+				),
+				$this 
+			);
 		}
 
 		if ( $args['html'] ) {

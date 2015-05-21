@@ -110,7 +110,7 @@ class WPT_Events extends WPT_Listing {
 		$events = $this->get($filters);		
 		$days = array();
 		foreach ($events as $event) {
-			$days[date('Y-m-d',$event->datetime())] = date_i18n('D j M',$event->datetime());
+			$days[ date('Y-m-d',$event->datetime() + get_option('gmt_offset') * HOUR_IN_SECONDS) ] = date_i18n('D j M',$event->datetime() + get_option('gmt_offset') * HOUR_IN_SECONDS);
 		}
 
 		if (!empty($filters['order']) && 'desc'==$filters['order']) {
@@ -520,7 +520,7 @@ class WPT_Events extends WPT_Listing {
 		$events = $this->get($filters);
 		$months = array();
 		foreach ($events as $event) {
-			$months[date('Y-m',$event->datetime())] = date_i18n('M Y',$event->datetime());
+			$months[ date('Y-m',$event->datetime() + get_option('gmt_offset') * HOUR_IN_SECONDS) ] = date_i18n('M Y',$event->datetime() + get_option('gmt_offset') * HOUR_IN_SECONDS);
 		}
 		
 		if (!empty($filters['order']) && 'desc'==$filters['order']) {
@@ -548,7 +548,7 @@ class WPT_Events extends WPT_Listing {
 		$events = $this->get($filters);
 		$years = array();
 		foreach ($events as $event) {
-			$years[date('Y',$event->datetime())] = date_i18n('Y',$event->datetime());
+			$years[date('Y',$event->datetime() + get_option('gmt_offset') * HOUR_IN_SECONDS)] = date_i18n('Y',$event->datetime() + get_option('gmt_offset') * HOUR_IN_SECONDS);
 		}
 
 		if (!empty($filters['order']) && 'desc'==$filters['order']) {
@@ -591,6 +591,8 @@ class WPT_Events extends WPT_Listing {
 	 * 					Added 'order' to $args.
 	 * @since 0.10.14	Preload events with their productions.
 	 *					This dramatically decreases the number of queries needed to show a listing of events.
+	 * @since 0.10.15	'Start' and 'end' $args now account for timezones.
+	 *					Fixes #117.
 	 *
  	 * @return array Events.
 	 */
@@ -655,7 +657,7 @@ class WPT_Events extends WPT_Listing {
 		if ($filters['start']) {
 			$args['meta_query'][] = array (
 				'key' => $wp_theatre->order->meta_key,
-				'value' => strtotime($filters['start']),
+				'value' => strtotime($filters['start'], current_time( 'timestamp' )) - get_option('gmt_offset') * 3600,
 				'compare' => '>='
 			);
 		}
@@ -670,7 +672,7 @@ class WPT_Events extends WPT_Listing {
 		if ($filters['end']) {
 			$args['meta_query'][] = array (
 				'key' => $wp_theatre->order->meta_key,
-				'value' => strtotime($filters['end']),
+				'value' => strtotime($filters['end'], current_time( 'timestamp' )) - get_option('gmt_offset') * 3600,
 				'compare' => '<='
 			);
 		}

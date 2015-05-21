@@ -226,6 +226,9 @@ Release Date: December 29th, 2014
 
 == Upgrade Notice ==
 
+= 0.10.15 =
+* Fix: The 'start' param for event listings wasn't handling timezones correctly.
+
 = 0.10.14 =
 * Fix: Past events still showed tickets buttons. Thanks [Menno](https://www.linkedin.com/in/mennoluitjes)!
 * Fix: Importer emptied fields that were not part of the import.
