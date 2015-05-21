@@ -80,7 +80,7 @@ class WPT_Event_Editor {
 		$production = $event->production();
 
 		wp_delete_post( $event_id, true );
-		$this->render_event_listing( $production );
+		echo $this->get_listing_html( $production->ID );
 
 		wp_die();
 	}

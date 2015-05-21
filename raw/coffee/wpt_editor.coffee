@@ -24,7 +24,7 @@ class wpt_editor
 			step: 15
 		
 	init_delete_links : ->
-		jQuery('.wpt_event_editor_event_action_delete').click (e) =>
+		jQuery('.wpt_event_editor_listing_action_delete').click (e) =>
 			if confirm wpt_editor_defaults.confirm_delete_message
 				data =
 					'action': 'wpt_event_editor_delete_event'
