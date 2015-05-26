@@ -226,6 +226,9 @@ Release Date: December 29th, 2014
 
 == Upgrade Notice ==
 
+= 0.10.16 =
+* Fix: The 'date' filter for template placeholders wasn't handling timezones correctly.
+
 = 0.10.15 =
 * Fix: The 'start' param for event listings wasn't handling timezones correctly.
 
