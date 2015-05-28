@@ -109,6 +109,9 @@
 		}
 	
 		public function register_post_types() {
+
+			$permalinks        = get_option( 'wpt_permalinks' );
+			$production_permalink = empty( $permalinks['production_base'] ) ? _x( 'production', 'slug', 'wp_theatre' ) : $permalinks['production_base'];
 			
 			register_post_type( WPT_Production::post_type_name,
 				array(
@@ -126,9 +129,7 @@
 					'show_in_admin_bar' => true,
 		  			'supports' => array('title', 'editor', 'excerpt', 'thumbnail','comments'),
 		  			'taxonomies' => array('category','post_tag'),
-		  			'rewrite' => array(
-		  				'slug' => sanitize_title(__('production','wp_theatre'))
-		  			)
+		  			'rewrite' => $production_permalink ? array( 'slug' => untrailingslashit( $production_permalink ), 'with_front' => false, 'feeds' => true ) : false,
 				)
 			);
 			
