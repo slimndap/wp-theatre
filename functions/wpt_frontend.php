@@ -83,11 +83,14 @@ class WPT_Frontend {
 	}
 
 	/**
-	 * the_content function.
+	 * Adds events listing to the content of a productio page.
 	 * 
-	 * @since 0.11	
-	 * @param string $content
-	 * @return void
+	 * @since 	?
+	 * @since 	0.11	Event are now only added to the main post content.
+	 * 					As explained by Pippin:
+	 *					https://pippinsplugins.com/playing-nice-with-the-content-filter/	
+	 * @param 	string 	$content
+	 * @return 	void
 	 */
 	public function the_content($content) {
 		global $wp_theatre;
