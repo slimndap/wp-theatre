@@ -1,5 +1,5 @@
 # @codekit-prepend '../js/jquery.datetimepicker.js'
-# @codekit-prepend 'wpt_editor.coffee'
+# @codekit-prepend 'wpt_event_editor.coffee'
 
 class wpt_admin_ticketspage
 	constructor: ->
