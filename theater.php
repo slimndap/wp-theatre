@@ -104,7 +104,7 @@ class WP_Theatre {
 		require_once(dirname(__FILE__) . '/functions/wpt_listing_page.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_calendar.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_filter.php');	
-		require_once(dirname(__FILE__) . '/functions/wpt_editor.php');	
+		require_once(dirname(__FILE__) . '/functions/wpt_event_editor.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_importer.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_cart.php');	
 		if (is_admin()) {

@@ -49,13 +49,13 @@ class WPT_Event_Editor {
 	 * @since 0.11
 	 */
 	public function enqueue_scripts() {
-		wp_localize_script( 'wp_theatre_admin', 'wpt_editor_defaults', $this->get_defaults() );
+		wp_localize_script( 'wp_theatre_admin', 'wpt_event_editor_defaults', $this->get_defaults() );
 
 		wp_localize_script(
 			'wp_theatre_admin',
-			'wpt_editor_security',
+			'wpt_event_editor_security',
 			array(
-				'nonce' => wp_create_nonce( 'wpt_editor_nonce' ),
+				'nonce' => wp_create_nonce( 'wpt_event_editor_nonce' ),
 			)
 		);
 	}
@@ -67,7 +67,7 @@ class WPT_Event_Editor {
 	 */
 	public function delete_event_over_ajax() {
 
-		check_ajax_referer( 'wpt_editor_nonce', 'nonce' , true );
+		check_ajax_referer( 'wpt_event_editor_nonce', 'nonce' , true );
 
 		$event_id = $_POST['event_id'];
 
@@ -174,7 +174,7 @@ class WPT_Event_Editor {
 				'id' => 'enddate',
 				'title' => __( 'End time', 'wp_theatre' ),
 				'save' => array(
-					'callback' => array( $this, 'save_field_enddate' ),
+					'callback' => array( $this, 'save_enddate' ),
 				),
 			),
 			array(
@@ -199,7 +199,7 @@ class WPT_Event_Editor {
 					'callback' => array( $this, 'get_control_tickets_status_html' ),
 				),
 				'save' => array(
-					'callback' => array( $this, 'save_field_tickets_status' ),
+					'callback' => array( $this, 'save_tickets_status' ),
 				),
 			),
 			array(
@@ -224,7 +224,7 @@ class WPT_Event_Editor {
 					'description' => __( 'Place extra prices on a new line.', 'wp_theatre' ),
 				),
 				'save' => array(
-					'callback' => array( $this, 'save_field_prices' ),
+					'callback' => array( $this, 'save_prices' ),
 				),
 			),
 		);
@@ -562,7 +562,7 @@ class WPT_Event_Editor {
 		$html = '';
 
 		$args = array(
-			'status' => 'all',
+			'status' => array( 'publish', 'draft' ),
 			'production' => $production_id,
 		);
 		$events = $wp_theatre->events->get( $args );
@@ -780,13 +780,43 @@ class WPT_Event_Editor {
 			call_user_func_array( $field['save']['callback'], array( $field, $event_id ) );
 		} else {
 			$value = $_POST[ 'wpt_event_editor_'.$field['id'] ];
-
-			$value = apply_filters( 'wpt/event_editor/save/field/value/field='.$field['id'], $value, $event_id );
-			$value = apply_filters( 'wpt/event_editor/save/field/value', $value, $field, $event_id );
-
-			$field_id = update_post_meta( $event_id, $field['id'], $value );
+			$this->save_value( $value, $field, $event_id );
 		}
 
+	}
+
+	/**
+	 * Saves the value for a field to the database.
+	 *
+	 * @since 	0.11
+	 * @access 	protected
+	 * @param 	mixed	$value		The value.
+	 * @param 	array 	$field		The field.
+	 * @param 	int 	$event_id	The event.
+	 * @param 	bool 	$update 	Whether of not to update an existing value (default: true).
+	 * @return	int					The ID of the inserted/updated row
+	 */
+	protected function save_value($value, $field, $event_id, $update = true) {
+
+		/**
+		 * Filter the value of an event field, before it is saved
+		 * to the database.
+		 *
+		 * @since 0.11
+		 * @param 	mixed 	$value		The value.
+		 * @param	array	$field		The field.
+		 * @param	int		$event_id	The event.
+		 */
+		$value = apply_filters( 'wpt/event_editor/save/value/field='.$field['id'], $value, $event_id );
+		$value = apply_filters( 'wpt/event_editor/save/value', $value, $field, $event_id );
+
+		if ( $update ) {
+			$field_id = update_post_meta( $event_id, $field['id'], $value );
+		} else {
+			$field_id = add_post_meta( $event_id, $field['id'], $value );
+		}
+
+		return $field_id;
 	}
 
 	/**
@@ -797,7 +827,7 @@ class WPT_Event_Editor {
 	 * @param 	int 	$event_id	The event.
 	 * @return 	void
 	 */
-	public function save_field_enddate($field, $event_id) {
+	public function save_enddate($field, $event_id) {
 
 		$defaults = $this->get_defaults();
 
@@ -809,7 +839,7 @@ class WPT_Event_Editor {
 			$value = date( 'Y-m-d H:i', $event_date + $defaults['duration'] );
 		}
 
-		$field_id = update_post_meta( $event_id, $field['id'], $value );
+		$this->save_value( $value, $field, $event_id );
 
 	}
 
@@ -821,15 +851,14 @@ class WPT_Event_Editor {
 	 * @param 	int 	$event_id	The event.
 	 * @return 	void
 	 */
-	public function save_field_prices($field, $event_id) {
+	public function save_prices($field, $event_id) {
 
 		delete_post_meta( $event_id, $field['id'] );
 
 		$values = explode( "\n",$_POST[ 'wpt_event_editor_'.$field['id'] ] );
 
 		foreach ( $values as $value ) {
-			$value = apply_filters( 'wpt/event_editor/save/field/prices/value', $value, $field, $event_id );
-			add_post_meta( $event_id, $field['id'], $value );
+			$this->save_value( $value, $field, $event_id, false );
 		}
 
 	}
@@ -842,7 +871,7 @@ class WPT_Event_Editor {
 	 * @param 	int 	$event_id	The event.
 	 * @return 	void
 	 */
-	public function save_field_tickets_status($field, $event_id) {
+	public function save_tickets_status($field, $event_id) {
 
 		$value = $_POST[ 'wpt_event_editor_'.$field['id'] ];
 
@@ -850,11 +879,7 @@ class WPT_Event_Editor {
 			$value = $_POST[ 'wpt_event_editor_'.$field['id'].'_other' ];
 		}
 
-		$value = apply_filters( 'wpt/editor/event/save/field/tickets_status/value', $value, $field, $event_id );
-
-		update_post_meta( $event_id, $field['id'], $value );
-
-		do_action( 'wpt/event_editor/save/field/tickets_status', $value, $field, $event_id );
+		$this->save_value( $value, $field, $event_id );
 
 	}
 
