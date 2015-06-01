@@ -778,7 +778,7 @@ class WPT_Event_Editor {
 	public function save_field($field, $event_id) {
 
 		if ( ! empty( $field['disabled'] ) ) {
-			return;	
+			return;
 		}
 
 		if ( ! empty($field['save']['callback']) ) {
@@ -828,6 +828,7 @@ class WPT_Event_Editor {
 	 * Saves the enddate field of an event.
 	 *
 	 * @since	0.11
+	 * @since	0.11.1	Get the event_date from the database if the event_date field is disabled.
 	 * @param 	array 	$field		The field.
 	 * @param 	int 	$event_id	The event.
 	 * @return 	void
@@ -838,7 +839,12 @@ class WPT_Event_Editor {
 
 		$value = $_POST[ 'wpt_event_editor_'.$field['id'] ];
 
-		$event_date = strtotime( $_POST['wpt_event_editor_event_date'] );
+		if ( isset ( $_POST['wpt_event_editor_event_date'] ) ) {
+			$event_date = strtotime( $_POST['wpt_event_editor_event_date'] );
+		} else {
+			$event_date = strtotime( get_post_meta( $event_id, 'event_date', true ) );
+		}
+
 		$enddate = strtotime( $value );
 		if ( $enddate < $event_date ) {
 			$value = date( 'Y-m-d H:i', $event_date + $defaults['duration'] );
