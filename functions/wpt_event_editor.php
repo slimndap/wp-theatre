@@ -770,11 +770,16 @@ class WPT_Event_Editor {
 	 * has a 'save'-callback defined.
 	 *
 	 * @since	0.11
+	 * @since 	0.11.1	Leave disabled fields alone.
 	 * @param 	array 	$field		The field.
 	 * @param 	int 	$event_id	The event.
 	 * @return 	void
 	 */
 	public function save_field($field, $event_id) {
+
+		if ( ! empty( $field['disabled'] ) ) {
+			return;	
+		}
 
 		if ( ! empty($field['save']['callback']) ) {
 			call_user_func_array( $field['save']['callback'], array( $field, $event_id ) );

@@ -233,6 +233,9 @@ Release Date: December 29th, 2014
 
 == Upgrade Notice ==
 
+= 0.11.1 =
+* Fix: The new event editor was overwriting disabled event fields.
+
 = 0.11 =
 * Fix: Importer now only stores fields for event when the fields are explicitly set.
 
