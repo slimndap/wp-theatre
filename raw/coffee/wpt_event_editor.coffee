@@ -9,7 +9,7 @@ class wpt_event_editor
 		@event_date = jQuery '#wpt_event_editor_event_date'
 		@enddate = jQuery '#wpt_event_editor_enddate'
 	
-		@event_date.datetimepicker
+		@event_date.wpt_datetimepicker
 			defaultDate: wpt_event_editor_defaults.event_date
 			format : wpt_event_editor_defaults.datetime_format
 			step: 15
@@ -20,7 +20,7 @@ class wpt_event_editor
 						enddate = new Date event_date.getTime() + wpt_event_editor_defaults.duration * 1000					
 						@enddate.val enddate.dateFormat wpt_event_editor_defaults.datetime_format
 			
-		@enddate.datetimepicker	
+		@enddate.wpt_datetimepicker	
 			format : wpt_event_editor_defaults.datetime_format
 			step: 15
 		
@@ -30,7 +30,7 @@ class wpt_event_editor
 				data =
 					'action': 'wpt_event_editor_delete_event'
 					'event_id': jQuery(e.currentTarget).parents('tr').data 'event_id'
-					'nonce': wpt_editor_security.nonce
+					'nonce': wpt_event_editor_security.nonce
 				jQuery('.wpt_event_editor_listing').load ajaxurl, data, =>
 					@init_delete_links()
 			false
@@ -55,7 +55,7 @@ class wpt_event_editor
 			data =
 				'action': 'wpt_event_editor_create_event'
 				'post_data' : form.serialize()
-				'nonce': wpt_editor_security.nonce
+				'nonce': wpt_event_editor_security.nonce
 			jQuery('.wpt_event_editor_listing').load ajaxurl, data, =>
 				@init_delete_links()
 				@create.removeClass 'open'

@@ -358,7 +358,10 @@ class WPT_Event_Editor {
 		$html = '';
 
 		$html .= '<td class="wpt_event_editor_listing_actions">';
-		foreach ( $this->get_listing_actions( $event_id ) as $action => $action_args ) {
+		
+		$actions = $this->get_listing_actions( $event_id );
+		
+		foreach ( $actions as $action => $action_args ) {
 			$html .= '<a class="wpt_event_editor_listing_action_'.$action.'" href="'.$action_args['link'].'">'.$action_args['title'].'</a> ';
 		}
 		$html .= '</td>';
