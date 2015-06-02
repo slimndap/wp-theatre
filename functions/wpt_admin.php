@@ -34,15 +34,18 @@ class WPT_Admin {
 	}	
 
 	function admin_init() {
+		global $wp_theatre;
+		
 		wp_enqueue_script(
 			'wp_theatre_admin', 
 			plugins_url( '../js/admin.js', __FILE__ ), 
 			array(
 				'jquery'
-			) 
+			),
+			$wp_theatre->wpt_version
 		);
-		wp_enqueue_style( 'wp_theatre_admin', plugins_url( '../css/admin.css', __FILE__ ) );
-		wp_enqueue_style( 'wp_theatre', plugins_url( '../css/style.css', __FILE__ ) );
+		wp_enqueue_style( 'wp_theatre_admin', plugins_url( '../css/admin.css', __FILE__ ), array(), $wp_theatre->wpt_version );
+		wp_enqueue_style( 'wp_theatre', plugins_url( '../css/style.css', __FILE__ ), array(), $wp_theatre->wpt_version );
 
 
 		$this->tabs = array(
