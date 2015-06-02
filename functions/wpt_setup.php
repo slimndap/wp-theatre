@@ -167,14 +167,39 @@
 
 		}	
 		
+		/**
+		 * Sanitizes the event_date meta value.
+		 *
+		 * Makes sure the event_date is always stored as 'Y-m-d H:i'.
+		 * 
+		 * @since 0.11
+		 * @param 	string 	$value	The event_date value.
+		 * @return 	string			The sanitized event_date.
+		 */
 		public function sanitize_event_date( $value ) {
 			return date( 'Y-m-d H:i', strtotime($value) );
 		}
 		
+		/**
+		 * Sanitizes the enddate meta value.
+		 *
+		 * Makes sure the enddate is always stored as 'Y-m-d H:i'.
+		 * 
+		 * @since 0.11
+		 * @param 	string 	$value	The enddate value.
+		 * @return 	string			The sanitized enddate.
+		 */
 		public function sanitize_enddate( $value ) {
 			return date( 'Y-m-d H:i', strtotime($value) );
 		}
 		
+		/**
+		 * Sanitizes the event_tickets_price value.
+		 * 
+		 * @since 0.11
+		 * @param 	string	$value	The event_tickets_price value.
+		 * @return 	string			The sanitized event_tickets_price.
+		 */
 		public function sanitize_event_tickets_price( $value) {
 			
 			$price_parts = explode( '|', $value );

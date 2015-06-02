@@ -555,7 +555,7 @@ class WPT_Productions extends WPT_Listing {
 	 */
 	private function preload_productions_with_events($productions) {
 		global $wp_theatre;
-		$event_ids = array();
+		$production_ids = array();
 		
 		foreach ($productions as $production) {
 			$production_ids[] = $production->ID;			
