@@ -514,61 +514,90 @@
   padding: 0;
   margin: 0;
 }
-#wpt_event_editor .inside .wpt_event_editor_event_listing table {
+#wpt_event_editor .inside .wpt_event_editor_listing table {
   width: 100%;
   border-spacing: 0;
   color: #555;
 }
-#wpt_event_editor .inside .wpt_event_editor_event_listing table tr.alternate {
+#wpt_event_editor .inside .wpt_event_editor_listing table tr.alternate {
   background-color: #f9f9f9;
 }
-#wpt_event_editor .inside .wpt_event_editor_event_listing table tr td {
+#wpt_event_editor .inside .wpt_event_editor_listing table tr td {
   padding: 8px 12px;
   vertical-align: top;
   border-bottom: 1px solid #F0F0F0;
 }
-#wpt_event_editor .inside .wpt_event_editor_event_listing table tr td.wpt_event_editor_event_actions {
+#wpt_event_editor .inside .wpt_event_editor_listing table tr td.wpt_event_editor_event_actions {
   text-align: right;
 }
-#wpt_event_editor .inside h4 {
-  padding: 0 12px;
+#wpt_event_editor .inside .wpt_event_editor_create .wpt_event_editor_create_actions {
+  display: none;
 }
-#wpt_event_editor .inside .wpt_event_editor_event_form {
+#wpt_event_editor .inside .wpt_event_editor_form {
   width: 100%;
   border-spacing: 0;
   color: #555;
 }
-#wpt_event_editor .inside .wpt_event_editor_event_form tr th,
-#wpt_event_editor .inside .wpt_event_editor_event_form tr td {
+#wpt_event_editor .inside .wpt_event_editor_form tr th,
+#wpt_event_editor .inside .wpt_event_editor_form tr td {
   border-top: 1px solid #F0F0F0;
   border-left: 1px solid #E1E1E1;
   text-align: left;
   vertical-align: top;
   padding: 8px 12px;
 }
-#wpt_event_editor .inside .wpt_event_editor_event_form tr th {
+#wpt_event_editor .inside .wpt_event_editor_form tr th {
   background: #F9F9F9;
   border-left: none;
   width: 24%;
 }
-#wpt_event_editor .inside .wpt_event_editor_event_form tr th p {
+#wpt_event_editor .inside .wpt_event_editor_form tr th p {
   color: #777;
   font-weight: normal;
   font-style: normal;
 }
-#wpt_event_editor .inside .wpt_event_editor_event_form tr td {
+#wpt_event_editor .inside .wpt_event_editor_form tr td {
   border-right: none;
 }
-#wpt_event_editor .inside .wpt_event_editor_event_form tr td input[type=text] {
+#wpt_event_editor .inside .wpt_event_editor_form tr td input[type=text] {
   width: 100%;
 }
-#wpt_event_editor .inside .wpt_event_editor_event_form tr td input[type=text][name=wpt_event_editor_tickets_status_other] {
+#wpt_event_editor .inside .wpt_event_editor_form tr td input[type=text][name=wpt_event_editor_tickets_status_other] {
   width: auto;
 }
-#wpt_event_editor .inside .wpt_event_editor_event_form tr td textarea {
+#wpt_event_editor .inside .wpt_event_editor_form tr td textarea {
   max-width: 100%;
   width: 200px;
   height: 6em;
+}
+body.js #wpt_event_editor .inside .wpt_event_editor_create .wpt_event_editor_create_actions {
+  display: block;
+  padding: 8px 12px;
+}
+body.js #wpt_event_editor .inside .wpt_event_editor_create .wpt_event_editor_create_actions a {
+  display: inline-block;
+  margin-right: 8px;
+}
+body.js #wpt_event_editor .inside .wpt_event_editor_create .wpt_event_editor_create_actions.wpt_event_editor_create_actions_open {
+  display: none;
+}
+body.js #wpt_event_editor .inside .wpt_event_editor_create .wpt_event_editor_form {
+  display: none;
+}
+body.js #wpt_event_editor .inside .wpt_event_editor_create.open .wpt_event_editor_create_actions.wpt_event_editor_create_actions_open {
+  display: block;
+  text-align: right;
+  border-top: 1px solid #F0F0F0;
+}
+body.js #wpt_event_editor .inside .wpt_event_editor_create.open .wpt_event_editor_create_actions.wpt_event_editor_create_actions_open a {
+  margin-right: 0;
+  margin-left: 8px;
+}
+body.js #wpt_event_editor .inside .wpt_event_editor_create.open .wpt_event_editor_create_actions.wpt_event_editor_create_actions_closed {
+  display: none;
+}
+body.js #wpt_event_editor .inside .wpt_event_editor_create.open .wpt_event_editor_form {
+  display: block;
 }
 @font-face {
   font-family: "theatre-webfont";

@@ -2,7 +2,7 @@
 	.inside {
 		padding: 0;
 		margin: 0;
-		.wpt_event_editor_event_listing {
+		.wpt_event_editor_listing {
 			table {
 				width: 100%;
 				border-spacing: 0;
@@ -22,10 +22,12 @@
 				}				
 			}
 		}
-		h4 {
-			padding: 0 12px;			
+		.wpt_event_editor_create {
+			.wpt_event_editor_create_actions {
+				display: none;
+			}
 		}
-		.wpt_event_editor_event_form {
+		.wpt_event_editor_form {
 			width: 100%;
 			border-spacing: 0;
 			color: #555;
@@ -61,6 +63,52 @@
 						max-width: 100%;
 						width: 200px;
 						height: 6em;
+					}
+				}
+			}
+		}
+	}
+}
+
+body.js {
+	#wpt_event_editor {
+		.inside {
+			.wpt_event_editor_create {
+				.wpt_event_editor_create_actions {
+					display: block;
+					padding: 8px 12px;		
+					a {
+						display: inline-block;
+						margin-right: 8px;
+					}
+					&.wpt_event_editor_create_actions_open {
+						display: none;
+					}			
+					&.wpt_event_editor_create_actions_closed {
+						
+					}			
+				}
+				.wpt_event_editor_form {
+					display: none;
+				}
+				&.open {
+					.wpt_event_editor_create_actions {
+						&.wpt_event_editor_create_actions_open {
+							display: block;
+							text-align: right;
+							border-top: 1px solid #F0F0F0;
+							a {
+								margin-right: 0;
+								margin-left: 8px;
+							}
+						}			
+						&.wpt_event_editor_create_actions_closed {
+							display: none;	
+						}			
+					}
+					.wpt_event_editor_form {
+						display: block;
+						
 					}
 				}
 			}

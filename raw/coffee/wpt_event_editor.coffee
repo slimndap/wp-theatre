@@ -2,6 +2,7 @@ class wpt_editor
 	constructor: ->
 		@init_datetime_inputs()
 		@init_delete_links()
+		@init_create()
 		
 	init_datetime_inputs : ->
 	
@@ -24,15 +25,44 @@ class wpt_editor
 			step: 15
 		
 	init_delete_links : ->
-		jQuery('.wpt_event_editor_listing_action_delete').click (e) =>
+		jQuery('.wpt_event_editor_listing_action_delete').unbind('click').click (e) =>
 			if confirm wpt_editor_defaults.confirm_delete_message
 				data =
 					'action': 'wpt_event_editor_delete_event'
 					'event_id': jQuery(e.currentTarget).parents('tr').data 'event_id'
 					'nonce': wpt_editor_security.nonce
-				jQuery('.wpt_event_editor_event_listing').load ajaxurl, data, =>
+				jQuery('.wpt_event_editor_listing').load ajaxurl, data, =>
 					@init_delete_links()
 			false
+
+	init_create : ->
+		@create = jQuery '.wpt_event_editor_create'
+		open = @create.find '.wpt_event_editor_create_open'
+		open.click =>
+			@create.addClass 'open'
+			false
+
+		cancel = @create.find '.wpt_event_editor_create_cancel'
+		cancel.click =>
+			@create.removeClass 'open'
+			false
+		
+		save = @create.find '.wpt_event_editor_create_save'
+		save.click =>
+		
+			form = jQuery '#post'
+		
+			data =
+				'action': 'wpt_event_editor_create_event'
+				'post_data' : form.serialize()
+				'nonce': wpt_editor_security.nonce
+			jQuery('.wpt_event_editor_listing').load ajaxurl, data, =>
+				@init_delete_links()
+				@create.removeClass 'open'
+			false
+		
+		
+		
 
 jQuery ->
 	new wpt_editor
