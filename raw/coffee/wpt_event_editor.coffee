@@ -26,7 +26,7 @@ class wpt_event_editor
 		
 	init_delete_links : ->
 		jQuery('.wpt_event_editor_listing_action_delete').unbind('click').click (e) =>
-			if confirm wpt_editor_defaults.confirm_delete_message
+			if confirm wpt_event_editor_defaults.confirm_delete_message
 				data =
 					'action': 'wpt_event_editor_delete_event'
 					'event_id': jQuery(e.currentTarget).parents('tr').data 'event_id'

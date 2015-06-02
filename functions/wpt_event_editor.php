@@ -944,10 +944,12 @@ class WPT_Event_Editor {
 
 		delete_post_meta( $event_id, $field['id'] );
 
-		$values = explode( "\n",$data[ 'wpt_event_editor_'.$field['id'] ] );
-
+		$values = explode( "\r\n",$data[ 'wpt_event_editor_'.$field['id'] ] );
+		
 		foreach ( $values as $value ) {
-			$this->save_value( $value, $field, $event_id, false );
+			if ('' != trim($value)) {
+				$this->save_value( $value, $field, $event_id, false );			
+			}
 		}
 
 	}
