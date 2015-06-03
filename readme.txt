@@ -233,6 +233,10 @@ Release Date: December 29th, 2014
 
 == Upgrade Notice ==
 
+= 0.11.2 =
+* Fix: Events without prices ended up having a price of 0.00.
+* Fix: Renamed the datetimepicker to avoid conflicts with other datetimepickers.
+
 = 0.11.1 =
 * Fix: The new event editor was overwriting disabled event fields.
 
