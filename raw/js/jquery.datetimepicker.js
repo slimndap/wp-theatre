@@ -687,7 +687,7 @@
 		});
 	};
 
-	$.fn.datetimepicker = function (opt) {
+	$.fn.wpt_datetimepicker = function (opt) {
 		var KEY0 = 48,
 			KEY9 = 57,
 			_KEY0 = 96,
@@ -1972,7 +1972,7 @@
 			}
 		});
 	};
-	$.fn.datetimepicker.defaults = default_options;
+	$.fn.wpt_datetimepicker.defaults = default_options;
 }(jQuery));
 
 function HighlightedDate(date, desc, style) {

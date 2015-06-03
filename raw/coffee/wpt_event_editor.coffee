@@ -8,7 +8,7 @@ class wpt_event_editor
 		@event_date = jQuery '#wpt_event_editor_event_date'
 		@enddate = jQuery '#wpt_event_editor_enddate'
 	
-		@event_date.datetimepicker
+		@event_date.wpt_datetimepicker
 			defaultDate: wpt_event_editor_defaults.event_date
 			format : wpt_event_editor_defaults.datetime_format
 			step: 15
@@ -19,7 +19,7 @@ class wpt_event_editor
 						enddate = new Date event_date.getTime() + wpt_event_editor_defaults.duration * 1000					
 						@enddate.val enddate.dateFormat wpt_event_editor_defaults.datetime_format
 			
-		@enddate.datetimepicker	
+		@enddate.wpt_datetimepicker	
 			format : wpt_event_editor_defaults.datetime_format
 			step: 15
 		
