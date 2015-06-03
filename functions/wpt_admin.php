@@ -35,7 +35,7 @@ class WPT_Admin {
 
 	function admin_init() {
 		global $wp_theatre;
-		
+
 		wp_enqueue_script(
 			'wp_theatre_admin', 
 			plugins_url( '../js/admin.js', __FILE__ ), 

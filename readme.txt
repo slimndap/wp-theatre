@@ -12,6 +12,10 @@ Build a website for your theater, music venue, sports team, cinema or your rockb
 == Description ==
 A WordPress plugin to manage events with all necessary shortcodes and widgets for your theater.
 
+
+> <strong>Newsletter</strong><br>
+> This plugin is in active development and updated frequently. Please [sign-up for the newsletter](http://www.slimndap.com/theater-wordpress-newsletter/) to stay informed about upcoming features and successful showcases.
+
 __Shortcodes__
 
 Theater comes with several shortcodes and widgets to show off your events. See the [documentation](https://github.com/slimndap/wp-theatre/wiki/Shortcodes) for an overview.
@@ -41,7 +45,7 @@ __Author__
 This section describes how to install the plugin and get it working.
 
 1. Install the plugin.
-1. Start adding your productions and events using the Theater-menu or the Theater dashboard widget.
+1. Create your first event by clicking on the Theater-menu.
 
 __Productions and events__
 
@@ -232,6 +236,10 @@ Release Date: December 29th, 2014
 * Basic version of the plugin.
 
 == Upgrade Notice ==
+
+= 0.11.2 =
+* Fix: Events without prices ended up having a price of 0.00.
+* Fix: Renamed the datetimepicker to avoid conflicts with other datetimepickers.
 
 = 0.11.1 =
 * Fix: The new event editor was overwriting disabled event fields.
