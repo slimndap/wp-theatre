@@ -416,7 +416,20 @@ class WPT_Admin {
 			
 	}
 	
+	/**
+	 * Save meta data for a production and its events.
+	 * Triggered by de 'save_post'-action when you save a production in the admin.
+	 *
+	 * @since ?.?
+	 * @since 0.11.3	Unhook WPT_Event_Editor::save_event() to avoid loops.
+	 *					See: https://github.com/slimndap/wp-theatre/issues/125
+	 * 
+	 * @param 	int		$post_id
+	 * @return 	void
+	 */
 	function save_production( $post_id ) {
+		global $wp_theatre;
+		
 		/*
 		 * We need to verify this came from the our screen and with proper authorization,
 		 * because save_post can be triggered at other times.
@@ -456,12 +469,12 @@ class WPT_Admin {
 		
 		// unhook to avoid loops
 		remove_action( 'save_post', array( $this, 'save_production' ) );
+		remove_action( 'save_post', array( $wp_theatre->event_editor, 'save_event' ) );
 
 		$post = get_post($post_id);
 		$events = $this->get_events($post_id);
 
 		foreach($events as $event) {
-			
 			// Keep trashed events in the trash.
 			if ('trash' == get_post_status($event->ID)) {
 				continue;
@@ -481,6 +494,7 @@ class WPT_Admin {
 
 		// rehook
 		add_action( 'save_post', array( $this, 'save_production' ) );
+		add_action( 'save_post', array( $wp_theatre->event_editor, 'save_event' ) );
 
 		/**
 		 * Fires after a production is saved through the admin screen.
