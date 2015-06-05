@@ -349,7 +349,6 @@ class WPT_Event_Editor {
 	 * @return 	string				The HTML.
 	 */
 	public function get_control_html( $field, $event_id = false ) {
-
 		$html = '';
 
 		if ( ! empty( $field['edit']['callback'] ) ) {
@@ -382,7 +381,7 @@ class WPT_Event_Editor {
 		 * @param	array	$field		The field.
 		 * @param 	int		$event_id	The ID of the event.
 		 */
-		$html = apply_filters( 'wpt/event_editor/control/html/field='.$field['id'], $html, $event_id );
+		$html = apply_filters( 'wpt/event_editor/control/html/field='.$field['id'], $html, $field, $event_id );
 		$html = apply_filters( 'wpt/event_editor/control/html', $html, $field, $event_id );
 
 		return $html;
@@ -407,10 +406,10 @@ class WPT_Event_Editor {
 		 * @param 	string 	$label		The current label, as plain text.
 		 * @param	string	$field		The unique identifier of the field.
 		 */
-		$label = apply_filters( 'wpt/event_editor/control/label/field='.$field['id'], $label );
+		$label = apply_filters( 'wpt/event_editor/control/label/field='.$field['id'], $label, $field );
 		$label = apply_filters( 'wpt/event_editor/control/label/', $label, $field );
 
-		$html .= '<label for="wpt_event_editor_'.$event_field['id'].'">'.$label.'</label>';
+		$html .= '<label for="wpt_event_editor_'.$field['id'].'">'.$label.'</label>';
 
 		if ( ! empty( $field['edit']['description'] ) ) {
 			$description = $field['edit']['description'];
@@ -421,13 +420,14 @@ class WPT_Event_Editor {
 		 * Filter the HTML for a field input label.
 		 *
 		 * @since 0.11
+		 * @since 0.11.3	Removed the descriptions from the filter params.
+		 * 					You can still extract this from the $field.
 		 * @param 	string 	$html			The current label, as HTML.
 		 * @param	array	$field			The field.
 		 * @param	string	$label			The current label, as plain text.
-		 * @param	string	$description	The current description, as plain text.
 		 */
-		$label = apply_filters( 'wpt/event_editor/control/label/html/field='.$field['id'], $html, $label, $description );
-		$label = apply_filters( 'wpt/event_editor/control/label/html', $html, $field, $label, $description );
+		$label = apply_filters( 'wpt/event_editor/control/label/html/field='.$field['id'], $html, $field, $label );
+		$label = apply_filters( 'wpt/event_editor/control/label/html', $html, $field, $label );
 
 		return $html;
 	}
@@ -467,7 +467,7 @@ class WPT_Event_Editor {
 		 * @param	array	$field		The field.
 		 * @param 	int		$event_id	The ID of the event.
 		 */
-		$html = apply_filters( 'wpt/event_editor/control/html/field='.$field['id'], $html, $event_id );
+		$html = apply_filters( 'wpt/event_editor/control/html/field='.$field['id'], $html, $field, $event_id );
 		$html = apply_filters( 'wpt/event_editor/control/html', $html, $field, $event_id );
 
 		return $html;
@@ -541,7 +541,7 @@ class WPT_Event_Editor {
 		 * @param	string	$field		The unique identifier of the field.
 		 * @param 	int		$event_id	The ID of the event.
 		 */
-		$html = apply_filters( 'wpt/event_editor/control/html/field='.$field['id'], $html, $event_id );
+		$html = apply_filters( 'wpt/event_editor/control/html/field='.$field['id'], $html, $field, $event_id );
 		$html = apply_filters( 'wpt/event_editor/control/html', $html, $field, $event_id );
 
 		return $html;
@@ -816,7 +816,7 @@ class WPT_Event_Editor {
 		 * @param	array	$field		The field.
 		 * @param	int		$event_id	The event.
 		 */
-		$value = apply_filters( 'wpt/event_editor/save/value/field='.$field['id'], $value, $event_id );
+		$value = apply_filters( 'wpt/event_editor/save/value/field='.$field['id'], $value, $field, $event_id );
 		$value = apply_filters( 'wpt/event_editor/save/value', $value, $field, $event_id );
 
 		if ( $update ) {

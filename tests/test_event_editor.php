@@ -9,12 +9,36 @@ class WPT_Test_Event_Editor extends WP_UnitTestCase {
 		parent::setUp();
 
 	}
+	
+	function assume_role($role='author') {
+		$user = new WP_User( $this->factory->user->create( array( 'role' => $role ) ) );
+		wp_set_current_user( $user->ID );
+		return $user;		
+	}
+	
+	function create_event() {
+		$event_args = array(
+			'post_type' => WPT_Event::post_type_name,
+		);
+		return $this->factory->post->create( $event_args );		
+	}
+	
+	function create_event_for_production($production_id) {
+		$event_id = $this->create_event();
+		add_post_meta($event_id, WPT_Production::post_type_name, $production_id, true);
+		return $event_id;
+	}
+	
+	function create_production() {
+		$production_args = array(
+			'post_type' => WPT_Production::post_type_name,
+		);
+		return $this->factory->post->create( $production_args );
+	}
 
 	function test_event_is_created_on_production_page() {
 
-		// Login as a user with editing rights.
-		$user = new WP_User( $this->factory->user->create( array( 'role' => 'author' ) ) );
-		wp_set_current_user( $user->ID );
+		$this->assume_role('author');
 
 		// Create a fake post submission.
 		$_POST['wpt_event_editor_nonce'] = wp_create_nonce( 'wpt_event_editor' );
@@ -31,16 +55,11 @@ class WPT_Test_Event_Editor extends WP_UnitTestCase {
 
 		$this->assertEquals( $event_date, date( 'Y-m-d H:i', $events[0]->datetime() ) );
 
-		// Reset the logged in user.
-		wp_set_current_user( 0 );
-
 	}
 
 	function test_event_is_created_on_event_page() {
 
-		// Login as a user with editing rights.
-		$user = new WP_User( $this->factory->user->create( array( 'role' => 'author' ) ) );
-		wp_set_current_user( $user->ID );
+		$this->assume_role('author');
 
 		// Save a production.
 		$production_args = array(
@@ -65,9 +84,24 @@ class WPT_Test_Event_Editor extends WP_UnitTestCase {
 
 		$this->assertEquals( $event_date, date( 'Y-m-d H:i', $events[0]->datetime() ) );
 
-		// Reset the logged in user.
-		wp_set_current_user( 0 );
-
 	}
+	
+	function test_production_value_is_preserved_on_event_page() {
+		// Create a production with an event.
+		$production_id = $this->create_production();
+		$event_id = $this->create_event_for_production($production_id);
 
+		$this->assume_role('author');
+		
+		// Go to the event edit page.
+		set_current_screen(WPT_Event::post_type_name);
+		
+		// There should be a hidden input on the form with the production_id.
+		$form_html = $this->wp_theatre->event_editor->get_form_html($production_id, $event_id);
+		$this->assertContains('<input type="hidden" id="wpt_event_editor_'.WPT_Production::post_type_name.'" name="wpt_event_editor_'.WPT_Production::post_type_name.'" value="'.$production_id.'" />', $form_html);
+	}
+	
+	function test_is_disabled_field_value_preserved() {
+		
+	}
 }

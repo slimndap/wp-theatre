@@ -323,7 +323,6 @@ class WPT_Admin {
 	 * @return 	string				The HTML.
 	 */
 	public function get_control_production_html($field, $event_id) {
-		
 		$html = '';
 		
 		$production_id = get_post_meta($event_id, $field['id'], true);
