@@ -237,7 +237,7 @@ Release Date: December 29th, 2014
 
 == Upgrade Notice ==
 
-= 0.11.2 =
+= 0.11.3 =
 * Fix: The event editor was saving ghost events in the background.
 
 = 0.11.2 =
