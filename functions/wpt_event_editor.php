@@ -720,6 +720,7 @@ class WPT_Event_Editor {
 	 * @return 	int					The ID of the production.
 	 */
 	public function save_event($post_id) {
+
 		if ( ! isset( $_POST['wpt_event_editor_nonce'] ) ) {
 			return $post_id; }
 
@@ -784,8 +785,11 @@ class WPT_Event_Editor {
 		if ( ! empty($field['save']['callback']) ) {
 			call_user_func_array( $field['save']['callback'], array( $field, $event_id ) );
 		} else {
-			$value = $_POST[ 'wpt_event_editor_'.$field['id'] ];
-			$this->save_value( $value, $field, $event_id );
+			$key = 'wpt_event_editor_'.$field['id'];
+			if ( ! empty($_POST[ $key ]) ) {
+				$value = $_POST[ $key ];
+				$this->save_value( $value, $field, $event_id );
+			}
 		}
 
 	}
@@ -837,7 +841,13 @@ class WPT_Event_Editor {
 
 		$defaults = $this->get_defaults();
 
-		$value = $_POST[ 'wpt_event_editor_'.$field['id'] ];
+		$key = 'wpt_event_editor_'.$field['id'];
+
+		if ( empty($_POST[ $key ]) ) {
+			return;
+		}
+
+		$value = $_POST[ $key ];
 
 		if ( isset ( $_POST['wpt_event_editor_event_date'] ) ) {
 			$event_date = strtotime( $_POST['wpt_event_editor_event_date'] );
@@ -866,7 +876,13 @@ class WPT_Event_Editor {
 
 		delete_post_meta( $event_id, $field['id'] );
 
-		$values = explode( "\r\n",$_POST[ 'wpt_event_editor_'.$field['id'] ] );
+		$key = 'wpt_event_editor_'.$field['id'];
+
+		if ( empty($_POST[ $key ]) ) {
+			return;
+		}
+
+		$values = explode( "\r\n",$_POST[ $key ] );
 
 		foreach ( $values as $value ) {
 			if ( '' != $value ) {
@@ -886,7 +902,13 @@ class WPT_Event_Editor {
 	 */
 	public function save_tickets_status($field, $event_id) {
 
-		$value = $_POST[ 'wpt_event_editor_'.$field['id'] ];
+		$key = 'wpt_event_editor_'.$field['id'];
+
+		if ( empty($_POST[ $key ]) ) {
+			return;
+		}
+
+		$value = $_POST[ $key ];
 
 		if ( $value == WPT_Event::tickets_status_other ) {
 			$value = $_POST[ 'wpt_event_editor_'.$field['id'].'_other' ];

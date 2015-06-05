@@ -230,7 +230,10 @@ class WPT_Admin {
 		
 		$current_screen = get_current_screen();
 		
-		if (WPT_Event::post_type_name == $current_screen->id) {
+		if (
+			! is_null($current_screen) &&
+			(WPT_Event::post_type_name == $current_screen->id)
+		) {
 			array_unshift(
 				$fields,
 				array(
