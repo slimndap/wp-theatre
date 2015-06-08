@@ -357,8 +357,10 @@ class WPT_Event_Editor {
 
 		$html = '';
 
+		$actions = $this->get_listing_actions( $event_id );
+
 		$html .= '<td class="wpt_event_editor_listing_actions">';
-		foreach ( $this->get_listing_actions( $event_id ) as $action => $action_args ) {
+		foreach ( $actions as $action => $action_args ) {
 			$html .= '<a class="wpt_event_editor_listing_action_'.$action.'" href="'.$action_args['link'].'">'.$action_args['title'].'</a> ';
 		}
 		$html .= '</td>';
@@ -380,7 +382,6 @@ class WPT_Event_Editor {
 	 * @return 	string				The HTML.
 	 */
 	public function get_control_html( $field, $event_id = false ) {
-
 		$html = '';
 
 		if ( ! empty( $field['edit']['callback'] ) ) {
@@ -413,7 +414,7 @@ class WPT_Event_Editor {
 		 * @param	array	$field		The field.
 		 * @param 	int		$event_id	The ID of the event.
 		 */
-		$html = apply_filters( 'wpt/event_editor/control/html/field='.$field['id'], $html, $event_id );
+		$html = apply_filters( 'wpt/event_editor/control/html/field='.$field['id'], $html, $field, $event_id );
 		$html = apply_filters( 'wpt/event_editor/control/html', $html, $field, $event_id );
 
 		return $html;
@@ -438,10 +439,10 @@ class WPT_Event_Editor {
 		 * @param 	string 	$label		The current label, as plain text.
 		 * @param	string	$field		The unique identifier of the field.
 		 */
-		$label = apply_filters( 'wpt/event_editor/control/label/field='.$field['id'], $label );
+		$label = apply_filters( 'wpt/event_editor/control/label/field='.$field['id'], $label, $field );
 		$label = apply_filters( 'wpt/event_editor/control/label/', $label, $field );
 
-		$html .= '<label for="wpt_event_editor_'.$event_field['id'].'">'.$label.'</label>';
+		$html .= '<label for="wpt_event_editor_'.$field['id'].'">'.$label.'</label>';
 
 		if ( ! empty( $field['edit']['description'] ) ) {
 			$description = $field['edit']['description'];
@@ -452,13 +453,14 @@ class WPT_Event_Editor {
 		 * Filter the HTML for a field input label.
 		 *
 		 * @since 0.11
+		 * @since 0.11.3	Removed the descriptions from the filter params.
+		 * 					You can still extract this from the $field.
 		 * @param 	string 	$html			The current label, as HTML.
 		 * @param	array	$field			The field.
 		 * @param	string	$label			The current label, as plain text.
-		 * @param	string	$description	The current description, as plain text.
 		 */
-		$label = apply_filters( 'wpt/event_editor/control/label/html/field='.$field['id'], $html, $label, $description );
-		$label = apply_filters( 'wpt/event_editor/control/label/html', $html, $field, $label, $description );
+		$label = apply_filters( 'wpt/event_editor/control/label/html/field='.$field['id'], $html, $field, $label );
+		$label = apply_filters( 'wpt/event_editor/control/label/html', $html, $field, $label );
 
 		return $html;
 	}
@@ -498,7 +500,7 @@ class WPT_Event_Editor {
 		 * @param	array	$field		The field.
 		 * @param 	int		$event_id	The ID of the event.
 		 */
-		$html = apply_filters( 'wpt/event_editor/control/html/field='.$field['id'], $html, $event_id );
+		$html = apply_filters( 'wpt/event_editor/control/html/field='.$field['id'], $html, $field, $event_id );
 		$html = apply_filters( 'wpt/event_editor/control/html', $html, $field, $event_id );
 
 		return $html;
@@ -572,7 +574,7 @@ class WPT_Event_Editor {
 		 * @param	string	$field		The unique identifier of the field.
 		 * @param 	int		$event_id	The ID of the event.
 		 */
-		$html = apply_filters( 'wpt/event_editor/control/html/field='.$field['id'], $html, $event_id );
+		$html = apply_filters( 'wpt/event_editor/control/html/field='.$field['id'], $html, $field, $event_id );
 		$html = apply_filters( 'wpt/event_editor/control/html', $html, $field, $event_id );
 
 		return $html;
@@ -582,18 +584,19 @@ class WPT_Event_Editor {
 	 * Gets the HTML for a list of existing events for a production.
 	 *
 	 * @since 	0.11
-	 * @access 	private
+	 * @since 	0.11.4	Fix: Listing wasn't showing events for scheduled productions.
+	 *					@see https://github.com/slimndap/wp-theatre/issues/127
 	 * @param 	int 	$production_id	The production.
 	 * @return 	string	The HTML.
 	 */
-	private function get_listing_html( $production_id ) {
+	public function get_listing_html( $production_id ) {
 
 		global $wp_theatre;
 
 		$html = '';
 
 		$args = array(
-			'status' => array( 'publish', 'draft' ),
+			'status' => array( 'any' ),
 			'production' => $production_id,
 		);
 		$events = $wp_theatre->events->get( $args );
@@ -781,41 +784,48 @@ class WPT_Event_Editor {
 	 * 2. Saves all fields of the event.
 	 *
 	 * @since 	0.11
+	 * @since	0.11.4	Event now inherits status and publish date from the production.
 	 * @see		WPT_Event_Editor::save_field();
 	 * @param 	int 	$post_id	The ID of the production.
 	 * @return 	int					The ID of the production.
 	 */
-	public function save_event($post_id) {
+	public function save_event($production_id) {
+
 		if ( ! isset( $_POST['wpt_event_editor_nonce'] ) ) {
-			return $post_id; }
+			return $production_id; }
 
 		if ( ! wp_verify_nonce( $_POST['wpt_event_editor_nonce'], 'wpt_event_editor' ) ) {
-			return $post_id; }
+			return $production_id; }
 
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
-			return $post_id; }
+			return $production_id; }
 
-		if ( ! current_user_can( 'edit_post', $post_id ) ) {
-			return $post_id; }
+		if ( ! current_user_can( 'edit_post', $production_id ) ) {
+			return $production_id; }
 
 		/*
 		 * Event needs at least at start time.
 		 */
 		if ( empty($_POST['wpt_event_editor_event_date']) ) {
-			return $post_id;
+			return $production_id;
 		}
 
 		// Unhook to avoid loops
 		remove_action( 'save_post', array( $this, 'save_event' ) );
 
-		$post = array(
+		$production_post = get_post( $production_id );
+
+		$event_post = array(
 			'post_type' => WPT_Event::post_type_name,
-			'post_status' => 'publish',
+			'post_status' => get_post_status( $production_id ),
+			'edit_date' => true,
+			'post_date' => $production_post->post_date,
+			'post_date_gmt' => get_gmt_from_date( $production_post->post_date ),
 		);
 
-		if ( $event_id = wp_insert_post( $post ) ) {
+		if ( $event_id = wp_insert_post( $event_post ) ) {
 
-			add_post_meta( $event_id, WPT_Production::post_type_name, $post_id, true );
+			add_post_meta( $event_id, WPT_Production::post_type_name, $production_id, true );
 
 			foreach ( $this->get_fields() as $field ) {
 				$this->save_field( $field, $event_id, $_POST );
@@ -825,7 +835,7 @@ class WPT_Event_Editor {
 		// Rehook
 		add_action( 'save_post', array( $this, 'save_event' ) );
 
-		return $post_id;
+		return $production_id;
 
 	}
 
@@ -853,8 +863,11 @@ class WPT_Event_Editor {
 		if ( ! empty($field['save']['callback']) ) {
 			call_user_func_array( $field['save']['callback'], array( $field, $event_id, $data ) );
 		} else {
-			$value = $data[ 'wpt_event_editor_'.$field['id'] ];
-			$this->save_value( $value, $field, $event_id );
+			$key = 'wpt_event_editor_'.$field['id'];
+			if ( ! empty($_POST[ $key ]) ) {
+				$value = $_POST[ $key ];
+				$this->save_value( $value, $field, $event_id );
+			}
 		}
 
 	}
@@ -881,7 +894,7 @@ class WPT_Event_Editor {
 		 * @param	array	$field		The field.
 		 * @param	int		$event_id	The event.
 		 */
-		$value = apply_filters( 'wpt/event_editor/save/value/field='.$field['id'], $value, $event_id );
+		$value = apply_filters( 'wpt/event_editor/save/value/field='.$field['id'], $value, $field, $event_id );
 		$value = apply_filters( 'wpt/event_editor/save/value', $value, $field, $event_id );
 
 		if ( $update ) {
@@ -909,7 +922,13 @@ class WPT_Event_Editor {
 
 		$defaults = $this->get_defaults();
 
-		$value = $data[ 'wpt_event_editor_'.$field['id'] ];
+		$key = 'wpt_event_editor_'.$field['id'];
+
+		if ( empty($_POST[ $key ]) ) {
+			return;
+		}
+
+		$value = $_POST[ $key ];
 
 		if ( isset ( $_POST['wpt_event_editor_event_date'] ) ) {
 			$event_date = strtotime( $_POST['wpt_event_editor_event_date'] );
@@ -941,10 +960,18 @@ class WPT_Event_Editor {
 
 		delete_post_meta( $event_id, $field['id'] );
 
-		$values = explode( "\n",$data[ 'wpt_event_editor_'.$field['id'] ] );
+		$key = 'wpt_event_editor_'.$field['id'];
+
+		if ( empty($_POST[ $key ]) ) {
+			return;
+		}
+
+		$values = explode( "\r\n",$_POST[ $key ] );
 
 		foreach ( $values as $value ) {
-			$this->save_value( $value, $field, $event_id, false );
+			if ( '' != $value ) {
+				$this->save_value( $value, $field, $event_id, false );
+			}
 		}
 
 	}
@@ -962,7 +989,13 @@ class WPT_Event_Editor {
 	 */
 	public function save_tickets_status($field, $event_id, $data) {
 
-		$value = $data[ 'wpt_event_editor_'.$field['id'] ];
+		$key = 'wpt_event_editor_'.$field['id'];
+
+		if ( empty($_POST[ $key ]) ) {
+			return;
+		}
+
+		$value = $_POST[ $key ];
 
 		if ( $value == WPT_Event::tickets_status_other ) {
 			$value = $data[ 'wpt_event_editor_'.$field['id'].'_other' ];

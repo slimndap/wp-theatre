@@ -34,15 +34,18 @@ class WPT_Admin {
 	}	
 
 	function admin_init() {
+        global $wp_theatre;
+        
 		wp_enqueue_script(
 			'wp_theatre_admin', 
 			plugins_url( '../js/admin.js', __FILE__ ), 
 			array(
 				'jquery'
-			) 
+			),
+            $wp_theatre->wpt_version
 		);
-		wp_enqueue_style( 'wp_theatre_admin', plugins_url( '../css/admin.css', __FILE__ ) );
-		wp_enqueue_style( 'wp_theatre', plugins_url( '../css/style.css', __FILE__ ) );
+		wp_enqueue_style( 'wp_theatre_admin', plugins_url( '../css/admin.css', __FILE__ ), array(), $wp_theatre->wpt_version );
+		wp_enqueue_style( 'wp_theatre', plugins_url( '../css/style.css', __FILE__ ), array(), $wp_theatre->wpt_version );
 
 
 		$this->tabs = array(
@@ -227,7 +230,10 @@ class WPT_Admin {
 		
 		$current_screen = get_current_screen();
 		
-		if (WPT_Event::post_type_name == $current_screen->id) {
+		if (
+			! is_null($current_screen) &&
+			(WPT_Event::post_type_name == $current_screen->id)
+		) {
 			array_unshift(
 				$fields,
 				array(
@@ -317,7 +323,6 @@ class WPT_Admin {
 	 * @return 	string				The HTML.
 	 */
 	public function get_control_production_html($field, $event_id) {
-		
 		$html = '';
 		
 		$production_id = get_post_meta($event_id, $field['id'], true);
@@ -411,7 +416,20 @@ class WPT_Admin {
 			
 	}
 	
+	/**
+	 * Save meta data for a production and its events.
+	 * Triggered by de 'save_post'-action when you save a production in the admin.
+	 *
+	 * @since ?.?
+	 * @since 0.11.3	Unhook WPT_Event_Editor::save_event() to avoid loops.
+	 *					See: https://github.com/slimndap/wp-theatre/issues/125
+	 * 
+	 * @param 	int		$post_id
+	 * @return 	void
+	 */
 	function save_production( $post_id ) {
+		global $wp_theatre;
+		
 		/*
 		 * We need to verify this came from the our screen and with proper authorization,
 		 * because save_post can be triggered at other times.
@@ -451,12 +469,12 @@ class WPT_Admin {
 		
 		// unhook to avoid loops
 		remove_action( 'save_post', array( $this, 'save_production' ) );
+		remove_action( 'save_post', array( $wp_theatre->event_editor, 'save_event' ) );
 
 		$post = get_post($post_id);
 		$events = $this->get_events($post_id);
 
 		foreach($events as $event) {
-			
 			// Keep trashed events in the trash.
 			if ('trash' == get_post_status($event->ID)) {
 				continue;
@@ -476,6 +494,7 @@ class WPT_Admin {
 
 		// rehook
 		add_action( 'save_post', array( $this, 'save_production' ) );
+		add_action( 'save_post', array( $wp_theatre->event_editor, 'save_event' ) );
 
 		/**
 		 * Fires after a production is saved through the admin screen.
