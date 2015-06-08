@@ -239,7 +239,7 @@ class WPT_Test_Event_Editor_Ajax extends WP_Ajax_UnitTestCase {
 
 		$this->_setRole( 'administrator' );
 
-		$_POST['nonce'] = wp_create_nonce( 'wpt_event_editor_nonce' );
+		$_POST['nonce'] = wp_create_nonce( 'wpt_event_editor_ajax_nonce' );
 		$_POST['event_id'] = $second_event_id;
 
 		try {
@@ -252,6 +252,39 @@ class WPT_Test_Event_Editor_Ajax extends WP_Ajax_UnitTestCase {
 		$events = $production->events();
 
 		$this->assertCount( 1, $events );
+
+	}
+
+	function test_event_is_created_on_production_page() {
+		$production_id = $this->create_production();
+
+		$this->_setRole( 'administrator' );
+
+		$_POST['nonce'] = wp_create_nonce( 'wpt_event_editor_ajax_nonce' );
+
+		$event_date = date( 'Y-m-d H:i', + WEEK_IN_SECONDS );
+		$venue = 'Paradiso';
+		$post_data = array(
+			'wpt_event_editor_nonce' => wp_create_nonce( 'wpt_event_editor' ),
+			'wpt_event_editor_event_date' => $event_date,
+			'wpt_event_editor_venue' => $venue,
+			'post_ID' => $production_id,
+		);
+		$_POST['post_data'] = http_build_query( $post_data );
+
+		try {
+			$this->_handleAjax( 'wpt_event_editor_create_event' );
+		} catch ( WPAjaxDieContinueException $e ) {
+			// We expected this, do nothing.
+		}
+
+		$production = new WPT_Production( $production_id );
+		$events = $production->events();
+
+		$this->assertCount( 1, $events );
+
+		$this->assertEquals( $event_date, date( 'Y-m-d H:i', $events[0]->datetime() ) );
+		$this->assertEquals( $venue, $events['0']->venue() );
 
 	}
 

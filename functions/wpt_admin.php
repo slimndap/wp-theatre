@@ -411,7 +411,7 @@ class WPT_Admin {
 		update_post_meta( $post_id, WPT_Production::post_type_name, $_POST[WPT_Production::post_type_name] );
 		
 		foreach ($wp_theatre->event_editor->get_fields( $post_id ) as $field) {
-			$wp_theatre->event_editor->save_field($field, $post_id);
+			$wp_theatre->event_editor->save_field($field, $post_id, $_POST);
 		}
 			
 	}

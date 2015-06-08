@@ -63,31 +63,30 @@ class WPT_Event_Editor {
 
 	/**
 	 * Creates a new event for a production submitted through AJAX.
-	 * 
-	 * @since 0.11.2
+	 *
+	 * @since 0.11.5
 	 */
 	public function create_event_over_ajax() {
 
 		check_ajax_referer( 'wpt_event_editor_ajax_nonce', 'nonce' , true );
 
-		parse_str($_POST['post_data'], $post_data);
-		
+		parse_str( $_POST['post_data'], $post_data );
+
 		if ( ! empty($post_data['wpt_event_editor_event_date']) ) {
 
 			$post = array(
 				'post_type' => WPT_Event::post_type_name,
 				'post_status' => 'publish',
 			);
-	
+
 			if ( $event_id = wp_insert_post( $post ) ) {
-	
+
 				add_post_meta( $event_id, WPT_Production::post_type_name, $post_data['post_ID'], true );
-	
+
 				foreach ( $this->get_fields( $event_id ) as $field ) {
 					$this->save_field( $field, $event_id, $post_data );
 				}
 			}
-	
 		}
 
 		echo $this->get_listing_html( $post_data['post_ID'] );
@@ -624,7 +623,7 @@ class WPT_Event_Editor {
 		}
 
 		$html = '<div class="wpt_event_editor_listing">'.$html.'</div>';
-		$html = apply_filters('wpt/event_editor/listing/html', $html, $production_id, $events);
+		$html = apply_filters( 'wpt/event_editor/listing/html', $html, $production_id, $events );
 
 		return $html;
 	}
@@ -746,34 +745,34 @@ class WPT_Event_Editor {
 
 	/**
 	 * Gets the HTML to create a new event for a production.
-	 * 
+	 *
 	 * @since	0.11.2
 	 * @param 	int 	$production_id	The production.
 	 * @return 	string					The HTML.
 	 */
 	public function get_create_html($production_id) {
 		$html = '';
-		
-		$html.= $this->get_form_html( $post->ID );
+
+		$html .= $this->get_form_html( $post->ID );
 
 		$html_actions = '<div class="wpt_event_editor_create_actions wpt_event_editor_create_actions_closed">';
-		$html_actions.= '<a href="#" class="button wpt_event_editor_create_open">'.__('Add a new event','wp_theatre').'</a>';
-		$html_actions.= '</div>';
-		
-		$html.= $html_actions;	
-		
+		$html_actions .= '<a href="#" class="button wpt_event_editor_create_open">'.__( 'Add a new event','wp_theatre' ).'</a>';
+		$html_actions .= '</div>';
+
+		$html .= $html_actions;
+
 		$html_actions = '<div class="wpt_event_editor_create_actions wpt_event_editor_create_actions_open">';
-		$html_actions.= '<a href="#" class="button wpt_event_editor_create_save">'.__('Save event','wp_theatre').'</a>';
-		$html_actions.= '<a href="#" class="button wpt_event_editor_create_cancel">'.__('Cancel','wp_theatre').'</a>';
-		$html_actions.= '</div>';
-		
-		$html.= $html_actions;	
+		$html_actions .= '<a href="#" class="button wpt_event_editor_create_save">'.__( 'Save event','wp_theatre' ).'</a>';
+		$html_actions .= '<a href="#" class="button wpt_event_editor_create_cancel">'.__( 'Cancel','wp_theatre' ).'</a>';
+		$html_actions .= '</div>';
+
+		$html .= $html_actions;
 
 		$html = '<div class="wpt_event_editor_create">'.$html.'</div>';
-		$html = apply_filters('wpt/event_editor/create/html', $html, $production_id);
+		$html = apply_filters( 'wpt/event_editor/create/html', $html, $production_id );
 
 		return $html;
-		
+
 	}
 
 	/**
@@ -864,8 +863,8 @@ class WPT_Event_Editor {
 			call_user_func_array( $field['save']['callback'], array( $field, $event_id, $data ) );
 		} else {
 			$key = 'wpt_event_editor_'.$field['id'];
-			if ( ! empty($_POST[ $key ]) ) {
-				$value = $_POST[ $key ];
+			if ( ! empty($data[ $key ]) ) {
+				$value = $data[ $key ];
 				$this->save_value( $value, $field, $event_id );
 			}
 		}

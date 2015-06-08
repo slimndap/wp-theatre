@@ -26,11 +26,11 @@ class wpt_event_editor
 		
 	init_delete_links : ->
 		jQuery('.wpt_event_editor_listing_action_delete').unbind('click').click (e) =>
-			if confirm wpt_editor_defaults.confirm_delete_message
+			if confirm wpt_event_editor_defaults.confirm_delete_message
 				data =
 					'action': 'wpt_event_editor_delete_event'
 					'event_id': jQuery(e.currentTarget).parents('tr').data 'event_id'
-					'nonce': wpt_editor_security.nonce
+					'nonce': wpt_event_editor_security.nonce
 				jQuery('.wpt_event_editor_listing').load ajaxurl, data, =>
 					@init_delete_links()
 			false
@@ -55,7 +55,7 @@ class wpt_event_editor
 			data =
 				'action': 'wpt_event_editor_create_event'
 				'post_data' : form.serialize()
-				'nonce': wpt_editor_security.nonce
+				'nonce': wpt_event_editor_security.nonce
 			jQuery('.wpt_event_editor_listing').load ajaxurl, data, =>
 				@init_delete_links()
 				@create.removeClass 'open'
