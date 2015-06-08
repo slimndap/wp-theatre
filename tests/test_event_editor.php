@@ -101,10 +101,6 @@ class WPT_Test_Event_Editor extends WP_UnitTestCase {
 		$this->assertContains( '<input type="hidden" id="wpt_event_editor_'.WPT_Production::post_type_name.'" name="wpt_event_editor_'.WPT_Production::post_type_name.'" value="'.$production_id.'" />', $form_html );
 	}
 
-	function test_is_disabled_field_value_preserved() {
-
-	}
-
 	function test_2nd_event_is_created_on_production_page() {
 
 		$this->assume_role( 'author' );
