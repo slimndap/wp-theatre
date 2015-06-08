@@ -137,6 +137,67 @@ class WPT_Test_Event_Editor extends WP_UnitTestCase {
 		$this->assertCount( 2, $events );
 
 	}
+
+	function test_event_inherits_production_status_on_production_page() {
+
+		$this->assume_role( 'author' );
+
+		// Create a fake post submission.
+		$_POST['wpt_event_editor_nonce'] = wp_create_nonce( 'wpt_event_editor' );
+		$event_date = date( 'Y-m-d H:i', + WEEK_IN_SECONDS );
+		$_POST['wpt_event_editor_event_date'] = $event_date;
+
+		$post_status = 'future';
+		$post_date = date( 'Y-m-d H:i:s', time() + DAY_IN_SECONDS );
+
+		// Create a production.
+		$production_id = $this->create_production();
+		$production_post = array(
+			'ID' => $production_id,
+			'post_status' => $post_status,
+			'post_date' => $post_date,
+			'post_date_gmt' => get_gmt_from_date( $post_date ),
+		);
+		wp_update_post( $production_post );
+
+		$production = new WPT_Production( $production_id );
+		$events = $production->events();
+
+		$this->assertEquals( $post_status, get_post_status( $events[0]->ID ) );
+	}
+
+	function test_event_editor_lists_scheduled_events() {
+		$this->assume_role( 'author' );
+
+		$post_status = 'future';
+
+		$date = date( 'Y-m-d H:i:s', time() + DAY_IN_SECONDS );
+
+		// Create a production with an event.
+		$production_id = $this->create_production();
+		$production_post = array(
+			'ID' => $production_id,
+			'post_status' => $post_status,
+			'post_date' => $date,
+			'post_date_gmt' => get_gmt_from_date( $date ),
+		);
+		wp_update_post( $production_post );
+
+		$event_id = $this->create_event_for_production( $production_id );
+		$event_post = array(
+			'ID' => $event_id,
+			'post_status' => $post_status,
+			'post_date' => $date,
+			'post_date_gmt' => get_gmt_from_date( $date ),
+		);
+
+		wp_update_post( $event_post );
+
+		$html = $this->wp_theatre->event_editor->get_listing_html( $production_id );
+
+		$this->assertContains( '<tr data-event_id="'.$event_id.'">', $html );
+
+	}
 }
 
 /**

@@ -553,18 +553,19 @@ class WPT_Event_Editor {
 	 * Gets the HTML for a list of existing events for a production.
 	 *
 	 * @since 	0.11
-	 * @access 	private
+	 * @since 	0.11.4	Fix: Listing wasn't showing events for scheduled productions.
+	 *					@see https://github.com/slimndap/wp-theatre/issues/127
 	 * @param 	int 	$production_id	The production.
 	 * @return 	string	The HTML.
 	 */
-	private function get_listing_html( $production_id ) {
+	public function get_listing_html( $production_id ) {
 
 		global $wp_theatre;
 
 		$html = '';
 
 		$args = array(
-			'status' => array( 'publish', 'draft' ),
+			'status' => array( 'any' ),
 			'production' => $production_id,
 		);
 		$events = $wp_theatre->events->get( $args );
@@ -717,42 +718,48 @@ class WPT_Event_Editor {
 	 * 2. Saves all fields of the event.
 	 *
 	 * @since 	0.11
+	 * @since	0.11.4	Event now inherits status and publish date from the production.
 	 * @see		WPT_Event_Editor::save_field();
 	 * @param 	int 	$post_id	The ID of the production.
 	 * @return 	int					The ID of the production.
 	 */
-	public function save_event($post_id) {
+	public function save_event($production_id) {
 
 		if ( ! isset( $_POST['wpt_event_editor_nonce'] ) ) {
-			return $post_id; }
+			return $production_id; }
 
 		if ( ! wp_verify_nonce( $_POST['wpt_event_editor_nonce'], 'wpt_event_editor' ) ) {
-			return $post_id; }
+			return $production_id; }
 
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
-			return $post_id; }
+			return $production_id; }
 
-		if ( ! current_user_can( 'edit_post', $post_id ) ) {
-			return $post_id; }
+		if ( ! current_user_can( 'edit_post', $production_id ) ) {
+			return $production_id; }
 
 		/*
 		 * Event needs at least at start time.
 		 */
 		if ( empty($_POST['wpt_event_editor_event_date']) ) {
-			return $post_id;
+			return $production_id;
 		}
 
 		// Unhook to avoid loops
 		remove_action( 'save_post', array( $this, 'save_event' ) );
 
-		$post = array(
+		$production_post = get_post( $production_id );
+
+		$event_post = array(
 			'post_type' => WPT_Event::post_type_name,
-			'post_status' => 'publish',
+			'post_status' => get_post_status( $production_id ),
+			'edit_date' => true,
+			'post_date' => $production_post->post_date,
+			'post_date_gmt' => get_gmt_from_date( $production_post->post_date ),
 		);
 
-		if ( $event_id = wp_insert_post( $post ) ) {
+		if ( $event_id = wp_insert_post( $event_post ) ) {
 
-			add_post_meta( $event_id, WPT_Production::post_type_name, $post_id, true );
+			add_post_meta( $event_id, WPT_Production::post_type_name, $production_id, true );
 
 			foreach ( $this->get_fields() as $field ) {
 				$this->save_field( $field, $event_id );
@@ -762,7 +769,7 @@ class WPT_Event_Editor {
 		// Rehook
 		add_action( 'save_post', array( $this, 'save_event' ) );
 
-		return $post_id;
+		return $production_id;
 
 	}
 
