@@ -237,6 +237,9 @@ Release Date: December 29th, 2014
 
 == Upgrade Notice ==
 
+= 0.11.4 =
+* Fixes two bugs related to 'scheduled' productions.
+
 = 0.11.3 =
 * Fix: The event editor was saving ghost events in the background.
 
