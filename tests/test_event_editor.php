@@ -40,10 +40,20 @@ class WPT_Test_Event_Editor extends WP_UnitTestCase {
 
 		$this->assume_role( 'author' );
 
+		// Add an extra field
+		$func = create_function(
+			'$fields, $event_id',
+			'$fields[] = array("id"=>"extra_field", "title"=>"Extra field"); return $fields;'
+		);
+		
+		add_filter('wpt/event_editor/fields', $func, 10, 2);
+		
 		// Create a fake post submission.
 		$_POST['wpt_event_editor_nonce'] = wp_create_nonce( 'wpt_event_editor' );
 		$event_date = date( 'Y-m-d H:i', + WEEK_IN_SECONDS );
 		$_POST['wpt_event_editor_event_date'] = $event_date;
+		$extra_value = 'extra value';
+		$_POST['wpt_event_editor_extra_field'] = $extra_value;
 
 		// Create a production.
 		$production_args = array(
@@ -54,6 +64,7 @@ class WPT_Test_Event_Editor extends WP_UnitTestCase {
 		$events = $production->events();
 
 		$this->assertEquals( $event_date, date( 'Y-m-d H:i', $events[0]->datetime() ) );
+		$this->assertEquals( $extra_value, $events[0]->custom('extra_field' ) );
 
 	}
 
@@ -226,7 +237,7 @@ class WPT_Test_Event_Editor_Ajax extends WP_Ajax_UnitTestCase {
 		return $this->factory->post->create( $production_args );
 	}
 
-	function test_event_is_deleted_on_production_page() {
+	function test_event_is_deleted_with_ajax_on_production_page() {
 
 		// Create a production with two events.
 		$production_id = $this->create_production();
@@ -251,20 +262,30 @@ class WPT_Test_Event_Editor_Ajax extends WP_Ajax_UnitTestCase {
 
 	}
 
-	function test_event_is_created_on_production_page() {
+	function test_event_is_created_with_ajax_on_production_page() {
 		$production_id = $this->create_production();
 
+		// Add an extra field
+		$func = create_function(
+			'$fields, $event_id',
+			'$fields[] = array("id"=>"extra_field", "title"=>"Extra field"); return $fields;'
+		);
+		
+		add_filter('wpt/event_editor/fields', $func, 10, 2);
+		
 		$this->_setRole( 'administrator' );
 
 		$_POST['nonce'] = wp_create_nonce( 'wpt_event_editor_ajax_nonce' );
 
 		$event_date = date( 'Y-m-d H:i', + WEEK_IN_SECONDS );
 		$venue = 'Paradiso';
+		$extra_value = 'coming soon!';
 		$post_data = array(
 			'wpt_event_editor_nonce' => wp_create_nonce( 'wpt_event_editor' ),
 			'wpt_event_editor_event_date' => $event_date,
 			'wpt_event_editor_venue' => $venue,
 			'post_ID' => $production_id,
+			'wpt_event_editor_extra_field' => $extra_value,
 		);
 		$_POST['post_data'] = http_build_query( $post_data );
 
@@ -281,6 +302,7 @@ class WPT_Test_Event_Editor_Ajax extends WP_Ajax_UnitTestCase {
 
 		$this->assertEquals( $event_date, date( 'Y-m-d H:i', $events[0]->datetime() ) );
 		$this->assertEquals( $venue, $events['0']->venue() );
+		$this->assertEquals( $extra_value, $events[0]->custom('extra_field' ) );
 
 	}
 
