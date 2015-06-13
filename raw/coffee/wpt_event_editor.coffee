@@ -59,9 +59,20 @@ class wpt_event_editor
 			jQuery('.wpt_event_editor_listing').load ajaxurl, data, =>
 				@init_delete_links()
 				@create.removeClass 'open'
+				@reset_create_form()
 			false
+	
+	reset_create_form : ->
 		
-		
+		container = @create.find '.wpt_event_editor_create_form'
+
+		data =
+			'action': 'wpt_event_editor_reset_create_form'
+			'production_id' : jQuery('#post_ID').val()
+			'nonce': wpt_event_editor_security.nonce
+
+		container.load ajaxurl, data, =>
+			@init_datetime_inputs()
 		
 
 jQuery ->

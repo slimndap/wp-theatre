@@ -570,6 +570,10 @@
   width: 200px;
   height: 6em;
 }
+#wpt_event_editor .inside .wpt_event_editor_form tr:first-child th,
+#wpt_event_editor .inside .wpt_event_editor_form tr:first-child td {
+  border-top: none;
+}
 body.js #wpt_event_editor .inside .wpt_event_editor_create .wpt_event_editor_create_actions {
   display: block;
   padding: 8px 12px;

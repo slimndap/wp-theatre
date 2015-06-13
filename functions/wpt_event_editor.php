@@ -25,6 +25,7 @@ class WPT_Event_Editor {
 
 		add_action( 'wp_ajax_wpt_event_editor_delete_event', array( $this, 'delete_event_over_ajax' ) );
 		add_action( 'wp_ajax_wpt_event_editor_create_event', array( $this, 'create_event_over_ajax' ) );
+		add_action( 'wp_ajax_wpt_event_editor_reset_create_form', array( $this, 'get_form_html_over_ajax' ) );
 
 	}
 
@@ -116,6 +117,15 @@ class WPT_Event_Editor {
 		wp_delete_post( $event_id, true );
 		echo $this->get_listing_html( $production->ID );
 
+		wp_die();
+	}
+	
+	function get_form_html_over_ajax() {
+
+		check_ajax_referer( 'wpt_event_editor_ajax_nonce', 'nonce' , true );
+
+		$production_id = $_POST['production_id'];
+		echo $this->get_form_html($production_id);
 		wp_die();
 	}
 
@@ -753,7 +763,7 @@ class WPT_Event_Editor {
 	public function get_create_html($production_id) {
 		$html = '';
 
-		$html .= $this->get_form_html( $post->ID );
+		$html .= '<div class="wpt_event_editor_create_form">'.$this->get_form_html( $post->ID ).'</div>';
 
 		$html_actions = '<div class="wpt_event_editor_create_actions wpt_event_editor_create_actions_closed">';
 		$html_actions .= '<a href="#" class="button wpt_event_editor_create_open">'.__( 'Add a new event','wp_theatre' ).'</a>';
