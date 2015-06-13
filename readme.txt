@@ -237,6 +237,9 @@ Release Date: December 29th, 2014
 
 == Upgrade Notice ==
 
+= 0.11.5 =
+* Create new events for a production without a page reload.
+
 = 0.11.4 =
 * Fixes two bugs related to 'scheduled' productions.
 

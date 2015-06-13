@@ -119,13 +119,18 @@ class WPT_Event_Editor {
 
 		wp_die();
 	}
-	
-	function get_form_html_over_ajax() {
+
+	/**
+	 * Gets the create event form for a production over AJAX.
+	 *
+	 * @since 0.11.5
+	 */
+	public function get_form_html_over_ajax() {
 
 		check_ajax_referer( 'wpt_event_editor_ajax_nonce', 'nonce' , true );
 
 		$production_id = $_POST['production_id'];
-		echo $this->get_form_html($production_id);
+		echo $this->get_form_html( $production_id );
 		wp_die();
 	}
 
@@ -367,7 +372,7 @@ class WPT_Event_Editor {
 		$html = '';
 
 		$html .= '<td class="wpt_event_editor_listing_actions">';
-		
+
 		$actions = $this->get_listing_actions( $event_id );
 		foreach ( $actions as $action => $action_args ) {
 			$html .= '<a class="wpt_event_editor_listing_action_'.$action.'" href="'.$action_args['link'].'">'.$action_args['title'].'</a> ';
@@ -595,6 +600,8 @@ class WPT_Event_Editor {
 	 * @since 	0.11
 	 * @since 	0.11.4	Fix: Listing wasn't showing events for scheduled productions.
 	 *					@see https://github.com/slimndap/wp-theatre/issues/127
+	 * @since	0.11.5	Added a container div around the list HTML.
+	 *					Added a filter to the list HTML.
 	 * @param 	int 	$production_id	The production.
 	 * @return 	string	The HTML.
 	 */
@@ -633,6 +640,15 @@ class WPT_Event_Editor {
 		}
 
 		$html = '<div class="wpt_event_editor_listing">'.$html.'</div>';
+
+		/**
+		 * Filter the HTML for a list of existing events for a production.
+		 *
+		 * @since 	0.11.5
+		 * @param 	string 		$html				The current HTML.
+		 * @param	int			$production_id		The production.
+		 * @param	array		$event	s			The events.
+		 */
 		$html = apply_filters( 'wpt/event_editor/listing/html', $html, $production_id, $events );
 
 		return $html;
@@ -756,7 +772,7 @@ class WPT_Event_Editor {
 	/**
 	 * Gets the HTML to create a new event for a production.
 	 *
-	 * @since	0.11.2
+	 * @since	0.11.5
 	 * @param 	int 	$production_id	The production.
 	 * @return 	string					The HTML.
 	 */
@@ -779,6 +795,14 @@ class WPT_Event_Editor {
 		$html .= $html_actions;
 
 		$html = '<div class="wpt_event_editor_create">'.$html.'</div>';
+
+		/**
+		 * Filter the HTML to create a new event for a production.
+		 *
+		 * @since 	0.11.5
+		 * @param 	string 		$html				The current HTML.
+		 * @param	int			$production_id		The production.
+		 */
 		$html = apply_filters( 'wpt/event_editor/create/html', $html, $production_id );
 
 		return $html;
@@ -856,7 +880,7 @@ class WPT_Event_Editor {
 	 *
 	 * @since	0.11
 	 * @since 	0.11.1	Leave disabled fields alone.
-	 * @since	0.11.2	Added the $data param, so the editor can also handle data that is not in $_POST.
+	 * @since	0.11.5	Added the $data param, so the editor can also handle data that is not in $_POST.
 	 *					Eg. data submitted through AJAX.
 	 * @param 	array 	$field		The field.
 	 * @param 	int 	$event_id	The event.
@@ -920,7 +944,7 @@ class WPT_Event_Editor {
 	 *
 	 * @since	0.11
 	 * @since	0.11.1	Get the event_date from the database if the event_date field is disabled.
-	 * @since	0.11.2	Added the $data param, so the editor can also handle data that is not in $_POST.
+	 * @since	0.11.5	Added the $data param, so the editor can also handle data that is not in $_POST.
 	 *					Eg. data submitted through AJAX.
 	 * @param 	array 	$field		The field.
 	 * @param 	int 	$event_id	The event.
@@ -958,7 +982,7 @@ class WPT_Event_Editor {
 	 * Saves the prices field of an event.
 	 *
 	 * @since	0.11
-	 * @since	0.11.2	Added the $data param, so the editor can also handle data that is not in $_POST.
+	 * @since	0.11.5	Added the $data param, so the editor can also handle data that is not in $_POST.
 	 *					Eg. data submitted through AJAX.
 	 * @param 	array 	$field		The field.
 	 * @param 	int 	$event_id	The event.
@@ -989,7 +1013,7 @@ class WPT_Event_Editor {
 	 * Saves the tickets status field of an event.
 	 *
 	 * @since	0.11
-	 * @since	0.11.2	Added the $data param, so the editor can also handle data that is not in $_POST.
+	 * @since	0.11.5	Added the $data param, so the editor can also handle data that is not in $_POST.
 	 *					Eg. data submitted through AJAX.
 	 * @param 	array 	$field		The field.
 	 * @param 	int 	$event_id	The event.
