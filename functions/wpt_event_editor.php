@@ -779,7 +779,7 @@ class WPT_Event_Editor {
 	public function get_create_html($production_id) {
 		$html = '';
 
-		$html .= '<div class="wpt_event_editor_create_form">'.$this->get_form_html( $post->ID ).'</div>';
+		$html .= '<div class="wpt_event_editor_create_form">'.$this->get_form_html( $production_id ).'</div>';
 
 		$html_actions = '<div class="wpt_event_editor_create_actions wpt_event_editor_create_actions_closed">';
 		$html_actions .= '<a href="#" class="button wpt_event_editor_create_open">'.__( 'Add a new event','wp_theatre' ).'</a>';

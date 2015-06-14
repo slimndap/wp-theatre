@@ -237,6 +237,9 @@ Release Date: December 29th, 2014
 
 == Upgrade Notice ==
 
+= 0.11.6 =
+* Removes a couple of (harmless) php warnings.
+
 = 0.11.5 =
 * Create new events for a production without a page reload.
 

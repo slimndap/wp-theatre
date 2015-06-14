@@ -36,6 +36,64 @@ class WPT_Test_Event_Editor extends WP_UnitTestCase {
 		return $this->factory->post->create( $production_args );
 	}
 
+	function test_create_html_is_displayed_on_production_page() {
+		global $wp_theatre;
+
+		$production_id = $this->create_production();
+		$create_html = $wp_theatre->event_editor->get_create_html( $production_id );
+
+			$this->assume_role( 'author' );
+
+		do_action( 'add_meta_boxes_'.WPT_Production::post_type_name );
+
+		ob_start();
+		do_meta_boxes( WPT_Production::post_type_name, 'normal', get_post( $production_id ) );
+		$meta_boxes = ob_get_contents();
+		ob_end_clean();
+
+		$this->assertContains( $create_html, $meta_boxes );
+	}
+
+	function test_listing_html_is_displayed_on_production_page() {
+		global $wp_theatre;
+
+		$production_id = $this->create_production();
+		$this->create_event_for_production( $production_id );
+		$listing_html = $wp_theatre->event_editor->get_listing_html( $production_id );
+
+			$this->assume_role( 'author' );
+
+		do_action( 'add_meta_boxes_'.WPT_Production::post_type_name );
+
+		ob_start();
+		do_meta_boxes( WPT_Production::post_type_name, 'normal', get_post( $production_id ) );
+		$meta_boxes = ob_get_contents();
+		ob_end_clean();
+		echo $meta_boxes;
+		$this->assertContains( $listing_html, $meta_boxes );
+	}
+
+	function test_edit_form_is_displayed_on_event_page() {
+		global $wp_theatre;
+
+		$production_id = $this->create_production();
+		$event_id = $this->create_event_for_production( $production_id );
+
+			$this->assume_role( 'author' );
+		set_current_screen( WPT_Event::post_type_name );
+
+		$edit_form_html = $wp_theatre->event_editor->get_form_html( $production_id, $event_id );
+
+		do_action( 'add_meta_boxes', WPT_Event::post_type_name, get_post( $event_id ) );
+
+		ob_start();
+		do_meta_boxes( WPT_Event::post_type_name, 'normal', get_post( $event_id ) );
+		$meta_boxes = ob_get_contents();
+		ob_end_clean();
+
+		$this->assertContains( $edit_form_html, $meta_boxes );
+	}
+
 	function test_event_is_created_on_production_page() {
 
 		$this->assume_role( 'author' );
@@ -45,9 +103,9 @@ class WPT_Test_Event_Editor extends WP_UnitTestCase {
 			'$fields, $event_id',
 			'$fields[] = array("id"=>"extra_field", "title"=>"Extra field"); return $fields;'
 		);
-		
-		add_filter('wpt/event_editor/fields', $func, 10, 2);
-		
+
+		add_filter( 'wpt/event_editor/fields', $func, 10, 2 );
+
 		// Create a fake post submission.
 		$_POST['wpt_event_editor_nonce'] = wp_create_nonce( 'wpt_event_editor' );
 		$event_date = date( 'Y-m-d H:i', + WEEK_IN_SECONDS );
@@ -64,7 +122,7 @@ class WPT_Test_Event_Editor extends WP_UnitTestCase {
 		$events = $production->events();
 
 		$this->assertEquals( $event_date, date( 'Y-m-d H:i', $events[0]->datetime() ) );
-		$this->assertEquals( $extra_value, $events[0]->custom('extra_field' ) );
+		$this->assertEquals( $extra_value, $events[0]->custom( 'extra_field' ) );
 
 	}
 
@@ -270,9 +328,9 @@ class WPT_Test_Event_Editor_Ajax extends WP_Ajax_UnitTestCase {
 			'$fields, $event_id',
 			'$fields[] = array("id"=>"extra_field", "title"=>"Extra field"); return $fields;'
 		);
-		
-		add_filter('wpt/event_editor/fields', $func, 10, 2);
-		
+
+		add_filter( 'wpt/event_editor/fields', $func, 10, 2 );
+
 		$this->_setRole( 'administrator' );
 
 		$_POST['nonce'] = wp_create_nonce( 'wpt_event_editor_ajax_nonce' );
@@ -302,7 +360,7 @@ class WPT_Test_Event_Editor_Ajax extends WP_Ajax_UnitTestCase {
 
 		$this->assertEquals( $event_date, date( 'Y-m-d H:i', $events[0]->datetime() ) );
 		$this->assertEquals( $venue, $events['0']->venue() );
-		$this->assertEquals( $extra_value, $events[0]->custom('extra_field' ) );
+		$this->assertEquals( $extra_value, $events[0]->custom( 'extra_field' ) );
 
 	}
 

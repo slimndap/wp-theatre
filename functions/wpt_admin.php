@@ -345,7 +345,8 @@ class WPT_Admin {
 		
 		wp_nonce_field(WPT_Event::post_type_name, WPT_Event::post_type_name.'_nonce' );
 
-		echo $wp_theatre->event_editor->get_form_html($production->ID, $event->ID);
+		$production_id = get_post_meta($event->ID, WPT_Production::post_type_name, true);
+		echo $wp_theatre->event_editor->get_form_html($production_id, $event->ID);
 		       
 	}
 	
