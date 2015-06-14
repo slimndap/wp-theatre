@@ -57,11 +57,12 @@ class WPT_Test_Event_Editor extends WP_UnitTestCase {
 	function test_listing_html_is_displayed_on_production_page() {
 		global $wp_theatre;
 
+		$this->assume_role( 'author' );
+
 		$production_id = $this->create_production();
 		$this->create_event_for_production( $production_id );
 		$listing_html = $wp_theatre->event_editor->get_listing_html( $production_id );
 
-			$this->assume_role( 'author' );
 
 		do_action( 'add_meta_boxes_'.WPT_Production::post_type_name );
 
@@ -69,7 +70,7 @@ class WPT_Test_Event_Editor extends WP_UnitTestCase {
 		do_meta_boxes( WPT_Production::post_type_name, 'normal', get_post( $production_id ) );
 		$meta_boxes = ob_get_contents();
 		ob_end_clean();
-		echo $meta_boxes;
+
 		$this->assertContains( $listing_html, $meta_boxes );
 	}
 
