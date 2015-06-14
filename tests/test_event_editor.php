@@ -141,7 +141,7 @@ class WPT_Test_Event_Editor extends WP_UnitTestCase {
 		$_POST[ WPT_Event::post_type_name.'_nonce' ] = wp_create_nonce( WPT_Event::post_type_name );
 		$event_date = date( 'Y-m-d H:i', + WEEK_IN_SECONDS );
 		$_POST['wpt_event_editor_event_date'] = $event_date;
-		$_POST[ WPT_Production::post_type_name ] = $production_id;
+		$_POST[ 'wpt_event_editor_'.WPT_Production::post_type_name ] = $production_id;
 
 		// Create the event
 		$event_args = array(
