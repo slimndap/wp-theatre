@@ -41,11 +41,6 @@ class WPT_Demo_Importer extends WPT_Importer {
 				$production = $this->create_production( $production_args );
 			}
 
-			wp_update_post( array(
-				'ID' => $production->ID,
-				'post_status' => 'publish',
-			));
-
 			for ( $e = 0;$e < count( $this->feed[ $p ] );$e++ ) {
 				$event_ref = $production_ref.'_'.$e;
 				$event_date = strtotime( $this->feed[ $p ][ $e ] );
@@ -60,19 +55,13 @@ class WPT_Demo_Importer extends WPT_Importer {
 				);
 				$event_args = apply_filters( 'wpt/test/importer/process_feed/event/args', $event_args, $this->feed[ $p ][ $e ] );
 				$event = $this->update_event( $event_args );
-
-				wp_update_post( array(
-					'ID' => $event->ID,
-					'post_status' => 'publish',
-				));
-
 			}
 		}
 
 		return true;
 
 	}
-
+	
 	function ready_for_import() {
 		return true;
 	}
@@ -89,6 +78,37 @@ class WPT_Test_Importer extends WP_UnitTestCase {
 
 	}
 
+	/**
+	 * Sets the post_status of _all_ productions and events to 'publish'.
+	 * 
+	 * @since 0.11.6
+	 */
+	function publish_all() {
+		global $wp_theatre;
+		
+		$args = array(
+			'post_type' => WPT_Production::post_type_name,
+			'post_status' => array('all'),	
+		);
+		foreach( get_posts($args) as $production) {
+			wp_update_post( array(
+				'ID' => $production->ID,
+				'post_status' => 'publish',
+			));		
+		}
+		
+		$args = array(
+			'post_type' => WPT_Event::post_type_name,
+			'post_status' => array('all'),	
+		);
+		foreach( get_posts($args) as $event) {
+			wp_update_post( array(
+				'ID' => $event->ID,
+				'post_status' => 'publish',
+			));		
+		}
+	}
+
 
 	// settings
 
@@ -97,12 +117,14 @@ class WPT_Test_Importer extends WP_UnitTestCase {
 	function test_productions_are_imported() {
 		$importer = new WPT_Demo_Importer();
 		$importer->execute();
+		$this->publish_all();
 		$this->assertCount( 3, $this->wp_theatre->productions->get() );
 	}
 
 	function test_events_are_imported() {
 		$importer = new WPT_Demo_Importer();
 		$importer->execute();
+		$this->publish_all();
 		$this->assertCount( 4, $this->wp_theatre->events->get() );
 	}
 
@@ -126,6 +148,7 @@ class WPT_Test_Importer extends WP_UnitTestCase {
 
 		$importer = new WPT_Demo_Importer();
 		$importer->execute();
+		$this->publish_all();
 		$this->assertCount( 5, $this->wp_theatre->events->get() );
 	}
 
@@ -141,6 +164,8 @@ class WPT_Test_Importer extends WP_UnitTestCase {
 
 		$importer->execute();
 
+		$this->publish_all();
+
 		$this->assertCount( 2, $this->wp_theatre->events->get() );
 
 	}
@@ -155,9 +180,10 @@ class WPT_Test_Importer extends WP_UnitTestCase {
 		$importer = new WPT_Demo_Importer();
 
 		$importer->execute();
-
+		$this->publish_all();
+		
 		$productions = $wp_theatre->productions->get();
-		$production = $production[0];
+		$production = $productions[0];
 
 		/*
 		 * Add a new event to the first production, without setting a post status.
@@ -182,7 +208,7 @@ class WPT_Test_Importer extends WP_UnitTestCase {
 		 */
 		$events = $production->events();
 
-		$this->assertCount( 2, $events );
+		$this->assertCount( 3, $events );
 
 	}
 
@@ -192,6 +218,7 @@ class WPT_Test_Importer extends WP_UnitTestCase {
 		$importer = new WPT_Demo_Importer();
 
 		$importer->execute();
+		$this->publish_all();
 
 		$events = $wp_theatre->events->get();
 		$prices = $events[0]->prices();
@@ -212,6 +239,7 @@ class WPT_Test_Importer extends WP_UnitTestCase {
 		$importer = new WPT_Demo_Importer();
 
 		$importer->execute();
+		$this->publish_all();
 
 		$events = $wp_theatre->events->get();
 

@@ -75,7 +75,9 @@
 		 * Use this helper function to create a new event while processing your feed.
 		 * 
 		 * @since 0.10
-		 * @since 0.11 Added support for event prices.
+		 * @since 0.11 		Added support for event prices.
+		 * @since 0.11.6	Events now inherit the post_status from the production.
+		 *					Fixes https://github.com/slimndap/wp-theatre/issues/129.
 		 *
 		 * @see WPT_Importer::get_event_by_ref()
 		 * @see WPT_Importer::update_event()
@@ -108,9 +110,15 @@
 
 			$post = array(
 				'post_type' => WPT_Event::post_type_name,
-				'post_status' => 'draft',
 			);
-			
+
+			if (false !== $args['production']) {
+				$post['post_status'] = get_post_status($args['production']);
+			} else {
+				$post['post_status'] = 'draft';
+			}			
+				//$post['post_status'] = 'draft';
+
 			if ($post_id = wp_insert_post($post)) {
 				add_post_meta($post_id, '_wpt_source', $this->slug, true);
 				add_post_meta($post_id, '_wpt_source_ref', sanitize_text_field($args['ref']), true);
