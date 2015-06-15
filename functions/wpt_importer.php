@@ -76,7 +76,7 @@
 		 * 
 		 * @since 0.10
 		 * @since 0.11 		Added support for event prices.
-		 * @since 0.11.6	Events now inherit the post_status from the production.
+		 * @since 0.11.7	Events now inherit the post_status from the production.
 		 *					Fixes https://github.com/slimndap/wp-theatre/issues/129.
 		 *
 		 * @see WPT_Importer::get_event_by_ref()
@@ -117,7 +117,6 @@
 			} else {
 				$post['post_status'] = 'draft';
 			}			
-				//$post['post_status'] = 'draft';
 
 			if ($post_id = wp_insert_post($post)) {
 				add_post_meta($post_id, '_wpt_source', $this->slug, true);
