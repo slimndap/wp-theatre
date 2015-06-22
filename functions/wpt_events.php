@@ -603,6 +603,7 @@ class WPT_Events extends WPT_Listing {
 		$defaults = array(
 			'order' => 'asc',
 			'limit' => false,
+			'post__in' => false,
 			'upcoming' => false,
 			'past' => false,
 			'start' => false,
@@ -675,6 +676,10 @@ class WPT_Events extends WPT_Listing {
 				'value' => strtotime($filters['end'], current_time( 'timestamp' )) - get_option('gmt_offset') * 3600,
 				'compare' => '<='
 			);
+		}
+
+		if ($filters['post__in']) {
+			$args['post__in'] = $filters['post__in'];
 		}
 
 		if ($filters['season']) {
