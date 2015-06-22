@@ -604,6 +604,7 @@ class WPT_Events extends WPT_Listing {
 			'order' => 'asc',
 			'limit' => false,
 			'post__in' => false,
+			'post__not_in' => false,
 			'upcoming' => false,
 			'past' => false,
 			'start' => false,
@@ -680,6 +681,10 @@ class WPT_Events extends WPT_Listing {
 
 		if ($filters['post__in']) {
 			$args['post__in'] = $filters['post__in'];
+		}
+
+		if ($filters['post__not_in']) {
+			$args['post__not_in'] = $filters['post__not_in'];
 		}
 
 		if ($filters['season']) {
