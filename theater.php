@@ -5,7 +5,7 @@
 	Plugin URI: http://wordpress.org/plugins/theatre/
 	Description: Turn your Wordpress website into a theater website.
 	Author: Jeroen Schmit, Slim & Dapper
-	Version: 0.11.8
+	Version: 0.11.9
 	Author URI: http://slimndap.com/
 	Text Domain: wp_theatre
 	Domain Path: /lang
@@ -28,7 +28,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	
-$wpt_version = '0.11.8';
+$wpt_version = '0.11.9';
 
 class WP_Theatre {
 	function __construct() {

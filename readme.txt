@@ -92,6 +92,7 @@ Release Date: May 30th, 2015
 * Enhancements
     * A brand new event editor. See the [release notes](http://www.slimndap.com/theater-for-wordpress-0-11-a-new-event-editor/) for all the info.
     * Support for `post__in` and `post__not_in` in the `[wpt_events]` shortcode. See the [documentation](https://github.com/slimndap/wp-theatre/wiki/Shortcodes) for examples. Thanks [jbrandligt](https://wordpress.org/support/profile/jbrandligt)!
+    * Support for custom filters in event listings. See [this post](http://www.slimndap.com/add-venue-and-city-filters-to-event-listings/) for an example.
 
 = 0.10 =
 
@@ -238,6 +239,9 @@ Release Date: December 29th, 2014
 * Basic version of the plugin.
 
 == Upgrade Notice ==
+
+= 0.11.9 =
+Added support for custom filters in event listings (eg. venue of city).
 
 = 0.11.8 =
 Fixes a problem with the production slug in Dutch websites and adds support for `post__in` and `post__not_in` in the `[wpt_events]` shortcode.

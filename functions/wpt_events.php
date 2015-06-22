@@ -621,6 +621,12 @@ class WPT_Events extends WPT_Listing {
 			'status' => array('publish'),
 		);
 		
+		/**
+		 * Filter the defaults for the list of events.
+		 *
+		 * @since 	0.11.9
+		 * @param 	array 	$defaults	The current defaults.
+		 */
 		$defaults = apply_filters( 'wpt/events/get/defaults', $defaults );
 		
 		$filters = wp_parse_args( $filters, $defaults );
@@ -732,8 +738,10 @@ class WPT_Events extends WPT_Listing {
 		 * Filter the $args before doing get_posts().
 		 *
 		 * @since 0.9.2
+		 * @since 0.11.9	New filter added, with an extra 'filter' param.
 		 *
-		 * @param array $args The arguments to use in get_posts to retrieve events.
+		 * @param array 	$args 		The arguments to use in get_posts to retrieve events.
+		 * @param array 	$filters 	The filters for the list of events.
 		 */
 		$args = apply_filters('wpt_events_load_args',$args);
 		$args = apply_filters('wpt_events_get_args',$args);
