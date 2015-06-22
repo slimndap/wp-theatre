@@ -593,6 +593,8 @@ class WPT_Events extends WPT_Listing {
 	 *					This dramatically decreases the number of queries needed to show a listing of events.
 	 * @since 0.10.15	'Start' and 'end' $args now account for timezones.
 	 *					Fixes #117.
+	 * @since 0.11.8	Support for 'post__in' and 'post__not_in'.
+	 *					Fixes #128.
 	 *
  	 * @return array Events.
 	 */
@@ -604,6 +606,7 @@ class WPT_Events extends WPT_Listing {
 			'order' => 'asc',
 			'limit' => false,
 			'post__in' => false,
+			'post__not_in' => false,
 			'upcoming' => false,
 			'past' => false,
 			'start' => false,
@@ -680,6 +683,10 @@ class WPT_Events extends WPT_Listing {
 
 		if ($filters['post__in']) {
 			$args['post__in'] = $filters['post__in'];
+		}
+
+		if ($filters['post__not_in']) {
+			$args['post__not_in'] = $filters['post__not_in'];
 		}
 
 		if ($filters['season']) {

@@ -175,6 +175,8 @@ class WPT_Frontend {
 	 * @since ?
 	 * @since 0.10.9	Improved the unique key for transients.
 	 *					Fixes issue #97.
+	 * @since 0.11.8	Support for 'post__in' and 'post__not_in'.
+	 *					Fixes #128.
 	 * 
 	 * @param 	array 	$atts
 	 * @param 	string 	$content (default: null)
@@ -187,6 +189,7 @@ class WPT_Frontend {
 		$defaults = array(
 			'paginateby'=>array(),
 			'post__in' => false,
+			'post__not_in' => false,
 			'category'=> false, // deprecated since v0.9.
 			'cat'=>false,
 			'category_name'=>false,
@@ -216,6 +219,10 @@ class WPT_Frontend {
 
 		if (!empty($atts['post__in'])) {
 			$atts['post__in'] = explode(',',$atts['post__in']);
+		}
+		
+		if (!empty($atts['post__not_in'])) {
+			$atts['post__not_in'] = explode(',',$atts['post__not_in']);
 		}
 		
 		if(!empty($atts['year'])) {

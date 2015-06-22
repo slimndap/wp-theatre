@@ -822,10 +822,12 @@ class WPT_Test extends WP_UnitTestCase {
 		
 		/** 
 		 * Copy the defaults from WPT_Frontend::wpt_events
-		 * Remove the quotes around 'true' for upcoming.
+		 * Set 'start' to 'now' (with quotes).
 		 */
-		$args = array(
+		$defaults = array(
 			'paginateby'=>array(),
+			'post__in' => false,
+			'post__not_in' => false,
 			'category'=> false, // deprecated since v0.9.
 			'cat'=>false,
 			'category_name'=>false,
@@ -842,8 +844,9 @@ class WPT_Test extends WP_UnitTestCase {
 			'limit'=>false,
 			'order'=>'asc',
 		);
+		
 		$unique_args = array_merge(
-			array( 'atts' => $args ), 
+			array( 'atts' => $defaults ), 
 			array( 'wp_query' => $wp_query->query_vars )
 		);
 		
