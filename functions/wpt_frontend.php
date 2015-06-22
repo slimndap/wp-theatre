@@ -186,6 +186,7 @@ class WPT_Frontend {
 		
 		$defaults = array(
 			'paginateby'=>array(),
+			'post__in' => false,
 			'category'=> false, // deprecated since v0.9.
 			'cat'=>false,
 			'category_name'=>false,
@@ -211,6 +212,10 @@ class WPT_Frontend {
 				$fields[$i] = trim($fields[$i]);
 			}
 			$atts['paginateby'] = $fields;
+		}
+
+		if (!empty($atts['post__in'])) {
+			$atts['post__in'] = explode(',',$atts['post__in']);
 		}
 		
 		if(!empty($atts['year'])) {
