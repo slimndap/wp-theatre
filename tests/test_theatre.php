@@ -437,6 +437,17 @@ class WPT_Test extends WP_UnitTestCase {
 		
 		$this->assertContains($formatted_date, $output);
 	}
+	
+	function test_wpt_events_with_post_args() {
+		
+		$html = do_shortcode('[wpt_events post__in="'.$this->upcoming_event_with_prices.'"]');
+
+		$this->assertEquals(1, substr_count($html, '"wp_theatre_event"'));		
+
+		$html = do_shortcode('[wpt_events post__not_in="'.$this->upcoming_event_with_prices.'"]');
+
+		$this->assertEquals(3, substr_count($html, '"wp_theatre_event"'));		
+	}
 
 	function test_shortcode_wpt_productions_with_custom_field() {
 		$director = 'Steven Spielberg';
