@@ -815,6 +815,8 @@ class WPT_Test extends WP_UnitTestCase {
 		 */
 		$args = array(
 			'paginateby'=>array(),
+			'post__in'=> false,
+			'post__not_in' => false,
 			'category'=> false, // deprecated since v0.9.
 			'cat'=>false,
 			'category_name'=>false,
