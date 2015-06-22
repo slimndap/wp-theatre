@@ -8,7 +8,7 @@ class WPT_Frontend {
 
 		add_filter('pre_get_posts', array($this,'pre_get_posts') );
 
-		add_shortcode('wpt_events', array($this,'wpt_events'));
+		add_shortcode('wpt_events', array($this,'get_shortcode_events'));
 		add_shortcode('wpt_productions', array($this,'wpt_productions'));
 		add_shortcode('wpt_seasons', array($this,'wpt_productions'));
 		add_shortcode('wp_theatre_iframe', array($this,'wp_theatre_iframe'));
@@ -182,7 +182,7 @@ class WPT_Frontend {
 	 * @param 	string 	$content (default: null)
 	 * @return 	string 	The HTML output.
 	 */
-	function wpt_events($atts, $content=null) {
+	function get_shortcode_events($atts, $content=null) {
 		global $wp_theatre;
 		global $wp_query;
 		
@@ -207,6 +207,8 @@ class WPT_Frontend {
 			'order'=>'asc',
 		);
 		
+		$defaults = apply_filters( 'wpt/frontend/shortcode/events/defaults', $defaults);
+
 		$atts = shortcode_atts( $defaults, $atts );
 
 		if (!empty($atts['paginateby'])) {
@@ -279,6 +281,8 @@ class WPT_Frontend {
 			}
 			$atts['cat'] = implode(',',$categories);
 		}
+
+		$atts = apply_filters( 'wpt/frontend/shortcode/events/filters', $atts);
 
 		/*
 		 * Base the $args parameter for the transient on $atts and $wp_query,

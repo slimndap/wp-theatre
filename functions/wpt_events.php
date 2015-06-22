@@ -620,6 +620,9 @@ class WPT_Events extends WPT_Listing {
 			'production' => false,
 			'status' => array('publish'),
 		);
+		
+		$defaults = apply_filters( 'wpt/events/get/defaults', $defaults );
+		
 		$filters = wp_parse_args( $filters, $defaults );
 
 		$args = array(
@@ -734,6 +737,7 @@ class WPT_Events extends WPT_Listing {
 		 */
 		$args = apply_filters('wpt_events_load_args',$args);
 		$args = apply_filters('wpt_events_get_args',$args);
+		$args = apply_filters('wpt/events/get/args', $args, $filters);
 
 		$posts = get_posts($args);
 

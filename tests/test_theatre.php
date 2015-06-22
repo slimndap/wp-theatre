@@ -449,6 +449,26 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertEquals(3, substr_count($html, '"wp_theatre_event"'));		
 	}
 
+	function test_wpt_events_with_custom_atts() {
+		
+		$defaults_func = create_function(
+			'$defaults',
+			'$defaults[\'venue\'] = false; return $defaults;'
+		);
+		add_filter( 'wpt/frontend/shortcode/events/defaults', $defaults_func, 10 );
+		add_filter( 'wpt/events/get/defaults', $defaults_func, 10 );
+		
+		$args_func = create_function(
+			'$args,$filters',
+			'if ($filters[\'venue\']) { $args[\'meta_query\'][] = array(\'key\'=>\'venue\', \'value\'=>$filters[\'venue\']); } return $args;'
+		);
+		add_filter( 'wpt/events/get/args', $args_func, 10, 2 );
+
+		$html = do_shortcode('[wpt_events venue="Paard van Troje"]');
+		
+		$this->assertEquals(1, substr_count($html, '"wp_theatre_event"'));		
+	}
+
 	function test_shortcode_wpt_productions_with_custom_field() {
 		$director = 'Steven Spielberg';
 	
