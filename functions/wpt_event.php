@@ -620,6 +620,8 @@ class WPT_Event {
 	 * Gets the HTML for a valid event tickets link.
 	 *
 	 * @since	0.10.14
+	 * @since	0.11.10	Don't return anything for historic events with an 'on sale' status.
+	 *					Fixes #118.
 	 * @return 	string	The HTML for a valid event tickets link.
 	 */
 	public function tickets_html() {
@@ -630,17 +632,16 @@ class WPT_Event {
 
 		$html .= '<div class="'.self::post_type_name.'_tickets">';
 
-		if (
-			self::tickets_status_onsale == $this->tickets_status() &&
-			$this->datetime() > current_time( 'timestamp' )
-		) {
-
-			$html .= $this->tickets_url_html();
-
-			$prices_html = $this->prices_html();
-			$prices_html = apply_filters( 'wpt_event_tickets_prices_html', $prices_html, $this );
-			$html .= $prices_html;
-
+		if ( self::tickets_status_onsale == $this->tickets_status() ) {
+			
+			if ( $this->datetime() > current_time( 'timestamp' ) ) {
+				$html .= $this->tickets_url_html();
+	
+				$prices_html = $this->prices_html();
+				$prices_html = apply_filters( 'wpt_event_tickets_prices_html', $prices_html, $this );
+				$html .= $prices_html;							
+			}
+			
 		} else {
 			$html .= $this->tickets_status_html();
 		}

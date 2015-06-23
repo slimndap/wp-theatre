@@ -668,11 +668,13 @@ class WPT_Test extends WP_UnitTestCase {
 		$event_id = $this->factory->post->create($event_args);
 		add_post_meta($event_id, WPT_Production::post_type_name, $this->production_with_historic_event);
 		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() - 2 * DAY_IN_SECONDS));
+		add_post_meta($event_id, 'tickets_url', 'http://slimndap.com');
 		add_post_meta($event_id, '_wpt_event_tickets_price', 12);
 		
 		$html = do_shortcode('[wpt_events end="now"]');
-		
+
 		$this->assertNotContains('wp_theatre_event_prices',$html);
+		$this->assertNotContains('wp_theatre_event_tickets_status',$html);
 		
 	}
 	
