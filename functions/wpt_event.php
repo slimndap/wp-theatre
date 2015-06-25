@@ -295,6 +295,65 @@ class WPT_Event {
 	}
 
 	/**
+	 * Event endtime.
+	 *
+	 * Returns the event endtime as plain text of as an HTML element.
+	 *
+	 * @param array $args {
+	 *     @type bool $html Return HTML? Default <false>.
+	 * }
+	 * @return string text or HTML.
+	 */
+	function endtime($args = array()) {
+		global $wp_theatre;
+
+		$defaults = array(
+		'html' => false,
+		'start' => false,
+		'filters' => array()
+		);
+		$args = wp_parse_args( $args, $defaults );
+
+		if ( $args['start'] ) {
+			$field = 'event_date';
+		} else {
+			$field = 'enddate';
+		}
+
+		if ( ! isset($this->endtime[ $field ]) ) {
+			$datetime_args = array( 'start' => $args['start'] );
+			$this->endtime[ $field ] = apply_filters(
+				'wpt_event_endtime',
+				date_i18n( 
+					get_option( 'time_format' ),
+					$this->datetime( $datetime_args ) + get_option('gmt_offset') * 3600
+				),
+				$this 
+			);
+		}
+
+		if ( $args['html'] ) {
+			$html = '<div class="'.self::post_type_name.'_endtime">';
+
+			/**
+		 * Apply WPT_Filters
+		 * Use the raw datetime when the date filter is active.
+		 */
+			$filters_functions = $wp_theatre->filter->get_functions( $args['filters'] );
+			if ( in_array( 'date', $filters_functions ) ) {
+				$html .= $wp_theatre->filter->apply( $this->datetime[ $field ], $args['filters'], $this );
+			} else {
+				$html .= $wp_theatre->filter->apply( $this->endtime[ $field ], $args['filters'], $this );
+			}
+			$html .= '</div>';
+			return apply_filters( 'wpt_event_endtime_html', $html, $this );
+		} else {
+			return $this->endtime[ $field ];
+		}
+	}
+
+
+	/**
 	 * Event location.
 	 *
 	 * Returns the event venue and city combined as plain text or as an HTML element.
@@ -1041,6 +1100,7 @@ class WPT_Event {
 				case 'date':
 				case 'datetime':
 				case 'duration':
+				case 'endtime':
 				case 'location':
 				case 'remark':
 				case 'time':
