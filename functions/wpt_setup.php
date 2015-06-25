@@ -109,9 +109,9 @@
 		}
 	
 		public function register_post_types() {
-
-			$permalinks        = get_option( 'wpt_permalinks' );
-			$production_permalink = empty( $permalinks['production_base'] ) ? _x( 'production', 'slug', 'wp_theatre' ) : $permalinks['production_base'];
+			global $wp_theatre;
+			
+			$production_permalink = $wp_theatre->permalinks->get_production_permalink();
 			
 			register_post_type( WPT_Production::post_type_name,
 				array(

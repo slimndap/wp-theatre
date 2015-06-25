@@ -24,6 +24,7 @@ class WPT_Admin {
 
 		add_filter('wpt/event_editor/fields', array($this, 'add_production_to_event_editor'), 10, 2);
 		
+		
 		// More hooks (always load, necessary for bulk editing through AJAX)
 		add_filter('request', array($this,'request'));
 		add_action( 'bulk_edit_custom_box', array($this,'bulk_edit_custom_box'), 10, 2 );
@@ -217,6 +218,7 @@ class WPT_Admin {
             'side'
         ); 	
 	}
+
 	
 	/**
 	 * Adds a production field to the event editor on the event admin page.
@@ -513,6 +515,7 @@ class WPT_Admin {
 		do_action('wpt_admin_after_save_'.WPT_Production::post_type_name, $post_id);
 	}
 	
+
     function wp_dashboard_setup() {
 		wp_add_dashboard_widget(
              'dashboard_wp_theatre',         // Widget slug.
