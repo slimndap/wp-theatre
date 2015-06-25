@@ -111,8 +111,6 @@
 		public function register_post_types() {
 			global $wp_theatre;
 			
-			$production_permalink = $wp_theatre->permalinks->get_production_permalink();
-			
 			register_post_type( WPT_Production::post_type_name,
 				array(
 					'labels' => array(
@@ -129,7 +127,11 @@
 					'show_in_admin_bar' => true,
 		  			'supports' => array('title', 'editor', 'excerpt', 'thumbnail','comments'),
 		  			'taxonomies' => array('category','post_tag'),
-		  			'rewrite' => $production_permalink ? array( 'slug' => untrailingslashit( $production_permalink ), 'with_front' => false, 'feeds' => true ) : false,
+		  			'rewrite' => array( 
+		  				'slug' => $wp_theatre->production_permalink->get_permalink(), 
+		  				'with_front' => false, 
+		  				'feeds' => true 
+		  			),
 				)
 			);
 			

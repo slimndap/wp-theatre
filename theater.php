@@ -53,7 +53,7 @@ class WP_Theatre {
 		$this->filter = new WPT_Filter();
 		$this->event_editor = new WPT_Event_Editor();
 		$this->cart = new WPT_Cart();
-		$this->permalinks = new WPT_Permalinks();
+		$this->production_permalink = new WPT_Production_Permalink();
 		if (is_admin()) {
 		} else {
 			$this->frontend = new WPT_Frontend();
@@ -108,7 +108,7 @@ class WP_Theatre {
 		require_once(dirname(__FILE__) . '/functions/wpt_event_editor.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_importer.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_cart.php');	
-		require_once(dirname(__FILE__) . '/functions/wpt_permalinks.php');	
+		require_once(dirname(__FILE__) . '/functions/wpt_production_permalink.php');	
 		if (is_admin()) {
 		} else {
 			require_once(dirname(__FILE__) . '/functions/wpt_frontend.php');
