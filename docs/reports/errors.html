@@ -1,0 +1,2254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <meta charset="utf-8"/>
+    <title>     &raquo; Compilation errors
+</title>
+    <meta name="author" content=""/>
+    <meta name="description" content=""/>
+
+    <link href="../css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/prism.css" rel="stylesheet" media="all"/>
+    <link href="../css/template.css" rel="stylesheet" media="all"/>
+    
+    <!--[if lt IE 9]>
+    <script src="../js/html5.js"></script>
+    <![endif]-->
+    <script src="../js/jquery-1.11.0.min.js"></script>
+    <script src="../js/ui/1.10.4/jquery-ui.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/jquery.smooth-scroll.js"></script>
+    <script src="../js/prism.min.js"></script>
+    <!-- TODO: Add http://jscrollpane.kelvinluck.com/ to style the scrollbars for browsers not using webkit-->
+    
+    <link rel="shortcut icon" href="../images/favicon.ico"/>
+    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="../images/apple-touch-icon-72x72.png"/>
+    <link rel="apple-touch-icon" sizes="114x114" href="../images/apple-touch-icon-114x114.png"/>
+</head>
+<body>
+
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <i class="icon-ellipsis-vertical"></i>
+            </a>
+            <a class="brand" href="../index.html">API Documentation</a>
+
+            <div class="nav-collapse">
+                <ul class="nav pull-right">
+                                        <li class="dropdown" id="charts-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Charts <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../graphs/class.html">
+                                    <i class="icon-list-alt"></i>&#160;Class hierarchy diagram
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown" id="reports-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Reports <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../reports/errors.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">333</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/markers.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <i class="icon-list-alt"></i>&#160;Markers <span class="label label-info pull-right">2</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/deprecated.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <i class="icon-list-alt"></i>&#160;Deprecated <span class="label label-info pull-right">11</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--<div class="go_to_top">-->
+    <!--<a href="#___" style="color: inherit">Back to top&#160;&#160;<i class="icon-upload icon-white"></i></a>-->
+    <!--</div>-->
+</div>
+
+<div id="___" class="container-fluid">
+        <section class="row-fluid">
+        <div class="span2 sidebar">
+
+            <ul class="side-nav nav nav-list">
+                <li class="nav-header">Navigation</li>
+                                                                            <li><a href="#wpt_event_editor.php"><i class="icon-file"></i> wpt_event_editor.php</a></li>
+                                                                                                    <li><a href="#index.php"><i class="icon-file"></i> index.php</a></li>
+                                                                                                    <li><a href="#wpt_admin.php"><i class="icon-file"></i> wpt_admin.php</a></li>
+                                                                                                    <li><a href="#wpt_calendar.php"><i class="icon-file"></i> wpt_calendar.php</a></li>
+                                                                                                    <li><a href="#wpt_cart.php"><i class="icon-file"></i> wpt_cart.php</a></li>
+                                                                                                    <li><a href="#wpt_event.php"><i class="icon-file"></i> wpt_event.php</a></li>
+                                                                                                    <li><a href="#wpt_events.php"><i class="icon-file"></i> wpt_events.php</a></li>
+                                                                                                    <li><a href="#wpt_feeds.php"><i class="icon-file"></i> wpt_feeds.php</a></li>
+                                                                                                    <li><a href="#wpt_filter.php"><i class="icon-file"></i> wpt_filter.php</a></li>
+                                                                                                    <li><a href="#wpt_frontend.php"><i class="icon-file"></i> wpt_frontend.php</a></li>
+                                                                                                    <li><a href="#wpt_importer.php"><i class="icon-file"></i> wpt_importer.php</a></li>
+                                                                                                    <li><a href="#wpt_listing.php"><i class="icon-file"></i> wpt_listing.php</a></li>
+                                                                                                    <li><a href="#wpt_listing_page.php"><i class="icon-file"></i> wpt_listing_page.php</a></li>
+                                                                                                    <li><a href="#wpt_order.php"><i class="icon-file"></i> wpt_order.php</a></li>
+                                                                                                    <li><a href="#wpt_production.php"><i class="icon-file"></i> wpt_production.php</a></li>
+                                                                                                    <li><a href="#wpt_productions.php"><i class="icon-file"></i> wpt_productions.php</a></li>
+                                                                                                    <li><a href="#wpt_season.php"><i class="icon-file"></i> wpt_season.php</a></li>
+                                                                                                    <li><a href="#wpt_setup.php"><i class="icon-file"></i> wpt_setup.php</a></li>
+                                                                                                    <li><a href="#wpt_transient.php"><i class="icon-file"></i> wpt_transient.php</a></li>
+                                                                                                    <li><a href="#wpt_widget.php"><i class="icon-file"></i> wpt_widget.php</a></li>
+                                                                    </ul>
+        </div>
+
+        <div class="span10 offset2">
+            <ul class="breadcrumb">
+                <li><a href="../"><i class="icon-remove-sign"></i></a><span class="divider">\</span></li>
+                <li>Compilation Errors</li>
+            </ul>
+
+            
+                            <div class="package-contents">
+                                            <a name="wpt_event_editor.php" id="wpt_event_editor.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            wpt_event_editor.php
+                            <small style="float: right;padding-right: 10px;">2</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>13</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="index.php" id="index.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            index.php
+                            <small style="float: right;padding-right: 10px;">1</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="wpt_admin.php" id="wpt_admin.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            wpt_admin.php
+                            <small style="float: right;padding-right: 10px;">51</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>2</td>
+                                        <td>No summary for class \WPT_Admin</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>3</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>36</td>
+                                        <td>No summary for method admin_init()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>175</td>
+                                        <td>No summary for method admin_menu()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>284</td>
+                                        <td>Argument $production_id is missing from the Docblock of get_events</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>284</td>
+                                        <td>No summary for method get_events()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>343</td>
+                                        <td>Argument $event is missing from the Docblock of event_meta_box</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>343</td>
+                                        <td>No summary for method event_meta_box()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>353</td>
+                                        <td>Argument $production is missing from the Docblock of meta_box_seasons</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>353</td>
+                                        <td>No summary for method meta_box_seasons()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>516</td>
+                                        <td>No summary for method wp_dashboard_setup()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>524</td>
+                                        <td>No summary for method wp_add_dashboard_widget()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>532</td>
+                                        <td>Argument $event is missing from the Docblock of render_event</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>532</td>
+                                        <td>No summary for method render_event()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>572</td>
+                                        <td>Argument $production is missing from the Docblock of render_production</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>572</td>
+                                        <td>No summary for method render_production()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>598</td>
+                                        <td>Argument $columns is missing from the Docblock of manage_wp_theatre_prod_posts_columns</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>598</td>
+                                        <td>No summary for method manage_wp_theatre_prod_posts_columns()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>617</td>
+                                        <td>Argument $columns is missing from the Docblock of manage_wp_theatre_event_posts_columns</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>617</td>
+                                        <td>Argument $post_type is missing from the Docblock of manage_wp_theatre_event_posts_columns</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>617</td>
+                                        <td>No summary for method manage_wp_theatre_event_posts_columns()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>628</td>
+                                        <td>Argument $column_name is missing from the Docblock of manage_wp_theatre_prod_posts_custom_column</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>628</td>
+                                        <td>Argument $post_id is missing from the Docblock of manage_wp_theatre_prod_posts_custom_column</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>628</td>
+                                        <td>No summary for method manage_wp_theatre_prod_posts_custom_column()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>642</td>
+                                        <td>Argument $column_name is missing from the Docblock of manage_wp_theatre_event_posts_custom_column</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>642</td>
+                                        <td>Argument $post_id is missing from the Docblock of manage_wp_theatre_event_posts_custom_column</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>642</td>
+                                        <td>No summary for method manage_wp_theatre_event_posts_custom_column()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>655</td>
+                                        <td>Argument $columns is missing from the Docblock of manage_edit_wp_theatre_prod_sortable_columns</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>655</td>
+                                        <td>No summary for method manage_edit_wp_theatre_prod_sortable_columns()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>660</td>
+                                        <td>Argument $column_name is missing from the Docblock of quick_edit_custom_box</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>660</td>
+                                        <td>Argument $post_type is missing from the Docblock of quick_edit_custom_box</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>660</td>
+                                        <td>No summary for method quick_edit_custom_box()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>668</td>
+                                        <td>Argument $column_name is missing from the Docblock of bulk_edit_custom_box</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>668</td>
+                                        <td>Argument $post_type is missing from the Docblock of bulk_edit_custom_box</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>668</td>
+                                        <td>No summary for method bulk_edit_custom_box()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>700</td>
+                                        <td>No summary for method settings_field_css()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>712</td>
+                                        <td>No summary for method settings_field_stylesheet()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>724</td>
+                                        <td>No summary for method settings_field_language_tickets()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>732</td>
+                                        <td>No summary for method settings_field_language_events()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>739</td>
+                                        <td>No summary for method settings_field_language_categories()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>746</td>
+                                        <td>No summary for method settings_field_integrationtype()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>769</td>
+                                        <td>No summary for method settings_field_iframepage()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>790</td>
+                                        <td>No summary for method settings_field_currencysymbol()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>801</td>
+                                        <td>Argument $vars is missing from the Docblock of request</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>801</td>
+                                        <td>No summary for method request()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>823</td>
+                                        <td>Argument $html is missing from the Docblock of wpt_event_html</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>823</td>
+                                        <td>Argument $event is missing from the Docblock of wpt_event_html</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>823</td>
+                                        <td>No summary for method wpt_event_html()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>833</td>
+                                        <td>Argument $views is missing from the Docblock of views_productions</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>833</td>
+                                        <td>No summary for method views_productions()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="wpt_calendar.php" id="wpt_calendar.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            wpt_calendar.php
+                            <small style="float: right;padding-right: 10px;">8</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>310</td>
+                                        <td>No summary for class \WPT_Calendar_Widget</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>311</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>319</td>
+                                        <td>Argument $args is missing from the Docblock of widget</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>319</td>
+                                        <td>Argument $instance is missing from the Docblock of widget</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>319</td>
+                                        <td>No summary for method widget()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>339</td>
+                                        <td>Argument $instance is missing from the Docblock of form</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>339</td>
+                                        <td>No summary for method form()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="wpt_cart.php" id="wpt_cart.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            wpt_cart.php
+                            <small style="float: right;padding-right: 10px;">10</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>2</td>
+                                        <td>No summary for class \WPT_Cart</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>3</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>7</td>
+                                        <td>No summary for method init()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>17</td>
+                                        <td>No summary for method save()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>24</td>
+                                        <td>No summary for method reset()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>29</td>
+                                        <td>No summary for method is_empty()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>33</td>
+                                        <td>Argument $production is missing from the Docblock of add_item</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>33</td>
+                                        <td>No summary for method add_item()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>47</td>
+                                        <td>No summary for method render()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="wpt_event.php" id="wpt_event.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            wpt_event.php
+                            <small style="float: right;padding-right: 10px;">16</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>28</td>
+                                        <td>Argument $ID is missing from the Docblock of __construct</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>28</td>
+                                        <td>Argument $PostClass is missing from the Docblock of __construct</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>28</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>44</td>
+                                        <td>No summary for method post_type()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>48</td>
+                                        <td>No summary for method post_class()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>61</td>
+                                        <td>Argument $args is missing from the Docblock of city</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>263</td>
+                                        <td>Argument $args is missing from the Docblock of duration</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>263</td>
+                                        <td>No summary for method duration()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>352</td>
+                                        <td>Argument $args is missing from the Docblock of permalink</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>352</td>
+                                        <td>No summary for method permalink()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>365</td>
+                                        <td>Argument $deprecated is missing from the Docblock of prices</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>562</td>
+                                        <td>Argument $deprecated is missing from the Docblock of tickets</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>755</td>
+                                        <td>Argument $deprecated is missing from the Docblock of tickets_url</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>971</td>
+                                        <td>Argument $args is missing from the Docblock of venue</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>1121</td>
+                                        <td>No summary for method get_post()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="wpt_events.php" id="wpt_events.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            wpt_events.php
+                            <small style="float: right;padding-right: 10px;">10</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>12</td>
+                                        <td>No summary for class \WPT_Events</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>569</td>
+                                        <td>No summary for method last()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>602</td>
+                                        <td>Argument $filters is missing from the Docblock of get</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>809</td>
+                                        <td>Argument $filters is missing from the Docblock of categories</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>809</td>
+                                        <td>No summary for method categories()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>818</td>
+                                        <td>Argument $filters is missing from the Docblock of days</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>818</td>
+                                        <td>No summary for method days()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>827</td>
+                                        <td>Argument $filters is missing from the Docblock of months</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>827</td>
+                                        <td>No summary for method months()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="wpt_feeds.php" id="wpt_feeds.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            wpt_feeds.php
+                            <small style="float: right;padding-right: 10px;">8</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>12</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>17</td>
+                                        <td>No summary for method init()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>22</td>
+                                        <td>No summary for method wp_head()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>32</td>
+                                        <td>No summary for method upcoming_productions()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>39</td>
+                                        <td>No summary for method get_upcoming_productions()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>79</td>
+                                        <td>No summary for method upcoming_events()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>86</td>
+                                        <td>No summary for method get_upcoming_events()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="wpt_filter.php" id="wpt_filter.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            wpt_filter.php
+                            <small style="float: right;padding-right: 10px;">29</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>9</td>
+                                        <td>No summary for class \WPT_Filter</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>11</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>34</td>
+                                        <td>Argument $content is missing from the Docblock of permalink</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>34</td>
+                                        <td>Argument $object is missing from the Docblock of permalink</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>34</td>
+                                        <td>No summary for method permalink()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>56</td>
+                                        <td>Argument $content is missing from the Docblock of date</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>56</td>
+                                        <td>Argument $object is missing from the Docblock of date</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>56</td>
+                                        <td>Argument $format is missing from the Docblock of date</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>75</td>
+                                        <td>Argument $content is missing from the Docblock of wpautop</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>75</td>
+                                        <td>No summary for method wpautop()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>83</td>
+                                        <td>Argument $content is missing from the Docblock of tickets_url</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>83</td>
+                                        <td>Argument $object is missing from the Docblock of tickets_url</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>110</td>
+                                        <td>Argument $content is missing from the Docblock of apply</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>110</td>
+                                        <td>Argument $filters is missing from the Docblock of apply</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>110</td>
+                                        <td>Argument $object is missing from the Docblock of apply</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>110</td>
+                                        <td>No summary for method apply()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>125</td>
+                                        <td>Argument $filters is missing from the Docblock of get_functions</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>125</td>
+                                        <td>No summary for method get_functions()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>137</td>
+                                        <td>Argument $filter is missing from the Docblock of get_function</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>137</td>
+                                        <td>No summary for method get_function()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>154</td>
+                                        <td>Argument $filter is missing from the Docblock of get_arguments</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>154</td>
+                                        <td>No summary for method get_arguments()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>175</td>
+                                        <td>Argument $arguments is missing from the Docblock of sanitize_arguments</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>175</td>
+                                        <td>No summary for method sanitize_arguments()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>188</td>
+                                        <td>Argument $function is missing from the Docblock of is_valid</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>188</td>
+                                        <td>Argument $arguments is missing from the Docblock of is_valid</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>188</td>
+                                        <td>Argument $object is missing from the Docblock of is_valid</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>188</td>
+                                        <td>No summary for method is_valid()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="wpt_frontend.php" id="wpt_frontend.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            wpt_frontend.php
+                            <small style="float: right;padding-right: 10px;">25</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>2</td>
+                                        <td>No summary for class \WPT_Frontend</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>3</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>29</td>
+                                        <td>No summary for method init()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>51</td>
+                                        <td>No summary for method wp_head()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>69</td>
+                                        <td>Argument $query is missing from the Docblock of pre_get_posts</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>69</td>
+                                        <td>No summary for method pre_get_posts()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>415</td>
+                                        <td>Argument $atts is missing from the Docblock of wpt_seasons</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>415</td>
+                                        <td>Argument $content is missing from the Docblock of wpt_seasons</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>415</td>
+                                        <td>No summary for method wpt_seasons()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>449</td>
+                                        <td>Argument $atts is missing from the Docblock of wpt_season_events</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>449</td>
+                                        <td>Argument $content is missing from the Docblock of wpt_season_events</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>449</td>
+                                        <td>No summary for method wpt_season_events()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>480</td>
+                                        <td>Argument $atts is missing from the Docblock of wpt_season_productions</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>480</td>
+                                        <td>Argument $content is missing from the Docblock of wpt_season_productions</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>480</td>
+                                        <td>No summary for method wpt_season_productions()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>510</td>
+                                        <td>Argument $atts is missing from the Docblock of wp_theatre_iframe</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>510</td>
+                                        <td>Argument $content is missing from the Docblock of wp_theatre_iframe</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>510</td>
+                                        <td>No summary for method wp_theatre_iframe()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>535</td>
+                                        <td>Argument $atts is missing from the Docblock of wpt_production_events</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>535</td>
+                                        <td>Argument $content is missing from the Docblock of wpt_production_events</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>535</td>
+                                        <td>No summary for method wpt_production_events()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>568</td>
+                                        <td>Argument $atts is missing from the Docblock of wpt_event_ticket_button</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>568</td>
+                                        <td>Argument $content is missing from the Docblock of wpt_event_ticket_button</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>568</td>
+                                        <td>No summary for method wpt_event_ticket_button()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="wpt_importer.php" id="wpt_importer.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            wpt_importer.php
+                            <small style="float: right;padding-right: 10px;">3</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>15</td>
+                                        <td>Argument $args is missing from the Docblock of init</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>15</td>
+                                        <td>No summary for method init()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="wpt_listing.php" id="wpt_listing.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            wpt_listing.php
+                            <small style="float: right;padding-right: 10px;">13</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>12</td>
+                                        <td>No summary for class \WPT_Listing</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>28</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>63</td>
+                                        <td>Argument $field is missing from the Docblock of filter_pagination</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>63</td>
+                                        <td>Argument $options is missing from the Docblock of filter_pagination</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>63</td>
+                                        <td>Argument $args is missing from the Docblock of filter_pagination</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>63</td>
+                                        <td>No summary for method filter_pagination()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>181</td>
+                                        <td>Argument $args is missing from the Docblock of get_classes_for_html</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>181</td>
+                                        <td>No summary for method get_classes_for_html()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>272</td>
+                                        <td>Argument $args is missing from the Docblock of html</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>272</td>
+                                        <td>No summary for method html()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>281</td>
+                                        <td>Argument $filters is missing from the Docblock of load</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>281</td>
+                                        <td>No summary for method load()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="wpt_listing_page.php" id="wpt_listing_page.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            wpt_listing_page.php
+                            <small style="float: right;padding-right: 10px;">37</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>8</td>
+                                        <td>No summary for class \WPT_Listing_Page</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>834</td>
+                                        <td>No summary for class \WPT_Categories_Widget</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>10</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>36</td>
+                                        <td>No summary for method admin_init()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>127</td>
+                                        <td>No summary for method init()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>208</td>
+                                        <td>Argument $args is missing from the Docblock of shortcode</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>208</td>
+                                        <td>No summary for method shortcode()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>248</td>
+                                        <td>No summary for method page()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>262</td>
+                                        <td>Argument $input is missing from the Docblock of sanitize_option_values</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>262</td>
+                                        <td>No summary for method sanitize_option_values()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>347</td>
+                                        <td>No summary for method settings_field_wpt_listing_page_post_id()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>367</td>
+                                        <td>No summary for method settings_field_wpt_listing_page_position()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>390</td>
+                                        <td>No summary for method settings_field_wpt_listing_page_position_on_production_page()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>417</td>
+                                        <td>No summary for method settings_field_wpt_listing_page_type()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>439</td>
+                                        <td>No summary for method settings_field_wpt_listing_page_nav_events()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>494</td>
+                                        <td>No summary for method settings_field_wpt_listing_page_nav_productions()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>545</td>
+                                        <td>No summary for method settings_field_wpt_listing_page_groupby()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>570</td>
+                                        <td>No summary for method settings_field_wpt_listing_template()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>585</td>
+                                        <td>No summary for method settings_field_wpt_listing_template_on_production_page()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>602</td>
+                                        <td>Argument $content is missing from the Docblock of the_content</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>602</td>
+                                        <td>No summary for method the_content()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>639</td>
+                                        <td>Argument $args is missing from the Docblock of url</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>639</td>
+                                        <td>No summary for method url()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>689</td>
+                                        <td>No summary for method reset()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>703</td>
+                                        <td>No summary for method widgets_init()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>716</td>
+                                        <td>Argument $tabs is missing from the Docblock of wpt_admin_page_tabs</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>716</td>
+                                        <td>No summary for method wpt_admin_page_tabs()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>730</td>
+                                        <td>Argument $url is missing from the Docblock of wpt_listing_filter_pagination_url</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>730</td>
+                                        <td>No summary for method wpt_listing_filter_pagination_url()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>816</td>
+                                        <td>No summary for method deprecated()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>835</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>843</td>
+                                        <td>Argument $args is missing from the Docblock of widget</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>843</td>
+                                        <td>Argument $instance is missing from the Docblock of widget</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>843</td>
+                                        <td>No summary for method widget()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>880</td>
+                                        <td>Argument $instance is missing from the Docblock of form</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>880</td>
+                                        <td>No summary for method form()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="wpt_order.php" id="wpt_order.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            wpt_order.php
+                            <small style="float: right;padding-right: 10px;">9</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>18</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>39</td>
+                                        <td>Argument $query is missing from the Docblock of pre_get_posts</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>68</td>
+                                        <td>Argument $post_id is missing from the Docblock of save_post</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>84</td>
+                                        <td>Argument $post is missing from the Docblock of set_post_order</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>168</td>
+                                        <td>Argument $meta_id is missing from the Docblock of updated_post_meta</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>168</td>
+                                        <td>Argument $object_id is missing from the Docblock of updated_post_meta</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>168</td>
+                                        <td>Argument $meta_key is missing from the Docblock of updated_post_meta</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>168</td>
+                                        <td>Argument $meta_value is missing from the Docblock of updated_post_meta</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="wpt_production.php" id="wpt_production.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            wpt_production.php
+                            <small style="float: right;padding-right: 10px;">17</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>2</td>
+                                        <td>No summary for class \WPT_Production</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>6</td>
+                                        <td>Argument $ID is missing from the Docblock of __construct</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>6</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>23</td>
+                                        <td>No summary for method post_type()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>27</td>
+                                        <td>Argument $args is missing from the Docblock of categories</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>27</td>
+                                        <td>No summary for method categories()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>120</td>
+                                        <td>Argument $args is missing from the Docblock of content</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>120</td>
+                                        <td>No summary for method content()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>224</td>
+                                        <td>Argument $filters is missing from the Docblock of events</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>224</td>
+                                        <td>No summary for method events()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>284</td>
+                                        <td>No summary for method past()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>528</td>
+                                        <td>Argument $args is missing from the Docblock of custom</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>558</td>
+                                        <td>No summary for method upcoming()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>660</td>
+                                        <td>No summary for method get_post()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>667</td>
+                                        <td>No summary for method render()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>671</td>
+                                        <td>No summary for method get_events()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="wpt_productions.php" id="wpt_productions.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            wpt_productions.php
+                            <small style="float: right;padding-right: 10px;">6</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>11</td>
+                                        <td>No summary for class \WPT_Productions</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>608</td>
+                                        <td>Argument $filters is missing from the Docblock of categories</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>608</td>
+                                        <td>No summary for method categories()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>617</td>
+                                        <td>Argument $filters is missing from the Docblock of seasons</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>617</td>
+                                        <td>No summary for method seasons()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="wpt_season.php" id="wpt_season.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            wpt_season.php
+                            <small style="float: right;padding-right: 10px;">9</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>2</td>
+                                        <td>No summary for class \WPT_Season</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>5</td>
+                                        <td>Argument $ID is missing from the Docblock of __construct</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>5</td>
+                                        <td>Argument $PostClass is missing from the Docblock of __construct</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>5</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>19</td>
+                                        <td>No summary for method post_type()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>23</td>
+                                        <td>No summary for method productions()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>31</td>
+                                        <td>No summary for method title()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>58</td>
+                                        <td>No summary for method get_post()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="wpt_setup.php" id="wpt_setup.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            wpt_setup.php
+                            <small style="float: right;padding-right: 10px;">27</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>425</td>
+                                        <td>No summary for function \wp_ajax_save_bulk_edit_production()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>2</td>
+                                        <td>No summary for class \WPT_Setup</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>3</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>111</td>
+                                        <td>No summary for method register_post_types()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>219</td>
+                                        <td>Argument $schedules is missing from the Docblock of cron_schedules</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>219</td>
+                                        <td>No summary for method cron_schedules()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>237</td>
+                                        <td>Argument $post_id is missing from the Docblock of before_delete_post</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>257</td>
+                                        <td>Argument $translated_text is missing from the Docblock of gettext</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>257</td>
+                                        <td>Argument $text is missing from the Docblock of gettext</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>257</td>
+                                        <td>Argument $domain is missing from the Docblock of gettext</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>257</td>
+                                        <td>No summary for method gettext()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>282</td>
+                                        <td>No summary for method plugins_loaded()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>292</td>
+                                        <td>Argument $object_id is missing from the Docblock of set_object_terms</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>292</td>
+                                        <td>Argument $terms is missing from the Docblock of set_object_terms</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>292</td>
+                                        <td>Argument $tt_ids is missing from the Docblock of set_object_terms</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>292</td>
+                                        <td>Argument $taxonomy is missing from the Docblock of set_object_terms</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>292</td>
+                                        <td>Argument $append is missing from the Docblock of set_object_terms</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>292</td>
+                                        <td>Argument $old_tt_ids is missing from the Docblock of set_object_terms</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>292</td>
+                                        <td>No summary for method set_object_terms()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>303</td>
+                                        <td>No summary for method widgets_init()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>319</td>
+                                        <td>Argument $post_id is missing from the Docblock of wp_trash_post</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>342</td>
+                                        <td>Argument $post_id is missing from the Docblock of untrash_post</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>375</td>
+                                        <td>Argument $meta_id is missing from the Docblock of updated_post_meta</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>375</td>
+                                        <td>Argument $object_id is missing from the Docblock of updated_post_meta</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>375</td>
+                                        <td>Argument $meta_key is missing from the Docblock of updated_post_meta</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>375</td>
+                                        <td>Argument $meta_value is missing from the Docblock of updated_post_meta</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="wpt_transient.php" id="wpt_transient.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            wpt_transient.php
+                            <small style="float: right;padding-right: 10px;">16</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>13</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>19</td>
+                                        <td>Argument $name is missing from the Docblock of get</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>19</td>
+                                        <td>Argument $args is missing from the Docblock of get</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>19</td>
+                                        <td>No summary for method get()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>44</td>
+                                        <td>Argument $post_id is missing from the Docblock of save_post</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>44</td>
+                                        <td>No summary for method save_post()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>48</td>
+                                        <td>Argument $name is missing from the Docblock of set</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>48</td>
+                                        <td>Argument $args is missing from the Docblock of set</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>48</td>
+                                        <td>Argument $value is missing from the Docblock of set</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>48</td>
+                                        <td>No summary for method set()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>53</td>
+                                        <td>Argument $meta_id is missing from the Docblock of updated_post_meta</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>53</td>
+                                        <td>Argument $object_id is missing from the Docblock of updated_post_meta</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>53</td>
+                                        <td>Argument $meta_key is missing from the Docblock of updated_post_meta</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>53</td>
+                                        <td>Argument $meta_value is missing from the Docblock of updated_post_meta</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>53</td>
+                                        <td>No summary for method updated_post_meta()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="wpt_widget.php" id="wpt_widget.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            wpt_widget.php
+                            <small style="float: right;padding-right: 10px;">36</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>3</td>
+                                        <td>No summary for class \WPT_Events_Widget</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>74</td>
+                                        <td>No summary for class \WPT_Production_Widget</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>171</td>
+                                        <td>No summary for class \WPT_Production_Events_Widget</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>236</td>
+                                        <td>No summary for class \WPT_Productions_Widget</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>300</td>
+                                        <td>No summary for class \WPT_Cart_Widget</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>4</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>12</td>
+                                        <td>Argument $args is missing from the Docblock of widget</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>12</td>
+                                        <td>Argument $instance is missing from the Docblock of widget</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>12</td>
+                                        <td>No summary for method widget()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>42</td>
+                                        <td>Argument $instance is missing from the Docblock of form</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>42</td>
+                                        <td>No summary for method form()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>75</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>83</td>
+                                        <td>Argument $args is missing from the Docblock of widget</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>83</td>
+                                        <td>Argument $instance is missing from the Docblock of widget</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>83</td>
+                                        <td>No summary for method widget()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>120</td>
+                                        <td>Argument $instance is missing from the Docblock of form</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>120</td>
+                                        <td>No summary for method form()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>172</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>180</td>
+                                        <td>Argument $args is missing from the Docblock of widget</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>180</td>
+                                        <td>Argument $instance is missing from the Docblock of widget</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>180</td>
+                                        <td>No summary for method widget()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>213</td>
+                                        <td>Argument $instance is missing from the Docblock of form</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>213</td>
+                                        <td>No summary for method form()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>237</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>245</td>
+                                        <td>Argument $args is missing from the Docblock of widget</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>245</td>
+                                        <td>Argument $instance is missing from the Docblock of widget</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>245</td>
+                                        <td>No summary for method widget()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>274</td>
+                                        <td>Argument $instance is missing from the Docblock of form</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>274</td>
+                                        <td>No summary for method form()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>301</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>309</td>
+                                        <td>Argument $args is missing from the Docblock of widget</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>309</td>
+                                        <td>Argument $instance is missing from the Docblock of widget</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>309</td>
+                                        <td>No summary for method widget()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>327</td>
+                                        <td>Argument $instance is missing from the Docblock of form</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>327</td>
+                                        <td>No summary for method form()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                    </div>
+    </section>
+
+    <footer class="row-fluid">
+        <section class="span10 offset2">
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <section class="row-fluid footer-sections">
+                        <section class="span4">
+                                                        <h1><i class="icon-code"></i></h1>
+                            <div>
+                                <ul>
+                                                                    </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-bar-chart"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../graphs/class.html">Class Hierarchy Diagram</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-pushpin"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../reports/errors.html">Errors</a></li>
+                                    <li><a href="../reports/markers.html">Markers</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                    </section>
+                </section>
+            </section>
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <hr />
+                    Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
+                    on June 25th, 2015 at 14:24.
+                </section>
+            </section>
+        </section>
+    </footer>
+</div>
+
+</body>
+</html>
