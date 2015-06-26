@@ -391,7 +391,6 @@ class WPT_Admin {
 	function save_event( $post_id ) {
 		
 		global $wp_theatre;
-		
 		/*
 		 * We need to verify this came from the our screen and with proper authorization,
 		 * because save_post can be triggered at other times.
