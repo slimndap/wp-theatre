@@ -130,38 +130,118 @@ class WPT_Event {
 	}
 
 	/**
-	 * Event date.
+	 * Event enddate html.
 	 *
-	 * Returns the event date as plain text or as an HTML element.
+	 * Returns the event enddate as HTML element.
+	 *
+	 * @param array $args {
+	 *		@type array	$filters
+	 * }
+	 * @return string HTML.
+	 */
+	function enddate_html($args = array()) {
+		global $wp_theatre;
+
+		$defaults = array(
+		'filters' => array()
+		);
+		$args = wp_parse_args( $args, $defaults );
+
+		$html = '<div class="'.self::post_type_name.'_enddate">';
+		$html .= $wp_theatre->filter->apply( $this->enddate(), $args['filters'], $this );
+		$html .= '</div>';
+
+		return apply_filters( 'wpt_event_enddate_html', $html, $this );
+	}
+
+	/**
+	 * Event enddate.
+	 *
+	 * Returns the event date as text element.
 	 *
 	 * @since 0.4
 	 * @since 0.10.15	Now accounts for timezones.
 	 *
 	 * @param array $args {
-	 *     @type bool $html Return HTML? Default <false>.
+	 *		@type array	$filters
 	 * }
-	 * @return string text or HTML.
+	 * @return string TEXT.
 	 */
-	function date($args = array()) {
+	function enddate($args = array()) {
 		global $wp_theatre;
 
 		$defaults = array(
-			'html' => false,
+		'filters' => array()
+		);
+		$args = wp_parse_args( $args, $defaults );
+
+		if ( ! isset($this->enddate) ) {
+			$datetime_args = array( 'start' => false );
+			$this->enddate[ $field ] = apply_filters(
+				'wpt_event_enddate',
+				date_i18n( 
+					get_option( 'date_format' ),
+					$this->datetime( $datetime_args ) + get_option('gmt_offset') * 3600
+				),
+				$this 
+			);
+		}
+
+		return $this->enddate[ $field ];
+	}
+
+	/**
+	 * Event startdate html.
+	 *
+	 * Returns the event date as HTML element.
+	 *
+	 * @param array $args {
+	 *		@type array	$filters
+	 * }
+	 * @return string HTML.
+	 */
+	function startdate_html($args = array()) {
+		global $wp_theatre;
+
+		$defaults = array(
+		'start' => true,
+		'filters' => array()
+		);
+		$args = wp_parse_args( $args, $defaults );
+
+		$html = '<div class="'.self::post_type_name.'_date">';
+		$html .= $wp_theatre->filter->apply( $this->startdate(), $args['filters'], $this );
+		$html .= '</div>';
+
+		return apply_filters( 'wpt_event_startdate_html', $html, $this );
+	}
+
+	/**
+	 * Event startdate.
+	 *
+	 * Returns the event date as plain text element.
+	 *
+	 * @since 0.4
+	 * @since 0.10.15	Now accounts for timezones.
+	 *
+	 * @param array $args {
+	 *		@type array	$filters
+	 * }
+	 * @return string text.
+	 */
+	function startdate($args = array()) {
+		global $wp_theatre;
+
+		$defaults = array(
 			'start' => true,
 			'filters' => array()
 		);
 		$args = wp_parse_args( $args, $defaults );
 
-		if ( $args['start'] ) {
-			$field = 'event_date';
-		} else {
-			$field = 'enddate';
-		}
-
-		if ( ! isset($this->date[ $field ]) ) {
+		if ( ! isset($this->startdate) ) {
 			$datetime_args = array( 'start' => $args['start'] );
-			$this->date[ $field ] = apply_filters(
-				'wpt_event_date',
+			$this->startdate[ $field ] = apply_filters(
+				'wpt_event_startdate',
 				date_i18n( 
 					get_option( 'date_format' ),
 					$this->datetime( $datetime_args ) + get_option('gmt_offset') * 3600
@@ -170,24 +250,38 @@ class WPT_Event {
 			);
 		}
 
-		if ( $args['html'] ) {
-			$html = '<div class="'.self::post_type_name.'_date">';
+		return $this->startdate[ $field ];
+	}
 
-			/**
-			 * Apply WPT_Filters
-			 * Use the raw datetime when the date filter is active.
-			 */
-			$filters_functions = $wp_theatre->filter->get_functions( $args['filters'] );
-			if ( in_array( 'date', $filters_functions ) ) {
-				$html .= $wp_theatre->filter->apply( $this->datetime[ $field ], $args['filters'], $this );
-			} else {
-				$html .= $wp_theatre->filter->apply( $this->date[ $field ], $args['filters'], $this );
-			}
-
-			$html .= '</div>';
-			return apply_filters( 'wpt_event_date_html', $html, $this );
-		} else {
-			return $this->date[ $field ];
+	/**
+	 * Event date.
+	 *
+	 * Returns the event date as plain text or as an HTML element.
+	 *
+	 * @param array $args {
+	 *     @type bool $html Return HTML? Default <false>.
+	 * }
+	 * @return string text or HTML.
+	 */
+	function date($args = array()) {
+		switch ( $args['field'] ) {
+			case 'date':
+				return $this->startdate_html($args);
+				break;
+			case 'startdate_html':
+				return $this->startdate_html($args);
+				break;
+			case 'startdate':
+				return $this->startdate($args);
+				break;
+			case 'enddate_html':
+				return $this->enddate_html($args);
+				break;
+			case 'enddate':
+				return $this->enddate($args);
+				break;
+			default:
+				return $this->startdate($args);
 		}
 	}
 
@@ -295,7 +389,7 @@ class WPT_Event {
 	}
 
 	/**
-	 * Event location.false
+	 * Event location.
 	 *
 	 * Returns the event venue and city combined as plain text or as an HTML element.
 	 *
@@ -916,30 +1010,8 @@ class WPT_Event {
 		);
 		$args = wp_parse_args( $args, $defaults );
 
-		if ( ! isset($this->endtime_html[ $field ]) ) {
-			$datetime_args = array( 'start' => $args['start'] );
-			$this->endtime_html[ $field ] = apply_filters(
-				'wpt_event_endtime',
-				date_i18n( 
-					get_option( 'time_format' ),
-					$this->datetime( $datetime_args ) + get_option('gmt_offset') * 3600
-				),
-				$this 
-			);
-		}
-
 		$html = '<div class="'.self::post_type_name.'_endtime">';
-
-		/**
-		 * Apply WPT_Filters
-		 * Use the raw datetime when the date filter is active.
-		 */
-		$filters_functions = $wp_theatre->filter->get_functions( $args['filters'] );
-		if ( in_array( 'date', $filters_functions ) ) {
-			$html .= $wp_theatre->filter->apply( $this->datetime[ $field ], $args['filters'], $this );
-		} else {
-			$html .= $wp_theatre->filter->apply( $this->endtime_html[ $field ], $args['filters'], $this );
-		}
+		$html .= $wp_theatre->filter->apply( $this->endtime(), $args['filters'], $this );
 		$html .= '</div>';
 
 		return apply_filters( 'wpt_event_endtime_html', $html, $this );
@@ -961,8 +1033,8 @@ class WPT_Event {
 		);
 		$args = wp_parse_args( $args, $defaults );
 
-		if ( ! isset($this->endtime[ $field ]) ) {
-			$datetime_args = array( 'start' => $args['start'] );
+		if ( ! isset($this->endtime) ) {
+			$datetime_args = array( 'start' => false );
 			$this->endtime[ $field ] = apply_filters(
 				'wpt_event_endtime',
 				date_i18n( 
@@ -993,30 +1065,8 @@ class WPT_Event {
 		);
 		$args = wp_parse_args( $args, $defaults );
 
-		if ( ! isset($this->starttime_html[ $field ]) ) {
-			$datetime_args = array( 'start' => $args['start'] );
-			$this->starttime_html[ $field ] = apply_filters(
-				'wpt_event_starttime',
-				date_i18n( 
-					get_option( 'time_format' ),
-					$this->datetime( $datetime_args ) + get_option('gmt_offset') * 3600
-				),
-				$this 
-			);
-		}
-
 		$html = '<div class="'.self::post_type_name.'_time">';
-
-		/**
-		 * Apply WPT_Filters
-		 * Use the raw datetime when the date filter is active.
-		 */
-		$filters_functions = $wp_theatre->filter->get_functions( $args['filters'] );
-		if ( in_array( 'date', $filters_functions ) ) {
-			$html .= $wp_theatre->filter->apply( $this->datetime[ $field ], $args['filters'], $this );
-		} else {
-			$html .= $wp_theatre->filter->apply( $this->starttime_html[ $field ], $args['filters'], $this );
-		}
+		$html .= $wp_theatre->filter->apply( $this->starttime(), $args['filters'], $this );
 		$html .= '</div>';
 
 		return apply_filters( 'wpt_event_starttime_html', $html, $this );
@@ -1039,7 +1089,7 @@ class WPT_Event {
 		);
 		$args = wp_parse_args( $args, $defaults );
 
-		if ( ! isset($this->starttime[ $field ]) ) {
+		if ( ! isset($this->starttime) ) {
 			$datetime_args = array( 'start' => $args['start'] );
 			$this->starttime[ $field ] = apply_filters(
 				'wpt_event_starttime',
@@ -1166,7 +1216,6 @@ class WPT_Event {
 			}
 
 			switch ( $field ) {
-				case 'date':
 				case 'datetime':
 				case 'duration':
 				case 'location':
@@ -1191,6 +1240,56 @@ class WPT_Event {
 						'html' => true,
 						'filters' => $filters,
 					)
+					);
+					break;
+				case 'date':
+					$replacement = $this->date(
+					array(
+						'field' => $field,
+						'html' => true,
+						'start'=> true,
+						'filters' => $filters,
+						)
+					);
+					break;
+				case 'startdate':
+					$replacement = $this->date(
+					array(
+						'field' => $field,
+						'html' => false,
+						'start'=> true,
+						'filters' => $filters,
+						)
+					);
+					break;
+				case 'startdate_html':
+					$replacement = $this->date(
+					array(
+						'field' => $field,
+						'html' => true,
+						'start'=> true,
+						'filters' => $filters,
+						)
+					);
+					break;
+				case 'enddate':
+					$replacement = $this->date(
+					array(
+						'field' => $field,
+						'html' => false,
+						'start'=> false,
+						'filters' => $filters,
+						)
+					);
+					break;
+				case 'enddate_html':
+					$replacement = $this->date(
+					array(
+						'field' => $field,
+						'html' => true,
+						'start'=> false,
+						'filters' => $filters,
+						)
 					);
 					break;
 				case 'time':
