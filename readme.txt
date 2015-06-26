@@ -85,6 +85,25 @@ The new feature may be added directly to the Theater plugin or as an extension s
 
 == Changelog ==
 
+= 0.12 =
+
+Release Date: ??
+
+* Enhancements
+    * You can adjust the slug for production detail pages in the permalink settings. Your URLs can now look like `http://example.com/show/billy-elliot` or `http://example.com/concert/kurt-vile`.
+    * New template placeholders for events: `{{starttime}}`, `{{startdate}}`, `{{endtime}}` and `{{enddate}}`. Thanks [jbrandligt](https://github.com/jbrandligt)!
+    * The URLs for your ticketpages look nicer, if you use the iframe option: `http://example.com/tickets/billy-elliot/123`.
+    * Updated the German translation. Thanks [henk23](https://github.com/henk23)!
+
+* Clean up
+    * Productions no longer have an archive page on `http://example.com/productions/`. 
+    * Removed the Theater dashboard widget since it was kind off useless and slowing the admin interface down.
+
+* Bugfixes
+	* Some past events were showing a false tickets status.
+	* It was impossible to clear a value for an event field.
+	
+
 = 0.11 =
 
 Release Date: May 30th, 2015
@@ -239,6 +258,9 @@ Release Date: December 29th, 2014
 * Basic version of the plugin.
 
 == Upgrade Notice ==
+
+= 0.12 =
+Adds new placeholders, nicer URLs, removes clutter and fixes some small bugs.
 
 = 0.11.9 =
 Added support for custom filters in event listings (eg. venue of city).
