@@ -601,7 +601,7 @@ body.js #wpt_event_editor .inside .wpt_event_editor_create.open .wpt_event_edito
   display: none;
 }
 body.js #wpt_event_editor .inside .wpt_event_editor_create.open .wpt_event_editor_form {
-  display: block;
+  display: table;
 }
 @font-face {
   font-family: "theatre-webfont";
