@@ -25,6 +25,63 @@
 			add_action('untrash_post',array( $this,'untrash_post'));
 			
 			add_filter( 'cron_schedules', array($this,'cron_schedules'));
+
+			add_filter( 'query_vars', array($this,'add_tickets_url_iframe_query_vars'));	 
+			add_action('init', array($this, 'add_tickets_url_iframe_rewrites'));
+		}
+	
+		/**
+		 * Adds event tickets URL iframe rewrites.
+		 * 
+		 * Rewrite pretty iframed ticket screens URLs from:
+		 *
+		 * http://example.com/tickets/my-event/123
+		 *
+		 * to:
+		 *
+		 * http://example.com/?pagename=tickets&wpt_event_tickets=123
+		 *
+		 * @see		WPT_Setup::add_tickets_url_iframe_query_vars()
+		 * @since	0.12
+		 * @return	void
+		 */
+		public function add_tickets_url_iframe_rewrites() {
+			global $wp_theatre;
+			
+			if (empty($wp_theatre->wpt_tickets_options['iframepage'])) {
+				return;
+			}
+			
+			$iframe_page = get_post($wp_theatre->wpt_tickets_options['iframepage']);
+			
+			if (is_null($iframe_page)) {
+				return;
+			}
+			
+			add_rewrite_tag('%wpt_event_tickets%', '.*');
+
+			add_rewrite_rule(
+				$iframe_page->post_name.'/([a-z0-9-]+)/([0-9]+)$', 
+				'index.php?pagename='.$iframe_page->post_name.'&wpt_event_tickets=$matches[2]',
+				'top'
+			);
+			
+		}
+		
+		/**
+		 * Adds 'wpt_event_tickets' to the query vars.
+		 *
+		 * Makes it possible to access iframed ticket screens like:
+		 * http://example.com/?pagename=tickets&wpt_event_tickets=123
+		 *
+		 * @see WPT_Setup::add_tickets_url_iframe_rewrites()
+		 * @access public
+		 * @param mixed $query_vars
+		 * @return void
+		 */
+		public function add_tickets_url_iframe_query_vars($query_vars) {
+			$query_vars[] = 'wpt_event_tickets';
+			return $query_vars;
 		}
 	
 		/**
@@ -129,7 +186,7 @@
 						'singular_name' => __( 'Production','wp_theatre'),
 						'add_new' =>  _x('Add New', 'production','wp_theatre'),
 						'new_item' => __('New production','wp_theatre'),
-						'add_new_item' => __('Add new').' '.__('production','wp_theatre'),
+						'add_new_item' => __('Add new production','wp_theatre'),
 						'edit_item' => __('Edit production','wp_theatre')
 					),
 					'public' => true,

@@ -889,6 +889,9 @@ class WPT_Event_Editor {
 	 * @since 	0.11.1	Leave disabled fields alone.
 	 * @since	0.11.5	Added the $data param, so the editor can also handle data that is not in $_POST.
 	 *					Eg. data submitted through AJAX.
+	 * @since	0.12	Empty values are saved as well.
+	 * 					Fixes #138.
+	 *
 	 * @param 	array 	$field		The field.
 	 * @param 	int 	$event_id	The event.
 	 * @param	array	$data		The form data that was submitted by the user.
@@ -904,7 +907,7 @@ class WPT_Event_Editor {
 			call_user_func_array( $field['save']['callback'], array( $field, $event_id, $data ) );
 		} else {
 			$key = 'wpt_event_editor_'.$field['id'];
-			if ( ! empty($data[ $key ]) ) {
+			if ( isset($data[ $key ]) ) {
 				$value = $data[ $key ];
 				$this->save_value( $value, $field, $event_id );
 			}

@@ -620,10 +620,15 @@ class WPT_Test extends WP_UnitTestCase {
 	function test_wpt_event_tickets_url_with_iframe() {
 		
 		global $wp_theatre;
+
+		// create a page for our listing
+		$args = array(
+			'post_type'=>'page'
+		);
 		
 		$wp_theatre->wpt_tickets_options = 	array(
 			'integrationtype' => 'iframe',
-			'iframepage' => '',
+			'iframepage' => $this->factory->post->create($args),
 			'currencysymbol' => '$',
 		);
 		

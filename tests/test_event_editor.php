@@ -63,7 +63,6 @@ class WPT_Test_Event_Editor extends WP_UnitTestCase {
 		$this->create_event_for_production( $production_id );
 		$listing_html = $wp_theatre->event_editor->get_listing_html( $production_id );
 
-
 		do_action( 'add_meta_boxes_'.WPT_Production::post_type_name );
 
 		ob_start();
@@ -362,6 +361,41 @@ class WPT_Test_Event_Editor_Ajax extends WP_Ajax_UnitTestCase {
 		$this->assertEquals( $event_date, date( 'Y-m-d H:i', $events[0]->datetime() ) );
 		$this->assertEquals( $venue, $events['0']->venue() );
 		$this->assertEquals( $extra_value, $events[0]->custom( 'extra_field' ) );
+
+	}
+
+	function test_event_value_can_be_emptied() {
+
+		// Create a production with an event.
+		$production_id = $this->create_production();
+		$event_id = $this->create_event_for_production( $production_id );
+
+		// Give the event a tickets_url.
+		$tickets_url = 'http://slimndap.com';
+		add_post_meta( $event_id, 'tickets_url', $tickets_url, true );
+
+		// Check if it's set properly.
+		$event_with_tickets_url = new WPT_Event( $event_id );
+		$this->assertEquals( $tickets_url, $event_with_tickets_url->tickets_url() );
+
+		// Assume admin.
+		$this->_setRole( 'administrator' );
+
+		// Create a fake post submission.
+		$_POST[ WPT_Event::post_type_name.'_nonce' ] = wp_create_nonce( WPT_Event::post_type_name );
+		$_POST['wpt_event_editor_tickets_url'] = '';
+		$_POST[ 'wpt_event_editor_'.WPT_Production::post_type_name ] = $production_id;
+
+		// Update the event
+		$event_args = array(
+			'ID' => $event_id,
+			'post_type' => WPT_Event::post_type_name,
+		);
+		wp_update_post( $event_args );
+
+		// Check if it's emptied.
+		$event = new WPT_Event( $event_id );
+		$this->assertEmpty( $event->tickets_url() );
 
 	}
 
