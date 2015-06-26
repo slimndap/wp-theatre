@@ -122,7 +122,7 @@
 						'edit_item' => __('Edit production','wp_theatre')
 					),
 					'public' => true,
-					'has_archive' => true,
+					'has_archive' => $wp_theatre->listing_page->page()?$wp_theatre->listing_page->page()->ID:false,
 					'show_in_menu'  => 'theatre',
 					'show_in_admin_bar' => true,
 		  			'supports' => array('title', 'editor', 'excerpt', 'thumbnail','comments'),
