@@ -507,15 +507,20 @@ class WPT_Frontend {
 		}
 	}
 	
-	function wp_theatre_iframe($atts, $content=null) {
+	function wp_theatre_iframe() {
 		$html = '';
-		if (isset($_GET[__('Event','wp_theatre')])) {
-			$tickets_url = get_post_meta($_GET[__('Event','wp_theatre')],'tickets_url',true);
-			if ($tickets_url!='') {
-				$html = '<iframe src="'.$tickets_url.'" class="wp_theatre_iframe"></iframe>';
-			}
+
+		$event_id = (int) get_query_var('wpt_event_tickets');
+
+		if (!empty($event_id)) {
+			$tickets_url = get_post_meta($event_id,'tickets_url',true);
+			if (!empty($tickets_url)) {
+				$html.= '<iframe src="'.$tickets_url.'" class="wp_theatre_iframe"></iframe>';
+			}			
 		}
-		do_action('wp_theatre_iframe', $atts, $content=null);
+
+		do_action('wp_theatre_iframe');
+
 		return $html;
 	}
 	

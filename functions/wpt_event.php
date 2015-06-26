@@ -765,15 +765,10 @@ class WPT_Event {
 		if (
 			! empty($wp_theatre->wpt_tickets_options['integrationtype']) &&
 			'iframe' == $wp_theatre->wpt_tickets_options['integrationtype']  &&
-			! empty($tickets_url)
+			! empty($tickets_url) &&
+			$tickets_url_iframe = $this->tickets_url_iframe()
 		) {
-			$tickets_url = get_permalink( $wp_theatre->wpt_tickets_options['iframepage'] );
-			$tickets_url = add_query_arg(
-				array(
-					__( 'Event','wp_theatre' ) => $this->ID,
-				),
-				$tickets_url
-			);
+			$tickets_url = $tickets_url_iframe;
 		}
 
 		/**
@@ -792,6 +787,25 @@ class WPT_Event {
 		$tickets_url = apply_filters( 'wpt_event_tickets_url',$tickets_url,$this );
 
 		return $tickets_url;
+	}
+
+	public function tickets_url_iframe() {
+		global $wp_theatre;
+		
+		if (empty($wp_theatre->wpt_tickets_options['iframepage'])) {
+			return false;
+		}
+		
+		$tickets_url_iframe = get_permalink( $wp_theatre->wpt_tickets_options['iframepage'] );
+		
+		if (get_option('permalink_structure')) {
+			$tickets_url_iframe = trailingslashit($tickets_url_iframe).$this->production->post->post_name.'/'.$this->post->post_name;
+		} else {
+			$tickets_url_iframe = add_query_arg('wpt_event_tickets', $this->ID, $tickets_url_iframe);
+		}
+		
+		return $tickets_url_iframe;
+		
 	}
 
 	/**
