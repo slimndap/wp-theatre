@@ -80,7 +80,7 @@ class WPT_Production_Permalink {
 	 */
 	public function save_base($base = '') {
 		if ( empty($base) ) {
-			$base = $this->get_default();
+			$base = $this->get_base_default();
 		}
 
 		$base = '/'.trim( $base, '/' );
