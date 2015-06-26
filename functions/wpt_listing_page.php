@@ -142,8 +142,8 @@
 		 	 * {listing_page}/yesterday
 		 	 */
 
-			if ($this->page()) {
-				$post_name = $this->page->post_name;
+			if ($page = $this->page()) {
+				$post_name = $page->post_name;
 			
 				// <listing_page>/2014/05
 				add_rewrite_rule(
@@ -690,7 +690,6 @@
 	 	
 	 	function reset() {
 	 		$this->options = get_option('wpt_listing_page');
-	 		unset($this->page);
 	 	}
 	 	
 	 	/*

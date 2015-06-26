@@ -112,10 +112,10 @@
 		 * Registers the custom post types for productions, events and seasons.
 		 * 
 		 * @since 	?.?
-		 * @since 	0.12	Slug and archive are dynamic.
+		 * @since 	0.12	Slug is dynamic.
+		 *					Archive is disabled.
 		 *
 		 * @see		WPT_Production_Permalink::get_permalink()	The production permalink.
-		 * @see		WPT_Listing_page::page()					The listing page.
 		 *				
 		 * @return void
 		 */
@@ -133,13 +133,13 @@
 						'edit_item' => __('Edit production','wp_theatre')
 					),
 					'public' => true,
-					'has_archive' => $wp_theatre->listing_page->page()?get_page_uri($wp_theatre->listing_page->page()->ID):false,
+					'has_archive' => false,
 					'show_in_menu'  => 'theatre',
 					'show_in_admin_bar' => true,
 		  			'supports' => array('title', 'editor', 'excerpt', 'thumbnail','comments'),
 		  			'taxonomies' => array('category','post_tag'),
 		  			'rewrite' => array( 
-		  				'slug' => $wp_theatre->production_permalink->get_permalink(), 
+		  				'slug' => $wp_theatre->production_permalink->get_base(), 
 		  				'with_front' => false, 
 		  				'feeds' => true 
 		  			),

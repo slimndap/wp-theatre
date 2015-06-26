@@ -32,60 +32,60 @@ class WPT_Production_Permalink {
 	}
 
 	/**
-	 * Gets the default permalink.
+	 * Gets the default permalink base.
 	 *
 	 * @since 	0.12
-	 * @return 	string	The default permalink.
+	 * @return 	string	The default permalink base.
 	 */
-	public function get_default() {
+	public function get_base_default() {
 		$default = '/'._x( 'production', 'slug', 'wp_theatre' );
 
 		/**
-		 * Filter the default production permalink.
+		 * Filter the default production permalink base.
 		 *
 		 * @since 	0.12
-		 * @param	string	$default	The default production permalink.
+		 * @param	string	$default	The default production permalink base.
 		 */
-		$default = apply_filters( 'wpt/production/permalink/default', $default );
+		$default = apply_filters( 'wpt/production/permalink/base/default', $default );
 
 		return $default;
 	}
 
 	/**
-	 * Gets the production permalink.
+	 * Gets the production permalink base.
 	 *
 	 * @since	0.12
-	 * @return 	string	The permalink.
+	 * @return 	string	The production permalink base.
 	 */
-	public function get_permalink() {
-		$permalink = empty( $this->options['permalink'] ) ? $this->get_default() : $this->options['permalink'];
+	public function get_base() {
+		$base = empty( $this->options['base'] ) ? $this->get_base_default() : $this->options['base'];
 
 		/**
-		 * Filter the production permalink.
+		 * Filter the production permalink base.
 		 *
 		 * @since	0.12
-		 * @param	string	$permalink	The production permalink.
+		 * @param	string	$base	The production permalink base.
 		 */
-		$permalink = apply_filters( 'wpt/production/permalink/', $permalink );
+		$base = apply_filters( 'wpt/production/permalink/base', $base );
 
-		return $permalink;
+		return $base;
 	}
 
 	/**
-	 * Save the production permalink.
+	 * Save the production permalink base.
 	 *
 	 * @since	0.12
-	 * @param 	string	$permalink	The permalink.
+	 * @param 	string	$base	The production permalink base.
 	 * @return	void
 	 */
-	public function save_permalink($permalink = '') {
-		if ( empty($permalink) ) {
-			$permalink = $this->get_default();
+	public function save_base($base = '') {
+		if ( empty($base) ) {
+			$base = $this->get_default();
 		}
 
-		$permalink = '/'.trim( $permalink, '/' );
+		$base = '/'.trim( $base, '/' );
 
-		$this->options['permalink'] = $permalink;
+		$this->options['base'] = $base;
 		update_option( 'wpt/production/permalink', $this->options );
 	}
 
@@ -97,7 +97,7 @@ class WPT_Production_Permalink {
 	 */
 	public function save_settings() {
 
-		if ( ! isset( $_POST['wpt_production_permalink'] ) ) {
+		if ( ! isset( $_POST['wpt_production_permalink_base'] ) ) {
 			return;
 		}
 
@@ -105,13 +105,13 @@ class WPT_Production_Permalink {
 			return;
 		}
 
-		$permalink = sanitize_text_field( $_POST['wpt_production_permalink'] );
+		$base = sanitize_text_field( $_POST['wpt_production_permalink_base'] );
 
-		if ( 'custom' == $permalink ) {
-			$permalink = sanitize_text_field( $_POST['wpt_production_permalink_custom'] );
+		if ( 'custom' == $base ) {
+			$base = sanitize_text_field( $_POST['wpt_production_permalink_custom_base'] );
 		}
 
-		$this->save_permalink( $permalink );
+		$this->save_base( $base );
 	}
 
 	/**
@@ -132,9 +132,9 @@ class WPT_Production_Permalink {
 
 		$permalink_options = array(
 			'production' => array(
-				'structure' => $this->get_default(),
+				'structure' => $this->get_base_default(),
 				'title' => __( 'Production', 'wp_theatre' ),
-				'example' => home_url().trailingslashit( $this->get_default() ).__( 'sample-production','wp_theatre' ),
+				'example' => home_url().trailingslashit( $this->get_base_default() ).__( 'sample-production','wp_theatre' ),
 			),
 		);
 
@@ -144,15 +144,15 @@ class WPT_Production_Permalink {
 			$html .= '<tr>';
 			$html .= '<th>';
 			$html .= '<label>';
-			$html .= '<input name="wpt_production_permalink" type="radio" value="'.$args['structure'].'"';
-			$html .= ' '.checked( $args['structure'], $this->get_permalink(), false ).' />';
+			$html .= '<input name="wpt_production_permalink_base" type="radio" value="'.$args['structure'].'"';
+			$html .= ' '.checked( $args['structure'], $this->get_base(), false ).' />';
 			$html .= ' '.$args['title'];
 			$html .= '</label>';
 			$html .= '</th>';
 			$html .= '<td><code>'.$args['example'].'</code></td>';
 			$html .= '</tr>';
 
-			if ( $args['structure'] == $this->get_permalink() ) {
+			if ( $args['structure'] == $this->get_base() ) {
 				$option_checked = true;
 			}
 		}
@@ -160,13 +160,13 @@ class WPT_Production_Permalink {
 		$html .= '<tr>';
 		$html .= '<th>';
 		$html .= '<label>';
-		$html .= '<input name="wpt_production_permalink" type="radio" value="custom" '.checked( $option_checked, false, false ).' />';
+		$html .= '<input name="wpt_production_permalink_base" type="radio" value="custom" '.checked( $option_checked, false, false ).' />';
 		$html .= __( 'Custom Base', 'wp_theatre' );
 		$html .= '</label>';
 		$html .= '</th>';
 		$html .= '<td>';
 		$html .= '<code>'.untrailingslashit( home_url() ).'</code>';
-		$html .= '<input name="wpt_production_permalink_custom" type="text" value="'.esc_attr( $this->get_permalink() ).'" class="regular-text code">';
+		$html .= '<input name="wpt_production_permalink_custom_base" type="text" value="'.esc_attr( $this->get_base() ).'" class="regular-text code">';
 		$html .= '</td>';
 		$html .= '</tr>';
 
