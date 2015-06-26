@@ -108,9 +108,20 @@
 			);
 		}
 	
+		/**
+		 * Registers the custom post types for productions, events and seasons.
+		 * 
+		 * @since 	?.?
+		 * @since 	0.12	Slug and archive are dynamic.
+		 *
+		 * @see		WPT_Production_Permalink::get_permalink()	The production permalink.
+		 * @see		WPT_Listing_page::page()					The listing page.
+		 *				
+		 * @return void
+		 */
 		public function register_post_types() {
 			global $wp_theatre;
-			
+
 			register_post_type( WPT_Production::post_type_name,
 				array(
 					'labels' => array(
@@ -122,7 +133,7 @@
 						'edit_item' => __('Edit production','wp_theatre')
 					),
 					'public' => true,
-					'has_archive' => $wp_theatre->listing_page->page()?$wp_theatre->listing_page->page()->ID:false,
+					'has_archive' => $wp_theatre->listing_page->page()?get_page_uri($wp_theatre->listing_page->page()->ID):false,
 					'show_in_menu'  => 'theatre',
 					'show_in_admin_bar' => true,
 		  			'supports' => array('title', 'editor', 'excerpt', 'thumbnail','comments'),

@@ -638,6 +638,20 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		$html = do_shortcode('[wpt_calendar]');
 		$this->assertEquals(4, substr_count($html, '<td><a'), $html);		
 	}
+	
+	function test_production_archive_equals_listing_page() {
+		global $wp_theatre;
+		
+		/*
+		 * Re-register post types so that is uses the listing page settings.
+		 */
+		$wp_theatre->setup->register_post_types();
+		
+		$this->assertEquals( 
+			get_permalink($wp_theatre->listing_page->page()), 
+			get_post_type_archive_link(WPT_Production::post_type_name) 
+		);
+	}
 		
 	/* 
 	 * Test backwards compatibility

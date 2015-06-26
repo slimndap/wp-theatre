@@ -240,22 +240,24 @@
 	 	}
 	 	
 	 	/*
-	 	 * Get the page with upcoming events.
-	 	 * @return WP_Post Page if page is set and if page exists.
-	 	 * @return false otherwise. 
+	 	 * Gets the page with upcoming events.
+	 	 *
+	 	 * @since 	0.8
+	 	 * @since 	0.12		No more caching of $page.
+	 	 *						Rely on internal caching of Wordpress instead.
+	 	 *
+	 	 * @return WP_Post|bool	Page if page is set and if page exists.
+	 	 * 						<false> otherwise. 
 	 	 */
-	 	
 	 	function page() {
-		 	if (!isset($this->page)) {
-			 	$this->page = false;
-			 	if (!empty($this->options['listing_page_post_id'])) {
-				 	$page = get_post($this->options['listing_page_post_id']);
-				 	if (!is_null($page)) {
-				 		$this->page = $page;
-				 	}
+		 	$page = false;
+		 	if (!empty($this->options['listing_page_post_id'])) {
+			 	$post = get_post($this->options['listing_page_post_id']);
+			 	if (!is_null($post)) {
+			 		$page = $post;
 			 	}
-		 	}		 	
-		 	return $this->page;
+		 	}
+		 	return $page;
 	 	}
 	 	
 	 	 
@@ -602,7 +604,7 @@
 	 	function the_content($content) {
 	 		global $wp_theatre;
 	 		
-	 		if ($this->page() && is_page($this->page->ID)) {
+	 		if ($this->page() && is_page($this->page()->ID)) {
 	 			if (!empty($this->options['listing_page_position'])) {
 		 			switch($this->options['listing_page_position']) {
 			 			case 'above':
@@ -638,7 +640,7 @@
 	 	
 	 	function url($args=array()) {
 	 		if ($this->page()) {
-		 		$url = trailingslashit(get_permalink($this->page->ID));
+		 		$url = trailingslashit(get_permalink($this->page()->ID));
 		 		$defaults = array(
 		 			'wpt_month' => false,
 		 			'wpt_day' => false,
@@ -731,7 +733,7 @@
 	 		if (
 	 			get_option('permalink_structure') &&
 	 			$this->page() &&
-	 			is_page($this->page->ID)
+	 			is_page($this->page()->ID)
 	 		) {
 		 		$url_parts = parse_url($url);
 		 		if (empty($url_parts['query'])) {
