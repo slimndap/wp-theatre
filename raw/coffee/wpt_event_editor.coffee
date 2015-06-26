@@ -13,6 +13,7 @@ class wpt_event_editor
 			defaultDate: wpt_event_editor_defaults.event_date
 			format : wpt_event_editor_defaults.datetime_format
 			step: 15
+			lang: wpt_event_editor_defaults.language
 			onChangeDateTime: (event_date, input) =>
 				if event_date?
 					enddate = new Date @enddate.val()	

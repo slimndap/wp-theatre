@@ -51,6 +51,7 @@ class WPT_Event_Editor {
 	 * @since 0.11
 	 */
 	public function enqueue_scripts() {
+		
 		wp_localize_script( 'wp_theatre_admin', 'wpt_event_editor_defaults', $this->get_defaults() );
 
 		wp_localize_script(
@@ -60,6 +61,7 @@ class WPT_Event_Editor {
 				'nonce' => wp_create_nonce( 'wpt_event_editor_ajax_nonce' ),
 			)
 		);
+
 	}
 
 	/**
@@ -139,9 +141,11 @@ class WPT_Event_Editor {
 	 *
 	 * You can use the 'wpt/event_editor/defaults'-filter to alter the settings.
 	 *
-	 * @since 0.11
-	 * @access private
-	 * @return array {
+	 * @since	0.11
+	 * @since 	0.12	Added 'language' to defaults.
+	 *					Fixes #135.	
+	 * @access 	private
+	 * @return 	array {
 	 * 		int		$duration			Default duration of an event.
 	 *									This is used to automatically set the end time of an event when
 	 *									you create a new event.
@@ -155,6 +159,8 @@ class WPT_Event_Editor {
 	 */
 	private function get_defaults() {
 
+		$language_parts = explode('-', get_bloginfo('language'));	
+
 		$defaults = array(
 			'duration' => 2 * HOUR_IN_SECONDS,
 			'datetime_format' => 'Y-m-d H:i',
@@ -162,6 +168,7 @@ class WPT_Event_Editor {
 			'tickets_button' => __( 'Tickets', 'wp_theatre' ),
 			'tickets_status' => WPT_Event::tickets_status_onsale,
 			'confirm_delete_message' => __( 'Are you sure that you want to delete this event?', 'wp_theatre' ),
+			'language' => $language_parts[0],
 		);
 
 		/**
