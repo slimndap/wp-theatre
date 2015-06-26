@@ -1298,4 +1298,60 @@ class WPT_Test extends WP_UnitTestCase {
 		
 	}
 	
+	function test_event_starttime() {
+		$html = do_shortcode('[wpt_events]{{starttime}}[/wpt_events]');
+		
+		$expected = date_i18n( 
+						get_option( 'time_format' ),
+						strtotime( 
+							get_post_meta(
+								$this->upcoming_event_with_prices, 
+								'event_date', 
+								true
+							)
+						)
+		);
+		
+		$this->assertContains($expected, $html);
+	}
+	
+	function test_event_startdate() {
+		$html = do_shortcode('[wpt_events]{{startdate}}[/wpt_events]');
+		
+		$expected = date_i18n( 
+						get_option( 'date_format' ),
+						strtotime( 
+							get_post_meta(
+								$this->upcoming_event_with_prices, 
+								'event_date', 
+								true
+							)
+						)
+		);
+		
+		$this->assertContains($expected, $html);
+	}
+	
+	function test_event_endtime() {
+		$html = do_shortcode('[wpt_events]{{endtime}}[/wpt_events]');
+
+		$enddate = date('Y-m-d H:i:s', time() + (3 * DAY_IN_SECONDS) );
+		add_post_meta($this->upcoming_event_with_prices, 'enddate', $enddate);
+		
+		$expected = date_i18n( get_option( 'time_format' ),	strtotime( $enddate) );
+		
+		$this->assertContains($expected, $html);				
+	}
+	
+	function test_event_enddate() {
+		$html = do_shortcode('[wpt_events]{{enddate}}[/wpt_events]');
+
+		$enddate = date('Y-m-d H:i:s', time() + (3 * DAY_IN_SECONDS) );
+		add_post_meta($this->upcoming_event_with_prices, 'enddate', $enddate);
+		
+		$expected = date_i18n( get_option( 'date_format' ),	strtotime( $enddate) );
+		
+		$this->assertContains($expected, $html);		
+	}
+	
 }
