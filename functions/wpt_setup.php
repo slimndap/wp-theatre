@@ -30,6 +30,21 @@
 			add_action('init', array($this, 'add_tickets_url_iframe_rewrites'));
 		}
 	
+		/**
+		 * Adds event tickets URL iframe rewrites.
+		 * 
+		 * Rewrite pretty iframed ticket screens URLs from:
+		 *
+		 * http://example.com/tickets/my-event/123
+		 *
+		 * to:
+		 *
+		 * http://example.com/?pagename=tickets&wpt_event_tickets=123
+		 *
+		 * @see		WPT_Setup::add_tickets_url_iframe_query_vars()
+		 * @since	0.12
+		 * @return	void
+		 */
 		public function add_tickets_url_iframe_rewrites() {
 			global $wp_theatre;
 			
@@ -51,9 +66,19 @@
 				'top'
 			);
 			
-
 		}
 		
+		/**
+		 * Adds 'wpt_event_tickets' to the query vars.
+		 *
+		 * Makes it possible to access iframed ticket screens like:
+		 * http://example.com/?pagename=tickets&wpt_event_tickets=123
+		 *
+		 * @see WPT_Setup::add_tickets_url_iframe_rewrites()
+		 * @access public
+		 * @param mixed $query_vars
+		 * @return void
+		 */
 		public function add_tickets_url_iframe_query_vars($query_vars) {
 			$query_vars[] = 'wpt_event_tickets';
 			return $query_vars;

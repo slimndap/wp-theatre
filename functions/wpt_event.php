@@ -742,13 +742,13 @@ class WPT_Event {
 	}
 
 	/**
-	 * Get the event tickets URL.
-	 *
-	 * Returns the event tickets URL as plain text of as an HTML link element.
+	 * Gets the event tickets URL.
 	 *
 	 * @since 	0.8.3
 	 * @since 	0.10.14	Deprecated the HTML argument.
 	 *					Use @see WPT_Event::tickets_url_html() instead.
+	 * @since	0.12	Moved the iframe url to a new method.
+	 *					@see WPT_Event::tickets_url_iframe().
 	 * @return 	string 	The event tickets URL.
 	 */
 
@@ -789,20 +789,43 @@ class WPT_Event {
 		return $tickets_url;
 	}
 
+	/**
+	 * Gets the event tickets iframe URL.
+	 * 
+	 * @since 	0.12
+	 * @return  string|bool		The event tickets iframe URL or 
+	 *							<false> if no iframe page is set.
+	 */
 	public function tickets_url_iframe() {
+		
 		global $wp_theatre;
 		
 		if (empty($wp_theatre->wpt_tickets_options['iframepage'])) {
 			return false;
 		}
 		
-		$tickets_url_iframe = get_permalink( $wp_theatre->wpt_tickets_options['iframepage'] );
+		$tickets_iframe_page = get_post($wp_theatre->wpt_tickets_options['iframepage']);
+		
+		if (is_null($tickets_iframe_page)) {
+			return false;
+		}
+		
+		$tickets_url_iframe = get_permalink( $tickets_iframe_page );
 		
 		if (get_option('permalink_structure')) {
 			$tickets_url_iframe = trailingslashit($tickets_url_iframe).$this->production->post->post_name.'/'.$this->post->post_name;
 		} else {
 			$tickets_url_iframe = add_query_arg('wpt_event_tickets', $this->ID, $tickets_url_iframe);
 		}
+		
+		/**
+		 * Filter the event tickets iframe URL.
+		 * 
+		 * @since 	0.12
+		 * @param 	string		$tickets_url_iframe		The event tickets iframe URL.
+		 * @param	WPT_Event	$this					The event object.
+		 */
+		$tickets_url_iframe = apply_filters('wpt/event/tickets/url/iframe', $tickets_url_iframe, $this);
 		
 		return $tickets_url_iframe;
 		
@@ -958,7 +981,7 @@ class WPT_Event {
 		if ( $args['html'] ) {
 			$html = '<div class="'.self::post_type_name.'_time">';
 
-			/**
+		/**
 		 * Apply WPT_Filters
 		 * Use the raw datetime when the date filter is active.
 		 */

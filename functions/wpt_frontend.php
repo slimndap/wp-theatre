@@ -507,6 +507,14 @@ class WPT_Frontend {
 		}
 	}
 	
+	/**
+	 * Gets the HTML for the [wpt_event_tickets] shortcode.
+	 * 
+	 * @since  ?.?
+	 * @since  0.12		Work with the 'wpt_event_tickets' query var,
+	 * 					instead of $_GET vars.
+	 * @return string	The HTML for the [wpt_event_tickets] shortcode.
+	 */
 	function wp_theatre_iframe() {
 		$html = '';
 
