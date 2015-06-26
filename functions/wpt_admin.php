@@ -7,7 +7,6 @@ class WPT_Admin {
 		add_action( 'add_meta_boxes', array($this, 'add_meta_boxes'));
 		add_filter( 'wpt_event', array($this,'wpt_event'), 10 ,2);
 		add_action( 'quick_edit_custom_box', array($this,'quick_edit_custom_box'), 10, 2 );
-		add_action( 'wp_dashboard_setup', array($this,'wp_dashboard_setup' ));
 
 		add_action( 'save_post', array( $this, 'save_production' ));
 		add_action( 'save_post', array( $this, 'save_event' ));
@@ -514,23 +513,6 @@ class WPT_Admin {
 		do_action('wpt_admin_after_save_'.WPT_Production::post_type_name, $post_id);
 	}
 	
-
-    function wp_dashboard_setup() {
-		wp_add_dashboard_widget(
-             'dashboard_wp_theatre',         // Widget slug.
-             __('Theatre','wp_theatre'),         // Title.
-             array($this,'wp_add_dashboard_widget') // Display function.
-        );		    
-    }
-    
-    function wp_add_dashboard_widget() {
-    	global $wp_theatre;
-    	$args = array(
-    		'paginateby' => array('month','category')
-    	);
-    	echo $wp_theatre->events->html($args);
-    }
-
 	function render_event($event) {
 		$html = '';
 		
