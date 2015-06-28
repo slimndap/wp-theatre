@@ -1333,25 +1333,47 @@ class WPT_Test extends WP_UnitTestCase {
 	}
 	
 	function test_event_endtime() {
-		$html = do_shortcode('[wpt_events]{{endtime}}[/wpt_events]');
 
 		$enddate = date('Y-m-d H:i:s', time() + (3 * DAY_IN_SECONDS) );
 		add_post_meta($this->upcoming_event_with_prices, 'enddate', $enddate);
 		
+		$html = do_shortcode('[wpt_events]{{endtime}}[/wpt_events]');
+
 		$expected = date_i18n( get_option( 'time_format' ),	strtotime( $enddate) );
 		
 		$this->assertContains($expected, $html);				
 	}
 	
 	function test_event_enddate() {
-		$html = do_shortcode('[wpt_events]{{enddate}}[/wpt_events]');
 
 		$enddate = date('Y-m-d H:i:s', time() + (3 * DAY_IN_SECONDS) );
 		add_post_meta($this->upcoming_event_with_prices, 'enddate', $enddate);
 		
+		$html = do_shortcode('[wpt_events]{{enddate}}[/wpt_events]');
+
 		$expected = date_i18n( get_option( 'date_format' ),	strtotime( $enddate) );
 		
 		$this->assertContains($expected, $html);		
+	}
+	
+	/**
+	 * Tests if deprecated WPT_Event::date() and WPT_Event::time() still work.
+	 * Not running now, because I need to figure out how to suppress the deprecated notices.
+	 */
+	function test_deprecated_event_date_and_time() {
+		return;
+		
+		$event = new WPT_Event($this->upcoming_event_with_prices);
+
+		$this->assertEquals($event->date(), $event->startdate());		
+		$this->assertEquals($event->date(array('html'=>'true')), $event->startdate_html());		
+		$this->assertEquals($event->time(), $event->starttime());		
+		$this->assertEquals($event->time(array('html'=>'true')), $event->starttime_html());		
+
+		$this->assertEquals($event->date(array('start'=>false)), $event->enddate());		
+		$this->assertEquals($event->date(array('html'=>'true', 'start'=>false)), $event->enddate_html());		
+		$this->assertEquals($event->time(array('start'=>false)), $event->endtime());		
+		$this->assertEquals($event->time(array('html'=>'true', 'start'=>false)), $event->endtime_html());		
 	}
 	
 }

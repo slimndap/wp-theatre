@@ -671,8 +671,8 @@ class WPT_Event_Editor {
 		);
 
 		$html .= '<td>';
-		$html .= $event->date( $args );
-		$html .= $event->time( $args );
+		$html .= $event->startdate_html();
+		$html .= $event->starttime_html();
 		$html .= '</td>';
 
 		$html .= '<td>';
@@ -682,7 +682,7 @@ class WPT_Event_Editor {
 		$html .= '</td>';
 
 		$html .= '<td>';
-		$html .= $event->tickets( $args );
+		$html .= $event->tickets_html();
 		$html .= '</td>';
 
 		/**

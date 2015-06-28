@@ -193,16 +193,16 @@ class WPT_Production {
 				$next = $upcoming[0];
 				$last = $events[count($events)-1];
 
-				if ($next->date()==$last->date()) {
+				if ($next->startdate()==$last->startdate()) {
 					// one or more events on the same day
-					$dates.= $next->date();
+					$dates.= $next->startdate();
 				} else {
 					if (time() < $first->datetime()) {
 						// serie starts in the future
-						$dates.= $first->date().' '.__('to','wp_theatre').' '.$last->date();
+						$dates.= $first->startdate().' '.__('to','wp_theatre').' '.$last->startdate();
 					} else {
 						// serie is already running
-						$dates.= __('until','wp_theatre').' '.$last->date();
+						$dates.= __('until','wp_theatre').' '.$last->startdate();
 					}
 				}
 			}
