@@ -87,7 +87,7 @@ The new feature may be added directly to the Theater plugin or as an extension s
 
 = 0.12 =
 
-Release Date: ??
+Release Date: June 29th, 2015
 
 * Enhancements
     * You can adjust the slug for production detail pages in the permalink settings. Your URLs can now look like `http://example.com/show/billy-elliot` or `http://example.com/concert/kurt-vile`.

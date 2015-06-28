@@ -188,8 +188,8 @@ class WPT_Event {
 			if ( in_array( 'date', $filters_functions ) ) {
 				$html .= $wp_theatre->filter->apply( $this->datetime[ $field ], $args['filters'], $this );
 			} else {
-				$html .= $this->startdate( $args );
-				$html .= $this->starttime( $args );
+				$html .= $this->startdate_html( $args['filters'] );
+				$html .= $this->starttime_html( $args['filters'] );
 			}
 			$html .= '</div>';
 			return $html;
@@ -261,7 +261,7 @@ class WPT_Event {
 	function enddate_html($filters = array()) {
 		global $wp_theatre;
 
-		$html = '<div class="'.self::post_type_name.'_enddate">';
+		$html = '<div class="'.self::post_type_name.'_date '.self::post_type_name.'_enddate">';
 
 		$filters_functions = $wp_theatre->filter->get_functions( $filters );
 		if ( in_array( 'date', $filters_functions ) ) {
@@ -306,7 +306,7 @@ class WPT_Event {
 	function endtime_html( $filters = array() ) {
 		global $wp_theatre;
 
-		$html = '<div class="'.self::post_type_name.'_endtime">';
+		$html = '<div class="'.self::post_type_name.'_time '.self::post_type_name.'_endtime">';
 
 		$filters_functions = $wp_theatre->filter->get_functions( $filters );
 		if ( in_array( 'date', $filters_functions ) ) {
@@ -1209,7 +1209,7 @@ class WPT_Event {
 	function startdate_html($filters = array()) {
 		global $wp_theatre;
 
-		$html = '<div class="'.self::post_type_name.'_startdate">';
+		$html = '<div class="'.self::post_type_name.'_date '.self::post_type_name.'_startdate">';
 
 		$filters_functions = $wp_theatre->filter->get_functions( $filters );
 		if ( in_array( 'date', $filters_functions ) ) {
@@ -1250,7 +1250,7 @@ class WPT_Event {
 	function starttime_html($filters = array()) {
 		global $wp_theatre;
 
-		$html = '<div class="'.self::post_type_name.'_starttime">';
+		$html = '<div class="'.self::post_type_name.'_time '.self::post_type_name.'_starttime">';
 
 		$filters_functions = $wp_theatre->filter->get_functions( $filters );
 		if ( in_array( 'date', $filters_functions ) ) {
