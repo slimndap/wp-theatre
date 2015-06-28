@@ -799,7 +799,7 @@ class WPT_Events extends WPT_Listing {
 				$events[$i]->production = new WPT_Production($productions_with_keys[$production_id]);
 			}
 		}
-		 return $events;
+		return $events;
 	}
 
 	/**
