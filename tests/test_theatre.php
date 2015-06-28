@@ -1297,5 +1297,4 @@ class WPT_Test extends WP_UnitTestCase {
 		 */
 		
 	}
-	
 }

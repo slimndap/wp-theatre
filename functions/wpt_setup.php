@@ -231,15 +231,15 @@
 		 * Whenever a production is deleted (not just trashed), make sure that all connected events are deleted as well.
 		 * Events that al already in the trash are left alone.
 		 *
-		 * @since 0.7
- 		 *
+		 * @since 	0.7
+		 * @since	0.12	Added support for events with an 'auto-draft' post_status.
 		 */
 		function before_delete_post($post_id) {
 			$post = get_post($post_id);
 			if (!empty($post) && $post->post_type==WPT_Production::post_type_name) {
 				$args = array (
 					'post_type' => WPT_Event::post_type_name,
-					'post_status' => array('any'),
+					'post_status' => array('any', 'auto-draft'),
 					'meta_query' => array(
 						array(
 							'key' => WPT_Production::post_type_name,

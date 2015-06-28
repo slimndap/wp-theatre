@@ -65,7 +65,9 @@ class WPT_Event_Editor {
 	/**
 	 * Creates a new event for a production submitted through AJAX.
 	 *
-	 * @since 0.11.5
+	 * @since	0.11.5
+	 * @since 	0.12	Event now inherits post_status from production.
+	 *					Fixes #141.
 	 */
 	public function create_event_over_ajax() {
 
@@ -77,7 +79,7 @@ class WPT_Event_Editor {
 
 			$post = array(
 				'post_type' => WPT_Event::post_type_name,
-				'post_status' => 'publish',
+				'post_status' => get_post_status( $post_data['post_ID'] ),
 			);
 
 			if ( $event_id = wp_insert_post( $post ) ) {
@@ -602,6 +604,7 @@ class WPT_Event_Editor {
 	 *					@see https://github.com/slimndap/wp-theatre/issues/127
 	 * @since	0.11.5	Added a container div around the list HTML.
 	 *					Added a filter to the list HTML.
+	 * @since 	0.12	Added support for events with an 'auto-draft' post_status.
 	 * @param 	int 	$production_id	The production.
 	 * @return 	string	The HTML.
 	 */
@@ -612,7 +615,7 @@ class WPT_Event_Editor {
 		$html = '';
 
 		$args = array(
-			'status' => array( 'any' ),
+			'status' => array( 'any', 'auto-draft' ),
 			'production' => $production_id,
 		);
 		$events = $wp_theatre->events->get( $args );
