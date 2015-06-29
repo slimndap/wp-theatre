@@ -455,7 +455,7 @@ class WPT_Admin {
 		
 		$args = array(
 			'status' => array( 'any', 'auto-draft' ),
-			'production' => $production_id,
+			'production' => $post_id,
 		);
 		$events = $wp_theatre->events->get( $args );
 
