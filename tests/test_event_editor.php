@@ -1,5 +1,4 @@
 <?php
-
 class WPT_Test_Event_Editor extends WP_UnitTestCase {
 
 	function setUp() {
@@ -396,6 +395,7 @@ class WPT_Test_Event_Editor_Ajax extends WP_Ajax_UnitTestCase {
 		// Check if it's emptied.
 		$event = new WPT_Event( $event_id );
 		$this->assertEmpty( $event->tickets_url() );
+	}
 
 	/**
 	 * Tests if event for auto-saved productions also get the 'auto-draft' post_status.
@@ -434,5 +434,4 @@ class WPT_Test_Event_Editor_Ajax extends WP_Ajax_UnitTestCase {
 		
 		$this->assertCount( 1, $events );
 	}
-
 }
