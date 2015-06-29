@@ -282,35 +282,6 @@ class WPT_Admin {
 		do_action('wpt_admin_meta_box_display', $production, $metabox);
 	}
 
-	function get_events($production_id) {
-		$args = array(
-			'post_type'=>WPT_Event::post_type_name,
-			'meta_key' => 'event_date',
-			'order_by' => 'meta_value',
-			'order' => 'ASC',
-			'posts_per_page' => -1,
-			'post_status'=>'all',
-			'meta_query' => array(
-				array(
-					'key' => WPT_Production::post_type_name,
-					'value' => $production_id,
-					'compare' => '=',
-				),
-			),
-		);
-		$posts = get_posts($args);
-
-		$events = array();
-		for ($i=0;$i<count($posts);$i++) {
-			$datetime = strtotime(get_post_meta($posts[$i]->ID,'event_date',true));
-			$events[$datetime.$posts[$i]->ID] = new WPT_Event($posts[$i]);
-		}
-		
-		ksort($events);
-		return array_values($events);
-
-	}
-
 	/**
 	 * Gets the HTML for a production input control of an event.
 	 *
@@ -327,7 +298,7 @@ class WPT_Admin {
 		$html = '';
 		
 		$production_id = get_post_meta($event_id, $field['id'], true);
-		
+
 		if (!empty($production_id)) {
 			
 			$production = new WPT_Production( $production_id );
@@ -432,6 +403,7 @@ class WPT_Admin {
 	 * @since ?.?
 	 * @since 0.11.3	Unhook WPT_Event_Editor::save_event() to avoid loops.
 	 *					See: https://github.com/slimndap/wp-theatre/issues/125
+	 * @since 0.12		Added support for events with an 'auto-draft' post_status.
 	 * 
 	 * @param 	int		$post_id
 	 * @return 	void
@@ -475,13 +447,17 @@ class WPT_Admin {
 		/*
 		 *	 Update connected Events
 		 */
-		
 		// unhook to avoid loops
 		remove_action( 'save_post', array( $this, 'save_production' ) );
 		remove_action( 'save_post', array( $wp_theatre->event_editor, 'save_event' ) );
 
 		$post = get_post($post_id);
-		$events = $this->get_events($post_id);
+		
+		$args = array(
+			'status' => array( 'any', 'auto-draft' ),
+			'production' => $production_id,
+		);
+		$events = $wp_theatre->events->get( $args );
 
 		foreach($events as $event) {
 			// Keep trashed events in the trash.
