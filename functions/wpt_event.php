@@ -842,7 +842,7 @@ class WPT_Event {
 		$tickets_url_iframe = get_permalink( $tickets_iframe_page );
 		
 		if (get_option('permalink_structure')) {
-			$tickets_url_iframe = trailingslashit($tickets_url_iframe).$this->production->post->post_name.'/'.$this->post->post_name;
+			$tickets_url_iframe = trailingslashit($tickets_url_iframe).$this->production()->post()->post_name.'/'.$this->post()->post_name;
 		} else {
 			$tickets_url_iframe = add_query_arg('wpt_event_tickets', $this->ID, $tickets_url_iframe);
 		}
