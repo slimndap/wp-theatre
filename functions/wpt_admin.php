@@ -26,7 +26,6 @@ class WPT_Admin {
 		
 		// More hooks (always load, necessary for bulk editing through AJAX)
 		add_filter('request', array($this,'request'));
-		add_action( 'bulk_edit_custom_box', array($this,'bulk_edit_custom_box'), 10, 2 );
 
 		// Options
 		$this->options = get_option( 'wp_theatre' );
@@ -625,10 +624,6 @@ class WPT_Admin {
 	    }		
 	}
 
-	function bulk_edit_custom_box($column_name, $post_type) {
-		wp_nonce_field($post_type, $post_type.'_nonce' );
-	}
-	
 	/**
 	 * Admin setting.
 	 */
