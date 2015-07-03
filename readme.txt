@@ -92,7 +92,7 @@ Release Date: June 29th, 2015
 * Enhancements
     * You can adjust the slug for production detail pages in the permalink settings. Your URLs can now look like `http://example.com/show/billy-elliot` or `http://example.com/concert/kurt-vile`.
     * New template placeholders for events: `{{starttime}}`, `{{startdate}}`, `{{endtime}}` and `{{enddate}}`. Thanks [jbrandligt](https://github.com/jbrandligt)!
-    * The URLs for your ticketpages look nicer, if you use the iframe option: `http://example.com/tickets/billy-elliot/123`.
+    * The URLs for your ticket pages look nicer, if you use the iframe option: `http://example.com/tickets/billy-elliot/123`.
     * Updated the German translation. Thanks [henk23](https://github.com/henk23)!
 
 * Clean up
