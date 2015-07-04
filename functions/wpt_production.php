@@ -454,7 +454,7 @@ class WPT_Production {
 			'filters' => array()
 		);
 		$args = wp_parse_args( $args, $defaults );
-		
+
 		if (!isset($this->thumbnails[$args['size']])) {
 			$this->thumbnails[$args['size']] = get_post_thumbnail_id($this->ID,$args['size']);
 		}	
@@ -590,29 +590,26 @@ class WPT_Production {
 		);
 
 		$args = wp_parse_args( $args, $defaults );
-		$html = $args['template'];
 
 		$classes = array();
 		$classes[] = self::post_type_name;
 
-		// Parse template
-		$placeholders = array();
-		preg_match_all('~{{(.*?)}}~', $html, $placeholders);
-		foreach($placeholders[1] as $placeholder) {
+		$template = new WPT_Template($args['template']);
+		foreach($template->placeholders as $placeholder) {
 
-			$field = '';
-			$filters = array();
+			$field = $placeholder->get_field();
+			$field_args = $placeholder->get_field_args();
 
-			$placeholder_parts = explode('|',$placeholder);
-			if (!empty($placeholder_parts[0])) {
-				$field = $placeholder_parts[0];
-			}
-			if (!empty($placeholder_parts[1])) {
-				$filters = $placeholder_parts;
-				array_shift($filters);
-			}
-
+			$replacement_args = array(
+				'html'=>true, 
+				'filters'=>$placeholder->get_filters(),
+			);
+			
 			switch($field) {
+				case 'thumbnail':
+					if (!empty($field_args[0])) {
+						$replacement_args['size'] = $field_args[0];
+					}
 				case 'title':
 				case 'dates':
 				case 'cities':
@@ -620,14 +617,13 @@ class WPT_Production {
 				case 'excerpt':
 				case 'summary':
 				case 'categories':
-				case 'thumbnail':
-					$replacement = $this->{$field}(array('html'=>true, 'filters'=>$filters));
+					$placeholder->set_replacement($this->{$field}($replacement_args));
 					break;
 				default:
-					$replacement = $this->custom($field,array('html'=>true, 'filters'=>$filters));
+					$placeholder->set_replacement($this->custom($field,$replacement_args));
 			}
-			$html = str_replace('{{'.$placeholder.'}}', $replacement, $html);
 		}
+		$html = $template->get_html();
 
 		// Filters
 		$html = apply_filters('wpt_production_html',$html, $this);
