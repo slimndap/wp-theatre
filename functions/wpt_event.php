@@ -1059,10 +1059,10 @@ class WPT_Event {
 				case 'prices':
 				case 'tickets':
 				case 'tickets_url':
-					$placeholder->set_replacement($this->{$field.'_html'}($replacement_args));
+					$placeholder->set_replacement($this->{$field.'_html'}($replacement_args['filters']));
 					break;
 				default:
-					$replacement = $this->custom($field,$replacement_args);
+					$placeholder->set_replacement($this->custom($field,$replacement_args));
 			}
 		}
 		$html = $template->get_html();
