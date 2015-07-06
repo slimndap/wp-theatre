@@ -2,8 +2,8 @@
 	
 class wpt_template_placeholder {
 	
-	public $placeholder;
-	public $replacement = '';
+	protected $placeholder;
+	protected $replacement = '';
 	
 	function __construct($placeholder) {
 		$this->placeholder = $placeholder;
@@ -41,6 +41,10 @@ class wpt_template_placeholder {
 		
 		return $filters;
 		
+	}
+	
+	public function replace_in($html) {
+		return str_replace('{{'.$this->placeholder.'}}', $this->replacement, $html);
 	}
 	
 	public function set_replacement($replacement) {

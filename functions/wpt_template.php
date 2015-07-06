@@ -21,10 +21,9 @@ class wpt_template {
 	}
 	
 	public function get_html() {
-		
 		$html = $this->template;
-		foreach($this->placeholders as $placeholder) {
-			$html = str_replace('{{'.$placeholder->placeholder.'}}', $placeholder->replacement, $html);
+		foreach($this->placeholders as $placeholder) {			
+			$html = $placeholder->replace_in($html);
 		}
 		return $html;
 	}
