@@ -103,6 +103,7 @@ class WP_Theatre {
 		require_once(dirname(__FILE__) . '/functions/wpt_event_editor.php');	
 
 		require_once(dirname(__FILE__) . '/functions/wpt_events.php');
+		require_once(dirname(__FILE__) . '/functions/wpt_events_widget.php');
 
 		require_once(dirname(__FILE__) . '/functions/wpt_setup.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_season.php');
