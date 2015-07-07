@@ -1022,78 +1022,50 @@ class WPT_Event {
 		$classes = array();
 		$classes[] = self::post_type_name;
 
-		$html = $args['template'];
+		$template = new WPT_Template($args['template']);
+		foreach($template->placeholders as $placeholder) {
 
-		// Parse template
-		$placeholders = array();
-		preg_match_all( '~{{(.*?)}}~', $html, $placeholders );
-		foreach ( $placeholders[1] as $placeholder ) {
+			$field = $placeholder->get_field();
+			$field_args = $placeholder->get_field_args();
 
-			$field = '';
-			$filters = array();
-
-			$placeholder_parts = explode( '|',$placeholder );
-
-			if ( ! empty($placeholder_parts[0]) ) {
-				$field = $placeholder_parts[0];
-			}
-			if ( ! empty($placeholder_parts[1]) ) {
-				$filters = $placeholder_parts;
-				array_shift( $filters );
-			}
-
+			$replacement_args = array(
+				'html'=>true, 
+				'filters'=>$placeholder->get_filters(),
+			);
+			
 			switch ( $field ) {
 				case 'datetime':
 				case 'duration':
 				case 'location':
 				case 'remark':
-				case 'tickets':
-				case 'tickets_url':
 				case 'title':
-				case 'prices':
-					$replacement = $this->{$field}(
-						array(
-							'html' => true,
-							'filters' => $filters,
-						)
-					);
+					$placeholder->set_replacement($this->{$field}($replacement_args));
 					break;
+				case 'thumbnail':
+					if (!empty($field_args[0])) {
+						$replacement_args['size'] = $field_args[0];
+					}
 				case 'categories':
 				case 'content':
 				case 'excerpt':
-				case 'thumbnail':
-					$replacement = $this->production()->{$field}(
-						array(
-							'html' => true,
-							'filters' => $filters,
-						)
-					);
+					$placeholder->set_replacement($this->production()->{$field}($replacement_args));
 					break;
 				case 'date':
 				case 'startdate':
-					$replacement = $this->startdate_html( $filters );
-					break;
 				case 'enddate':
-					$replacement = $this->enddate_html( $filters );
-					break;
 				case 'time':
 				case 'starttime':
-					$replacement = $this->starttime_html( $filters );
-					break;
 				case 'endtime':
-					$replacement = $this->endtime_html( $filters );
+				case 'prices':
+				case 'tickets':
+				case 'tickets_url':
+					$placeholder->set_replacement($this->{$field.'_html'}($replacement_args['filters']));
 					break;
 				default:
-					$replacement = $this->custom(
-						$field,
-						array(
-						'html' => true,
-						'filters' => $filters,
-						)
-					);
+					$placeholder->set_replacement($this->custom($field,$replacement_args));
 			}
-			$html = str_replace( '{{'.$placeholder.'}}', $replacement, $html );
 		}
+		$html = $template->get_html();
 
 		// Tickets
 		if ( false !== strpos( $html,'{{tickets}}' ) ) {

@@ -9,7 +9,7 @@
 	class WPT_Filter {
 		
 		function __construct() {
-			$this->allowed_functions = Array('permalink','date','wpautop','tickets_url');
+			$this->allowed_functions = array('permalink','date','wpautop','tickets_url');
 
 			/**
 			 * Make sure all filters are cleaned up.
@@ -44,7 +44,7 @@
 			}
 			return $content;		
 		}
-		
+				
 		/**
 		 * Date filter.
 		 * Format the content using the date format defined in the third argument.
@@ -93,8 +93,7 @@
 					}
 				}
 			}
-			return $content;		
-			
+			return $content;				
 		}
 		
 		/*
