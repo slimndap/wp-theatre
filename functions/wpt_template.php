@@ -1,22 +1,25 @@
 <?php
 	
-class wpt_template {
+class WPT_Template {
 	
-	public $template;
+	protected $template;	
+	protected $filters = array();
+
 	public $placeholders = array();
 	
-	function __construct($template) {
+	function __construct($template, $object) {
 		$this->template = $template;
+		$this->object = $object;
 
-		$this->set_placeholders();
+		$this->init_placeholders();
 	}
 	
-	public function set_placeholders() {
+	protected function init_placeholders() {
 		$placeholders_extracted = array();
 		preg_match_all('~{{(.*?)}}~', $this->template, $placeholders_extracted);
 		
 		foreach($placeholders_extracted[1] as $placeholder) {			
-			$this->placeholders[] = new WPT_Template_Placeholder($placeholder);
+			$this->placeholders[] = new WPT_Template_Placeholder($placeholder, $this->object);
 		}
 	}
 	

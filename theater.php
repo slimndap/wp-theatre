@@ -55,7 +55,6 @@ class WP_Theatre {
 		$this->cart = new WPT_Cart();
 		$this->production_permalink = new WPT_Production_Permalink();
 		$this->bulk_editor = new WPT_Bulk_Editor();
-		//$this->template = new WPT_Template();
 		if (is_admin()) {
 		} else {
 			$this->frontend = new WPT_Frontend();
@@ -114,6 +113,7 @@ class WP_Theatre {
 		require_once(dirname(__FILE__) . '/functions/wpt_bulk_editor.php');	
 
 		require_once(dirname(__FILE__) . '/functions/wpt_template.php');	
+		require_once(dirname(__FILE__) . '/functions/wpt_template_filter.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_template_placeholder.php');	
 
 		if (is_admin()) {

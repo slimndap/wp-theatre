@@ -1,15 +1,24 @@
 <?php
 	
-class wpt_template_placeholder {
+class WPT_Template_Placeholder {
 	
 	protected $placeholder;
 	protected $replacement = '';
 	
-	function __construct($placeholder) {
+	public $field;
+	public $field_args = array();
+	public $filters = array();
+	
+	function __construct($placeholder, $object) {
 		$this->placeholder = $placeholder;
+		$this->object = $object;
+
+		$this->field = $this->get_field();
+		$this->field_args = $this->get_arguments($placeholder);
+		$this->filters = $this->get_filters();
 	}
 	
-	public function get_field() {
+	protected function get_field() {
 		$placeholder_parts = $this->get_parts();
 
 		if (empty($placeholder_parts[0])) {
@@ -19,7 +28,20 @@ class wpt_template_placeholder {
 		return $this->get_function($placeholder_parts[0]);
 	}
 	
-	public function get_field_args() {
+	protected function get_template_filter($filter_name) {
+		$template_filters = $this->get_template_filters();
+
+		foreach($this->get_template_filters() as $filter) {
+			if ( $filter['name']==$filter_name) {
+				return $filter;
+			}
+		}
+		
+		return false;
+		
+	}
+	
+	protected function get_field_args() {
 		$placeholder_parts = $this->get_parts();
 
 		if (empty($placeholder_parts[0])) {
@@ -29,17 +51,34 @@ class wpt_template_placeholder {
 		return $this->get_arguments($placeholder_parts[0]);		
 	}
 	
-	public function get_filters() {
+	protected function is_valid_filter($filter_name) {
+		$template_filters = $this->get_template_filters();
+
+		foreach($template_filters as $filter) {
+			if ( $filter['name']==$filter_name) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	protected function get_filters() {
 		$placeholder_parts = $this->get_parts();
 
-		$filters = array();
+		$template_filters = array();
 
+		$filters = array();
 		if (!empty($placeholder_parts[1])) {
 			$filters = $placeholder_parts;
 			array_shift($filters);
 		}
 		
-		return $filters;
+		foreach($filters as $filter) {
+			$template_filters[] = new WPT_Template_Filter($this->get_function($filter), $this->get_arguments($filter), $this->object);
+		}
+		
+		return $template_filters;
 		
 	}
 	

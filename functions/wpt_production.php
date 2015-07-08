@@ -24,6 +24,13 @@ class WPT_Production {
 		return get_post_type_object(self::post_type_name);
 	}
 
+	protected function apply_template_filters($value, $filters) {
+		foreach ($filters as $filter) {
+			$value = $filter->apply_to($value, $this);
+		}
+		return $value;
+	}
+
 	function categories($args=array()) {
 		$defaults = array(
 			'html' => false
@@ -109,7 +116,7 @@ class WPT_Production {
 		if ($args['html']) {
 			$html = '';
 			$html.= '<div class="'.self::post_type_name.'_cities">';
-			$html.= $wp_theatre->filter->apply($this->cities, $args['filters'], $this);
+			$html.= $this->apply_template_filters($this->cities(), $args['filters']);
 			$html.= '</div>';
 			return apply_filters('wpt_production_cities_html', $html, $this);				
 		} else {
@@ -213,7 +220,7 @@ class WPT_Production {
 		if ($args['html']) {
 			$html = '';
 			$html.= '<div class="'.self::post_type_name.'_dates">';
-			$html.= $wp_theatre->filter->apply($this->dates, $args['filters'], $this);
+			$html.= $this->apply_template_filters($this->dates(), $args['filters']);
 			$html.= '</div>';
 			return apply_filters('wpt_production_dates_html', $html, $this);				
 		} else {
@@ -273,7 +280,7 @@ class WPT_Production {
 		if ($args['html']) {
 			$html = '';
 			$html.= '<p class="'.self::post_type_name.'_excerpt">';
-			$html.= $wp_theatre->filter->apply($this->excerpt, $args['filters'], $this);
+			$html.= $this->apply_template_filters($this->excerpt(), $args['filters']);
 			$html.= '</p>';
 			return apply_filters('wpt_production_excerpt_html', $html, $this);				
 		} else {
@@ -418,7 +425,7 @@ class WPT_Production {
 		if ($args['html']) {
 			$html = '';
 			$html.= '<p class="'.self::post_type_name.'_summary">';
-			$html.= $wp_theatre->filter->apply($this->summary, $args['filters'], $this);
+			$html.= $this->apply_template_filters($this->summary(), $args['filters']);
 			$html.= '</p>';
 
 			return apply_filters('wpt_production_summary_html', $html, $this);				
@@ -464,7 +471,7 @@ class WPT_Production {
 			$thumbnail = get_the_post_thumbnail($this->ID,$args['size']);					
 			if (!empty($thumbnail)) {
 				$html.= '<figure>';
-				$html.= $wp_theatre->filter->apply($thumbnail, $args['filters'], $this);
+				$html.= $this->apply_template_filters($thumbnail, $args['filters']);
 				$html.= '</figure>';
 			}
 			return apply_filters('wpt_production_thumbnail_html', $html, $this);
@@ -507,7 +514,7 @@ class WPT_Production {
 		if ($args['html']) {
 			$html = '';
 			$html.= '<div class="'.self::post_type_name.'_title">';
-			$html.= $wp_theatre->filter->apply($this->title, $args['filters'], $this);
+			$html .= $this->apply_template_filters( $this->title(), $args['filters'] );
 			$html.= '</div>';
 			return apply_filters('wpt_production_title_html', $html, $this);
 		} else {
@@ -546,7 +553,7 @@ class WPT_Production {
 		if ($args['html']) {
 			$html = '';
 			$html.= '<div class="'.self::post_type_name.'_'.$field.'">';
-			$html.= $wp_theatre->filter->apply($this->{$field}, $args['filters'], $this);
+			$html.= $this->apply_template_filters($this->{$field}, $args['filters']);
 			$html.= '</div>';
 
 			return apply_filters('wpt_production_'.$field.'_html', $html, $this);
@@ -594,20 +601,17 @@ class WPT_Production {
 		$classes = array();
 		$classes[] = self::post_type_name;
 
-		$template = new WPT_Template($args['template']);
+		$template = new WPT_Template($args['template'], $this);
 		foreach($template->placeholders as $placeholder) {
-
-			$field = $placeholder->get_field();
-			$field_args = $placeholder->get_field_args();
 
 			$replacement_args = array(
 				'html'=>true, 
-				'filters'=>$placeholder->get_filters(),
+				'filters'=>$placeholder->filters,
 			);
 			
-			switch($field) {
+			switch($placeholder->field) {
 				case 'thumbnail':
-					if (!empty($field_args[0])) {
+					if (!empty($placeholder->fields_args[0])) {
 						$replacement_args['size'] = $field_args[0];
 					}
 				case 'title':
@@ -617,10 +621,10 @@ class WPT_Production {
 				case 'excerpt':
 				case 'summary':
 				case 'categories':
-					$placeholder->set_replacement($this->{$field}($replacement_args));
+					$placeholder->set_replacement($this->{$placeholder->field}($replacement_args));
 					break;
 				default:
-					$placeholder->set_replacement($this->custom($field,$replacement_args));
+					$placeholder->set_replacement($this->custom($placeholder->field,$replacement_args));
 			}
 		}
 		$html = $template->get_html();
