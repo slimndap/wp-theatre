@@ -92,9 +92,19 @@ class WP_Theatre {
 	 */
 	function includes() {
 		require_once(dirname(__FILE__) . '/functions/wpt_listing.php');
+
+		require_once(dirname(__FILE__) . '/functions/template/wpt_template.php');	
+		require_once(dirname(__FILE__) . '/functions/template/wpt_template_placeholder.php');	
+		require_once(dirname(__FILE__) . '/functions/template/wpt_template_placeholder_filter.php');	
+
 		require_once(dirname(__FILE__) . '/functions/wpt_production.php');
+		require_once(dirname(__FILE__) . '/functions/wpt_production_template.php');	
+
 		require_once(dirname(__FILE__) . '/functions/wpt_productions.php');
+
 		require_once(dirname(__FILE__) . '/functions/wpt_event.php');
+		require_once(dirname(__FILE__) . '/functions/wpt_event_template.php');	
+
 		require_once(dirname(__FILE__) . '/functions/wpt_events.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_setup.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_season.php');
@@ -112,9 +122,6 @@ class WP_Theatre {
 		require_once(dirname(__FILE__) . '/functions/wpt_production_permalink.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_bulk_editor.php');	
 
-		require_once(dirname(__FILE__) . '/functions/wpt_template.php');	
-		require_once(dirname(__FILE__) . '/functions/wpt_template_filter.php');	
-		require_once(dirname(__FILE__) . '/functions/wpt_template_placeholder.php');	
 
 		if (is_admin()) {
 		} else {

@@ -601,33 +601,8 @@ class WPT_Production {
 		$classes = array();
 		$classes[] = self::post_type_name;
 
-		$template = new WPT_Template($args['template'], $this);
-		foreach($template->placeholders as $placeholder) {
-
-			$replacement_args = array(
-				'html'=>true, 
-				'filters'=>$placeholder->filters,
-			);
-			
-			switch($placeholder->field) {
-				case 'thumbnail':
-					if (!empty($placeholder->fields_args[0])) {
-						$replacement_args['size'] = $field_args[0];
-					}
-				case 'title':
-				case 'dates':
-				case 'cities':
-				case 'content':
-				case 'excerpt':
-				case 'summary':
-				case 'categories':
-					$placeholder->set_replacement($this->{$placeholder->field}($replacement_args));
-					break;
-				default:
-					$placeholder->set_replacement($this->custom($placeholder->field,$replacement_args));
-			}
-		}
-		$html = $template->get_html();
+		$template = new WPT_Production_Template($args['template'], $this);
+		$html = $template->get_merged();
 
 		// Filters
 		$html = apply_filters('wpt_production_html',$html, $this);

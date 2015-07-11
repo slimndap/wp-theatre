@@ -1033,53 +1033,9 @@ class WPT_Event {
 		$classes = array();
 		$classes[] = self::post_type_name;
 
-		$template = new WPT_Template($args['template'], $this);
-		foreach($template->placeholders as $placeholder) {
-
-			$replacement_args = array(
-				'html'=>true, 
-				'filters'=>$placeholder->filters,
-			);
-			
-			switch ( $placeholder->field ) {
-				case 'datetime':
-				case 'duration':
-				case 'venue':
-				case 'location':
-				case 'remark':
-				case 'title':
-					$placeholder->set_replacement($this->{$placeholder->field}($replacement_args));
-					break;
-				case 'thumbnail':
-					if (!empty($placeholder->field_args[0])) {
-						$replacement_args['size'] = $placeholder->field_args[0];
-					}
-				case 'categories':
-				case 'content':
-				case 'excerpt':
-					$placeholder->set_replacement($this->production()->{$placeholder->field}($replacement_args));
-					break;
-				case 'startdate':
-				case 'date':
-					$placeholder->set_replacement($this->startdate_html($placeholder->filters));
-					break;
-				case 'starttime':
-				case 'time':
-					$placeholder->set_replacement($this->starttime_html($placeholder->filters));
-					break;
-				case 'enddate':
-				case 'endtime':
-				case 'prices':
-				case 'tickets':
-				case 'tickets_url':
-					$placeholder->set_replacement($this->{$placeholder->field.'_html'}($placeholder->filters));
-					break;
-				default:
-					$placeholder->set_replacement($this->custom($placeholder->field,$replacement_args));
-			}
-		}
-		$html = $template->get_html();
-
+		$template = new WPT_Event_Template($args['template'], $this);
+		$html = $template->get_merged();
+		
 		// Tickets
 		if ( false !== strpos( $html,'{{tickets}}' ) ) {
 			$tickets_args = array(
