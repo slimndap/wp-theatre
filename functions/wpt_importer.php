@@ -434,7 +434,7 @@
 			$this->stats['events_updated'] = 0;
 			$this->stats['productions_created'] = 0;
 			$this->stats['productions_updated'] = 0;
-			unset($this->stats['errors']);
+			$this->stats['errors'] = '';
 			
 			$this->mark_upcoming_events();
 			
@@ -853,7 +853,7 @@
 				}
 
 				if (!empty($this->stats['errors'])) {
-					$msg = '<p><strong>'.__('Import failed. Please try again. Contact your help desk if the problem persists.','wp_theatre'). '</strong></p>';
+					$msg = '<p><strong>'.__('Import failed. Please try again, or contact your help desk if the problem persists.','wp_theatre'). '</strong></p>';
 					if (defined('WP_DEBUG') && WP_DEBUG === true) {
 						$msg .= '<p>'.$this->stats['errors'].'</p>';
 					}
