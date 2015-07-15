@@ -12,6 +12,10 @@ Build a website for your theater, music venue, sports team, cinema or your rockb
 == Description ==
 A WordPress plugin to manage events with all necessary shortcodes and widgets for your theater.
 
+
+> <strong>Newsletter</strong><br>
+> This plugin is in active development and updated frequently. Please [sign-up for the newsletter](http://www.slimndap.com/theater-wordpress-newsletter/) to stay informed about upcoming features and successful showcases.
+
 __Shortcodes__
 
 Theater comes with several shortcodes and widgets to show off your events. See the [documentation](https://github.com/slimndap/wp-theatre/wiki/Shortcodes) for an overview.
@@ -19,6 +23,7 @@ Theater comes with several shortcodes and widgets to show off your events. See t
 __Available add-ons__
 
 * [Ticketmatic](http://slimndap.com/product/ticketmatic-for-wordpress/)
+* [ActiveTickets](http://www.slimndap.com/product/activetickets-wordpress/)
 
 __Missing features?__
 
@@ -41,7 +46,7 @@ __Author__
 This section describes how to install the plugin and get it working.
 
 1. Install the plugin.
-1. Start adding your productions and events using the Theater-menu or the Theater dashboard widget.
+1. Create your first event by clicking on the Theater-menu.
 
 __Productions and events__
 
@@ -79,6 +84,34 @@ If you are missing a feature that you really need for your website you can:
 The new feature may be added directly to the Theater plugin or as an extension so that others may benefit from this as well.
 
 == Changelog ==
+
+= 0.12 =
+
+Release Date: July 3rd, 2015
+
+* Enhancements
+    * You can adjust the slug for production detail pages in the permalink settings. Your URLs can now look like `http://example.com/show/billy-elliot` or `http://example.com/concert/kurt-vile`.
+    * New template placeholders for events: `{{starttime}}`, `{{startdate}}`, `{{endtime}}` and `{{enddate}}`. Thanks [jbrandligt](https://github.com/jbrandligt)!
+    * The URLs for your ticket pages look nicer, if you use the iframe option: `http://example.com/tickets/billy-elliot/123`.
+    * Updated the German translation. Thanks [henk23](https://github.com/henk23)!
+
+* Clean up
+    * Productions no longer have an archive page on `http://example.com/productions/`. 
+    * Removed the Theater dashboard widget since it was kind off useless and slowing the admin interface down.
+
+* Bugfixes
+	* Some past events were showing a false tickets status.
+	* It was impossible to clear a value for an event field.
+	
+
+= 0.11 =
+
+Release Date: May 30th, 2015
+
+* Enhancements
+    * A brand new event editor. See the [release notes](http://www.slimndap.com/theater-for-wordpress-0-11-a-new-event-editor/) for all the info.
+    * Support for `post__in` and `post__not_in` in the `[wpt_events]` shortcode. See the [documentation](https://github.com/slimndap/wp-theatre/wiki/Shortcodes) for examples. Thanks [jbrandligt](https://wordpress.org/support/profile/jbrandligt)!
+    * Support for custom filters in event listings. See [this post](http://www.slimndap.com/add-venue-and-city-filters-to-event-listings/) for an example.
 
 = 0.10 =
 
@@ -225,6 +258,55 @@ Release Date: December 29th, 2014
 * Basic version of the plugin.
 
 == Upgrade Notice ==
+
+= 0.12 =
+Adds new placeholders, nicer URLs, removes clutter and fixes some small bugs.
+
+= 0.11.9 =
+Added support for custom filters in event listings (eg. venue of city).
+
+= 0.11.8 =
+Fixes a problem with the production slug in Dutch websites and adds support for `post__in` and `post__not_in` in the `[wpt_events]` shortcode.
+
+= 0.11.7 =
+* Fixes a problem with the importer.
+
+= 0.11.6 =
+* Removes a couple of (harmless) php warnings.
+
+= 0.11.5 =
+* Create new events for a production without a page reload.
+
+= 0.11.4 =
+* Fixes two bugs related to 'scheduled' productions.
+
+= 0.11.3 =
+* Fix: The event editor was saving ghost events in the background.
+
+= 0.11.2 =
+* Fix: Events without prices ended up having a price of 0.00.
+* Fix: Renamed the datetimepicker to avoid conflicts with other datetimepickers.
+
+= 0.11.1 =
+* Fix: The new event editor was overwriting disabled event fields.
+
+= 0.11 =
+* Fix: Importer now only stores fields for event when the fields are explicitly set.
+
+= 0.10.16 =
+* Fix: The 'date' filter for template placeholders wasn't handling timezones correctly.
+
+= 0.10.15 =
+* Fix: The 'start' param for event listings wasn't handling timezones correctly.
+
+= 0.10.14 =
+* Fix: Past events still showed tickets buttons. Thanks [Menno](https://www.linkedin.com/in/mennoluitjes)!
+* Fix: Importer emptied fields that were not part of the import.
+* Fix: Tickets button for events wasn't properly showing the ticket status when called directly in PHP. Thanks [paramir](https://github.com/paramir)!
+* Improvement: Significally decreased the number of queries used for listings.
+
+= 0.10.13 =
+* Fix: Removed a loop when saving a production.
 
 = 0.10.12 =
 * Fix: Trashed events were visible on production detail pages. Thanks [Menno](https://www.linkedin.com/in/mennoluitjes)!

@@ -28,6 +28,8 @@
 		 * @since 0.8
 		 * @since 0.10.6	Bugfix: calendar was showing months that have historic events.
 		 *					See https://wordpress.org/support/topic/calendar-wrong-month-shown-again.
+		 * @since 0.10.15	Bugfix: now accounts for timezones.
+		 *					Fixes #117.
 		 *
 		 * @return string The HTML for the calendar.
 		 */
@@ -138,7 +140,7 @@
 				$events = $wp_theatre->events->get($events_filters);
 				
 				foreach ($events as $event) {
-					$date = date('Y-m-d',$event->datetime());
+					$date = date('Y-m-d',$event->datetime() + get_option('gmt_offset') * HOUR_IN_SECONDS);
 					$days[$date][] = $event;
 				}
 	

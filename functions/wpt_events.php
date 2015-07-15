@@ -35,23 +35,24 @@ class WPT_Events extends WPT_Listing {
 	 * @since 0.5
 	 * @since 0.10		Renamed method from `categories()` to `get_categories()`.
  	 * @since 0.10.2	Now returns the slug instead of the term_id as the array keys.
+ 	 * @since 0.10.14	Significally decreased the number of queries used.
 	 *
 	 * @param 	array $filters	See WPT_Events::get() for possible values.
 	 * @return 	array 			Categories.
 	 */
 	function get_categories($filters=array()) {
 		$filters['category'] = false;
-		$events = $this->get($filters);		
+		$events = $this->get($filters);	
+		$event_ids = wp_list_pluck($events, 'ID');
+		$terms = wp_get_object_terms($event_ids, 'category');
 		$categories = array();
-		foreach ($events as $event) {
-			$post_categories = wp_get_post_categories( $event->production()->ID );
-			foreach($post_categories as $c){
-				$cat = get_category( $c );
-				$categories[$cat->slug] = $cat->name;
-			}
+
+		foreach ($terms as $term) {
+			$categories[$term->slug] = $term->name;
 		}
+		
 		asort($categories);
-		return $categories;
+		return $categories;	
 	}
 		
 	/**
@@ -109,7 +110,7 @@ class WPT_Events extends WPT_Listing {
 		$events = $this->get($filters);		
 		$days = array();
 		foreach ($events as $event) {
-			$days[date('Y-m-d',$event->datetime())] = date_i18n('D j M',$event->datetime());
+			$days[ date('Y-m-d',$event->datetime() + get_option('gmt_offset') * HOUR_IN_SECONDS) ] = date_i18n('D j M',$event->datetime() + get_option('gmt_offset') * HOUR_IN_SECONDS);
 		}
 
 		if (!empty($filters['order']) && 'desc'==$filters['order']) {
@@ -336,7 +337,7 @@ class WPT_Events extends WPT_Listing {
 		 * Then revert to the corresponding WPT_Events::get_html_for_* method.
 		 * @see WPT_Events::get_html_page_navigation().
 		 */
-		 
+		
 		if (!empty($wp_query->query_vars['wpt_year']))
 			return $this->get_html_for_year($wp_query->query_vars['wpt_year'], $args);
 			
@@ -433,6 +434,7 @@ class WPT_Events extends WPT_Listing {
 				break;					
 			default:
 				$events = $this->get($args);
+				$events = $this->preload_events_with_productions($events);
 				foreach ($events as $event) {
 					$event_args = array();
 					if (!empty($args['template'])) {
@@ -460,20 +462,42 @@ class WPT_Events extends WPT_Listing {
 	 * @return 	string			The HTML for the page navigation.
 	 */
 	protected function get_html_page_navigation($args=array()) {
+		global $wp_query;
+		
 		$html = '';
-
-		// Days navigation
-		$html.= $this->filter_pagination('day', $this->get_days($args), $args);
+		
+		// Days navigation		
+		if (
+			(!empty($args['paginateby']) && in_array('day', $args['paginateby'])) || 
+			!empty($wp_query->query_vars['wpt_day'])
+		) {
+			$html.= $this->filter_pagination('day', $this->get_days($args), $args);
+		}
 
 		// Months navigation
-		$html.= $this->filter_pagination('month', $this->get_months($args), $args);
+		if (
+			(!empty($args['paginateby']) && in_array('month', $args['paginateby'])) || 
+			!empty($wp_query->query_vars['wpt_month'])
+		) {
+			$html.= $this->filter_pagination('month', $this->get_months($args), $args);		
+		}
 
 		// Years navigation
-		$html.= $this->filter_pagination('year', $this->get_years($args), $args);
+		if (
+			(!empty($args['paginateby']) && in_array('year', $args['paginateby'])) || 
+			!empty($wp_query->query_vars['wpt_year'])
+		) {
+			$html.= $this->filter_pagination('year', $this->get_years($args), $args);
+		}
 
 		// Categories navigation
-		$html.= $this->filter_pagination('category', $this->get_categories($args), $args);
-
+		if (
+			(!empty($args['paginateby']) && in_array('category', $args['paginateby'])) || 
+			!empty($wp_query->query_vars['wpt_category'])
+		) {
+			$html.= $this->filter_pagination('category', $this->get_categories($args), $args);
+		}
+		
 		return $html;		
 	}
 
@@ -496,7 +520,7 @@ class WPT_Events extends WPT_Listing {
 		$events = $this->get($filters);
 		$months = array();
 		foreach ($events as $event) {
-			$months[date('Y-m',$event->datetime())] = date_i18n('M Y',$event->datetime());
+			$months[ date('Y-m',$event->datetime() + get_option('gmt_offset') * HOUR_IN_SECONDS) ] = date_i18n('M Y',$event->datetime() + get_option('gmt_offset') * HOUR_IN_SECONDS);
 		}
 		
 		if (!empty($filters['order']) && 'desc'==$filters['order']) {
@@ -524,7 +548,7 @@ class WPT_Events extends WPT_Listing {
 		$events = $this->get($filters);
 		$years = array();
 		foreach ($events as $event) {
-			$years[date('Y',$event->datetime())] = date_i18n('Y',$event->datetime());
+			$years[date('Y',$event->datetime() + get_option('gmt_offset') * HOUR_IN_SECONDS)] = date_i18n('Y',$event->datetime() + get_option('gmt_offset') * HOUR_IN_SECONDS);
 		}
 
 		if (!empty($filters['order']) && 'desc'==$filters['order']) {
@@ -563,8 +587,14 @@ class WPT_Events extends WPT_Listing {
 	 * Gets a list of events.
 	 * 
 	 * @since 0.5
-	 * @since 0.10	Renamed method from `load()` to `get()`.
-	 * 				Added 'order' to $args.
+	 * @since 0.10		Renamed method from `load()` to `get()`.
+	 * 					Added 'order' to $args.
+	 * @since 0.10.14	Preload events with their productions.
+	 *					This dramatically decreases the number of queries needed to show a listing of events.
+	 * @since 0.10.15	'Start' and 'end' $args now account for timezones.
+	 *					Fixes #117.
+	 * @since 0.11.8	Support for 'post__in' and 'post__not_in'.
+	 *					Fixes #128.
 	 *
  	 * @return array Events.
 	 */
@@ -575,6 +605,8 @@ class WPT_Events extends WPT_Listing {
 		$defaults = array(
 			'order' => 'asc',
 			'limit' => false,
+			'post__in' => false,
+			'post__not_in' => false,
 			'upcoming' => false,
 			'past' => false,
 			'start' => false,
@@ -588,6 +620,15 @@ class WPT_Events extends WPT_Listing {
 			'production' => false,
 			'status' => array('publish'),
 		);
+		
+		/**
+		 * Filter the defaults for the list of events.
+		 *
+		 * @since 	0.11.9
+		 * @param 	array 	$defaults	The current defaults.
+		 */
+		$defaults = apply_filters( 'wpt/events/get/defaults', $defaults );
+		
 		$filters = wp_parse_args( $filters, $defaults );
 
 		$args = array(
@@ -615,7 +656,7 @@ class WPT_Events extends WPT_Listing {
 			$args['meta_query'][] = array (
 				'key' => WPT_Production::post_type_name,
 				'value' => $filters['production'],
-				'compare' => '='
+				'compare' => '=',
 			);
 		}
 		
@@ -629,7 +670,7 @@ class WPT_Events extends WPT_Listing {
 		if ($filters['start']) {
 			$args['meta_query'][] = array (
 				'key' => $wp_theatre->order->meta_key,
-				'value' => strtotime($filters['start']),
+				'value' => strtotime($filters['start'], current_time( 'timestamp' )) - get_option('gmt_offset') * 3600,
 				'compare' => '>='
 			);
 		}
@@ -644,9 +685,17 @@ class WPT_Events extends WPT_Listing {
 		if ($filters['end']) {
 			$args['meta_query'][] = array (
 				'key' => $wp_theatre->order->meta_key,
-				'value' => strtotime($filters['end']),
+				'value' => strtotime($filters['end'], current_time( 'timestamp' )) - get_option('gmt_offset') * 3600,
 				'compare' => '<='
 			);
+		}
+
+		if ($filters['post__in']) {
+			$args['post__in'] = $filters['post__in'];
+		}
+
+		if ($filters['post__not_in']) {
+			$args['post__not_in'] = $filters['post__not_in'];
 		}
 
 		if ($filters['season']) {
@@ -677,7 +726,6 @@ class WPT_Events extends WPT_Listing {
 			$args['category__not_in'] = $filters['category__not_in'];
 		}
 		
-		
 		if ($filters['limit']) {
 			$args['posts_per_page'] = $filters['limit'];
 			$args['numberposts'] = $filters['limit'];
@@ -685,26 +733,72 @@ class WPT_Events extends WPT_Listing {
 			$args['posts_per_page'] = -1;
 			$args['numberposts'] = -1;
 		}
-
+		
 		/**
 		 * Filter the $args before doing get_posts().
 		 *
 		 * @since 0.9.2
+		 * @since 0.11.9	New filter added, with an extra 'filter' param.
 		 *
-		 * @param array $args The arguments to use in get_posts to retrieve events.
+		 * @param array 	$args 		The arguments to use in get_posts to retrieve events.
+		 * @param array 	$filters 	The filters for the list of events.
 		 */
 		$args = apply_filters('wpt_events_load_args',$args);
 		$args = apply_filters('wpt_events_get_args',$args);
+		$args = apply_filters('wpt/events/get/args', $args, $filters);
 
 		$posts = get_posts($args);
 
 		$events = array();
 		for ($i=0;$i<count($posts);$i++) {
-			$key = $posts[$i]->ID;
-			$event = new WPT_Event($posts[$i]->ID);
+			$event = new WPT_Event($posts[$i]);
 			$events[] = $event;
 		}
-
+		
+		return $events;
+	}
+	
+	/**
+	 * Preloads events with their productions.
+	 *
+	 * Sets the production of a each event in a list of events with a single query.
+	 * This dramatically decreases the number of queries needed to show a listing of events.
+	 * 
+	 * @since 	0.10.14
+	 * @access 	private
+	 * @param 	array	$events		An array of WPT_Event objects.
+	 * @return 	array				An array of WPT_Event objects, with the production preloaded.
+	 */
+	private function preload_events_with_productions($events) {
+		
+		$production_ids = array();
+		
+		foreach ($events as $event) {
+			$production_ids[] = get_post_meta($event->ID, WPT_Production::post_type_name, true);			
+		}
+		
+		$production_ids = array_unique($production_ids);
+		
+		$productions = get_posts(
+			array(
+				'post_type' => WPT_Production::post_type_name,
+				'post__in' => array_unique( $production_ids ),
+				'posts_per_page' => -1,
+			)	
+		);
+		
+		$productions_with_keys = array();
+		
+		foreach ($productions as $production) {
+			$productions_with_keys[$production->ID] = $production;
+		}
+		
+		for ($i=0; $i<count($events);$i++) {
+			$production_id = get_post_meta( $events[$i]->ID, WPT_Production::post_type_name, true );
+			if (in_array($production_id, array_keys($productions_with_keys)) ) {
+				$events[$i]->production = new WPT_Production($productions_with_keys[$production_id]);
+			}
+		}
 		return $events;
 	}
 

@@ -283,7 +283,7 @@ class WPT_Test extends WP_UnitTestCase {
 		
 	}
 	
-	function test_shortcode_wpt_events() {
+	function test_shortcode_wpt_event_tickets() {
 		$this->assertEquals(4, substr_count(do_shortcode('[wpt_events]'), '"wp_theatre_event"'));
 	}
 	
@@ -437,6 +437,37 @@ class WPT_Test extends WP_UnitTestCase {
 		
 		$this->assertContains($formatted_date, $output);
 	}
+	
+	function test_wpt_events_with_post_args() {
+		
+		$html = do_shortcode('[wpt_events post__in="'.$this->upcoming_event_with_prices.'"]');
+
+		$this->assertEquals(1, substr_count($html, '"wp_theatre_event"'));		
+
+		$html = do_shortcode('[wpt_events post__not_in="'.$this->upcoming_event_with_prices.'"]');
+
+		$this->assertEquals(3, substr_count($html, '"wp_theatre_event"'));		
+	}
+
+	function test_wpt_events_with_custom_atts() {
+		
+		$defaults_func = create_function(
+			'$defaults',
+			'$defaults[\'venue\'] = false; return $defaults;'
+		);
+		add_filter( 'wpt/frontend/shortcode/events/defaults', $defaults_func, 10 );
+		add_filter( 'wpt/events/get/defaults', $defaults_func, 10 );
+		
+		$args_func = create_function(
+			'$args,$filters',
+			'if ($filters[\'venue\']) { $args[\'meta_query\'][] = array(\'key\'=>\'venue\', \'value\'=>$filters[\'venue\']); } return $args;'
+		);
+		add_filter( 'wpt/events/get/args', $args_func, 10, 2 );
+
+		$html = do_shortcode('[wpt_events venue="Paard van Troje"]');
+		
+		$this->assertEquals(1, substr_count($html, '"wp_theatre_event"'));		
+	}
 
 	function test_shortcode_wpt_productions_with_custom_field() {
 		$director = 'Steven Spielberg';
@@ -526,8 +557,59 @@ class WPT_Test extends WP_UnitTestCase {
 		);
 		$html = $event->tickets($args);
 		$this->assertContains('new status', $event->tickets($args));
+	}
+	
+	function test_wpt_event_tickets_prices_filter() {
+		global $wp_theatre;
+		
+		$func = create_function(
+			'$html, $event',
+			'return "tickets prices";'
+		);
+		add_filter( 'wpt_event_tickets_prices_html', $func, 10 , 2 );
+		
+		$event = new WPT_Event($this->upcoming_event_with_prices);
+		$args = array(
+			'html' => true,
+		);
+		$this->assertContains('tickets prices', $event->tickets($args));
+	}
+	
+	
+	function test_wpt_event_tickets() {
+		$url = 'http://slimndap.com';
+		update_post_meta($this->upcoming_event_with_prices,'tickets_url',$url);
+		$event = new WPT_Event($this->upcoming_event_with_prices);
+		$this->assertEquals($url, $event->tickets());
+	}
+	
+	function test_wpt_event_tickets_filter() {
+		global $wp_theatre;
+		
+		$func = create_function(
+			'$url, $event',
+			'return "tickets url";'
+		);
+		add_filter( 'wpt_event_tickets', $func, 10 , 2 );
+		
+		add_post_meta($this->upcoming_event_with_prices, 'tickets_url', 'http://slimndap.com');
 
 		
+		$event = new WPT_Event($this->upcoming_event_with_prices);
+		$this->assertContains('tickets url', $event->tickets());
+	}
+	
+	function test_wpt_event_tickets_html_filter() {
+		global $wp_theatre;
+		
+		$func = create_function(
+			'$html, $event',
+			'return "tickets button";'
+		);
+		add_filter( 'wpt_event_tickets_html', $func, 10 , 2 );
+		
+		$event = new WPT_Event($this->upcoming_event_with_prices);
+		$this->assertContains('tickets button', $event->tickets(array('html'=>true)));
 	}
 	
 	function test_wpt_event_tickets_url() {
@@ -538,10 +620,15 @@ class WPT_Test extends WP_UnitTestCase {
 	function test_wpt_event_tickets_url_with_iframe() {
 		
 		global $wp_theatre;
+
+		// create a page for our listing
+		$args = array(
+			'post_type'=>'page'
+		);
 		
 		$wp_theatre->wpt_tickets_options = 	array(
 			'integrationtype' => 'iframe',
-			'iframepage' => '',
+			'iframepage' => $this->factory->post->create($args),
 			'currencysymbol' => '$',
 		);
 		
@@ -559,6 +646,41 @@ class WPT_Test extends WP_UnitTestCase {
 			'summary'=>true
 		);
 		$this->assertContains('8.50', $event->prices($args));
+	}
+	
+	function test_wpt_event_tickets_for_past_events_are_hiddedn() {
+
+		$event_args = array(
+			'post_type'=>WPT_Event::post_type_name
+		);
+
+		$event_id = $this->factory->post->create($event_args);
+		add_post_meta($event_id, WPT_Production::post_type_name, $this->production_with_historic_event);
+		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() - 2 * DAY_IN_SECONDS));
+		add_post_meta($event_id, '_wpt_event_tickets_price', 12);
+		
+		$event = new WPT_Event($event_id);
+		$this->assertEmpty($event->tickets());
+		
+	}
+	
+	function test_wpt_event_tickets_html_for_past_events_are_hiddedn() {
+
+		$event_args = array(
+			'post_type'=>WPT_Event::post_type_name
+		);
+
+		$event_id = $this->factory->post->create($event_args);
+		add_post_meta($event_id, WPT_Production::post_type_name, $this->production_with_historic_event);
+		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() - 2 * DAY_IN_SECONDS));
+		add_post_meta($event_id, 'tickets_url', 'http://slimndap.com');
+		add_post_meta($event_id, '_wpt_event_tickets_price', 12);
+		
+		$html = do_shortcode('[wpt_events end="now"]');
+
+		$this->assertNotContains('wp_theatre_event_prices',$html);
+		$this->assertNotContains('wp_theatre_event_tickets_status',$html);
+		
 	}
 	
 	/**
@@ -727,10 +849,12 @@ class WPT_Test extends WP_UnitTestCase {
 		
 		/** 
 		 * Copy the defaults from WPT_Frontend::wpt_events
-		 * Remove the quotes around 'true' for upcoming.
+		 * Set 'start' to 'now' (with quotes).
 		 */
-		$args = array(
+		$defaults = array(
 			'paginateby'=>array(),
+			'post__in' => false,
+			'post__not_in' => false,
 			'category'=> false, // deprecated since v0.9.
 			'cat'=>false,
 			'category_name'=>false,
@@ -747,8 +871,9 @@ class WPT_Test extends WP_UnitTestCase {
 			'limit'=>false,
 			'order'=>'asc',
 		);
+		
 		$unique_args = array_merge(
-			array( 'atts' => $args ), 
+			array( 'atts' => $defaults ), 
 			array( 'wp_query' => $wp_query->query_vars )
 		);
 		
@@ -1147,6 +1272,116 @@ class WPT_Test extends WP_UnitTestCase {
 		
 		$this->assertCount(0,$events);
 		
+	}
+	
+	/**
+	 * Test is relative date filters use the right time offset.
+	 *
+	 * Tricky situation: displaying all events that start today.
+	 * Solution: use 'Yesterday 23:59' for the 'start' argument.
+	 * Problem: UTC may give a different value for yesterday than your local timezone.
+	 * See: https://github.com/slimndap/wp-theatre/issues/117
+	 */
+	function test_timezones() {
+		global $wp_theatre;
+		
+		// Set the timezone to a problematic offset.
+		update_option('gmt_offset', (date('H')+1) * -1 );
+		
+		// Recalculate the post orders, based on the new time offset.
+		$wp_theatre->order->update_post_order();
+		
+		$html = do_shortcode('[wpt_events start="-2 days 23:59" end="now"]');
+		
+		$this->assertEquals(1, substr_count($html, '"wp_theatre_event"'));
+		
+		/*
+		 * More possible tests:
+		 * event yesterday 23:59
+		 * event today 00:00
+		 * event today 23:59
+		 * event tomorrow 00:00
+		 */
+		
+	}
+	
+	function test_event_starttime() {
+		$html = do_shortcode('[wpt_events]{{starttime}}[/wpt_events]');
+		
+		$expected = date_i18n( 
+						get_option( 'time_format' ),
+						strtotime( 
+							get_post_meta(
+								$this->upcoming_event_with_prices, 
+								'event_date', 
+								true
+							)
+						)
+		);
+		
+		$this->assertContains($expected, $html);
+	}
+	
+	function test_event_startdate() {
+		$html = do_shortcode('[wpt_events]{{startdate}}[/wpt_events]');
+		
+		$expected = date_i18n( 
+						get_option( 'date_format' ),
+						strtotime( 
+							get_post_meta(
+								$this->upcoming_event_with_prices, 
+								'event_date', 
+								true
+							)
+						)
+		);
+		
+		$this->assertContains($expected, $html);
+	}
+	
+	function test_event_endtime() {
+
+		$enddate = date('Y-m-d H:i:s', time() + (3 * DAY_IN_SECONDS) );
+		add_post_meta($this->upcoming_event_with_prices, 'enddate', $enddate);
+		
+		$html = do_shortcode('[wpt_events]{{endtime}}[/wpt_events]');
+
+		$expected = date_i18n( get_option( 'time_format' ),	strtotime( $enddate) );
+		
+		$this->assertContains($expected, $html);				
+	}
+	
+	function test_event_enddate() {
+
+		$enddate = date('Y-m-d H:i:s', time() + (3 * DAY_IN_SECONDS) );
+		add_post_meta($this->upcoming_event_with_prices, 'enddate', $enddate);
+		
+		$html = do_shortcode('[wpt_events]{{enddate}}[/wpt_events]');
+
+		$expected = date_i18n( get_option( 'date_format' ),	strtotime( $enddate) );
+		
+		$this->assertContains($expected, $html);		
+	}
+	
+	/**
+	 * Tests if deprecated WPT_Event::date() and WPT_Event::time() still work.
+	 * Not running now, because I need to figure out how to suppress the deprecated notices.
+	 * See: https://unit-tests.trac.wordpress.org/ticket/142
+	 */
+	function test_deprecated_event_date_and_time() {
+		return;
+		
+		$event = new WPT_Event($this->upcoming_event_with_prices);
+
+		$this->assertEquals($event->date(), $event->startdate());		
+		$this->assertEquals($event->date(array('html'=>'true')), $event->startdate_html());		
+		$this->assertEquals($event->time(), $event->starttime());		
+		$this->assertEquals($event->time(array('html'=>'true')), $event->starttime_html());		
+
+		$this->assertEquals($event->date(array('start'=>false)), $event->enddate());		
+		$this->assertEquals($event->date(array('html'=>'true', 'start'=>false)), $event->enddate_html());		
+		$this->assertEquals($event->time(array('start'=>false)), $event->endtime());		
+		$this->assertEquals($event->time(array('html'=>'true', 'start'=>false)), $event->endtime_html());		
 	}
 	
 }

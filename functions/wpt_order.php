@@ -77,6 +77,8 @@
 		 * The _wpt_order value is based on the post_date for all other post_types.
 		 *
 		 * @since 0.6.2
+		 * @since 0.10.15	Always set _wpt_order in UTC.
+		 *					Fixes #117.
 		 *
 		 */
 		function set_post_order($post) {
@@ -91,14 +93,28 @@
 					$production = new WPT_Production($post->ID);
 					$events = $production->upcoming();
 					if (!empty($events[0])) {
-						$wpt_order = strtotime(get_post_meta($events[0]->ID, 'event_date',TRUE));
+						$wpt_order = strtotime(
+							get_post_meta(
+								$events[0]->ID, 
+								'event_date',
+								TRUE
+							),
+							current_time( 'timestamp' )
+						) - 3600 * get_option('gmt_offset');
 						break;
 					}
 				case WPT_Event::post_type_name:
-					$wpt_order = strtotime(get_post_meta($post->ID, 'event_date',TRUE));
+					$wpt_order = strtotime(
+						get_post_meta(
+							$post->ID, 
+							'event_date', 
+							TRUE
+						),
+						current_time( 'timestamp' )
+					) - 3600 * get_option('gmt_offset');
 					break;
 				default:
-					$wpt_order = strtotime($post->post_date);
+					$wpt_order = strtotime($post->post_date) + 3600 * get_option('gmt_offset');
 			}			
 			update_post_meta($post->ID, $this->meta_key, $wpt_order);			
 		}

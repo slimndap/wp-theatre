@@ -82,10 +82,20 @@ class WPT_Frontend {
 		return $query;
 	}
 
-	function the_content($content) {
+	/**
+	 * Adds events listing to the content of a productio page.
+	 * 
+	 * @since 	?
+	 * @since 	0.11	Event are now only added to the main post content.
+	 * 					As explained by Pippin:
+	 *					https://pippinsplugins.com/playing-nice-with-the-content-filter/	
+	 * @param 	string 	$content
+	 * @return 	void
+	 */
+	public function the_content($content) {
 		global $wp_theatre;
 		
-		if (is_singular(WPT_Production::post_type_name)) {
+		if (is_singular(WPT_Production::post_type_name) && is_main_query()) {
 			if (
 				isset( $wp_theatre->options['show_season_events'] ) &&
 				in_array($wp_theatre->options['show_season_events'], array('above','below'))
@@ -118,7 +128,7 @@ class WPT_Frontend {
 			}
 		}
 		
-		if (is_singular(WPT_Production::post_type_name)) {
+		if (is_singular(WPT_Production::post_type_name) && is_main_query()) {
 
 			/**
 			 * Filter the content of a production page.
@@ -165,6 +175,8 @@ class WPT_Frontend {
 	 * @since ?
 	 * @since 0.10.9	Improved the unique key for transients.
 	 *					Fixes issue #97.
+	 * @since 0.11.8	Support for 'post__in' and 'post__not_in'.
+	 *					Fixes #128.
 	 * 
 	 * @param 	array 	$atts
 	 * @param 	string 	$content (default: null)
@@ -176,6 +188,8 @@ class WPT_Frontend {
 		
 		$defaults = array(
 			'paginateby'=>array(),
+			'post__in' => false,
+			'post__not_in' => false,
 			'category'=> false, // deprecated since v0.9.
 			'cat'=>false,
 			'category_name'=>false,
@@ -193,6 +207,14 @@ class WPT_Frontend {
 			'order'=>'asc',
 		);
 		
+		/**
+		 * Filter the defaults for the [wpt_events] shortcode.
+		 *
+		 * @since 	0.11.9
+		 * @param 	array 	$defaults	The current defaults.
+		 */
+		$defaults = apply_filters( 'wpt/frontend/shortcode/events/defaults', $defaults);
+
 		$atts = shortcode_atts( $defaults, $atts );
 
 		if (!empty($atts['paginateby'])) {
@@ -201,6 +223,14 @@ class WPT_Frontend {
 				$fields[$i] = trim($fields[$i]);
 			}
 			$atts['paginateby'] = $fields;
+		}
+
+		if (!empty($atts['post__in'])) {
+			$atts['post__in'] = explode(',',$atts['post__in']);
+		}
+		
+		if (!empty($atts['post__not_in'])) {
+			$atts['post__not_in'] = explode(',',$atts['post__not_in']);
 		}
 		
 		if(!empty($atts['year'])) {
@@ -257,6 +287,14 @@ class WPT_Frontend {
 			}
 			$atts['cat'] = implode(',',$categories);
 		}
+
+		/**
+		 * Filter the filters for the events listing.
+		 *
+		 * @since 	0.11.9
+		 * @param 	array 	$atts	The current filters, based on the shortcode attributes.
+		 */
+		$atts = apply_filters( 'wpt/frontend/shortcode/events/filters', $atts);
 
 		/*
 		 * Base the $args parameter for the transient on $atts and $wp_query,
@@ -469,15 +507,28 @@ class WPT_Frontend {
 		}
 	}
 	
-	function wp_theatre_iframe($atts, $content=null) {
+	/**
+	 * Gets the HTML for the [wpt_event_tickets] shortcode.
+	 * 
+	 * @since  ?.?
+	 * @since  0.12		Work with the 'wpt_event_tickets' query var,
+	 * 					instead of $_GET vars.
+	 * @return string	The HTML for the [wpt_event_tickets] shortcode.
+	 */
+	function wp_theatre_iframe() {
 		$html = '';
-		if (isset($_GET[__('Event','wp_theatre')])) {
-			$tickets_url = get_post_meta($_GET[__('Event','wp_theatre')],'tickets_url',true);
-			if ($tickets_url!='') {
-				$html = '<iframe src="'.$tickets_url.'" class="wp_theatre_iframe"></iframe>';
-			}
+
+		$event_id = (int) get_query_var('wpt_event_tickets');
+
+		if (!empty($event_id)) {
+			$tickets_url = get_post_meta($event_id,'tickets_url',true);
+			if (!empty($tickets_url)) {
+				$html.= '<iframe src="'.$tickets_url.'" class="wp_theatre_iframe"></iframe>';
+			}			
 		}
-		do_action('wp_theatre_iframe', $atts, $content=null);
+
+		do_action('wp_theatre_iframe');
+
 		return $html;
 	}
 	

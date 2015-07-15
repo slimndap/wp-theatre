@@ -48,6 +48,10 @@
 		/**
 		 * Date filter.
 		 * Format the content using the date format defined in the third argument.
+		 *
+		 * @since 0.8.2
+		 * @since 0.10.16	Now accounts for timezones.
+		 *					Fixes #117.
 		 */
 		function date($content, $object, $format='') {
 			if (!empty($format)) {	
@@ -56,7 +60,10 @@
 				} else {
 					$timestamp = strtotime($content);								
 				}
-				$content = date_i18n($format,$timestamp);
+				$content = date_i18n(
+					$format,
+					$timestamp + get_option('gmt_offset') * HOUR_IN_SECONDS
+				);
 			}
 			return $content;
 		}

@@ -75,7 +75,9 @@
 		 * Use this helper function to create a new event while processing your feed.
 		 * 
 		 * @since 0.10
-		 * @since 0.11 Added support for event prices.
+		 * @since 0.11 		Added support for event prices.
+		 * @since 0.11.7	Events now inherit the post_status from the production.
+		 *					Fixes https://github.com/slimndap/wp-theatre/issues/129.
 		 *
 		 * @see WPT_Importer::get_event_by_ref()
 		 * @see WPT_Importer::update_event()
@@ -96,31 +98,49 @@
 			
 			$defaults = array(
 				'production' => false,
-				'venue' => '',
-				'city' => '',
-				'tickets_url' => '',
-				'event_date' => '',
+				'venue' => false,
+				'city' => false,
+				'tickets_url' => false,
+				'event_date' => false,
 				'ref' => '',
-				'prices' => array(),
+				'prices' => false,
 			);
 			
 			$args = wp_parse_args($args, $defaults);
 
 			$post = array(
 				'post_type' => WPT_Event::post_type_name,
-				'post_status' => 'draft',
 			);
-			
+
+			if (false !== $args['production']) {
+				$post['post_status'] = get_post_status($args['production']);
+			} else {
+				$post['post_status'] = 'draft';
+			}			
+
 			if ($post_id = wp_insert_post($post)) {
 				add_post_meta($post_id, '_wpt_source', $this->slug, true);
 				add_post_meta($post_id, '_wpt_source_ref', sanitize_text_field($args['ref']), true);
-				add_post_meta($post_id, WPT_Production::post_type_name, $args['production'], true);
-				add_post_meta($post_id, 'venue', $args['venue'], true);
-				add_post_meta($post_id, 'city', $args['city'], true);
-				add_post_meta($post_id, 'tickets_url', $args['tickets_url'], true);
-				add_post_meta($post_id, 'event_date', $args['event_date'], true);
+				
+				if (false !== $args['production']) {
+					add_post_meta($post_id, WPT_Production::post_type_name, $args['production'], true);				
+				}
+				if (false !== $args['venue']) {
+					add_post_meta($post_id, 'venue', $args['venue'], true);
+				}
+				if (false !== $args['city']) {
+					add_post_meta($post_id, 'city', $args['city'], true);
+				}
+				if (false !== $args['tickets_url']) {
+					add_post_meta($post_id, 'tickets_url', $args['tickets_url'], true);
+				}
+				if (false !== $args['event_date']) {
+					add_post_meta($post_id, 'event_date', $args['event_date'], true);
+				}
 
-				$this->set_event_prices($post_id, $args['prices']);
+				if (is_array($args['prices'])) {
+					$this->set_event_prices($post_id, $args['prices']);				
+				}
 
 				$this->stats['events_created']++;
 				
@@ -258,22 +278,8 @@
 			
 			delete_post_meta($event_id, '_wpt_event_tickets_price');
 	
-			for ($p=0;$p<count($prices);$p++) {
-				
-				$price_parts = explode('|',$prices[$p]);
-				
-				// Sanitize the amount.
-				$price_parts[0] = (float) $price_parts[0];
-				
-				// Sanitize the name.
-				if (!empty($prices_parts[1])) {
-					$price_parts[1] = trim($price_parts[1]);
-				}
-				
-				// Check if the price is valid.
-				if ($price_parts[0]>0) {
-					add_post_meta($event_id,'_wpt_event_tickets_price', implode('|',$price_parts));			
-				}
+			foreach($prices as $price) {
+				add_post_meta($event_id,'_wpt_event_tickets_price', $price);							
 			}
 			
 		}
@@ -287,6 +293,8 @@
 		 * @since 0.10
 		 * @since 0.10.7	Method now returns a WPT_Event object.
 		 * 					Added support for event prices.
+		 * @since 0.10.14	Only updates fields that are explicitly set in $args 
+		 * 					by the importer. Fixes #113.
 		 *
 		 * @see WPT_Importer::get_event_by_ref()
 		 * @see WPT_Importer::create_event()
@@ -308,12 +316,12 @@
 
 			$defaults = array(
 				'production' => false,
-				'venue' => '',
-				'city' => '',
-				'tickets_url' => '',
-				'event_date' => '',
+				'venue' => false,
+				'city' => false,
+				'tickets_url' => false,
+				'event_date' => false,
 				'ref' => '',
-				'prices' => array(),
+				'prices' => false,
 			);
 			
 			$args = wp_parse_args($args, $defaults);
@@ -325,12 +333,25 @@
 			}
 			
 			update_post_meta($event->ID, WPT_Production::post_type_name, $args['production']);
-			update_post_meta($event->ID, 'venue', $args['venue']);
-			update_post_meta($event->ID, 'city', $args['city']);
-			update_post_meta($event->ID, 'tickets_url', $args['tickets_url']);
-			update_post_meta($event->ID, 'event_date', $args['event_date']);
 			
-			$this->set_event_prices($event->ID, $args['prices']);
+			if ($args['venue']!==false) {
+				update_post_meta($event->ID, 'venue', $args['venue']);			
+			}
+			
+			if ($args['city']!==false) {
+				update_post_meta($event->ID, 'city', $args['city']);
+			}
+			
+			if ($args['tickets_url']!==false) {
+				update_post_meta($event->ID, 'tickets_url', $args['tickets_url']);
+			}
+			if ($args['event_date']!==false) {
+				update_post_meta($event->ID, 'event_date', $args['event_date']);
+			}
+			
+			if (is_array($args['prices'])) {
+				$this->set_event_prices($event->ID, $args['prices']);
+			}
 
 			delete_post_meta($event->ID, $this->marker);
 

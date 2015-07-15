@@ -20,7 +20,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 			'listing_page_position' => 'above'
 		);	
 		update_option('wpt_listing_page', $this->options);
-
+		
 		$season_args = array(
 			'post_type'=>WPT_Season::post_type_name
 		);
@@ -638,7 +638,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		$html = do_shortcode('[wpt_calendar]');
 		$this->assertEquals(4, substr_count($html, '<td><a'), $html);		
 	}
-		
+	
 	/* 
 	 * Test backwards compatibility
 	 */

@@ -1,3 +1,5 @@
+# @codekit-prepend 'wpt_calendar.coffee';
+
 class wpt_tickets
 	constructor: ->
 		@.ticket_urls = jQuery('.wp_theatre_event_tickets_url').click (e) =>
