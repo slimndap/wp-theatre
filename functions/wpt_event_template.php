@@ -2,6 +2,15 @@
 
 class WPT_Event_Template extends WPT_Template {
 
+	protected function get_default() {
+		$default = '{{thumbnail|permalink}} {{title|permalink}} {{remark}} {{datetime}} {{location}} {{tickets}}';
+		
+		$default = apply_filters('wpt_event_template_default', $default);
+		$default = apply_filters('wpt/event/template/default', $default);
+		
+		return $default;
+	}
+
 	/**
 	 * Gets the value for a field from an event.
 	 *

@@ -586,22 +586,23 @@ class WPT_Production {
 	 * }
 	 * @return string HTML.
 	 */
-	function html($args=array()) {
+	function html($template = '') {
 		global $wp_theatre;
 		
-		$defaults = array(
-			'template' => apply_filters(
-				'wpt_production_template_default',
-				'{{thumbnail|permalink}} {{title|permalink}} {{dates}} {{cities}}'
-			),
-		);
+		if (is_array($template)) {
+			$defaults = array(
+				'template' => '',
+			);
+			$args = wp_parse_args( $template, $defaults );
+			$template = $args['template'];
+		}
 
 		$args = wp_parse_args( $args, $defaults );
 
 		$classes = array();
 		$classes[] = self::post_type_name;
 
-		$template = new WPT_Production_Template($args['template'], $this);
+		$template = new WPT_Production_Template($this, $template);
 		$html = $template->get_merged();
 
 		// Filters

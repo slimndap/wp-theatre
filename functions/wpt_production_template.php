@@ -8,6 +8,15 @@
  */
 class WPT_Production_Template extends WPT_Template {
 
+	protected function get_default() {
+		$default = '{{thumbnail|permalink}} {{title|permalink}} {{dates}} {{cities}}';
+		
+		$default = apply_filters('wpt_production_template_default', $default);
+		$default = apply_filters('wpt/production/template/default', $default);
+		
+		return $default;
+	}
+
 	/**
 	 * Gets the value for a field from a production.
 	 *

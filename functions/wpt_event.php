@@ -1021,19 +1021,19 @@ class WPT_Event {
 	 * }
 	 * @return string HTML.
 	 */
-	function html($args = array()) {
-		$defaults = array(
-			'template' => apply_filters(
-				'wpt_event_template_default',
-				'{{thumbnail|permalink}} {{title|permalink}} {{remark}} {{datetime}} {{location}} {{tickets}}'
-			),
-		);
-		$args = wp_parse_args( $args, $defaults );
+	function html($template='') {
+		if (is_array($template)) {
+			$defaults = array(
+				'template' => '',
+			);
+			$args = wp_parse_args( $template, $defaults );
+			$template = $args['template'];
+		}
 
 		$classes = array();
 		$classes[] = self::post_type_name;
 
-		$template = new WPT_Event_Template($args['template'], $this);
+		$template = new WPT_Event_Template($this, $template);
 		$html = $template->get_merged();
 		
 		// Tickets

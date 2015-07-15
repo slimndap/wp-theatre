@@ -33,12 +33,20 @@ class WPT_Template {
 
 	/**
 	 * @since 	0.12.1
-	 * @param 	string	$template	The template text.
 	 * @param 	mixed 	$object		The object.
+	 * @param 	string	$template	The template (optional).
 	 */
-	function __construct($template, $object) {
-		$this->template = $template;
+	function __construct($object, $template='') {
 		$this->object = $object;
+
+		if (empty($template)) {
+			$template = $this->get_default();
+		}
+		$this->template = $template;		
+	}
+
+	protected function get_default() {
+		return '';
 	}
 
 	/**
