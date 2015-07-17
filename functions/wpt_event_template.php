@@ -2,9 +2,21 @@
 
 class WPT_Event_Template extends WPT_Template {
 
+	/**
+	 * Gets the default template for events.
+	 * 
+	 * @since	0.12.1
+	 * @access 	protected
+	 * @return 	string		The default template.
+	 */
 	protected function get_default() {
 		$default = '{{thumbnail|permalink}} {{title|permalink}} {{remark}} {{datetime}} {{location}} {{tickets}}';
 		
+		/**
+		 * Filter the default template for events.
+		 * 
+		 * @param 	string	$default	The default template.
+		 */
 		$default = apply_filters('wpt_event_template_default', $default);
 		$default = apply_filters('wpt/event/template/default', $default);
 		

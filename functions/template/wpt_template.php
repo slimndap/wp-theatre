@@ -45,6 +45,15 @@ class WPT_Template {
 		$this->template = $template;		
 	}
 
+	/**
+	 * Gets the default template.
+	 * 
+	 * Child classes should overwrite this method.
+	 *
+	 * @since	0.12.1
+	 * @access 	protected
+	 * @return 	string		The default template.
+	 */
 	protected function get_default() {
 		return '';
 	}

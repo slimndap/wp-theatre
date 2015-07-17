@@ -8,9 +8,21 @@
  */
 class WPT_Production_Template extends WPT_Template {
 
+	/**
+	 * Gets the default template for productions.
+	 * 
+	 * @since	0.12.1
+	 * @access 	protected
+	 * @return 	string		The default template.
+	 */
 	protected function get_default() {
 		$default = '{{thumbnail|permalink}} {{title|permalink}} {{dates}} {{cities}}';
 		
+		/**
+		 * Filter the default template for productions.
+		 * 
+		 * @param 	string	$default	The default template.
+		 */
 		$default = apply_filters('wpt_production_template_default', $default);
 		$default = apply_filters('wpt/production/template/default', $default);
 		
