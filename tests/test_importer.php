@@ -254,5 +254,19 @@ class WPT_Test_Importer extends WP_UnitTestCase {
 		$venue = $events[0]->venue();
 		$this->assertEquals( 'Paradiso', $events[0]->venue() );
 	}
+	
+	function test_import_error() {
+		
+		$error = 'Something went wrong';
+		
+		$importer = new WPT_Demo_Importer();
+		$importer->execute();
+		$importer->add_error($error);
+		
+		$actual = $importer->stats['errors'];
+		$expected = $error;
+		
+		$this->assertContains($expected, $actual);
+	}
 
 }
