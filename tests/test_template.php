@@ -143,15 +143,69 @@ class WPT_Test_Template extends WP_UnitTestCase {
 	}
 	
 	function test_template_placeholder_filter_permalink() {
+		$production_id = $this->create_production();	
+		$event_id = $this->create_event_for_production($production_id)	;
+		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() + (2 * DAY_IN_SECONDS)));
 		
+		$event = new WPT_Event($event_id);
+		$template = new WPT_Event_Template($event, '{{title|permalink}}');
+		
+		$expected = '<div class="wp_theatre_event_title"><a href="'.$event->production()->permalink().'">'.$event->production()->title().'</a></div>';
+		$actual = $template->get_merged();
+		
+		$this->assertEquals($expected, $actual);			
 	}
 
 	function test_template_placeholder_filter_date() {
+		$production_id = $this->create_production();	
+		$event_id = $this->create_event_for_production($production_id);
+
+		$startdate = time() + (2 * DAY_IN_SECONDS);
+		$date_format = 'D d';
+
+		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', $startdate));
 		
+		$event = new WPT_Event($event_id);
+		$template = new WPT_Event_Template($event, '{{startdate|date(\''.$date_format.'\')}}');
+		
+		$expected = '<div class="wp_theatre_event_date wp_theatre_event_startdate">'.date($date_format,$startdate).'</div>';
+		$actual = $template->get_merged();
+		
+		$this->assertEquals($expected, $actual);			
 	}
 
 	function test_template_placeholder_filter_tickets_url() {
+		$production_id = $this->create_production();	
+		$event_id = $this->create_event_for_production($production_id);
+
+		$tickets_url = 'http://slimndap.com';
+		add_post_meta($event_id, 'tickets_url', $tickets_url);
 		
+		$event = new WPT_Event($event_id);
+		$template = new WPT_Event_Template($event, '{{title|tickets_url}}');
+		
+		$expected = '<div class="wp_theatre_event_title"><a href="'.$tickets_url.'" rel="nofollow" class="wp_theatre_event_tickets_url">Tickets</a></div>';
+		$actual = $template->get_merged();
+		
+		$this->assertEquals($expected, $actual);			
+	}
+
+	function test_template_placeholder_filter_date_and_permalink() {
+		$production_id = $this->create_production();	
+		$event_id = $this->create_event_for_production($production_id);
+
+		$startdate = time() + (2 * DAY_IN_SECONDS);
+		$date_format = 'D d';
+
+		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', $startdate));
+		
+		$event = new WPT_Event($event_id);
+		$template = new WPT_Event_Template($event, '{{startdate|date(\''.$date_format.'\')|permalink}}');
+		
+		$expected = '<div class="wp_theatre_event_date wp_theatre_event_startdate"><a href="'.$event->production()->permalink().'">'.date($date_format,$startdate).'</a></div>';
+		$actual = $template->get_merged();
+		
+		$this->assertEquals($expected, $actual);			
 	}
 
 
