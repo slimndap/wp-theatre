@@ -51,6 +51,13 @@ class WPT_Event {
 		return implode( ' ',$classes );
 	}
 
+	protected function apply_template_filters($value, $filters) {
+		foreach ($filters as $filter) {
+			$value = $filter->apply_to($value, $this);
+		}
+		return $value;
+	}
+
 	/**
 	 * Event city.
 	 *
@@ -73,7 +80,7 @@ class WPT_Event {
 
 		if ( $args['html'] ) {
 			$html = '<div class="'.self::post_type_name.'_city">';
-			$html .= $wp_theatre->filter->apply( $this->city, $args['filters'], $this );
+			$html.= $this->apply_template_filters($this->city, $args['filters']);
 			$html .= '</div>';
 			return apply_filters( 'wpt_event_city_html', $html, $this );
 		} else {
@@ -120,7 +127,7 @@ class WPT_Event {
 		if ( $args['html'] ) {
 			$html = '';
 			$html .= '<div class="'.self::post_type_name.'_'.$field.'">';
-			$html .= $wp_theatre->filter->apply( $this->{$field}, $args['filters'], $this );
+			$html.= $this->apply_template_filters($this->{$field}, $args['filters']);
 			$html .= '</div>';
 
 			return apply_filters( 'wpt_event_'.$field.'_html', $html, $field, $this );
@@ -179,18 +186,17 @@ class WPT_Event {
 		if ( $args['html'] ) {
 			$html = '';
 			$html .= '<div class="'.self::post_type_name.'_datetime">';
-
-			/**
-			 * Apply WPT_Filters
-			 * Use the raw datetime when the date filter is active.
-			 */
-			$filters_functions = $wp_theatre->filter->get_functions( $args['filters'] );
-			if ( in_array( 'date', $filters_functions ) ) {
-				$html .= $wp_theatre->filter->apply( $this->datetime[ $field ], $args['filters'], $this );
-			} else {
-				$html .= $this->startdate_html( $args['filters'] );
-				$html .= $this->starttime_html( $args['filters'] );
+			
+			$datetime_html = $this->startdate_html().$this->starttime_html();
+			foreach ($args['filters'] as $filter) {
+				if ('date'==$filter->name) {
+					$datetime_html = $filter->apply_to($this->datetime( array('start'=>$args['start']) ) + get_option( 'gmt_offset' ) * 3600, $this);			
+				} else {
+					$datetime_html = $filter->apply_to($datetime_html, $this);
+				}
 			}
+			$html.= $datetime_html;
+
 			$html .= '</div>';
 			return $html;
 		} else {
@@ -224,7 +230,7 @@ class WPT_Event {
 		if ( $args['html'] ) {
 			$html = '';
 			$html .= '<div class="'.self::post_type_name.'_duration">';
-			$html .= $wp_theatre->filter->apply( $this->duration, $args['filters'], $this );
+			$html .= apply_template_filters($this->duration, $args['filters']);
 			$html .= '</div>';
 			return $html;
 		} else {
@@ -263,12 +269,15 @@ class WPT_Event {
 
 		$html = '<div class="'.self::post_type_name.'_date '.self::post_type_name.'_enddate">';
 
-		$filters_functions = $wp_theatre->filter->get_functions( $filters );
-		if ( in_array( 'date', $filters_functions ) ) {
-			$html .= $wp_theatre->filter->apply( $this->datetime( array( 'start' => false ) + get_option( 'gmt_offset' ) * 3600 ), $filters, $this );
-		} else {
-			$html .= $wp_theatre->filter->apply( $this->enddate(), $filters, $this );
+		$enddate_html = $this->enddate();
+		foreach ($filters as $filter) {
+			if ('date'==$filter->name) {
+				$enddate_html = $filter->apply_to($this->datetime(array( 'start' => false )) + get_option( 'gmt_offset' ) * 3600, $this);	
+			} else {
+				$enddate_html = $filter->apply_to($enddate_html, $this);			
+			}
 		}
+		$html .= $enddate_html;
 
 		$html .= '</div>';
 
@@ -308,12 +317,15 @@ class WPT_Event {
 
 		$html = '<div class="'.self::post_type_name.'_time '.self::post_type_name.'_endtime">';
 
-		$filters_functions = $wp_theatre->filter->get_functions( $filters );
-		if ( in_array( 'date', $filters_functions ) ) {
-			$html .= $wp_theatre->filter->apply( $this->datetime( array( 'start' => false ) + get_option( 'gmt_offset' ) * 3600 ), $filters, $this );
-		} else {
-			$html .= $wp_theatre->filter->apply( $this->endtime(), $filters, $this );
+		$endtime_html = $this->endtime();
+		foreach ($filters as $filter) {
+			if ('date'==$filter->name) {
+				$endtime_html = $filter->apply_to($this->datetime(array( 'start' => false )) + get_option( 'gmt_offset' ) * 3600, $this);	
+			} else {
+				$endtime_html = $filter->apply_to($endtime_html, $this);			
+			}
 		}
+		$html .= $endtime_html;
 
 		$html .= '</div>';
 
@@ -567,7 +579,7 @@ class WPT_Event {
 		if ( $args['html'] ) {
 			$html = '';
 			$html .= '<div class="'.self::post_type_name.'_remark">';
-			$html .= $wp_theatre->filter->apply( $this->remark, $args['filters'], $this );
+			$html .= $this->apply_template_filters($this->remark, $args['filters']);
 			$html .= '</div>';
 			return apply_filters( 'wpt_event_remark_html', $html, $this );
 		} else {
@@ -949,7 +961,6 @@ class WPT_Event {
 		'filters' => array()
 		);
 		$args = wp_parse_args( $args, $defaults );
-
 		if ( ! isset($this->title) ) {
 			$this->title = apply_filters( 'wpt_event_title',$this->production()->title(),$this );
 		}
@@ -957,7 +968,7 @@ class WPT_Event {
 		if ( $args['html'] ) {
 			$html = '';
 			$html .= '<div class="'.self::post_type_name.'_title">';
-			$html .= $wp_theatre->filter->apply( $this->title, $args['filters'], $this );
+			$html.= $this->apply_template_filters($this->title(), $args['filters']);
 			$html .= '</div>';
 			return apply_filters( 'wpt_event_title_html', $html, $this );
 		} else {
@@ -988,7 +999,7 @@ class WPT_Event {
 
 		if ( $args['html'] ) {
 			$html = '<div class="'.self::post_type_name.'_venue">';
-			$html .= $wp_theatre->filter->apply( $this->venue, $args['filters'], $this );
+			$html .= $this->apply_template_filters($this->venue(), $args['filters']);
 			$html .= '</div>';
 			return apply_filters( 'wpt_event_venue_html', $html, $this );
 		} else {
@@ -1010,63 +1021,21 @@ class WPT_Event {
 	 * }
 	 * @return string HTML.
 	 */
-	function html($args = array()) {
-		$defaults = array(
-			'template' => apply_filters(
-				'wpt_event_template_default',
-				'{{thumbnail|permalink}} {{title|permalink}} {{remark}} {{datetime}} {{location}} {{tickets}}'
-			),
-		);
-		$args = wp_parse_args( $args, $defaults );
+	function html($template='') {
+		if (is_array($template)) {
+			$defaults = array(
+				'template' => '',
+			);
+			$args = wp_parse_args( $template, $defaults );
+			$template = $args['template'];
+		}
 
 		$classes = array();
 		$classes[] = self::post_type_name;
 
-		$template = new WPT_Template($args['template']);
-		foreach($template->placeholders as $placeholder) {
-
-			$field = $placeholder->get_field();
-			$field_args = $placeholder->get_field_args();
-
-			$replacement_args = array(
-				'html'=>true, 
-				'filters'=>$placeholder->get_filters(),
-			);
-			
-			switch ( $field ) {
-				case 'datetime':
-				case 'duration':
-				case 'location':
-				case 'remark':
-				case 'title':
-					$placeholder->set_replacement($this->{$field}($replacement_args));
-					break;
-				case 'thumbnail':
-					if (!empty($field_args[0])) {
-						$replacement_args['size'] = $field_args[0];
-					}
-				case 'categories':
-				case 'content':
-				case 'excerpt':
-					$placeholder->set_replacement($this->production()->{$field}($replacement_args));
-					break;
-				case 'date':
-				case 'startdate':
-				case 'enddate':
-				case 'time':
-				case 'starttime':
-				case 'endtime':
-				case 'prices':
-				case 'tickets':
-				case 'tickets_url':
-					$placeholder->set_replacement($this->{$field.'_html'}($replacement_args['filters']));
-					break;
-				default:
-					$placeholder->set_replacement($this->custom($field,$replacement_args));
-			}
-		}
-		$html = $template->get_html();
-
+		$template = new WPT_Event_Template($this, $template);
+		$html = $template->get_merged();
+		
 		// Tickets
 		if ( false !== strpos( $html,'{{tickets}}' ) ) {
 			$tickets_args = array(
@@ -1183,12 +1152,15 @@ class WPT_Event {
 
 		$html = '<div class="'.self::post_type_name.'_date '.self::post_type_name.'_startdate">';
 
-		$filters_functions = $wp_theatre->filter->get_functions( $filters );
-		if ( in_array( 'date', $filters_functions ) ) {
-			$html .= $wp_theatre->filter->apply( $this->datetime() + get_option( 'gmt_offset' ) * 3600, $filters, $this );
-		} else {
-			$html .= $wp_theatre->filter->apply( $this->startdate(), $filters, $this );
+		$startdate_html = $this->startdate();
+		foreach ($filters as $filter) {
+			if ('date'==$filter->name) {
+				$startdate_html = $filter->apply_to($this->datetime() + get_option( 'gmt_offset' ) * 3600, $this);			
+			} else {
+				$startdate_html = $filter->apply_to($startdate_html, $this);			
+			}
 		}
+		$html .= $startdate_html;
 
 		$html .= '</div>';
 
@@ -1224,12 +1196,15 @@ class WPT_Event {
 
 		$html = '<div class="'.self::post_type_name.'_time '.self::post_type_name.'_starttime">';
 
-		$filters_functions = $wp_theatre->filter->get_functions( $filters );
-		if ( in_array( 'date', $filters_functions ) ) {
-			$html .= $wp_theatre->filter->apply( $this->datetime() + get_option( 'gmt_offset' ) * 3600, $filters, $this );
-		} else {
-			$html .= $wp_theatre->filter->apply( $this->starttime(), $filters, $this );
+		$starttime_html = $this->starttime();
+		foreach ($filters as $filter) {
+			if ('date'==$filter->name) {
+				$starttime_html = $filter->apply_to($this->datetime() + get_option( 'gmt_offset' ) * 3600, $this);	
+			} else {
+				$starttime_html = $filter->apply_to($starttime_html, $this);			
+			}
 		}
+		$html .= $starttime_html;
 
 		$html .= '</div>';
 
