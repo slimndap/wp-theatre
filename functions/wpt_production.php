@@ -597,8 +597,6 @@ class WPT_Production {
 			$template = $args['template'];
 		}
 
-		$args = wp_parse_args( $args, $defaults );
-
 		$classes = array();
 		$classes[] = self::post_type_name;
 
