@@ -70,6 +70,22 @@
 		}
 
 		/**
+		 * Adds an error to the importer stats.
+		 *
+		 * Use this helper function to register an error while processing your feed.
+		 * 
+		 * @since	0.12.1
+		 * @param	string	$error	The error message.
+		 * @return	void
+		 */
+		function add_error($error) {
+			if (empty($error)) {
+				$error = 'Undefined error.';
+			}
+			$this->stats['errors'][] = $error;				
+		}
+
+		/**
 		 * Created a new event.
 		 *
 		 * Use this helper function to create a new event while processing your feed.
@@ -434,6 +450,7 @@
 			$this->stats['events_updated'] = 0;
 			$this->stats['productions_created'] = 0;
 			$this->stats['productions_updated'] = 0;
+			$this->stats['errors'] = array();
 			
 			$this->mark_upcoming_events();
 			
@@ -848,6 +865,25 @@
 					echo '<tr>';
 					echo '<th>'.__('Duration','wp_theatre').'</th>';
 					echo '<td>'.human_time_diff($this->stats['start'], $this->stats['end']).'</td>';				
+					echo '</tr>';
+				}
+
+				/**
+				 * Displays import errors, if any errors were registered during processing of the feed.
+				 *
+				 * @since ?
+				 */
+
+				if (!empty($this->stats['errors'])) {
+					$msg = '<p><strong>'.__('Import failed. Please try again, or contact your help desk if the problem persists.','wp_theatre'). '</strong></p>';
+					if (defined('WP_DEBUG') && WP_DEBUG === true) {
+						foreach ($this->stats['errors'] as $error) {
+							$msg .= '<p>'.$error.'</p>';
+						}
+					}
+					echo '<tr>';
+					echo '<th>'.__('Error','wp_theatre').'</th>';
+					echo '<td>'.$msg.'</td>';				
 					echo '</tr>';
 				}
 			}
