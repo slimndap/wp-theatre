@@ -92,8 +92,11 @@ Release Date: July 3rd, 2015
 * Enhancements
     * You can adjust the slug for production detail pages in the permalink settings. Your URLs can now look like `http://example.com/show/billy-elliot` or `http://example.com/concert/kurt-vile`.
     * New template placeholders for events: `{{starttime}}`, `{{startdate}}`, `{{endtime}}` and `{{enddate}}`. Thanks [jbrandligt](https://github.com/jbrandligt)!
+    * You can choose the size for your thumbnail placholder: `{{thumbnail('large')}}`.
     * The URLs for your ticket pages look nicer, if you use the iframe option: `http://example.com/tickets/billy-elliot/123`.
+    * Added new filters to manipulate the output of the Theater Production widget and the Theater Events widget.
     * Updated the German translation. Thanks [henk23](https://github.com/henk23)!
+    * Added error messages to the import status. Thans [Menno](https://www.linkedin.com/in/mennoluitje)!
 
 * Clean up
     * Productions no longer have an archive page on `http://example.com/productions/`. 
@@ -258,6 +261,9 @@ Release Date: December 29th, 2014
 * Basic version of the plugin.
 
 == Upgrade Notice ==
+
+= 0.12.1 =
+Adds new placeholders, nicer URLs, removes clutter and fixes some small bugs.
 
 = 0.12 =
 Adds new placeholders, nicer URLs, removes clutter and fixes some small bugs.

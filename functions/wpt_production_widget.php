@@ -26,8 +26,9 @@ class WPT_Production_Widget extends WP_Widget {
 	 * @since 	0.12.1	Added filters.
 	 * @since 	0.12.1	Fixed PHP warnings. See #146.
 	 *
-	 * @param 	array 	$args
-	 * @param 	array	$instance
+	 * @param 	array 	$args		Display arguments including before_title, after_title,
+	 *                        		before_widget, and after_widget.
+	 * @param 	array	$instance	The settings for the particular instance of the widget.
 	 * @return 	void
 	 */
 	public function widget( $args, $instance ) {
@@ -47,12 +48,13 @@ class WPT_Production_Widget extends WP_Widget {
 			$production = new WPT_Production( $instance['production'] );
 
 			/**
-			 * title
+			 * Filter the widget title.
 			 * 
-			 * (default value: apply_filters( 'wpt/production/widget/title', $instance['title'], $args, $instance ))
-			 * 
-			 * @var string
-			 * @access public
+			 * @since	0.12.1
+			 * @param	string	$title	The widget title.
+			 * @param 	array 	$args		Display arguments including before_title, after_title,
+			 *                        		before_widget, and after_widget.
+			 * @param 	array	$instance	The settings for the particular instance of the widget.
 			 */
 			$title = apply_filters( 'wpt/production/widget/title', $instance['title'], $args, $instance );
 			if ( ! empty($title) ) {
@@ -60,38 +62,22 @@ class WPT_Production_Widget extends WP_Widget {
 			}
 
 			/**
-			 * template
+			 * Filter the production template.
 			 * 
-			 * (default value: apply_filters( 'wpt/production/widget/template', $instance['template'], $args, $instance ))
-			 * 
-			 * @var string
-			 * @access public
+			 * @since	0.12.1
+			 * @param	string	$template	The production template.
+			 * @param	array	$args
+			 * @param	array	$instance
 			 */
 			$template = apply_filters( 'wpt/production/widget/template', $instance['template'], $args, $instance );
 
-			$production_args = array();
-			if ( ! empty($template) ) {
-				$production_args['template'] = $template;
-			};
-			/**
-			 * production_args
-			 * 
-			 * (default value: apply_filters( 'wpt/production/widget/production/html/args', $production_args, $production ))
-			 * 
-			 * @var string
-			 * @access public
-			 */
-			$production_args = apply_filters( 'wpt/production/widget/production/html/args', $production_args, $production );
-
-			$html_production = $production->html( $production_args );
+			$html_production = $production->html( $template );
 			
 			/**
-			 * html_production
+			 * Filter the HTML of the production.
 			 * 
-			 * (default value: apply_filters( 'wpt/production/widget/production/html', $html_production, $production ))
-			 * 
-			 * @var string
-			 * @access public
+			 * @since	0.12.1
+			 * @param	string	$html_production	The HTML of the production.
 			 */
 			$html_production = apply_filters( 'wpt/production/widget/production/html', $html_production, $production );
 
@@ -101,12 +87,13 @@ class WPT_Production_Widget extends WP_Widget {
 		}
 
 		/**
-		 * html
-		 * 
-		 * (default value: apply_filters( 'wpt/production/widget', $html, $args, $instance ))
-		 * 
-		 * @var string
-		 * @access public
+		 * Filter the HTML of the widget.
+		 *
+		 * @since	0.12.1
+		 * @param	string	$html		The HTML of the widget.
+		 * @param 	array 	$args		Display arguments including before_title, after_title,
+		 *                        		before_widget, and after_widget.
+		 * @param 	array	$instance	The settings for the particular instance of the widget.
 		 */
 		$html = apply_filters( 'wpt/production/widget', $html, $args, $instance );
 
