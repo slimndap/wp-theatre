@@ -57,7 +57,7 @@ class WPT_Event_Template extends WPT_Template {
 				break;
 			case 'thumbnail':
 				if ( ! empty($args[0]) ) {
-					$replacement_args['size'] = $args[0];
+					$value_args['size'] = $args[0];
 				}
 			case 'categories':
 			case 'content':
