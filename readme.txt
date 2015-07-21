@@ -262,6 +262,9 @@ Release Date: December 29th, 2014
 
 == Upgrade Notice ==
 
+= 0.12.2 =
+Fix: Thumbnail sizes were not working in event listings.
+
 = 0.12.1 =
 You can now choose the size for your thumbnail placeholder like this: {{thumbnail('large')}}.
 
