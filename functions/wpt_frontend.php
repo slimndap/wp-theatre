@@ -83,7 +83,7 @@ class WPT_Frontend {
 	}
 
 	/**
-	 * Adds events listing to the content of a productio page.
+	 * Adds events listing to the content of a production page.
 	 * 
 	 * @since 	?
 	 * @since 	0.11	Event are now only added to the main post content.
@@ -215,7 +215,7 @@ class WPT_Frontend {
 		 */
 		$defaults = apply_filters( 'wpt/frontend/shortcode/events/defaults', $defaults);
 
-		$atts = shortcode_atts( $defaults, $atts );
+		$atts = shortcode_atts( $defaults, $atts, 'wpt_events');
 
 		if (!empty($atts['paginateby'])) {
 			$fields = explode(',',$atts['paginateby']);
