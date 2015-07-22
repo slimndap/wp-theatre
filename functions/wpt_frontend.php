@@ -2,6 +2,7 @@
 class WPT_Frontend {
 	function __construct() {
 		add_action('init', array($this,'init'));
+		add_action('template_redirect', array($this,'template_redirect'));
 		add_action('wp_head', array($this,'wp_head'));
 
 		add_filter('the_content', array($this, 'the_content'));
@@ -45,6 +46,39 @@ class WPT_Frontend {
 		) {
 			wp_enqueue_script('thickbox');
 			wp_enqueue_style('thickbox', includes_url('/js/thickbox/thickbox.css'), null, $wpt_version);			
+		}
+	}
+
+
+	/**
+	 * Redirect any visits to old style tickets page URLs to the new (0.12) pretty tickets page URLs.
+	 *
+	 * Old: http://example.com/tickets-page/?Event=123
+	 * New: http://example.com/tickets-page/my-event/123
+	 * 
+	 * @since	0.12.?
+	 * @access	public
+	 * @return	void
+	 */
+	public function template_redirect() {
+		global $wp_theatre;
+
+		$theatre_options = $wp_theatre->wpt_tickets_options;
+		if (
+			isset($theatre_options['iframepage']) &&
+			$theatre_options['iframepage'] == get_the_id() &&
+			isset($_GET[__('Event','wp_theatre')])
+		) {
+			// We are on the tickets page, using the old style URL, let's redirect
+			$event = new WPT_Event($_GET[__('Event','wp_theatre')]);
+			if (!empty($event)) {
+				$tickets_url_iframe = $event->tickets_url_iframe();
+				if (!empty($tickets_url_iframe)) {
+					// Redirect, Moved Permanently
+					wp_redirect($tickets_url_iframe, 301);
+					exit();					
+				}
+			}
 		}
 	}
 
