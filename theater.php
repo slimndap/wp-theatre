@@ -5,7 +5,7 @@
 	Plugin URI: http://wordpress.org/plugins/theatre/
 	Description: Turn your Wordpress website into a theater website.
 	Author: Jeroen Schmit, Slim & Dapper
-	Version: 0.12
+	Version: 0.12.2
 	Author URI: http://slimndap.com/
 	Text Domain: wp_theatre
 	Domain Path: /lang
@@ -28,7 +28,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	
-$wpt_version = '0.12';
+$wpt_version = '0.12.2';
 
 class WP_Theatre {
 	function __construct() {
@@ -92,10 +92,25 @@ class WP_Theatre {
 	 */
 	function includes() {
 		require_once(dirname(__FILE__) . '/functions/wpt_listing.php');
+
+		require_once(dirname(__FILE__) . '/functions/template/wpt_template.php');	
+		require_once(dirname(__FILE__) . '/functions/template/wpt_template_placeholder.php');	
+		require_once(dirname(__FILE__) . '/functions/template/wpt_template_placeholder_filter.php');	
+
 		require_once(dirname(__FILE__) . '/functions/wpt_production.php');
+		require_once(dirname(__FILE__) . '/functions/wpt_production_permalink.php');	
+		require_once(dirname(__FILE__) . '/functions/wpt_production_template.php');	
+		require_once(dirname(__FILE__) . '/functions/wpt_production_widget.php');
+
 		require_once(dirname(__FILE__) . '/functions/wpt_productions.php');
+
 		require_once(dirname(__FILE__) . '/functions/wpt_event.php');
+		require_once(dirname(__FILE__) . '/functions/wpt_event_editor.php');	
+		require_once(dirname(__FILE__) . '/functions/wpt_event_template.php');	
+
 		require_once(dirname(__FILE__) . '/functions/wpt_events.php');
+		require_once(dirname(__FILE__) . '/functions/wpt_events_widget.php');
+
 		require_once(dirname(__FILE__) . '/functions/wpt_setup.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_season.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_widget.php');
@@ -106,11 +121,11 @@ class WP_Theatre {
 		require_once(dirname(__FILE__) . '/functions/wpt_listing_page.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_calendar.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_filter.php');	
-		require_once(dirname(__FILE__) . '/functions/wpt_event_editor.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_importer.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_cart.php');	
-		require_once(dirname(__FILE__) . '/functions/wpt_production_permalink.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_bulk_editor.php');	
+
+
 		if (is_admin()) {
 		} else {
 			require_once(dirname(__FILE__) . '/functions/wpt_frontend.php');

@@ -726,8 +726,9 @@
 	 	 * Turn the filter navigation links into pretty URLs when displayed on the listing page.
 	 	 *
 	 	 * @see WPT_Listing::filter_pagination()
+	 	 * @since	?.?
+	 	 * @since	0.12.1	Trailingslashit to avoid an extra redirect.
 	 	 */
-	 	
 	 	function wpt_listing_filter_pagination_url($url) {
 	 		if (
 	 			get_option('permalink_structure') &&
@@ -740,6 +741,7 @@
 		 		} else {
 			 		$url = $this->url($url_parts['query']);		 		
 		 		}
+		 		$url = trailingslashit($url);
 	 		}
 		 	return $url;
 	 	}

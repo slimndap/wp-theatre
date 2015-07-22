@@ -332,29 +332,40 @@ class WPT_Events extends WPT_Listing {
 	protected function get_html_for_page($args=array()) {
 		global $wp_query;
 		
+		$html = '';
+		
 		/*
 		 * Check if the user used the page navigation to select a particular page.
 		 * Then revert to the corresponding WPT_Events::get_html_for_* method.
 		 * @see WPT_Events::get_html_page_navigation().
 		 */
 		
-		if (!empty($wp_query->query_vars['wpt_year']))
-			return $this->get_html_for_year($wp_query->query_vars['wpt_year'], $args);
-			
-		if (!empty($wp_query->query_vars['wpt_month']))
-			return $this->get_html_for_month($wp_query->query_vars['wpt_month'], $args);
-			
-		if (!empty($wp_query->query_vars['wpt_day']))
-			return $this->get_html_for_day($wp_query->query_vars['wpt_day'], $args);			
-			
-		if (!empty($wp_query->query_vars['wpt_category'])) 
-			return $this->get_html_for_category($wp_query->query_vars['wpt_category'], $args);
-			
-		/*
-		 * The user didn't select a page.
-		 * Show the full listing.
+		if (!empty($wp_query->query_vars['wpt_year'])) {
+			$html = $this->get_html_for_year($wp_query->query_vars['wpt_year'], $args);
+		} elseif (!empty($wp_query->query_vars['wpt_month'])) {
+			$html = $this->get_html_for_month($wp_query->query_vars['wpt_month'], $args);
+		} elseif (!empty($wp_query->query_vars['wpt_day'])) {
+			$html = $this->get_html_for_day($wp_query->query_vars['wpt_day'], $args);			
+		} elseif (!empty($wp_query->query_vars['wpt_category'])) {
+			$html = $this->get_html_for_category($wp_query->query_vars['wpt_category'], $args);
+		} else {
+			/*
+			 * The user didn't select a page.
+			 * Show the full listing.
+			 */
+			$html = $this->get_html_grouped($args);
+		}
+		
+		/**
+		 * Filter the HTML for a page in a listing.
+		 * 
+		 * @since	0.12.2
+		 * @param	string	$html_group	The HTML for this page.
+		 * @param	array	$args		The arguments for the HTML of this listing.
 		 */
-		return $this->get_html_grouped($args);
+		$html = apply_filters('wpt/events/html/page', $html, $args);
+
+		return $html;
 	}
 
 	/**
@@ -435,13 +446,25 @@ class WPT_Events extends WPT_Listing {
 			default:
 				$events = $this->get($args);
 				$events = $this->preload_events_with_productions($events);
+				$html_group = '';
 				foreach ($events as $event) {
 					$event_args = array();
 					if (!empty($args['template'])) {
 						$event_args = array('template'=>$args['template']);
 					}
-					$html.= $event->html($event_args);
-				}					
+					$html_group.= $event->html($event_args);
+				}
+				
+				/**
+				 * Filter the HTML for a group in a listing.
+				 * 
+				 * @since	0.12.2
+				 * @param	string	$html_group	The HTML for this group.
+				 * @param	array	$args		The arguments for the HTML of this listing.
+				 */
+				$html_group = apply_filters('wpt/events/html/grouped/group', $html_group, $args);
+				
+				$html.= $html_group;	
 		}
 		return $html;
 	}

@@ -70,10 +70,11 @@
 		}
 
 		/**
+		 * Adds an error to the importer stats.
+		 *
 		 * Use this helper function to register an error while processing your feed.
 		 * 
-		 * @since	?
-		 * @access	public
+		 * @since	0.12.1
 		 * @param	string	$error	The error message.
 		 * @return	void
 		 */
