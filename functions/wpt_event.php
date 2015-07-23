@@ -1173,7 +1173,7 @@ class WPT_Event {
 	 * Gets the event starttime.
 	 *
 	 * @since	0.12
-	 * @return	string The even starttime.
+	 * @return	string The event starttime.
 	 */
 	function starttime() {
 		$starttime = date_i18n(
