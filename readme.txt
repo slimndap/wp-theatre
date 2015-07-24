@@ -62,6 +62,13 @@ If you are a musician then your band is a _production_ and your gigs are the _ev
 
 For a sports club your teams are the _productions_ and the games are the _events_.
 
+== Screenshots ==
+
+1. Manage events in the Wordpress admin.
+2. The event editor.
+3. Manage events in the Wordpress admin
+4. Your upcoming events listed on your website.
+5. Event details.
 
 == Frequently Asked Questions ==
 
