@@ -1,13 +1,13 @@
 === Theater for WordPress ===
 Contributors: slimndap
-Tags: theatre, stage, venue, events, shows, concerts, tickets, ticketing, sports, performances, calendar, workshops, theater, cinema
+Tags: theatre, stage, venue, events, shows, concerts, tickets, ticketing, sports, performances, calendar, festival, workshops, theater, cinema
 Requires at least: 3.8
 Tested up to: 4.2
 Stable tag: trunk
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Build a website for your theater, music venue, sports team, cinema or your rockband! Add upcoming events and ticketing to your WordPress website. 
+A free plugin to publish your events on a WordPress website. Perfect for theaters, clubs, cinemas and festivals.
 
 == Description ==
 A WordPress plugin to manage events with all necessary shortcodes and widgets for your theater.
@@ -20,7 +20,7 @@ __Shortcodes__
 
 Theater comes with several shortcodes and widgets to show off your events. See the [documentation](https://github.com/slimndap/wp-theatre/wiki/Shortcodes) for an overview.
 
-__Available add-ons__
+__Available extensions__
 
 * [Ticketmatic](http://slimndap.com/product/ticketmatic-for-wordpress/)
 * [ActiveTickets](http://www.slimndap.com/product/activetickets-wordpress/)
@@ -37,30 +37,49 @@ __Contributors welcome__
 
 * Submit a [pull request on GitHub](https://github.com/slimndap/wp-theatre)
 
-__Author__
-
-* [Jeroen Schmit, Slim & Dapper](http://slimndap.com)
-
 == Installation ==
 
 This section describes how to install the plugin and get it working.
 
-1. Install the plugin.
-1. Create your first event by clicking on the Theater-menu.
+__Installation__
 
-__Productions and events__
+1. Go to _Plugins_ → _Add new_.
+1. Search for 'Theater'.
+1. Look for the _Theater for WordPress_ plugin and click on _Install now_.
+1. Wait for the next screen to load and click on _Activate Plugin_.
 
-Theater uses _productions_ to group your _events_. 
+__Add events__
 
-Each production has it's own page and can have one or more events. 
+Theater for Wordpress uses _productions_ to group your _events_. Each production can have one or more events.
 
-Events don't have their own pages. They only appear on pages with event listings.
+Add your first event:
 
-So if you run a theater then 'The Sound Of Music' is a _production_ and the show this weekend is an _event_.
+1. Go to _Theater_ → _Productions_ → _Add new_.
+1. Enter a title and description for your production.
+1. Scroll down and click on _Add a new event_.
+1. Enter a start time that is in the future.
+1. Enter the other details for your event.
+1. Click on _Save event_.
+1. Add a featured image (if your theme supports it).
+1. Click on _Publish_.
 
-If you are a musician then your band is a _production_ and your gigs are the _events_.
+__Show your events__
 
-For a sports club your teams are the _productions_ and the games are the _events_.
+You can show your upcoming events on a page.
+
+1. Go to _Pages_ → _Add new_.
+1. Give your page a title (eg. 'Upcoming events').
+1. Click on _Publish_.
+1. Go to _Theater_ → _Settings_ → _Display_.
+1. Set _Page to show upcoming events on_ to the page that you just created.
+1. Set _Position on page_ to _show above content_.
+1. Click on _Save Changes_.
+1. Go to _Theater_ → _Settings_ → _Style_.
+1. Check _Enable built-in Theater stylesheet_.
+1. Click on _Save Changes_.
+
+The page that you created now shows your upcoming events.
+
 
 == Screenshots ==
 

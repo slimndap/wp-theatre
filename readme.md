@@ -1,82 +1,57 @@
 [![Build Status](https://travis-ci.org/slimndap/wp-theatre.svg?branch=master)](https://travis-ci.org/slimndap/wp-theatre)
 
-#Theatre for Wordpress
+#Theater for Wordpress
 
 
 ## Events vs. productions
 
-Theatre uses _productions_ to group your individual _events_. 
-Each production has it's own page and can have one or more events. 
-Events don't have their own pages. They only appear on pages with event listings.
+Theater for Wordpress uses _productions_ to group your _events_. Each production can have one or more events.
 
 So if you run a theatre then 'The Sound Of Music' is a _production_ and the show this weekend is an _event_.
-If you're a musician then your band is a _production_ and your gigs are the _events_.
 
 ## Website owners
 
+This section describes how to install the plugin and get it working.
+
 ### Installation
 
-1. Look for 'theatre' in the Wordpress plugin directory.
-1. Install the Theatre plugin (by Jeroen Schmit, Slim & Dapper).
-1. Activate the plugin.
+1. Go to _Plugins_ → _Add new_.
+1. Search for 'Theater'.
+1. Look for the _Theater for WordPress_ plugin and click on _Install now_.
+1. Wait for the next screen to load and click on _Activate Plugin_.
 
-Your Wordpress admin screen now has a new menu-item in the left column: Theatre.
+### Add events
 
-### Managing your events
 
-Let's add a single event.
+Add your first event:
 
-Make sure that the _Show events on production page._-option is checked on the _Theatre/Settings_ page.
-
-First create a production:
-
-1. Click on _Theatre/Productions_.
-1. Click on _Add new_.
-1. Give your production a title, some content and a featured image.
+1. Go to _Theater_ → _Productions_ → _Add new_.
+1. Enter a title and description for your production.
+1. Scroll down and click on _Add a new event_.
+1. Enter a start time that is in the future.
+1. Enter the other details for your event.
+1. Click on _Save event_.
+1. Add a featured image (if your theme supports it).
 1. Click on _Publish_.
-1. Click on _View post_
 
-You are now looking at your first production. It probably looks exactly like any other post or page.
+### Show your events
 
-1. Edit the event you just created.
-1. In the right column, click on 'New event'.
-1. Set the event date, venue and city. Make sure the event date is a date in the future. Optionally, add an URL for the tickets. 
+You can show your upcoming events on a page.
+
+1. Go to _Pages_ → _Add new_.
+1. Give your page a title (eg. 'Upcoming events').
 1. Click on _Publish_.
-1. Click on the title of your production.
-1. Click on _View post_
+1. Go to _Theater_ → _Settings_ → _Display_.
+1. Set _Page to show upcoming events on_ to the page that you just created.
+1. Set _Position on page_ to _show above content_.
+1. Click on _Save Changes_.
+1. Go to _Theater_ → _Settings_ → _Style_.
+1. Check _Enable built-in Theater stylesheet_.
+1. Click on _Save Changes_.
 
-Your should now see your production with the event details at the bottom!
+The page that you created now shows your upcoming events.
 
-### Upcoming events
 
-To add a listing with all upcoming events to your Wordpress website:
-
-1. Create a new blank page (eg. 'Upcoming events').
-1. Place `[wp_theatre_events]` in the content.
-1. Publish the page and view it.
-1. Done!
-
-It is also possible to paginate the listing by month by altering the shortcode a bit:
-
-    [wp_theatre_events paginateby="month"]
-
-#### Widgets
-
-Theatre also comes with two widgets to show your upcoming events in the sidebar:
-
-* Theatre Events: a list of upcoming events. 
-* Theatre Productions: a list of productions with upcoming events. 
-
-You can limit the size of the lists in the corresponding widget's settings.
-
-### Production pages
-
-Production pages look exactly the same as regular post pages. However, you can add a listing of all the events for the current production to the page. 
-
-You have two options:
-
-* Check 'Show events on production page' on the Theatre settings page in the Wordpress admin. The listing is added to the bottom of the content of the production.
-* Add the `[wpt_production_events]` shortcode to the content of the production.
 
 ## Theme developers
 
