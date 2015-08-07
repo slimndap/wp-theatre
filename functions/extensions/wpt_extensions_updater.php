@@ -6,7 +6,7 @@
  * Extensions from the Theater for Wordpress store require a license key for updates.
  * User can enter and activate their license keys on the 'licenses' tab on the settings page.
  *
- * @since 	0.13
+ * @since 	0.12.3
  */
 class WPT_Extensions_Updater {
 
@@ -27,7 +27,7 @@ class WPT_Extensions_Updater {
 	 *
 	 * Triggered by the 'Activate License' button on the settings page.
 	 *
-	 * @since 	0.13
+	 * @since 	0.12.3
 	 * @return 	void
 	 */
 	function activate_licenses() {
@@ -61,7 +61,7 @@ class WPT_Extensions_Updater {
 	/**
 	 * Adds the 'Licenses' tab to the Theater settings page.
 	 *
-	 * @since	0.13
+	 * @since	0.12.3
 	 * @param	array	$tabs	The current tabs.
 	 * @return	array			The next tabs.
 	 */
@@ -76,7 +76,7 @@ class WPT_Extensions_Updater {
 	/**
 	 * Adds a 'License keys' section to the 'Licenses' tab.
 	 *
-	 * @since	0.13
+	 * @since	0.12.3
 	 * @return 	void
 	 */
 	public function add_licenses_section() {
@@ -91,7 +91,7 @@ class WPT_Extensions_Updater {
 	/**
 	 * Adds a licence key settings field for every extensions to the 'License Keys' section.
 	 *
-	 * @since	0.13
+	 * @since	0.12.3
 	 * @return 	void
 	 */
 	public function add_licenses_settings() {
@@ -118,7 +118,7 @@ class WPT_Extensions_Updater {
 	 *
 	 * The EDD Plugin Updater periodically checks for valid license keys and available updates.
 	 *
-	 * @since	0.13
+	 * @since	0.12.3
 	 * @return 	void
 	 */
 	public function create_plugin_updaters() {
@@ -140,7 +140,7 @@ class WPT_Extensions_Updater {
 	 *
 	 * Triggered by the 'Deactivate License' button on the settings page.
 	 *
-	 * @since 	0.13
+	 * @since 	0.12.3
 	 * @return 	void
 	 */
 	function deactivate_licenses() {
@@ -176,7 +176,7 @@ class WPT_Extensions_Updater {
 	/**
 	 * Gets all extensions that use the updater.
 	 *
-	 * @since	0.13
+	 * @since	0.12.3
 	 * @return 	array	The extensions.
 	 */
 	private function get_extensions() {
@@ -185,7 +185,7 @@ class WPT_Extensions_Updater {
 		 *
 		 * Extensions should use this filter to be included.
 		 *
-		 * @since	0.13
+		 * @since	0.12.3
 		 * @param	array	The current extensions.
 		 */
 		$extensions = apply_filters( 'wpt/extensions/updater/extensions', array() );
@@ -195,7 +195,7 @@ class WPT_Extensions_Updater {
 	/**
 	 * Outputs the license setting HTML.
 	 *
-	 * @since	0.13
+	 * @since	0.12.3
 	 * @param 	array	$args {
 	 *		@type	array {
 	 *			@type	string	$slug		The slug of the extension.
@@ -230,7 +230,7 @@ class WPT_Extensions_Updater {
 	/**
 	 * Loads the EDD Plugin Updater.
 	 *
-	 * @since	0.13
+	 * @since	0.12.3
 	 * @return 	void
 	 */
 	private function load_dependencies() {
