@@ -631,8 +631,7 @@ class WPT_Admin {
 	public function admin_page() {
         ?>
         <div class="wrap">
-            <?php screen_icon(); ?>
-       		<h2><?php echo __('Theater','wp_theatre').' '.__('Settings');?></h2>
+       		<h1><?php echo __('Theater','wp_theatre').' '.__('Settings');?></h1>
             <h2 class="nav-tab-wrapper">
             <?php foreach ($this->tabs as $key=>$val) { ?>
             	<a class="nav-tab <?php echo $key==$this->tab?'nav-tab-active':'';?>" href="?page=wpt_admin&tab=<?php echo $key;?>">
