@@ -66,7 +66,10 @@ class WPT_Extensions_Updater {
 	 * @return	array			The next tabs.
 	 */
 	public function add_settings_tab($tabs) {
-		$tabs['wpt_licenses'] = __( 'Licenses', 'wp_theatre' );
+		$extensions = $this->get_extensions();
+		if (!empty($extensions)) {
+			$tabs['wpt_licenses'] = __( 'Licenses', 'wp_theatre' );		
+		}
 		return $tabs;
 	}
 
