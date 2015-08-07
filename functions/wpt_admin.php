@@ -23,6 +23,7 @@ class WPT_Admin {
 
 		add_filter('wpt/event_editor/fields', array($this, 'add_production_to_event_editor'), 10, 2);
 		
+		add_filter( 'wp_link_query_args', array( $this, 'remove_events_from_link_query' ) );
 		
 		// More hooks (always load, necessary for bulk editing through AJAX)
 		add_filter('request', array($this,'request'));
@@ -794,6 +795,23 @@ class WPT_Admin {
     	$class = empty($_GET['upcoming'])?'':'current';
     	//$views['upcoming'] = '<a href="'.$url.'" class="'.$class.'">'.__('Upcoming','wp_theatre').'</a>';
     	return $views;
+    }
+    
+    /**
+     * Removes events from link query.
+     *
+     * Removes events from the 'link to existing content' section on the 'Insert/edit link' dialog.
+     * 
+     * @since	0.12.3
+     * @param 	array	$query	The current link query.
+     * @return 	array			The updated link query.
+     */
+    public function remove_events_from_link_query($query) {
+	    $key = array_search( WPT_Event::post_type_name, $query['post_type'] );
+	    if( $key ) {
+        	unset( $query['post_type'][$key] );		    
+	    }
+	    return $query;	    
     }
 }
 
