@@ -51,7 +51,7 @@ class WPT_Admin {
 		$this->tabs = array(
 			'wpt_style'=>__('Style','wp_theatre'),
 			'wpt_tickets'=>__('Tickets','wp_theatre'),
-			'wpt_language'=>__('Language','wp_theatre')
+			'wpt_language'=>__('Language','wp_theatre'),
 		);	
 		$this->tabs = apply_filters('wpt_admin_page_tabs',$this->tabs);
 	
