@@ -11,10 +11,13 @@
 class WPT_Extensions_Updater {
 
 	function __construct() {
+		
+		// Add the 'Licenses' tab to the settings page.
 		add_filter( 'wpt_admin_page_tabs',array( $this, 'add_settings_tab' ), 90 );
 		add_filter( 'admin_init', array( $this, 'add_licenses_section' ) );
 		add_filter( 'admin_init', array( $this, 'add_licenses_settings' ) );
 
+		// Manage updates and licenses with the EDD Plugin Updater.
 		add_action( 'admin_init', array( $this, 'create_plugin_updaters' ), 0 );
 		add_action( 'admin_init', array( $this, 'activate_licenses' ) );
 		add_action( 'admin_init', array( $this, 'deactivate_licenses'  ) );
