@@ -288,6 +288,9 @@ Release Date: December 29th, 2014
 
 == Upgrade Notice ==
 
+= 0.12.3 = 
+Fix: Removed events from the 'link to existing content' section on the 'Insert/edit link' dialog.
+
 = 0.12.2 =
 Fix: Thumbnail sizes were not working in event listings.
 
