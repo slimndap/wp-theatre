@@ -182,7 +182,7 @@ class WPT_Extensions_Updater {
 	 * @since	0.12.3
 	 * @return 	array	The extensions.
 	 */
-	private function get_extensions() {
+	public function get_extensions() {
 		/**
 		 * Filter the  extensions that use the updater.
 		 *
