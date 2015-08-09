@@ -122,7 +122,8 @@ Release Date: July 3rd, 2015
     * The URLs for your ticket pages look nicer, if you use the iframe option: `http://example.com/tickets/billy-elliot/123`.
     * Added new filters to manipulate the output of the Theater Production widget and the Theater Events widget.
     * Updated the German translation. Thanks [henk23](https://github.com/henk23)!
-    * Added error messages to the import status. Thans [Menno](https://www.linkedin.com/in/mennoluitje)!
+    * Added error messages to the import status. Thanks [Menno](https://www.linkedin.com/in/mennoluitjes)!
+	* Made it easier for extensions to add functionality to the event editor (0.12.4).
 
 * Clean up
     * Productions no longer have an archive page on `http://example.com/productions/`. 
@@ -131,6 +132,8 @@ Release Date: July 3rd, 2015
 * Bugfixes
 	* Some past events were showing a false tickets status.
 	* It was impossible to clear a value for an event field.
+	* Events were polluting the 'link to existing content' section on the 'Insert/edit link' dialog (0.12.3).
+
 	
 
 = 0.11 =
@@ -287,6 +290,9 @@ Release Date: December 29th, 2014
 * Basic version of the plugin.
 
 == Upgrade Notice ==
+
+= 0.12.4 = 
+Made it easier for extensions to add functionality to the event editor.
 
 = 0.12.3 = 
 Fix: Removed events from the 'link to existing content' section on the 'Insert/edit link' dialog.
