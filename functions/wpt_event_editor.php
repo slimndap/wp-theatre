@@ -51,7 +51,7 @@ class WPT_Event_Editor {
 	 * @since 0.11
 	 */
 	public function enqueue_scripts() {
-		
+
 		wp_localize_script( 'wp_theatre_admin', 'wpt_event_editor_defaults', $this->get_defaults() );
 
 		wp_localize_script(
@@ -145,7 +145,10 @@ class WPT_Event_Editor {
 	 *
 	 * @since	0.11
 	 * @since 	0.12	Added 'language' to defaults.
-	 *					Fixes #135.	
+	 *					Fixes #135.
+	 * @since	0.12.4	Added 'editor' to defaults so it can be used a a global instance for
+	 *					the event editor object. This way the event editor can be referenced
+	 *					from different javascript files (eg. in extensions).
 	 * @access 	private
 	 * @return 	array {
 	 * 		int		$duration			Default duration of an event.
@@ -161,7 +164,7 @@ class WPT_Event_Editor {
 	 */
 	private function get_defaults() {
 
-		$language_parts = explode('-', get_bloginfo('language'));	
+		$language_parts = explode( '-', get_bloginfo( 'language' ) );
 
 		$defaults = array(
 			'duration' => 2 * HOUR_IN_SECONDS,
@@ -171,6 +174,7 @@ class WPT_Event_Editor {
 			'tickets_status' => WPT_Event::tickets_status_onsale,
 			'confirm_delete_message' => __( 'Are you sure that you want to delete this event?', 'wp_theatre' ),
 			'language' => $language_parts[0],
+			'editor' => false,
 		);
 
 		/**
@@ -187,17 +191,42 @@ class WPT_Event_Editor {
 	}
 
 	/**
+	 * Gets the value for a field from the database.
+	 *
+	 * @since	0.12.4
+	 * @param 	array	$field		The field.
+	 * @param 	int 	$event_id	The event.
+	 * @return 	mixed				The value for the field.
+	 */
+	public function get_value($field, $event_id) {
+		if ( ! empty( $field['get']['callback'] ) ) {
+			$value = call_user_func_array( $field['get']['callback'], array( $field, $event_id ) );
+		} else {
+			$value = get_post_meta( $event_id, $field['id'], true );
+		}
+		return $value;
+	}
+
+	/**
 	 * Gets the event editor fields for an event.
 	 *
-	 * @since 0.11
-	 * @access public
-	 * @see WPT_Event_Editor::get_defaults()
-	 * @param int $event_id (default: false)
-	 * @return array {
+	 * @since 	0.11
+	 * @since	0.12.4	Added the 'get' handler.
+	 *
+	 * @see 	WPT_Event_Editor::get_defaults()
+	 * @param 	int 	$event_id (default: false)
+	 *
+	 * @return 	array {
 	 * 		array $field {
 	 *			string	$id		Unique identifier for this field.
 	 *							Should be equal to the meta key for this field.
 	 *			string 	$title	Title of this field, visible to the user.
+	 *			array	$get {
+	 *				Optional. Get handler for this field.
+	 *
+	 *				callback	$callback		Optional. Function that gets the database value of the field.
+	 *											Default array( $this, 'get_value' ).
+	 *			}
 	 *			array	$edit {
 	 *				Optional. Form input of this field.
 	 *
@@ -208,14 +237,14 @@ class WPT_Event_Editor {
 	 *				bool		$disabled		Optional. Activate the 'disabled' attribute of the input.
 	 *											Default <false>.
 	 *				callback	$callback		Optional. Function that return the HTML for the input.
-	 *											Default array( $this, 'get_control' ).
+	 *											Default array( $this, 'get_control_html' ).
 	 *			}
 	 *			array	$save {
 	 *				Optional. Save handler for this field.
 	 *
 	 *				callback	$callback		Optional. Function that saves the $_POST value of the field when you
 	 *											submit the event editor form.
-	 *											Default array( $this, 'get_field' ).
+	 *											Default array( $this, 'save_value' ).
 	 *			}
 	 *	 	}
 	 * }
@@ -277,6 +306,9 @@ class WPT_Event_Editor {
 			array(
 				'id' => '_wpt_event_tickets_price',
 				'title' => __( 'Prices', 'wp_theatre' ),
+				'get' => array(
+					'callback' => array( $this, 'get_prices' ),
+				),
 				'edit' => array(
 					'callback' => array( $this, 'get_control_prices_html' ),
 					'description' => __( 'Place extra prices on a new line.', 'wp_theatre' ),
@@ -417,8 +449,7 @@ class WPT_Event_Editor {
 			}
 
 			if ( is_numeric( $event_id ) ) {
-				$value = get_post_meta( $event_id, $field['id'], true );
-
+				$value = $this->get_value( $field, $event_id );
 				$html .= ' value="'.esc_attr( $value ).'"';
 			}
 
@@ -509,7 +540,7 @@ class WPT_Event_Editor {
 		$html .= '>';
 
 		if ( is_numeric( $event_id ) ) {
-			$values = get_post_meta( $event_id, $field['id'], false );
+			$values = $this->get_value( $field, $event_id );
 			$html .= implode( "\n", $values );
 		}
 
@@ -554,7 +585,7 @@ class WPT_Event_Editor {
 		$tickets_status_options = apply_filters( 'wpt_event_editor_tickets_status_options', $tickets_status_options );
 
 		if ( is_numeric( $event_id ) ) {
-			$value = get_post_meta( $event_id, $field['id'], true );
+			$value = $this->get_value( $field, $event_id );
 		}
 
 		if ( empty( $value ) ) {
@@ -777,6 +808,19 @@ class WPT_Event_Editor {
 
 		return $html;
 
+	}
+
+	/**
+	 * Gets the prices of an event.
+	 *
+	 * @since	0.12.4
+	 * @param 	array	$field		The field.
+	 * @param	int	 	$event_id	The event.
+	 * @return 	array				The prices.
+	 */
+	public function get_prices($field, $event_id) {
+		$values = get_post_meta( $event_id, $field['id'], false );
+		return $values;
 	}
 
 	/**
@@ -1003,16 +1047,19 @@ class WPT_Event_Editor {
 	 * @return 	void
 	 */
 	public function save_prices($field, $event_id, $data) {
-
 		delete_post_meta( $event_id, $field['id'] );
 
 		$key = 'wpt_event_editor_'.$field['id'];
 
-		if ( empty($_POST[ $key ]) ) {
+		if ( empty($data[ $key ]) ) {
 			return;
 		}
 
-		$values = explode( "\r\n",$_POST[ $key ] );
+		$values = $data[ $key ];
+
+		if ( ! is_array( $values ) ) {
+			$values = explode( "\r\n", $values );
+		}
 
 		foreach ( $values as $value ) {
 			if ( '' != $value ) {
