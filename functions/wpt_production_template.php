@@ -54,9 +54,12 @@ class WPT_Production_Template extends WPT_Template {
 
 		switch ( $field ) {
 			case 'thumbnail':
+				$size = 'thumbnail';
 				if ( ! empty($args[0]) ) {
-					$value_args['size'] = $args[0];
+					$size = $args[0];
 				}
+				$value = $this->object->thumbnail_html($size, $filters);
+				break;
 			case 'title':
 			case 'dates':
 			case 'cities':

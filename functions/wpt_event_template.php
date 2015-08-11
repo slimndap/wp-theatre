@@ -56,9 +56,12 @@ class WPT_Event_Template extends WPT_Template {
 				$value = $this->object->{$field}($value_args);
 				break;
 			case 'thumbnail':
+				$size = 'thumbnail';
 				if ( ! empty($args[0]) ) {
-					$value_args['size'] = $args[0];
+					$size = $args[0];
 				}
+				$value = $this->object->production()->thumbnail_html($size, $filters);
+				break;
 			case 'categories':
 			case 'content':
 			case 'excerpt':

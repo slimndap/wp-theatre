@@ -619,7 +619,7 @@ textarea#wpt_custom_css {
   height: 200px;
 }
 .wp-list-table.fixed .column-thumbnail {
-  width: 6em;
+  width: 4em;
 }
 .wp-list-table.fixed .column-thumbnail figure {
   margin: 0;
@@ -628,6 +628,11 @@ textarea#wpt_custom_css {
 .wp-list-table.fixed .column-thumbnail figure img {
   width: 100%;
   height: auto;
+}
+@media (max-width: 782px) {
+  .wp-list-table.fixed .column-thumbnail figure {
+    width: 4em;
+  }
 }
 .wptheatre_prod .row-actions,
 .wp_theatre_event .row-actions {

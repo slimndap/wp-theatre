@@ -555,6 +555,20 @@ class WPT_Admin {
 		return $html;	
 	}
 
+	/**
+	 * Alters the columns of the production admin screen.
+	 * 
+	 * Adds 'thumbnail' and 'dates' columns.
+	 * Removes the 'date' column.
+	 *
+	 * @since 	0.?
+	 * @since	0.12.5	Moved the thumbnail column behind the title column to 
+	 *					better support the new responsive columns of WordPress 4.3.
+	 * 					See: https://core.trac.wordpress.org/ticket/33308
+	 *
+	 * @param 	array	$columns	The current columns.
+	 * @return 	array				The altered columns.
+	 */
 	function manage_wp_theatre_prod_posts_columns($columns) {
 		$new_columns = array();
 		foreach($columns as $key => $value) {
@@ -562,15 +576,14 @@ class WPT_Admin {
 				case 'date' :
 					break;
 				case 'title' :
-					$new_columns['thumbnail'] = __('Thumbnail','wp_theatre');
 					$new_columns[$key] = $value;			
+					$new_columns['thumbnail'] = __('Image','wp_theatre');
 					$new_columns['dates'] = __('Dates','wp_theatre');
 					break;
 				default :
 					$new_columns[$key] = $value;								
 			}
 		}
-
 		return $new_columns;
 	}
 	
@@ -589,7 +602,7 @@ class WPT_Admin {
 		$production = new WPT_Production($post_id);
 		switch($column_name) {
 			case 'thumbnail':
-				echo $production->thumbnail(array('html'=>true));
+				echo $production->thumbnail_html();
 				break;
 			case 'dates':
 				echo $production->dates().'<br />';

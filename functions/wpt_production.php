@@ -435,49 +435,75 @@ class WPT_Production {
 	}
 
 	/**
-	 * Production thumbnail.
+	 * Gets the production thumbnail ID.
 	 * 
-	 * Returns the production thumbnail as an ID or as an HTML element.
-	 * The HTML version includes a link to the production page.
+	 * @since 	0.4
+	 * @since	0.12.5	Deprecated the HTML output.
+	 *					Use @see WPT_Production::thumbnail_html() instead.
 	 *
-	 * @since 0.4
-	 *
-	 * @param array $args {
-	 *     @type bool 		$html 		Return HTML? Default <false>.
-	 *     @type string 	$size 		Either a string keyword (thumbnail, medium, large or full) or 
-	 *									a 2-item array representing width and height in pixels, 
-	 *									e.g. array(32,32). 
-	 * 									Default 'thumbnail'.
-	 *     @type array 		$filters 	Default array().
-	 * }
-	 * @return integer ID or string HTML.
+	 * @return 	int	ID of the thumbnail.
 	 */
-	function thumbnail($args=array()) {
-		global $wp_theatre;
+	function thumbnail($deprecated=array()) {
 		
-		$defaults = array(
-			'html' => false,
-			'size' => 'thumbnail',
-			'filters' => array()
-		);
-		$args = wp_parse_args( $args, $defaults );
-
-		if (!isset($this->thumbnails[$args['size']])) {
-			$this->thumbnails[$args['size']] = get_post_thumbnail_id($this->ID,$args['size']);
-		}	
-	
-		if ($args['html']) {
-			$html = '';
-			$thumbnail = get_the_post_thumbnail($this->ID,$args['size']);					
-			if (!empty($thumbnail)) {
-				$html.= '<figure>';
-				$html.= $this->apply_template_filters($thumbnail, $args['filters']);
-				$html.= '</figure>';
-			}
-			return apply_filters('wpt_production_thumbnail_html', $html, $this);
-		} else {
-			return $this->thumbnails[$args['size']];			
+		if ( ! empty($deprecated['html'] ) ) {
+			$defaults = array(
+				'size' => 'thumbnail',
+				'filters' => array()
+			);
+			$deprecated = wp_parse_args( $deprecated, $defaults );
+			return $this->thumbnail_html($deprecated['size'], $deprecated['filters']);
 		}
+
+		$thumbnail = get_post_thumbnail_id($this->ID);
+		
+		/**
+		 * Filter the production thumbnail ID.
+		 * 
+		 * @since	0.12.5
+		 * @param	int				ID			The production thumbnail ID.
+		 * @param	WPT_Production	$production	The production.
+		 */
+		$thumbnail = apply_filters( 'wpt/production/thumbnail', $thumbnail, $this );
+
+		return $thumbnail;
+	}
+	
+	/**
+	 * Get the production thumbnail HTML.
+	 * 
+	 * @since	0.12.5
+	 * @param 	string 	$size 		The thumbnail size. Default: 'thumbnail'.
+	 * @param 	array 	$filters 	The template filters to apply.
+	 * @return 	string				The production thumbnail HTML.
+	 */
+	function thumbnail_html( $size='thumbnail', $filters=array() ) {
+		
+		$html = '';
+		$thumbnail = get_the_post_thumbnail($this->ID,$size);
+		if (!empty($thumbnail)) {
+			$html.= '<figure>';
+			$html.= $this->apply_template_filters($thumbnail, $filters);
+			$html.= '</figure>';
+		}
+		
+		/**
+		 * Filter the production thumbnail HTML.
+		 * 
+		 * @since	0.12.5
+		 * @param	string			$html		The production thumbnail HTML.
+		 * @param	string			$size		The thumbnail size.
+		 * @param	array			$filters	The template filters to apply.
+		 * @param	WPT_Production	$production	The production.
+		 */
+		$html = apply_filters( 'wpt/production/thumbnail/html/size='.$size, $html, $filters, $this );
+		$html = apply_filters( 'wpt/production/thumbnail/html', $html, $size, $filters, $this );
+		
+		/**
+		 * @deprecated	0.12.5
+		 */
+		$html = apply_filters( 'wpt_production_thumbnail_html', $html, $this);
+
+		return $html;
 	}
 
 	/**
