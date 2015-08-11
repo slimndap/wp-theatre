@@ -2,7 +2,7 @@
 Contributors: slimndap
 Tags: theatre, stage, venue, events, shows, concerts, tickets, ticketing, sports, performances, calendar, festival, workshops, theater, cinema
 Requires at least: 3.8
-Tested up to: 4.2
+Tested up to: 4.3
 Stable tag: trunk
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -290,6 +290,9 @@ Release Date: December 29th, 2014
 * Basic version of the plugin.
 
 == Upgrade Notice ==
+
+= 0.12.5 =
+Moved the thumbnail column on the production admin screen behind the title column to better support the new responsive columns of WordPress 4.3. 
 
 = 0.12.4 = 
 Made it easier for extensions to add functionality to the event editor.
