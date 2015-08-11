@@ -22,6 +22,8 @@ Theater comes with several shortcodes and widgets to show off your events. See t
 
 __Available extensions__
 
+* [Events Slider](http://theater.slimndap.com/downloads/events-slider-theater/) – Show your events in a touch enabled and responsive slider.
+* [Event Duplicator](http://theater.slimndap.com/downloads/event-duplicator-for-theater/) – This free extension adds a new action to the event editor that instantly duplicates the event. Very helpful if your need to enter a lot of events at once.
 * [Ticketmatic](http://slimndap.com/product/ticketmatic-for-wordpress/)
 * [ActiveTickets](http://www.slimndap.com/product/activetickets-wordpress/)
 
