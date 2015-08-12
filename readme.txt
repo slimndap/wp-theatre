@@ -135,9 +135,9 @@ Release Date: July 3rd, 2015
 	* Some past events were showing a false tickets status.
 	* It was impossible to clear a value for an event field.
 	* Events were polluting the 'link to existing content' section on the 'Insert/edit link' dialog (0.12.3).
-
+	* Fixed a timezone problem with the `{{datetime}}` template tag (0.12.6).
+	* Fixed a lightbox problem with themes that don't properly support screen-reader texts (0.12.6).
 	
-
 = 0.11 =
 
 Release Date: May 30th, 2015
@@ -292,6 +292,9 @@ Release Date: December 29th, 2014
 * Basic version of the plugin.
 
 == Upgrade Notice ==
+
+= 0.12.6 =
+Fixes a timezone problem with the {{datetime}} template tag and a lightbox problem with themes that don't properly support screen-reader texts.
 
 = 0.12.5 =
 Moved the thumbnail column on the production admin screen behind the title column to better support the new responsive columns of WordPress 4.3. 
