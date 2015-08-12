@@ -63,6 +63,19 @@
 .wpt_calendar .wpt_month tr td.trailing {
   color: rgba(0, 0, 0, 0.1);
 }
+/*
+ * Hide the screen-reader text in the close button of the tickets lightbox.
+ * Necessary for themes that don't properly support screen-reader text.
+ * See: https://make.wordpress.org/accessibility/2015/02/09/hiding-text-for-screen-readers-with-wordpress-core/
+ * See: https://github.com/slimndap/wp-theatre/issues/160
+ */
+#TB_closeAjaxWindow .screen-reader-text {
+  clip: rect(1px, 1px, 1px, 1px);
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+}
 .wpt_productions.wpt_events_without_thumbnail .wp_theatre_event > *,
 .wpt_events.wpt_events_without_thumbnail .wp_theatre_event > *,
 .wpt_productions.wpt_productions_without_thumbnail .wp_theatre_event > *,

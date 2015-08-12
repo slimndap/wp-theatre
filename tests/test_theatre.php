@@ -1275,7 +1275,7 @@ class WPT_Test extends WP_UnitTestCase {
 	}
 	
 	/**
-	 * Test is relative date filters use the right time offset.
+	 * Test if relative date filters use the right time offset.
 	 *
 	 * Tricky situation: displaying all events that start today.
 	 * Solution: use 'Yesterday 23:59' for the 'start' argument.

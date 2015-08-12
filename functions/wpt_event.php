@@ -190,7 +190,7 @@ class WPT_Event {
 			$datetime_html = $this->startdate_html().$this->starttime_html();
 			foreach ($args['filters'] as $filter) {
 				if ('date'==$filter->name) {
-					$datetime_html = $filter->apply_to($this->datetime( array('start'=>$args['start']) ) + get_option( 'gmt_offset' ) * 3600, $this);			
+					$datetime_html = $filter->apply_to($this->datetime( array('start'=>$args['start']) ), $this);			
 				} else {
 					$datetime_html = $filter->apply_to($datetime_html, $this);
 				}
