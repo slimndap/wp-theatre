@@ -159,14 +159,14 @@ class WPT_Test_Importer extends WP_UnitTestCase {
 
 		$importer->execute();
 
-		// remove an event from the feed.
-		array_shift( $importer->feed );
+		// Remove an event from the first production in the feed.
+		array_shift( $importer->feed[0] );
 
 		$importer->execute();
 
 		$this->publish_all();
 
-		$this->assertCount( 2, $this->wp_theatre->events->get() );
+		$this->assertCount( 3, $this->wp_theatre->events->get() );
 
 	}
 
