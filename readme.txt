@@ -14,7 +14,7 @@ A WordPress plugin to manage events with all necessary shortcodes and widgets fo
 
 
 > <strong>Newsletter</strong><br>
-> This plugin is in active development and updated frequently. Please [sign-up for the newsletter](http://www.slimndap.com/theater-wordpress-newsletter/) to stay informed about upcoming features and successful showcases.
+> This plugin is in active development and updated frequently. Please [sign-up for the newsletter](http://theater.slimndap.com/newsletter?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt) to stay informed about upcoming features and successful showcases.
 
 __Shortcodes__
 
@@ -22,8 +22,8 @@ Theater comes with several shortcodes and widgets to show off your events. See t
 
 __Available extensions__
 
-* [Events Slider](http://theater.slimndap.com/downloads/events-slider-theater/) – Show your events in a touch enabled and responsive slider.
-* [Event Duplicator](http://theater.slimndap.com/downloads/event-duplicator-for-theater/) – This free extension adds a new action to the event editor that instantly duplicates the event. Very helpful if your need to enter a lot of events at once.
+* [Events Slider](http://theater.slimndap.com/downloads/events-slider-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt) – Show your events in a touch enabled and responsive slider.
+* [Event Duplicator](http://theater.slimndap.com/downloads/event-duplicator-for-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt) – This free extension adds a new action to the event editor that instantly duplicates the event. Very helpful if your need to enter a lot of events at once.
 * [Ticketmatic](http://slimndap.com/product/ticketmatic-for-wordpress/)
 * [ActiveTickets](http://www.slimndap.com/product/activetickets-wordpress/)
 
