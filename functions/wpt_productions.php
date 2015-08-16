@@ -205,14 +205,26 @@ class WPT_Productions extends WPT_Listing {
 		
 				$productions = $this->get($args);
 				$productions = $this->preload_productions_with_events($productions);
-				
+				$html_group = '';
 				foreach ($productions as $production) {
 					$production_args = array();
 					if (!empty($args['template'])) {
 						$production_args = array('template'=>$args['template']);
 					}
-					$html.= $production->html($production_args);
-				}					
+					$html_group.= $production->html($production_args);
+				}
+				
+				/**
+				 * Filter the HTML for a group in a listing.
+				 * 
+				 * @since	0.12.7
+				 * @param	string	$html_group	The HTML for this group.
+				 * @param	array	$args		The arguments for the HTML of this listing.
+				 */
+				$html_group = apply_filters('wpt/productions/html/grouped/group', $html_group, $args);
+				
+				$html.= $html_group;
+										
 		}
 		return $html;
 	}

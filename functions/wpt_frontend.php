@@ -397,6 +397,14 @@ class WPT_Frontend {
 			$atts['cat'] = implode( ',',$categories );
 		}
 
+		/**
+		 * Filter the filters for the productions listing.
+		 *
+		 * @since 	0.12.7
+		 * @param 	array 	$atts	The current filters, based on the shortcode attributes.
+		 */
+		$atts = apply_filters( 'wpt/frontend/shortcode/productions/filters', $atts );
+
 		/*
 		 * Base the $args parameter for the transient on $atts and $wp_query,
 		 * to create unique keys for every page of paginated lists.
