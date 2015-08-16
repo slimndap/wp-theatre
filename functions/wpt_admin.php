@@ -24,6 +24,8 @@ class WPT_Admin {
 		add_filter('wpt/event_editor/fields', array($this, 'add_production_to_event_editor'), 10, 2);
 		
 		add_filter( 'wp_link_query_args', array( $this, 'remove_events_from_link_query' ) );
+		add_filter( 'redirect_post_location', array($this, 'redirect_after_save_event' ), 99, 2);
+
 		
 		// More hooks (always load, necessary for bulk editing through AJAX)
 		add_filter('request', array($this,'request'));
@@ -489,6 +491,25 @@ class WPT_Admin {
 		do_action('wpt_admin_after_save_'.WPT_Production::post_type_name, $post_id);
 	}
 	
+	/**
+	 * Redirects the user to the production edit page when he asevs an event.
+	 * 
+	 * @since	0.13
+	 * @param 	string	$location	The default redirect URL.
+	 * @param 	int		$post_id	The event ID.
+	 * @return	string				The URL of the production edit page.
+	 */
+	public function redirect_after_save_event( $location, $post_id ) {
+        if ( WPT_Event::post_type_name == get_post_type( $post_id ) ) {
+	        $event = new WPT_Event($post_id);
+	        $production = $event->production();
+	        if (!empty($production)) {
+				$location = admin_url('post.php?post='.$production->ID.'&action=edit');
+		    }
+        }
+        return $location;
+	}
+
 	function render_event($event) {
 		$html = '';
 		
