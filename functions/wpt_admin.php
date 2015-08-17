@@ -12,9 +12,8 @@ class WPT_Admin {
 		add_action( 'save_post', array( $this, 'save_event' ));
 
 		add_filter('manage_wp_theatre_prod_posts_columns', array($this,'manage_wp_theatre_prod_posts_columns'), 10, 2);
-		add_filter('manage_wp_theatre_event_posts_columns', array($this,'manage_wp_theatre_event_posts_columns'), 10, 2);
 		add_action('manage_wp_theatre_prod_posts_custom_column', array($this,'manage_wp_theatre_prod_posts_custom_column'), 10, 2);
-		add_action('manage_wp_theatre_event_posts_custom_column', array($this,'manage_wp_theatre_event_posts_custom_column'), 10, 2);	
+
 		add_filter('manage_edit-wp_theatre_prod_sortable_columns', array($this,'manage_edit_wp_theatre_prod_sortable_columns') );
 		
 		add_filter('wpt_event_html',array($this,'wpt_event_html'), 10 , 2);
@@ -24,8 +23,9 @@ class WPT_Admin {
 		add_filter('wpt/event_editor/fields', array($this, 'add_production_to_event_editor'), 10, 2);
 		
 		add_filter( 'wp_link_query_args', array( $this, 'remove_events_from_link_query' ) );
-		add_filter( 'redirect_post_location', array($this, 'redirect_after_save_event' ), 99, 2);
 
+		add_filter( 'redirect_post_location', array($this, 'redirect_after_save_event' ), 10, 2);
+		add_action( 'load-edit.php',array($this, 'redirect_after_trash_event'));
 		
 		// More hooks (always load, necessary for bulk editing through AJAX)
 		add_filter('request', array($this,'request'));
@@ -492,7 +492,7 @@ class WPT_Admin {
 	}
 	
 	/**
-	 * Redirects the user to the production edit page when he asevs an event.
+	 * Redirects the user to the production edit page when after saving an event.
 	 * 
 	 * @since	0.13
 	 * @param 	string	$location	The default redirect URL.
@@ -508,6 +508,28 @@ class WPT_Admin {
 		    }
         }
         return $location;
+	}
+	
+	/**
+	 * Redirects the user to the production edit page after trashing an event.
+	 * 
+	 * @since	0.13
+	 * @return void
+	 */
+	public function redirect_after_trash_event() {
+		$screen = get_current_screen();
+		if ( 'edit-'.WPT_Event::post_type_name == $screen->id ) {
+			if( isset($_GET['trashed']) &&  intval($_GET['trashed']) >0) {
+				$event = new WPT_Event( intval($_GET['ids']) );
+		        $production = $event->production();
+		        if (!empty($production)) {
+					$location = admin_url('post.php?post='.$production->ID.'&action=edit');
+			    }
+			    wp_redirect($location);
+				exit();
+			}
+			
+		}
 	}
 
 	function render_event($event) {
@@ -608,17 +630,6 @@ class WPT_Admin {
 		return $new_columns;
 	}
 	
-	function manage_wp_theatre_event_posts_columns($columns, $post_type) {
-		$new_columns = array();
-		foreach($columns as $key => $value) {
-			if (!in_array($key,array('title'))) {
-				$new_columns[$key] = $value;				
-			}
-			$new_columns['event'] = __('Event','wp_theatre');
-		}
-		return $new_columns;		
-	}
-	
 	function manage_wp_theatre_prod_posts_custom_column($column_name, $post_id) {
 		$production = new WPT_Production($post_id);
 		switch($column_name) {
@@ -633,19 +644,6 @@ class WPT_Admin {
 		
 	}
 	
-	function manage_wp_theatre_event_posts_custom_column($column_name, $post_id) {
-		$event = new WPT_Event($post_id);
-		switch($column_name) {
-			case 'event':
-				echo $this->render_event($event);
-				break;
-			case 'production':
-				echo $this->render_production($event->production());
-				break;
-		}
-		
-	}
-
     function manage_edit_wp_theatre_prod_sortable_columns($columns) {
 		$columns['dates'] = 'dates';
 		return $columns;
