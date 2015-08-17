@@ -51,6 +51,7 @@ class WP_Theatre {
 		$this->listing_page = new WPT_Listing_Page();
 		$this->calendar = new WPT_Calendar();
 		$this->filter = new WPT_Filter();
+		$this->event_admin = new WPT_Event_Admin();
 		$this->event_editor = new WPT_Event_Editor();
 		$this->cart = new WPT_Cart();
 		$this->production_permalink = new WPT_Production_Permalink();
@@ -106,6 +107,7 @@ class WP_Theatre {
 		require_once(dirname(__FILE__) . '/functions/wpt_productions.php');
 
 		require_once(dirname(__FILE__) . '/functions/wpt_event.php');
+		require_once(dirname(__FILE__) . '/functions/wpt_event_admin.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_event_editor.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_event_template.php');	
 

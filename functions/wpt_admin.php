@@ -5,11 +5,9 @@ class WPT_Admin {
 		add_action( 'admin_init', array($this,'admin_init'));
 		add_action( 'admin_menu', array($this, 'admin_menu' ));
 		add_action( 'add_meta_boxes', array($this, 'add_meta_boxes'));
-		add_filter( 'wpt_event', array($this,'wpt_event'), 10 ,2);
 		add_action( 'quick_edit_custom_box', array($this,'quick_edit_custom_box'), 10, 2 );
 
 		add_action( 'save_post', array( $this, 'save_production' ));
-		add_action( 'save_post', array( $this, 'save_event' ));
 
 		add_filter('manage_wp_theatre_prod_posts_columns', array($this,'manage_wp_theatre_prod_posts_columns'), 10, 2);
 		add_action('manage_wp_theatre_prod_posts_custom_column', array($this,'manage_wp_theatre_prod_posts_custom_column'), 10, 2);
@@ -17,15 +15,6 @@ class WPT_Admin {
 		add_filter('manage_edit-wp_theatre_prod_sortable_columns', array($this,'manage_edit_wp_theatre_prod_sortable_columns') );
 		
 		add_filter('wpt_event_html',array($this,'wpt_event_html'), 10 , 2);
-		
-		add_filter('views_edit-'.WPT_Production::post_type_name,array($this,'views_productions'));
-
-		add_filter('wpt/event_editor/fields', array($this, 'add_production_to_event_editor'), 10, 2);
-		
-		add_filter( 'wp_link_query_args', array( $this, 'remove_events_from_link_query' ) );
-
-		add_filter( 'redirect_post_location', array($this, 'redirect_after_save_event' ), 10, 2);
-		add_action( 'load-edit.php',array($this, 'redirect_after_trash_event'));
 		
 		// More hooks (always load, necessary for bulk editing through AJAX)
 		add_filter('request', array($this,'request'));
@@ -180,7 +169,7 @@ class WPT_Admin {
 	}
 	
 	/**
-	 * Adds Theater metaboxes to the admin pages of productions, events and seasons.
+	 * Adds Theater metaboxes to the admin pages of productions.
 	 * 
 	 * @since 0.1
 	 * @since 0.10 	Removed all static calls to public methods.
@@ -192,15 +181,6 @@ class WPT_Admin {
 	 */
 	function add_meta_boxes() {
 		
-		add_meta_box(
-			'wpt_event_editor', 
-			__('Event dates','wp_theatre'), 
-			array($this,'event_meta_box'), 
-			WPT_Event::post_type_name, 
-			'normal', 
-			'high'
-		);
-
 		// Add a 'Seasons' metabox to the production admin screen.
 		add_meta_box(
             'wp_theatre_seasons',
@@ -221,37 +201,6 @@ class WPT_Admin {
 	}
 
 	
-	/**
-	 * Adds a production field to the event editor on the event admin page.
-	 * 
-	 * @since	0.11
-	 * @param 	array 	$fields		The currently defined fields for the event editor.
-	 * @param 	int 	$event_id	The event that being edited.
-	 * @return 	array				The fields, with a production field added at the beginning.
-	 */
-	public function add_production_to_event_editor($fields, $event_id) {
-		
-		$current_screen = get_current_screen();
-		
-		if (
-			! is_null($current_screen) &&
-			(WPT_Event::post_type_name == $current_screen->id)
-		) {
-			array_unshift(
-				$fields,
-				array(
-					'id' => WPT_Production::post_type_name,
-					'title' => __('Production','wp_theatre'),
-					'edit' => array(
-						'callback' => array($this, 'get_control_production_html'),
-					),
-				)
-			);				
-		}
-		
-		return $fields;
-		
-	}
 
 	/**
 	 * Show a meta box with display settings for a production.
@@ -284,46 +233,6 @@ class WPT_Admin {
 		do_action('wpt_admin_meta_box_display', $production, $metabox);
 	}
 
-	/**
-	 * Gets the HTML for a production input control of an event.
-	 *
-	 * The input control consists of:
-	 * 1. A hidden input with the production_id and
-	 * 2. A link to the admin page of the production.	 
-	 *
-	 * @since 	0.11
-	 * @param 	array 	$field		The field.
-	 * @param 	int     $event_id   The event that is being edited.
-	 * @return 	string				The HTML.
-	 */
-	public function get_control_production_html($field, $event_id) {
-		$html = '';
-		
-		$production_id = get_post_meta($event_id, $field['id'], true);
-
-		if (!empty($production_id)) {
-			
-			$production = new WPT_Production( $production_id );
-			
-			$html.= '<input type="hidden" id="wpt_event_editor_'.$field['id'].'" name="wpt_event_editor_'.$field['id'].'" value="'.$production->ID.'" />';
-			$html.= '<a href="'.get_edit_post_link($production->ID).'">'.$production->title().'</a>';
-			
-			
-		}
-		
-		return $html;		
-	}
-	
-	function event_meta_box($event) {
-		global $wp_theatre;
-		
-		wp_nonce_field(WPT_Event::post_type_name, WPT_Event::post_type_name.'_nonce' );
-
-		$production_id = get_post_meta($event->ID, WPT_Production::post_type_name, true);
-		echo $wp_theatre->event_editor->get_form_html($production_id, $event->ID);
-		       
-	}
-	
 	function meta_box_seasons($production) {
 		wp_nonce_field(WPT_Production::post_type_name, WPT_Production::post_type_name.'_nonce' );
 
@@ -349,53 +258,6 @@ class WPT_Admin {
 		}
 		echo '</select>';
 	
-	}
-	
-	/**
-	 * Saves all custom fields for an event.
-	 * 
-	 * Runs when an event is submitted from the event admin form.
-	 *
-	 * @since 	?.?
-	 * @since 	0.11		Use WPT_Event_Editor::save_field() to save all field values.
-	 * @since 	0.11.5		Added the new $data param to WPT_Event_Editor::save_field().
-	 * @param 	int 		$post_id	The event_id.
-	 * @return void
-	 */
-	function save_event( $post_id ) {
-		
-		global $wp_theatre;
-		/*
-		 * We need to verify this came from the our screen and with proper authorization,
-		 * because save_post can be triggered at other times.
-		 */
-
-		// Check if our nonce is set.
-		if ( ! isset( $_POST[WPT_Event::post_type_name.'_nonce'] ) )
-			return $post_id;
-
-		$nonce = $_POST[WPT_Event::post_type_name.'_nonce'];
-
-		// Verify that the nonce is valid.
-		if ( ! wp_verify_nonce( $nonce, WPT_Event::post_type_name ) )
-			return $post_id;
-
-		// If this is an autosave, our form has not been submitted,
-        //     so we don't want to do anything.
-		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) 
-			return $post_id;
-
-		// Check the user's permissions.
-		if ( ! current_user_can( 'edit_post', $post_id ) ) {
-			return $post_id;
-		}
-
-		/* OK, its safe for us to save the data now. */
-
-		foreach ($wp_theatre->event_editor->get_fields( $post_id ) as $field) {
-			$wp_theatre->event_editor->save_field($field, $post_id, $_POST);
-		}
-			
 	}
 	
 	/**
@@ -489,113 +351,6 @@ class WPT_Admin {
 		 * @since 0.9.2
 		 */
 		do_action('wpt_admin_after_save_'.WPT_Production::post_type_name, $post_id);
-	}
-	
-	/**
-	 * Redirects the user to the production edit page when after saving an event.
-	 * 
-	 * @since	0.13
-	 * @param 	string	$location	The default redirect URL.
-	 * @param 	int		$post_id	The event ID.
-	 * @return	string				The URL of the production edit page.
-	 */
-	public function redirect_after_save_event( $location, $post_id ) {
-        if ( WPT_Event::post_type_name == get_post_type( $post_id ) ) {
-	        $event = new WPT_Event($post_id);
-	        $production = $event->production();
-	        if (!empty($production)) {
-				$location = admin_url('post.php?post='.$production->ID.'&action=edit');
-		    }
-        }
-        return $location;
-	}
-	
-	/**
-	 * Redirects the user to the production edit page after trashing an event.
-	 * 
-	 * @since	0.13
-	 * @return void
-	 */
-	public function redirect_after_trash_event() {
-		$screen = get_current_screen();
-		if ( 'edit-'.WPT_Event::post_type_name == $screen->id ) {
-			if( isset($_GET['trashed']) &&  intval($_GET['trashed']) >0) {
-				$event = new WPT_Event( intval($_GET['ids']) );
-		        $production = $event->production();
-		        if (!empty($production)) {
-					$location = admin_url('post.php?post='.$production->ID.'&action=edit');
-			    }
-			    wp_redirect($location);
-				exit();
-			}
-			
-		}
-	}
-
-	function render_event($event) {
-		$html = '';
-		
-		$html.= '<div class="'.WPT_Event::post_type_name.'">';
-			
-		$html.= '<div class="date">';
-		$html.= '<a href="'.get_edit_post_link($event->ID).'">';
-		$html.= $event->date().' '.$event->time(); 
-		$html.= '</a>';
-		$html.= '</div>'; // .date
-		
-		$html.= '<div class="content">';
-		$html.= '<div class="title">'.$event->title().'</div>';
-		
-		$remark = get_post_meta($event->ID,'remark',true);
-		if ($remark!='') {
-			$html.= '<div class="remark">'.$remark.'</div>';
-		}
-		
-		$venue = get_post_meta($event->ID,'venue',true);
-		$city = get_post_meta($event->ID,'city',true);
-		if ($venue!='') {
-			$html.= '<span itemprop="name">'.$venue.'</span>';
-		}
-		if ($venue!='' && $city!='') {
-			$html.= ', ';
-		}
-		if ($city!='') {
-			$html.= '<span itemprop="address" itemscope itemtype="http://data-vocabulary.org/Address">';
-			$html.= '<span itemprop="locality">'.$city.'</span>';
-			$html.= '</span>';
-		}
-
-		$html.= '</div>'; //.content
-
-		$html.='</div>'; // .event
-		
-		return $html;	
-	}
-
-	function render_production($production) {
-		$html = '';
-		
-		$html.= '<div class="'.WPT_Production::post_type_name.'">';
-			
-		$html.= '<div class="thumbnail">';
-		$html.= get_the_post_thumbnail($production->ID, 'thumbnail'); 
-		$html.= '</div>'; // .thumbnail
-		
-		$html.= '<div class="content">';
-		$html.= '<a href="'.get_edit_post_link($production->ID).'">';
-		$html.= $production->post()->post_title;
-		$html.= '</a>';
-		$html.= '<br />';
-		$html.= $production->dates();
-		$html.= '<br />';
-		$html.= $production->cities();
-		
-		$html.= '</div>'; //.content
-
-
-		$html.='</div>'; // .production
-		
-		return $html;	
 	}
 
 	/**
@@ -806,45 +561,7 @@ class WPT_Admin {
 		}
 		return $vars;		
 	}
-
-    function wpt_event_html($html, $event) {
-	    if (is_admin()) {
-			$html.= '<div class="row-actions">';
-			$html.= '<span><a href="'.get_edit_post_link($event->production->ID).'">'.__('Edit').'</a></span>';;
-			$html.= '<span> | <a href="'.get_delete_post_link($event->production->ID).'">'.__('Trash').'</a></span>';;
-			$html.= '</div>'; //.row-actions		    
-	    }
-		return $html;
-    }
-
-    function views_productions($views) {
-    	$url = add_query_arg( 
-    		array(
-    	   		'upcoming' => 1,
-    	   		'post_status' => false
-		   	)
-    	);
-    	$class = empty($_GET['upcoming'])?'':'current';
-    	//$views['upcoming'] = '<a href="'.$url.'" class="'.$class.'">'.__('Upcoming','wp_theatre').'</a>';
-    	return $views;
-    }
     
-    /**
-     * Removes events from link query.
-     *
-     * Removes events from the 'link to existing content' section on the 'Insert/edit link' dialog.
-     * 
-     * @since	0.12.3
-     * @param 	array	$query	The current link query.
-     * @return 	array			The updated link query.
-     */
-    public function remove_events_from_link_query($query) {
-	    $key = array_search( WPT_Event::post_type_name, $query['post_type'] );
-	    if( $key ) {
-        	unset( $query['post_type'][$key] );		    
-	    }
-	    return $query;	    
-    }
 }
 
 
