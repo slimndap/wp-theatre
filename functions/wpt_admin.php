@@ -14,8 +14,6 @@ class WPT_Admin {
 
 		add_filter('manage_edit-wp_theatre_prod_sortable_columns', array($this,'manage_edit_wp_theatre_prod_sortable_columns') );
 		
-		add_filter('wpt_event_html',array($this,'wpt_event_html'), 10 , 2);
-		
 		// More hooks (always load, necessary for bulk editing through AJAX)
 		add_filter('request', array($this,'request'));
 
