@@ -1,15 +1,15 @@
 <?php
 
 /**
- * Alters the default admin pages for events.
+ * Customizes the default admin pages for events.
  * @since	0.13
  */
 class WPT_Event_Admin {
 
 	function __construct() {
 		add_filter( 'redirect_post_location', array($this, 'redirect_after_save_event' ), 10, 2);
-		add_action( 'load-edit.php',array($this, 'redirect_after_trash_event'));
-		add_action( 'add_meta_boxes', array($this, 'add_event_editor'));
+		add_action( 'add_meta_boxes', array($this, 'add_event_editor_meta_box'));
+		add_action( 'add_meta_boxes', array($this, 'add_publish_meta_box'));
 		add_action( 'save_post', array( $this, 'save_event' ));
 		add_filter( 'wp_link_query_args', array( $this, 'remove_events_from_link_query' ) );
 		add_filter('wpt/event_editor/fields', array($this, 'add_production_to_event_editor'), 10, 2);
@@ -17,7 +17,14 @@ class WPT_Event_Admin {
 		add_action( 'admin_menu', array($this, 'remove_meta_boxes') );
 	}
 	
-	public function add_event_editor() {
+	/**
+	 * Adds the events editor meta box to the event admin page.
+	 * 
+	 * @since	0.11
+	 * @since	0.13	Moved from WPT_Event_Editor to WPT_Event_Admin.
+	 * @return 	void
+	 */
+	public function add_event_editor_meta_box() {
 		add_meta_box(
 			'wpt_event_editor', 
 			__('Event dates','wp_theatre'), 
@@ -32,6 +39,7 @@ class WPT_Event_Admin {
 	 * Adds a production field to the event editor on the event admin page.
 	 * 
 	 * @since	0.11
+	 * @since	0.13	Moved from WPT_Event_Editor to WPT_Event_Admin.
 	 * @param 	array 	$fields		The currently defined fields for the event editor.
 	 * @param 	int 	$event_id	The event that being edited.
 	 * @return 	array				The fields, with a production field added at the beginning.
@@ -60,6 +68,35 @@ class WPT_Event_Admin {
 		
 	}
 
+	/**
+	 * Add a Publish meta box to the event admin page.
+	 *
+	 * Replaces the default Publish meta box for posts.
+	 * @see WPT_Event_Admin::remove_meta_boxes().
+	 * 
+	 * @since	0.13
+	 * @return 	void
+	 */
+	public function add_publish_meta_box() {
+		add_meta_box(
+			'wpt_event_publish', 
+			__('Publish'), 
+			array($this,'publish_meta_box'), 
+			WPT_Event::post_type_name, 
+			'side', 
+			'high'
+		);		
+		
+	}
+
+	/**
+	 * Outputs the contents of the event editor meta box.
+	 * 
+	 * @since	0.11
+	 * @since	0.13	Moved from WPT_Event_Editor to WPT_Event_Admin.
+	 * @param 	int		$event	The event ID.
+	 * @return 	void
+	 */
 	public function event_editor_meta_box($event) {
 		global $wp_theatre;
 		
@@ -92,11 +129,22 @@ class WPT_Event_Admin {
 			
 			$html.= '<input type="hidden" id="wpt_event_editor_'.$field['id'].'" name="wpt_event_editor_'.$field['id'].'" value="'.$production->ID.'" />';
 			$html.= '<a href="'.get_edit_post_link($production->ID).'">'.$production->title().'</a>';
-			
-			
 		}
 		
 		return $html;		
+	}
+
+	/**
+	 * Outputs the contents of the Publish meta box.
+	 * 
+	 * @since	0.13
+	 * @param 	int		$event	The event ID.
+	 * @return 	void
+	 */
+	public function publish_meta_box($event) {
+		$html = '';
+		$html.= submit_button( __( 'Update' ), 'primary button-large' );
+		echo $html;
 	}
 	
 	/**
@@ -119,27 +167,11 @@ class WPT_Event_Admin {
 	}
 	
 	/**
-	 * Redirects the user to the production edit page after trashing an event.
+	 * Removes the 'Add new' button at the top of the event admin page.
 	 * 
 	 * @since	0.13
-	 * @return void
+	 * @return 	void
 	 */
-	public function redirect_after_trash_event() {
-		$screen = get_current_screen();
-		if ( 'edit-'.WPT_Event::post_type_name == $screen->id ) {
-			if( isset($_GET['trashed']) &&  intval($_GET['trashed']) >0) {
-				$event = new WPT_Event( intval($_GET['ids']) );
-		        $production = $event->production();
-		        if (!empty($production)) {
-					$location = admin_url('post.php?post='.$production->ID.'&action=edit');
-			    }
-			    wp_redirect($location);
-				exit();
-			}
-			
-		}
-	}
-
 	public function remove_add_new_button() {
 		unset($GLOBALS['post_new_file']);
 	}
@@ -150,6 +182,7 @@ class WPT_Event_Admin {
      * Removes events from the 'link to existing content' section on the 'Insert/edit link' dialog.
      * 
      * @since	0.12.3
+	 * @since	0.13	Moved from WPT_Admin to WPT_Event_Admin.
      * @param 	array	$query	The current link query.
      * @return 	array			The updated link query.
      */
@@ -161,7 +194,14 @@ class WPT_Event_Admin {
 	    return $query;	    
     }
 
+	/**
+	 * Removes all default meta boxes from the event admin page.
+	 * 
+	 * @since	0.13
+	 * @return 	void
+	 */
 	public function remove_meta_boxes() {
+		remove_meta_box('submitdiv', WPT_Event::post_type_name, 'side');
 		remove_meta_box('categorydiv', WPT_Event::post_type_name, 'side');
 		remove_meta_box('tagsdiv-post_tag', WPT_Event::post_type_name, 'side');
 	}
@@ -172,9 +212,10 @@ class WPT_Event_Admin {
 	 * Runs when an event is submitted from the event admin form.
 	 *
 	 * @since 	?.?
-	 * @since 	0.11		Use WPT_Event_Editor::save_field() to save all field values.
-	 * @since 	0.11.5		Added the new $data param to WPT_Event_Editor::save_field().
-	 * @param 	int 		$post_id	The event_id.
+	 * @since 	0.11	Use WPT_Event_Editor::save_field() to save all field values.
+	 * @since 	0.11.5	Added the new $data param to WPT_Event_Editor::save_field().
+	 * @since	0.13	Moved from WPT_Admin to WPT_Event_Admin.
+	 * @param 	int 	$post_id	The event_id.
 	 * @return void
 	 */
 	function save_event( $post_id ) {

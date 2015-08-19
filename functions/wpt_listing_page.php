@@ -11,6 +11,7 @@
 			if (is_admin()) {
 				add_action('admin_init', array($this,'admin_init'));
 				add_filter('wpt_admin_page_tabs', array($this,'wpt_admin_page_tabs'));
+				add_filter('display_post_states', array($this, 'set_display_post_state'), 10 , 2);
 			} else {
 				add_action('the_content', array($this, 'the_content'));
 				add_filter('wpt_production_page_content_before', array($this, 'wpt_production_page_content_before'));
@@ -538,6 +539,21 @@
 				echo '<br />';
 			}
 			echo '</div>';
+	    }
+	    
+	    /**
+	     * Adds the 'Events page' display state to the listing page in the pages list tabel.
+	     * 
+	     * @since	0.13
+	     * @param 	array 	$post_states	An array of post display states.
+	     * @param 	int 	$post			The post ID.
+	     * @return	array					The new array of post display states.
+	     */
+	    public function set_display_post_state($post_states, $post) {   
+		    if ($post->ID== $this->page()->ID) {
+			    $post_states['wpt_listing_page'] = __('Events page', 'wp_theatre');
+		    }
+		    return $post_states;
 	    }
 	    
 	 	/*
