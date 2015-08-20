@@ -341,6 +341,8 @@ class WPT_Frontend {
 			'category__and' => false,
 			'category__in' => false,
 			'category__not_in' => false,
+			'start' => false,
+			'end' => false,
 			'groupby' => false,
 			'limit' => false,
 			'order' => 'asc'

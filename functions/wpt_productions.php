@@ -344,6 +344,34 @@ class WPT_Productions extends WPT_Listing {
 	}
 
 	/**
+	 * Gets all productions between 'start' and 'end'.
+	 * 
+	 * @access 	private
+	 * @since	0.13
+	 * @param 	string 	$start	The start time. Can be anything that strtotime understands.
+	 * @param 	string 	$end	The end time. Can be anything that strtotime understands.
+	 * @return 	array			The productions.
+	 */
+	private function get_productions_by_date($start=false, $end=false) {
+		global $wp_theatre;
+		$productions = array();
+		if ($start || $end) {
+			$events_args = array(
+				'start' => $start,
+				'end' => $end,
+			);
+			$events = $wp_theatre->events->get($events_args);
+			
+			foreach ($events as $event) {
+				$productions[] = $event->production()->ID;
+			}
+			
+			$productions = array_unique($productions);	
+		}
+		return $productions;
+	}
+
+	/**
 	 * Gets an array of all categories with productions.
 	 *
 	 * @since Unknown
@@ -365,11 +393,12 @@ class WPT_Productions extends WPT_Listing {
 	}
 	
 	/**
-	 * Get a list of productions.
+	 * Gets a list of productions.
 	 * 
-	 * @since 0.5
-	 * @since 0.10	Renamed method from `load()` to `get()`.
-	 * 				Added 'order' to $args.
+	 * @since 	0.5
+	 * @since 	0.10	Renamed method from `load()` to `get()`.
+	 * 					Added 'order' to $args.
+	 * @since	0.13	Support for 'start' and 'end'.
 	 *
 	 * @param array $args {
 	 *		string $order. 			See WP_Query.
@@ -395,6 +424,8 @@ class WPT_Productions extends WPT_Listing {
 			'post__in' => false,
 			'post__not_in' => false,
 			'upcoming' => false,
+			'start' => false,
+			'end' => false,
 			'cat' => false,
 			'category_name' => false,
 			'category__and' => false,
@@ -454,12 +485,24 @@ class WPT_Productions extends WPT_Listing {
 			$args['posts_per_page'] = -1;
 		}
 
-		if ($filters['upcoming']) {
-			$args['meta_query'][] = array (
-				'key' => $wp_theatre->order->meta_key,
-				'value' => time(),
-				'compare' => '>='
-			);
+		if (
+			$filters['upcoming'] &&
+			!$filters['start'] &&
+			!$filters['end']
+		) {
+			$filters['start'] = 'now';
+		}
+
+		if ($filters['start'] || $filters['end']) {
+			$productions_by_date = $this->get_productions_by_date($filters['start'], $filters['end']);
+			if (empty($args['post__in'])) {
+				$args['post__in'] = $productions_by_date;							
+			} else {
+				$args['post__in'] = array_intersect(
+					$args['post__in'], 
+					$productions_by_date
+				);
+			}
 		}
 
 		/**
@@ -484,7 +527,7 @@ class WPT_Productions extends WPT_Listing {
 			empty($args['category_name']) &&
 			empty($args['category__and']) &&
 			empty($args['category__in']) &&
-			empty($args['post__in']) &&
+			!$filters['post__in'] &&
 			!$filters['season'] &&
 			$args['posts_per_page'] < 0
 		) {
