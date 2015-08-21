@@ -439,10 +439,10 @@ class WPT_Admin {
 		/* OK, its safe for us to save the data now. */
 
 		// Sanitize the user input.
-		$season = sanitize_text_field( $_POST[WPT_Season::post_type_name] );
-		
-		// Update the meta field.
-		update_post_meta( $post_id, WPT_Season::post_type_name, $season );
+		if (isset($_POST[WPT_Season::post_type_name])) {
+			$season = sanitize_text_field( $_POST[WPT_Season::post_type_name] );
+			update_post_meta( $post_id, WPT_Season::post_type_name, $season );			
+		}
 		
 		/*
 		 *	 Update connected Events
