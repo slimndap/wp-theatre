@@ -493,6 +493,20 @@ class WPT_Productions extends WPT_Listing {
 			$filters['start'] = 'now';
 		}
 
+		/*
+		 * Filter productions by date.
+		 * 
+		 * Uses @see WPT_Productions::get_productions_by_date() to get a list of 
+		 * production IDs that match the dates. The IDs are then added a a 'post__in'
+		 * argument.
+		 *
+		 * If the 'post__in' argument is already set, then the existing list of 
+		 * production IDs is limited to IDs that are also part of the production IDs from 
+		 * the date selection. 
+		 * 
+		 * If this results in an empty list of production IDs then further execution is
+		 * halted and an empty array is returned, because there are no matching productions.
+		 */
 		if ($filters['start'] || $filters['end']) {
 			$productions_by_date = $this->get_productions_by_date($filters['start'], $filters['end']);
 			if (empty($args['post__in'])) {
@@ -515,7 +529,20 @@ class WPT_Productions extends WPT_Listing {
 		$args = apply_filters('wpt_productions_load_args',$args);
 		$args = apply_filters('wpt_productions_get_args',$args);
 
-		$posts = get_posts($args);
+		$posts = array();
+
+		/*
+		 * Don't try to retrieve productions if the 'post_in' argument is an empty array.
+		 * This can happen when the date filter doesn't match any productions.
+		 *
+		 * This is different from the way that WP_Query handles an empty 'post__in' argument. 
+		 */
+		if (
+			!isset($args['post__in']) ||	// True when 'post__in', 'start', 'end' and 'upcoming' filters are not used.
+			!empty($args['post__in'])		// True when the date filter resulted in matching productions.
+		) {
+			$posts = get_posts($args);		
+		}
 
 		/*
 		 * Add sticky productions.
