@@ -1,7 +1,7 @@
 <?php
 class WPT_Frontend {
 	function __construct() {
-		add_action( 'init', array($this,'init') );
+		add_action( 'init', array($this,'enqueue_scripts') );
 		add_action( 'wp_head', array($this,'wp_head') );
 
 		add_filter( 'the_content', array($this, 'the_content') );
@@ -28,25 +28,49 @@ class WPT_Frontend {
 		add_action( 'template_redirect', array($this,'redirect_deprecated_tickets_page_url') );
 	}
 
-	function init() {
+	/**
+	 * Enqueues the Theater javascript and CSS files.
+	 * 
+	 * @since	0.?
+	 * @since	0.13	Added thickbox args to manipulate the behaviour of the tickets thickbox.
+	 * @return 	void
+	 */
+	function enqueue_scripts() {
 		global $wp_theatre;
-		global $wpt_version;
 
 		// Add built-in Theatre javascript
-		wp_enqueue_script( 'wp_theatre_js', plugins_url( '../js/main.js', __FILE__ ), array('jquery'), $wpt_version );
+		wp_enqueue_script( 'wp_theatre_js', plugins_url( '../js/main.js', __FILE__ ), array('jquery'), $wp_theatre->wpt_version );
 
 		// Add built-in Theatre stylesheet
 		if ( ! empty($wp_theatre->wpt_style_options['stylesheet']) ) {
-			wp_enqueue_style( 'wp_theatre', plugins_url( '../css/style.css', __FILE__ ), null, $wpt_version );
+			wp_enqueue_style( 'wp_theatre', plugins_url( '../css/style.css', __FILE__ ), null, $wp_theatre->wpt_version );
 		}
 
 		// Add Thickbox files
 		if (
 			! empty($wp_theatre->wpt_tickets_options['integrationtype']) &&
-			$wp_theatre->wpt_tickets_options['integrationtype'] == 'lightbox'
+			'lightbox' == $wp_theatre->wpt_tickets_options['integrationtype']
 		) {
 			wp_enqueue_script( 'thickbox' );
-			wp_enqueue_style( 'thickbox', includes_url( '/js/thickbox/thickbox.css' ), null, $wpt_version );
+			
+			$thickbox_args = array(
+				'width' => 800,
+				'height' => 600,
+				'breakpoint_mobile' => false,
+			);
+			
+			/**
+			 * Filter the thickbox arguments.
+			 * 
+			 * @since	0.13
+			 * 
+			 * @param 	array	The thickbox arguments.
+			 */
+			$thickbox_args = apply_filters('wpt/frontend/thickbox/args', $thickbox_args);
+			
+			wp_localize_script('thickbox', 'thickbox_args', $thickbox_args);
+			
+			wp_enqueue_style( 'thickbox', includes_url( '/js/thickbox/thickbox.css' ), null, $wp_theatre->wpt_version );
 		}
 	}
 
