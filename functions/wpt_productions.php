@@ -344,6 +344,34 @@ class WPT_Productions extends WPT_Listing {
 	}
 
 	/**
+	 * Gets all productions between 'start' and 'end'.
+	 * 
+	 * @access 	private
+	 * @since	0.13
+	 * @param 	string 	$start	The start time. Can be anything that strtotime understands.
+	 * @param 	string 	$end	The end time. Can be anything that strtotime understands.
+	 * @return 	array			The productions.
+	 */
+	private function get_productions_by_date($start=false, $end=false) {
+		global $wp_theatre;
+		$productions = array();
+		if ($start || $end) {
+			$events_args = array(
+				'start' => $start,
+				'end' => $end,
+			);
+			$events = $wp_theatre->events->get($events_args);
+			
+			foreach ($events as $event) {
+				$productions[] = $event->production()->ID;
+			}
+			
+			$productions = array_unique($productions);	
+		}
+		return $productions;
+	}
+
+	/**
 	 * Gets an array of all categories with productions.
 	 *
 	 * @since Unknown
@@ -365,11 +393,12 @@ class WPT_Productions extends WPT_Listing {
 	}
 	
 	/**
-	 * Get a list of productions.
+	 * Gets a list of productions.
 	 * 
-	 * @since 0.5
-	 * @since 0.10	Renamed method from `load()` to `get()`.
-	 * 				Added 'order' to $args.
+	 * @since 	0.5
+	 * @since 	0.10	Renamed method from `load()` to `get()`.
+	 * 					Added 'order' to $args.
+	 * @since	0.13	Support for 'start' and 'end'.
 	 *
 	 * @param array $args {
 	 *		string $order. 			See WP_Query.
@@ -395,6 +424,8 @@ class WPT_Productions extends WPT_Listing {
 			'post__in' => false,
 			'post__not_in' => false,
 			'upcoming' => false,
+			'start' => false,
+			'end' => false,
 			'cat' => false,
 			'category_name' => false,
 			'category__and' => false,
@@ -454,12 +485,38 @@ class WPT_Productions extends WPT_Listing {
 			$args['posts_per_page'] = -1;
 		}
 
-		if ($filters['upcoming']) {
-			$args['meta_query'][] = array (
-				'key' => $wp_theatre->order->meta_key,
-				'value' => time(),
-				'compare' => '>='
-			);
+		if (
+			$filters['upcoming'] &&
+			!$filters['start'] &&
+			!$filters['end']
+		) {
+			$filters['start'] = 'now';
+		}
+
+		/*
+		 * Filter productions by date.
+		 * 
+		 * Uses @see WPT_Productions::get_productions_by_date() to get a list of 
+		 * production IDs that match the dates. The IDs are then added a a 'post__in'
+		 * argument.
+		 *
+		 * If the 'post__in' argument is already set, then the existing list of 
+		 * production IDs is limited to IDs that are also part of the production IDs from 
+		 * the date selection. 
+		 * 
+		 * If this results in an empty list of production IDs then further execution is
+		 * halted and an empty array is returned, because there are no matching productions.
+		 */
+		if ($filters['start'] || $filters['end']) {
+			$productions_by_date = $this->get_productions_by_date($filters['start'], $filters['end']);
+			if (empty($args['post__in'])) {
+				$args['post__in'] = $productions_by_date;							
+			} else {
+				$args['post__in'] = array_intersect(
+					$args['post__in'], 
+					$productions_by_date
+				);
+			}
 		}
 
 		/**
@@ -472,7 +529,20 @@ class WPT_Productions extends WPT_Listing {
 		$args = apply_filters('wpt_productions_load_args',$args);
 		$args = apply_filters('wpt_productions_get_args',$args);
 
-		$posts = get_posts($args);
+		$posts = array();
+
+		/*
+		 * Don't try to retrieve productions if the 'post_in' argument is an empty array.
+		 * This can happen when the date filter doesn't match any productions.
+		 *
+		 * This is different from the way that WP_Query handles an empty 'post__in' argument. 
+		 */
+		if (
+			!isset($args['post__in']) ||	// True when 'post__in', 'start', 'end' and 'upcoming' filters are not used.
+			!empty($args['post__in'])		// True when the date filter resulted in matching productions.
+		) {
+			$posts = get_posts($args);		
+		}
 
 		/*
 		 * Add sticky productions.
@@ -484,7 +554,7 @@ class WPT_Productions extends WPT_Listing {
 			empty($args['category_name']) &&
 			empty($args['category__and']) &&
 			empty($args['category__in']) &&
-			empty($args['post__in']) &&
+			!$filters['post__in'] &&
 			!$filters['season'] &&
 			$args['posts_per_page'] < 0
 		) {
