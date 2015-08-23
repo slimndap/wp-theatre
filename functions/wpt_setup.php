@@ -218,7 +218,7 @@
 					'show_in_menu'  => false,
 					'supports' => array(''),
 		  			'taxonomies' => array('category','post_tag'),
-					'show_in_nav_menus'=> false
+					'show_in_nav_menus'=> false,
 				)
 			);
 			
