@@ -56,6 +56,7 @@ class WP_Theatre {
 		$this->production_permalink = new WPT_Production_Permalink();
 		$this->bulk_editor = new WPT_Bulk_Editor();
 		$this->extensions_updater= new WPT_Extensions_Updater();
+		$this->extensions_promo= new WPT_Extensions_Promo();
 		if (is_admin()) {
 		} else {
 			$this->frontend = new WPT_Frontend();
@@ -126,6 +127,7 @@ class WP_Theatre {
 		require_once(dirname(__FILE__) . '/functions/wpt_bulk_editor.php');	
 
 		require_once(dirname(__FILE__) . '/functions/extensions/wpt_extensions_updater.php');	
+		require_once(dirname(__FILE__) . '/functions/extensions/wpt_extensions_promo.php');	
 
 		require_once(dirname(__FILE__) . '/functions/wpt_importer.php');	
 
