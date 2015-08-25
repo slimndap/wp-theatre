@@ -1345,7 +1345,7 @@ class WPT_Test extends WP_UnitTestCase {
 		add_post_meta($this->upcoming_event_with_prices, 'enddate', $enddate);
 		
 		$html = do_shortcode('[wpt_events]{{endtime}}[/wpt_events]');
-
+		$event = new WPT_Event($this->upcoming_event_with_prices);
 		$expected = date_i18n( get_option( 'time_format' ),	strtotime( $enddate) );
 		
 		$this->assertContains($expected, $html);				
@@ -1361,6 +1361,28 @@ class WPT_Test extends WP_UnitTestCase {
 		$expected = date_i18n( get_option( 'date_format' ),	strtotime( $enddate) );
 		
 		$this->assertContains($expected, $html);		
+	}
+	
+	/**
+	 * Test if {{endtime}} doesn't output anything when no end time is set.
+	 * See: https://github.com/slimndap/wp-theatre/issues/165
+	 */
+	function test_event_endtime_when_empty() {
+		$html = do_shortcode('[wpt_events]{{endtime}}[/wpt_events]');
+
+		$expected = '<div class="'.WPT_Event::post_type_name.'_time '.WPT_Event::post_type_name.'_endtime"></div>';
+		$this->assertContains($expected, $html);						
+	}
+	
+	/**
+	 * Test if {{enddate}} doesn't output anything when no end time is set.
+	 * See: https://github.com/slimndap/wp-theatre/issues/165
+	 */
+	function test_event_enddate_when_empty() {
+		$html = do_shortcode('[wpt_events]{{enddate}}[/wpt_events]');
+
+		$expected = '<div class="'.WPT_Event::post_type_name.'_date '.WPT_Event::post_type_name.'_enddate"></div>';
+		$this->assertContains($expected, $html);						
 	}
 	
 	/**
