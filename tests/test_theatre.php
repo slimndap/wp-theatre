@@ -715,8 +715,6 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertEquals(4, substr_count($this->wp_theatre->feeds->get_upcoming_events(), '<item'));		
 	}
 	
-	// Sticky posts
-	
 		
 	function test_wpt_events_groupby_day() {
 				
@@ -758,6 +756,7 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertEquals(5, substr_count($html, '"wp_theatre_event"'));
 		
 	}
+
 
 	function test_wpt_events_groupby_category() {
 				

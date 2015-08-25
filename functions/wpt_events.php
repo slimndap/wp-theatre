@@ -609,15 +609,16 @@ class WPT_Events extends WPT_Listing {
 	/**
 	 * Gets a list of events.
 	 * 
-	 * @since 0.5
-	 * @since 0.10		Renamed method from `load()` to `get()`.
+	 * @since 	0.5
+	 * @since 	0.10	Renamed method from `load()` to `get()`.
 	 * 					Added 'order' to $args.
-	 * @since 0.10.14	Preload events with their productions.
+	 * @since 	0.10.14	Preload events with their productions.
 	 *					This dramatically decreases the number of queries needed to show a listing of events.
-	 * @since 0.10.15	'Start' and 'end' $args now account for timezones.
+	 * @since 	0.10.15	'Start' and 'end' $args now account for timezones.
 	 *					Fixes #117.
-	 * @since 0.11.8	Support for 'post__in' and 'post__not_in'.
+	 * @since 	0.11.8	Support for 'post__in' and 'post__not_in'.
 	 *					Fixes #128.
+	 * @since	0.13	Added support for multiple productions.
 	 *
  	 * @return array Events.
 	 */
@@ -678,11 +679,10 @@ class WPT_Events extends WPT_Listing {
 		if ($filters['production']) {
 			$args['meta_query'][] = array (
 				'key' => WPT_Production::post_type_name,
-				'value' => $filters['production'],
-				'compare' => '=',
+				'value' => (array) $filters['production'],
+				'compare' => 'IN',
 			);
 		}
-		
 		/**
 		 * Apply start filter.
 		 * Only show events that start after the `start` value.
@@ -756,7 +756,7 @@ class WPT_Events extends WPT_Listing {
 			$args['posts_per_page'] = -1;
 			$args['numberposts'] = -1;
 		}
-		
+
 		/**
 		 * Filter the $args before doing get_posts().
 		 *
