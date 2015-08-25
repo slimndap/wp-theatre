@@ -66,6 +66,7 @@ class WPT_Event {
 	 * @return string City.
 	 */
 	function city($args = array()) {
+		
 		global $wp_theatre;
 
 		$defaults = array(
@@ -137,71 +138,88 @@ class WPT_Event {
 	}
 
 	/**
-	 * Event date and time.
+	 * Gets the event timestamp.
 	 *
-	 * Returns the event date and time combined as plain text or as an HTML element.
+	 * @since 	0.4
+	 * @since 	0.10.15		Always return the datetime in UTC.
+	 * @since	0.12.7		Moved HTML output to WPT_Event::datetime_html().
 	 *
-	 * @since 0.4
-	 * @since 0.10.15	Always return the datetime in UTC.
-	 *
-	 * @param array $args {
-	 *     @type bool $html Return HTML? Default <false>.
-	 * }
-	 *
-	 * @see WPT_Event::date().
-	 * @see WPT_Event::time().
-	 *
-	 * @return string text or HTML.
+	 * @param 	bool		$enddate	Wheter to return the end datetime instead of the start endtime. 
+	 * @return 	datetime				The event timestamp.
+	 *									Returns false if no date is set.
 	 */
-	function datetime($args = array()) {
-		global $wp_theatre;
+	function datetime($enddate=false) {
 
-		$defaults = array(
-			'html' => false,
-			'start' => true,
-			'filters' => array()
-		);
-		$args = wp_parse_args( $args, $defaults );
-
-		if ( $args['start'] ) {
-			$field = 'event_date';
-		} else {
-			$field = 'enddate';
-		}
-
-		if ( ! isset($this->datetime[ $field ]) ) {
-			$this->datetime[ $field ] = apply_filters(
-				'wpt_event_datetime',
-				date_i18n(
-					'U',
-					strtotime(
-						$this->post()->{$field},
-						current_time( 'timestamp' )
-					) - get_option( 'gmt_offset' ) * 3600
-				),
-				$this
-			);
-		}
-
-		if ( $args['html'] ) {
-			$html = '';
-			$html .= '<div class="'.self::post_type_name.'_datetime">';
-			
-			$datetime_html = $this->startdate_html().$this->starttime_html();
-			foreach ($args['filters'] as $filter) {
-				if ('date'==$filter->name) {
-					$datetime_html = $filter->apply_to($this->datetime( array('start'=>$args['start']) ), $this);			
-				} else {
-					$datetime_html = $filter->apply_to($datetime_html, $this);
-				}
+		if (!empty($enddate['html'])) {
+			$filters = array();
+			if ( ! empty($enddate['filters']) ) {
+				$filters = $enddate['filters'];
 			}
-			$html.= $datetime_html;
-
-			$html .= '</div>';
-			return $html;
-		} else {
-			return $this->datetime[ $field ];
+			return $this->datetime_html($filters);
 		}
+		
+		if (!empty($enddate['start'])) {
+			$enddate = false;
+		}
+		
+		if ( false === $enddate) {
+			$date = get_post_meta($this->ID, 'event_date', true);
+		} else {
+			$date = get_post_meta($this->ID, 'enddate', true);
+		}
+		
+		if (empty($date)) {
+			return false;
+		}
+		
+		$datetime = date_i18n('U', strtotime( $date, current_time( 'timestamp' )) - get_option( 'gmt_offset' ) * 3600);
+
+		/**
+		 * Filter the event datetime.
+		 * 
+		 * @since	0.12.7
+		 * @param	datetime	$datetime	The event timestamp.
+		 * @param	WPT_Event	$event		The event.
+		 */
+		$datetime = apply_filters( 'wpt/event/datetime', $datetime, $this );
+		$datetime = apply_filters( 'wpt_event_datetime', $datetime, $this );
+		
+		return $datetime;
+	}
+	
+	/**
+	 * Gets the HTML for the event timestamp.
+	 * 
+	 * @since	0.12.7
+	 * @param 	array 	$filters	The template filters to apply.
+	 * @return 	sring				The HTML for the event timestamp.
+	 */
+	function datetime_html($filters = array()) {
+		$html = '<div class="'.self::post_type_name.'_datetime">';
+		
+		$datetime_html = $this->startdate_html().$this->starttime_html();		
+		foreach ($filters as $filter) {
+			if ('date'==$filter->name) {
+				$datetime_html = $filter->apply_to($this->datetime(), $this);			
+			} else {
+				$datetime_html = $filter->apply_to($datetime_html, $this);
+			}
+		}
+		$html.= $datetime_html;
+
+		$html .= '</div>';
+
+		/**
+		 * Filter the HTML for the event timestamp.
+		 * 
+		 * @since 	0.12.7
+		 * @param	string		$html		The HTML for the event timestamp.
+		 * @param	array		$filters	The template filters to apply.	
+		 * @param	WPT_Event	$event		The event.
+		 */
+		$html = apply_filters( 'wpt/event/datetime/html', $html, $filters, $this );
+
+		return $html;		
 	}
 
 	function duration($args = array()) {
@@ -242,17 +260,19 @@ class WPT_Event {
 	 * Gets the event enddate.
 	 *
 	 * @since	0.12
-	 * @return	string The even enddate.
+	 * @since	0.12.7	Now returns <false> is no endate is set.
+	 * 					See: https://github.com/slimndap/wp-theatre/issues/165
+	 * @return	string 	The event enddate.
+	 *					Returns <false> if no endate is set.
 	 */
 	function enddate() {
-		$enddate = date_i18n(
-			get_option( 'date_format' ),
-			$this->datetime(
-				array(
-					'start' => false,
-				)
-			) + get_option( 'gmt_offset' ) * 3600
-		);
+		$enddate = false;
+		if ($datetime = $this->datetime( true )) {
+			$enddate = date_i18n(
+				get_option( 'date_format' ),
+				$datetime + get_option( 'gmt_offset' ) * 3600
+			);			
+		}
 		$enddate = apply_filters( 'wpt/event/enddate', $enddate, $this );
 		return $enddate;
 	}
@@ -261,23 +281,28 @@ class WPT_Event {
 	 * Gets the HTML for the event enddate.
 	 *
 	 * @since	0.12
+	 * @since	0.12.7	No longer returns a date when no enddate is set.
+	 * 					See: https://github.com/slimndap/wp-theatre/issues/165
 	 * @param 	array 	$filters	The template filters to apply.
 	 * @return 	sring				The HTML for the event enddate.
 	 */
 	function enddate_html($filters = array()) {
-		global $wp_theatre;
-
 		$html = '<div class="'.self::post_type_name.'_date '.self::post_type_name.'_enddate">';
 
-		$enddate_html = $this->enddate();
-		foreach ($filters as $filter) {
-			if ('date'==$filter->name) {
-				$enddate_html = $filter->apply_to($this->datetime(array( 'start' => false )) + get_option( 'gmt_offset' ) * 3600, $this);	
-			} else {
-				$enddate_html = $filter->apply_to($enddate_html, $this);			
+		if ($enddate_html = $this->enddate()) {
+			foreach ($filters as $filter) {
+				if ('date'==$filter->name) {
+					$enddate_html = $filter->apply_to(
+						$this->datetime( true ) + get_option( 'gmt_offset' ) * 3600, 
+						$this
+					);	
+				} else {
+					$enddate_html = $filter->apply_to($enddate_html, $this);			
+				}
 			}
+			$html .= $enddate_html;
+			
 		}
-		$html .= $enddate_html;
 
 		$html .= '</div>';
 
@@ -290,17 +315,19 @@ class WPT_Event {
 	 * Gets the event endtime.
 	 *
 	 * @since	0.12
-	 * @return	string The even endtime.
+	 * @since	0.12.7	Now returns <false> is no endate is set.
+	 * 					See: https://github.com/slimndap/wp-theatre/issues/165
+	 * @return	string 	The event endtime.
+	 *					Returns <false> if no endate is set.
 	 */
 	function endtime() {
-		$endtime = date_i18n(
-			get_option( 'time_format' ),
-			$this->datetime(
-				array(
-					'start' => false,
-				)
-			) + get_option( 'gmt_offset' ) * 3600
-		);
+		$endtime = false;
+		if ($datetime = $this->datetime(true)) {
+			$endtime = date_i18n(
+				get_option( 'time_format' ),
+				$datetime + get_option( 'gmt_offset' ) * 3600
+			);			
+		}
 		$endtime = apply_filters( 'wpt/event/endtime', $endtime, $this );
 		return $endtime;
 	}
@@ -309,6 +336,8 @@ class WPT_Event {
 	 * Gets the HTML for the event endtime.
 	 *
 	 * @since	0.12
+	 * @since	0.12.7	No longer returns a time when no enddate is set.
+	 * 					See: https://github.com/slimndap/wp-theatre/issues/165
 	 * @param 	array 	$filters	The template filters to apply.
 	 * @return 	sring				The HTML for the event endtime.
 	 */
@@ -317,15 +346,16 @@ class WPT_Event {
 
 		$html = '<div class="'.self::post_type_name.'_time '.self::post_type_name.'_endtime">';
 
-		$endtime_html = $this->endtime();
-		foreach ($filters as $filter) {
-			if ('date'==$filter->name) {
-				$endtime_html = $filter->apply_to($this->datetime(array( 'start' => false )) + get_option( 'gmt_offset' ) * 3600, $this);	
-			} else {
-				$endtime_html = $filter->apply_to($endtime_html, $this);			
+		if ($endtime_html = $this->endtime()) {
+			foreach ($filters as $filter) {
+				if ('date'==$filter->name) {
+					$endtime_html = $filter->apply_to($this->datetime( true ) + get_option( 'gmt_offset' ) * 3600, $this);	
+				} else {
+					$endtime_html = $filter->apply_to($endtime_html, $this);			
+				}
 			}
+			$html .= $endtime_html;			
 		}
-		$html .= $endtime_html;
 
 		$html .= '</div>';
 

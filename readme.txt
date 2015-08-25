@@ -137,6 +137,8 @@ Release Date: July 3rd, 2015
 	* Events were polluting the 'link to existing content' section on the 'Insert/edit link' dialog (0.12.3).
 	* Fixed a timezone problem with the `{{datetime}}` template tag (0.12.6).
 	* Fixed a lightbox problem with themes that don't properly support screen-reader texts (0.12.6).
+	* Fixed a problem with invalid event end dates (0.12.7).
+	* The tickets status was not being saved when creating a new event.
 	
 = 0.11 =
 
@@ -292,6 +294,9 @@ Release Date: December 29th, 2014
 * Basic version of the plugin.
 
 == Upgrade Notice ==
+
+= 0.12.7 =
+Fixes a problem with invalid end dates and the tickets status not being saved.
 
 = 0.12.6 =
 Fixes a timezone problem with the {{datetime}} template tag and a lightbox problem with themes that don't properly support screen-reader texts.
