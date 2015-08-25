@@ -1075,6 +1075,9 @@ class WPT_Event_Editor {
 	 * @since	0.11
 	 * @since	0.11.5	Added the $data param, so the editor can also handle data that is not in $_POST.
 	 *					Eg. data submitted through AJAX.
+	 * @since	0.12.7	Tickets status wasn't being saved for new events created with the
+	 *					event editor on the production screen.
+	 * 					See: https://github.com/slimndap/wp-theatre/issues/166
 	 * @param 	array 	$field		The field.
 	 * @param 	int 	$event_id	The event.
 	 * @param	array	$data		The form data that was submitted by the user.
@@ -1084,11 +1087,11 @@ class WPT_Event_Editor {
 
 		$key = 'wpt_event_editor_'.$field['id'];
 
-		if ( empty($_POST[ $key ]) ) {
+		if ( empty($data[ $key ]) ) {
 			return;
 		}
 
-		$value = $_POST[ $key ];
+		$value = $data[ $key ];
 
 		if ( $value == WPT_Event::tickets_status_other ) {
 			$value = $data[ 'wpt_event_editor_'.$field['id'].'_other' ];
