@@ -479,5 +479,158 @@
 		$this->assertEquals($expected, substr_count($returned, '"wp_theatre_prod"'));
 	}
 	
+	function test_wpt_productions_groupby_day() {
+				
+		$html = do_shortcode('[wpt_productions groupby="day"]');
+
+		// should contain 'wpt_listing_group day'.
+		$this->assertEquals(7, substr_count($html, '<h3 class="wpt_listing_group day">'));		
+		$this->assertEquals(7, substr_count($html, '"wp_theatre_prod"'));
+		
+	}
+	
+	function test_wpt_productions_groupby_month() {
+
+		$production_args = array(
+			'post_type'=>WPT_Production::post_type_name
+		);
+			
+		$production_with_two_months = $this->factory->post->create($production_args);
+
+		$event_args = array(
+			'post_type'=>WPT_Event::post_type_name
+		);
+
+		$next_month_date = strtotime('+ 1 month');
+		$in_two_months_date = strtotime('+ 2 months');
+
+		$upcoming_event_next_month = $this->factory->post->create($event_args);
+		add_post_meta($upcoming_event_next_month, WPT_Production::post_type_name, $production_with_two_months);
+		add_post_meta($upcoming_event_next_month, 'event_date', date('Y-m-d H:i:s', $next_month_date));
+
+		$upcoming_event_in_two_months = $this->factory->post->create($event_args);
+		add_post_meta($upcoming_event_in_two_months, WPT_Production::post_type_name, $production_with_two_months);
+		add_post_meta($upcoming_event_in_two_months, 'event_date', date('Y-m-d H:i:s', $in_two_months_date));
+				
+		$html = do_shortcode('[wpt_productions groupby="month" post__in="'.$production_with_two_months.'"]');
+		
+		$this->assertEquals(2, substr_count($html, '<h3 class="wpt_listing_group month">'));		
+		$this->assertContains('<h3 class="wpt_listing_group month">'.date_i18n('F',$in_two_months_date).'</h3>', $html);
+		$this->assertEquals(2, substr_count($html, '"wp_theatre_prod"'));
+	}
+	
+	function test_wpt_productions_groupby_year() {
+
+		$production_args = array(
+			'post_type'=>WPT_Production::post_type_name
+		);
+			
+		$production_with_two_years = $this->factory->post->create($production_args);
+
+		$event_args = array(
+			'post_type'=>WPT_Event::post_type_name
+		);
+
+		$next_year_date = strtotime('+ 1 year');
+		$in_two_years_date = strtotime('+ 2 years');
+
+		$upcoming_event_next_year = $this->factory->post->create($event_args);
+		add_post_meta($upcoming_event_next_year, WPT_Production::post_type_name, $production_with_two_years);
+		add_post_meta($upcoming_event_next_year, 'event_date', date('Y-m-d H:i:s', $next_year_date));
+
+		$upcoming_event_in_two_years = $this->factory->post->create($event_args);
+		add_post_meta($upcoming_event_in_two_years, WPT_Production::post_type_name, $production_with_two_years);
+		add_post_meta($upcoming_event_in_two_years, 'event_date', date('Y-m-d H:i:s', $in_two_years_date));
+				
+		$html = do_shortcode('[wpt_productions groupby="year" post__in="'.$production_with_two_years.'"]');
+		
+		$this->assertEquals(2, substr_count($html, '<h3 class="wpt_listing_group year">'));		
+		$this->assertContains('<h3 class="wpt_listing_group year">'.date_i18n('Y',$in_two_years_date).'</h3>', $html);
+		$this->assertEquals(2, substr_count($html, '"wp_theatre_prod"'));
+	}
+	
+	function test_wpt_productions_paginateby_day() {
+				
+		$html = do_shortcode('[wpt_productions paginateby="day"]');
+
+		$event = new WPT_Event($this->upcoming_event_with_prices);
+
+		$expected = 1;
+		$returned = substr_count($html, '>'.date_i18n('D j M',$event->datetime()).'</a>');
+		$this->assertEquals($expected, $returned);
+		
+		$expected = 7;
+		$returned = substr_count($html, '<span class="wpt_listing_filter day-');
+		$this->assertEquals($expected, $returned);
+	}
+	
+	function test_wpt_production_paginateby_month() {
+		
+		$production_args = array(
+			'post_type'=>WPT_Production::post_type_name
+		);
+			
+		$production_with_two_months = $this->factory->post->create($production_args);
+
+		$event_args = array(
+			'post_type'=>WPT_Event::post_type_name
+		);
+
+		$next_month_date = strtotime('+ 1 month');
+		$in_two_months_date = strtotime('+ 2 months');
+
+		$upcoming_event_next_month = $this->factory->post->create($event_args);
+		add_post_meta($upcoming_event_next_month, WPT_Production::post_type_name, $production_with_two_months);
+		add_post_meta($upcoming_event_next_month, 'event_date', date('Y-m-d H:i:s', $next_month_date));
+
+		$upcoming_event_in_two_months = $this->factory->post->create($event_args);
+		add_post_meta($upcoming_event_in_two_months, WPT_Production::post_type_name, $production_with_two_months);
+		add_post_meta($upcoming_event_in_two_months, 'event_date', date('Y-m-d H:i:s', $in_two_months_date));
+				
+		$html = do_shortcode('[wpt_productions paginateby="month" post__in="'.$production_with_two_months.'"]');
+
+		$expected = 1;
+		$returned = substr_count($html, '>'.date_i18n('M Y',$in_two_months_date).'</a>');
+		$this->assertEquals($expected, $returned);
+		
+		$expected = 2;
+		$returned = substr_count($html, '<span class="wpt_listing_filter month-');
+		$this->assertEquals($expected, $returned);
+	}
+	
+	function test_wpt_production_paginateby_year() {
+		
+		$production_args = array(
+			'post_type'=>WPT_Production::post_type_name
+		);
+			
+		$production_with_two_years = $this->factory->post->create($production_args);
+
+		$event_args = array(
+			'post_type'=>WPT_Event::post_type_name
+		);
+
+		$next_year_date = strtotime('+ 1 year');
+		$in_two_years_date = strtotime('+ 2 years');
+
+		$upcoming_event_next_year = $this->factory->post->create($event_args);
+		add_post_meta($upcoming_event_next_year, WPT_Production::post_type_name, $production_with_two_years);
+		add_post_meta($upcoming_event_next_year, 'event_date', date('Y-m-d H:i:s', $next_year_date));
+
+		$upcoming_event_in_two_years = $this->factory->post->create($event_args);
+		add_post_meta($upcoming_event_in_two_years, WPT_Production::post_type_name, $production_with_two_years);
+		add_post_meta($upcoming_event_in_two_years, 'event_date', date('Y-m-d H:i:s', $in_two_years_date));
+								
+		$html = do_shortcode('[wpt_productions paginateby="year" post__in="'.$production_with_two_years.'"]');
+
+		$expected = 1;
+		$returned = substr_count($html, '>'.date_i18n('Y',$in_two_years_date).'</a>');
+		$this->assertEquals($expected, $returned);
+		
+		$expected = 2;
+		$returned = substr_count($html, '<span class="wpt_listing_filter year-');
+		$this->assertEquals($expected, $returned);
+	}
+	
 }
 ?>
