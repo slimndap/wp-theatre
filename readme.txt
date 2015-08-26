@@ -13,19 +13,21 @@ A free plugin to publish your events on a WordPress website. Perfect for theater
 A WordPress plugin to manage events with all necessary shortcodes and widgets for your theater.
 
 
-> <strong>Newsletter</strong><br>
-> This plugin is in active development and updated frequently. Please [sign-up for the newsletter](http://theater.slimndap.com/newsletter?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt) to stay informed about upcoming features and successful showcases.
-
 __Shortcodes__
 
 Theater comes with several shortcodes and widgets to show off your events. See the [documentation](https://github.com/slimndap/wp-theatre/wiki/Shortcodes) for an overview.
 
 __Available extensions__
 
-* [Events Slider](http://theater.slimndap.com/downloads/events-slider-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt) – Show your events in a touch enabled and responsive slider.
-* [Event Duplicator](http://theater.slimndap.com/downloads/event-duplicator-for-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt) – This free extension adds a new action to the event editor that instantly duplicates the event. Very helpful if your need to enter a lot of events at once.
+* [Event Duplicator](http://theater.slimndap.com/downloads/event-duplicator-for-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – This __free__ extension adds a new action to the event editor that instantly duplicates the event. Very helpful if your need to enter a lot of events at once.
+* [Events Slider](http://theater.slimndap.com/downloads/events-slider-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – Show your events in a touch enabled and responsive slider.
+* [Timetable](http://theater.slimndap.com/downloads/timetable-for-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – Show your event showtimes in a clear table layout. Perfect for cinemas and festivals.
+* [Kijkwijzer](http://theater.slimndap.com/downloads/kijkwijzer-for-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – Add Kijkwijzer icons to your events.
 * [Ticketmatic](http://slimndap.com/product/ticketmatic-for-wordpress/)
 * [ActiveTickets](http://www.slimndap.com/product/activetickets-wordpress/)
+
+> <strong>Newsletter</strong><br>
+> This plugin is in active development and updated frequently. Please [sign-up for the newsletter](http://theater.slimndap.com/newsletter?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) to stay informed about upcoming features and successful showcases.
 
 __Missing features?__
 
@@ -113,6 +115,19 @@ The new feature may be added directly to the Theater plugin or as an extension s
 
 == Changelog ==
 
+= 0.13 =
+
+Release Date: August 27th, 2015
+
+* Enhancements
+** Production listings can now be filters by start and end dates.
+** Production listings can now be grouped and paginated by day, month or year.
+** Stripped all unnecessary elements off the event edit screen.
+** Made it possible to alter the behaviour of the tickets lightbox with a filter.
+
+See the [release post](http://theater.slimndap.com/?utm_source=wordpress.org&utm_medium=web&utm_content=changelog&utm_campaign=readme.txt) for examples.
+
+
 = 0.12 =
 
 Release Date: July 3rd, 2015
@@ -138,7 +153,7 @@ Release Date: July 3rd, 2015
 	* Fixed a timezone problem with the `{{datetime}}` template tag (0.12.6).
 	* Fixed a lightbox problem with themes that don't properly support screen-reader texts (0.12.6).
 	* Fixed a problem with invalid event end dates (0.12.7).
-	* The tickets status was not being saved when creating a new event.
+	* The tickets status was not being saved when creating a new event (0.12.7).
 	
 = 0.11 =
 
@@ -294,6 +309,9 @@ Release Date: December 29th, 2014
 * Basic version of the plugin.
 
 == Upgrade Notice ==
+
+= 0.13 =
+Adds date filtering for production listings.
 
 = 0.12.7 =
 Fixes a problem with invalid end dates and the tickets status not being saved.
