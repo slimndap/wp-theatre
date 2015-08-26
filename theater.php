@@ -2,9 +2,9 @@
 /*
 	
 	Plugin Name: Theater
-	Plugin URI: http://wordpress.org/plugins/theatre/
+	Plugin URI: http://theater.slimndap.com/
 	Description: Turn your Wordpress website into a theater website.
-	Author: Jeroen Schmit, Slim & Dapper
+	Author: Jeroen Schmit
 	Version: 0.13
 	Author URI: http://slimndap.com/
 	Text Domain: wp_theatre

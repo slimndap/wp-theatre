@@ -120,7 +120,7 @@ The new feature may be added directly to the Theater plugin or as an extension s
 Release Date: August 27th, 2015
 
 * Enhancements
-** Production listings can now be filters by start and end dates.
+** Production listings can now be filtered by start and end dates.
 ** Production listings can now be grouped and paginated by day, month or year.
 ** Stripped all unnecessary elements off the event edit screen.
 ** Made it possible to alter the behaviour of the tickets lightbox with a filter.
