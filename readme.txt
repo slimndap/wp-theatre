@@ -117,15 +117,15 @@ The new feature may be added directly to the Theater plugin or as an extension s
 
 = 0.13 =
 
-Release Date: August 27th, 2015
+Release Date: September 3rd, 2015
 
 * Enhancements
-** Production listings can now be filtered by start and end dates.
+** Production listings can now be filtered by start and end dates. See the updated [documentation](https://github.com/slimndap/wp-theatre/wiki/Shortcodes#production-listing).
 ** Production listings can now be grouped and paginated by day, month or year.
 ** Stripped all unnecessary elements off the event edit screen.
 ** Made it possible to alter the behaviour of the tickets lightbox with a filter.
 
-See the [release post](http://theater.slimndap.com/?utm_source=wordpress.org&utm_medium=web&utm_content=changelog&utm_campaign=readme.txt) for examples.
+See the [release post](http://theater.slimndap.com/theater-for-wordpress-0-13-released/?utm_source=wordpress.org&utm_medium=web&utm_content=changelog&utm_campaign=readme.txt) for examples.
 
 
 = 0.12 =

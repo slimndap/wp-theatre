@@ -56,7 +56,7 @@ class WPT_Frontend {
 			$thickbox_args = array(
 				'width' => 800,
 				'height' => 600,
-				'breakpoint_mobile' => false,
+				'disable_width' => false,
 			);
 			
 			/**

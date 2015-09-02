@@ -20,7 +20,7 @@ class wpt_tickets
 		if tickets_url.hasClass 'wp_theatre_integrationtype_lightbox'
 			url = tickets_url.attr 'href'
 
-			if !thickbox_args.breakpoint_mobile or (jQuery(window).width() >  thickbox_args.breakpoint_mobile)
+			if !thickbox_args.disable_width or (jQuery(window).width() >  thickbox_args.disable_width)
 			
 				if url.indexOf '#'
 					tmp_parts = url.split '#'
