@@ -500,13 +500,6 @@
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f4f8fa', endColorstr='#FFF', GradientType=0);
   /* IE6-9 */
 }
-#poststuff .wp_theatre_event > div {
-  float: none;
-  width: auto;
-}
-#poststuff .wp_theatre_event > div.content .title {
-  display: none;
-}
 .wpt_settings_radio_with_selects {
   line-height: 2em;
 }
@@ -602,6 +595,23 @@ body.js #wpt_event_editor .inside .wpt_event_editor_create.open .wpt_event_edito
 }
 body.js #wpt_event_editor .inside .wpt_event_editor_create.open .wpt_event_editor_form {
   display: table;
+}
+body.wp-admin.post-type-wp_theatre_event #post-body-content {
+  display: none;
+}
+body.wp-admin.post-type-wp_theatre_event #wpt_event_publish h3 {
+  border-bottom: none;
+}
+body.wp-admin.post-type-wp_theatre_event #wpt_event_publish .inside {
+  padding: 10px;
+  margin: 0;
+  background: #f5f5f5;
+  border-top: 1px solid #ddd;
+}
+body.wp-admin.post-type-wp_theatre_event #wpt_event_publish .inside .submit {
+  margin: 0;
+  padding: 0;
+  text-align: right;
 }
 @font-face {
   font-family: "theatre-webfont";
