@@ -150,9 +150,17 @@
 .wpt_events .wp_theatre_event .wp_theatre_event_location .wp_theatre_event_venue + .wp_theatre_event_city:before {
   content: ',\00a0';
 }
+.wpt_productions .wp_theatre_event .wp_theatre_event_location .wp_theatre_event_venue:empty + .wp_theatre_event_city:before,
+.wpt_events .wp_theatre_event .wp_theatre_event_location .wp_theatre_event_venue:empty + .wp_theatre_event_city:before {
+  display: none;
+}
 .wpt_productions .wp_theatre_event .wp_theatre_event_location .wp_theatre_event_city,
 .wpt_events .wp_theatre_event .wp_theatre_event_location .wp_theatre_event_city {
   display: inline;
+}
+.wpt_productions .wp_theatre_event .wp_theatre_event_location .wp_theatre_event_city:empty:before,
+.wpt_events .wp_theatre_event .wp_theatre_event_location .wp_theatre_event_city:empty:before {
+  display: none;
 }
 .wpt_productions .wp_theatre_event .wp_theatre_event_tickets,
 .wpt_events .wp_theatre_event .wp_theatre_event_tickets {
