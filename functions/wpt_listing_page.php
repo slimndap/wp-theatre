@@ -639,12 +639,18 @@
 	 	/*
 	 	 * Get the URL for the listing page.
 	 	 *
-	 	 * @since 0.8
-	 	 * @since 0.10.2	Category now uses slug instead of term_id.
+	 	 * @since 	0.8
+	 	 * @since 	0.10.2	Category now uses slug instead of term_id.
+	 	 * @since	0.12.1	Trailingslashit to avoid an extra redirect.
+	 	 * @since	0.13.1	Pagination now work when listing page is same as front page.
+	 	 *					Fixes #98.
 	 	 * 
 	     * @param array $args {
 	     *     An array of arguments. Optional.
 	     *
+	     *     @type string $wpt_day      	Day to filter on. No day-filter when set to <false>. 
+	     *                                 	Accepts <yyyy-mm-dd> or <false>.
+	     *                                 	Default <false>.
 	     *     @type string $wpt_month      Month to filter on. No month-filter when set to <false>. 
 	     *                                 	Accepts <yyyy-mm> or <false>.
 	     *                                 	Default <false>.
@@ -652,11 +658,10 @@
 	     *                                 	Default <false>.
 	     * }
 	     * @return string URL.
-	 	 */
-	 	
+	 	 */	
 	 	function url($args=array()) {
-	 		if ($this->page()) {
-		 		$url = trailingslashit(get_permalink($this->page()->ID));
+	 		if ($page = $this->page()) {
+		 		$url = get_permalink($page->ID);
 		 		$defaults = array(
 		 			'wpt_month' => false,
 		 			'wpt_day' => false,
@@ -664,22 +669,24 @@
 		 		);
 		 		$args = wp_parse_args($args, $defaults);
 
-	 			if (get_option('permalink_structure')) {	
+	 			if (get_option('permalink_structure') && get_option('page_on_front') != $page->ID) {
+		 			$url = trailingslashit($url);
 			 		if ($args['wpt_category']) {
 			 			if ($category=get_category_by_slug($args['wpt_category'])) {
 					 		$url.= $category->slug.'/';
 			 			}
 			 		}
-			 		
 			 		if ($args['wpt_month']) {
 				 		$url.= substr($args['wpt_month'],0,4).'/'.substr($args['wpt_month'],5,2);
 			 		}
-			 		
 			 		if ($args['wpt_day']) {
 				 		$url.= substr($args['wpt_day'],0,4).'/'.substr($args['wpt_day'],5,2).'/'.substr($args['wpt_day'],8,2);
 			 		}
-	
+			 		$url = trailingslashit($url);
 	 			} else {
+		 			if (get_option('page_on_front') == $page->ID) {
+			 			$url = add_query_arg('pagename', $page->post_name, $url);
+		 			}
 			 		if ($args['wpt_category']) {
 			 			$url = add_query_arg('wpt_category', $args['wpt_category'], $url);
 			 		}
@@ -743,11 +750,9 @@
 	 	 *
 	 	 * @see WPT_Listing::filter_pagination()
 	 	 * @since	?.?
-	 	 * @since	0.12.1	Trailingslashit to avoid an extra redirect.
 	 	 */
 	 	function wpt_listing_filter_pagination_url($url) {
 	 		if (
-	 			get_option('permalink_structure') &&
 	 			$this->page() &&
 	 			is_page($this->page()->ID)
 	 		) {
@@ -757,7 +762,6 @@
 		 		} else {
 			 		$url = $this->url($url_parts['query']);		 		
 		 		}
-		 		$url = trailingslashit($url);
 	 		}
 		 	return $url;
 	 	}
