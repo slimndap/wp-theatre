@@ -632,5 +632,39 @@
 		$this->assertEquals($expected, $returned);
 	}
 	
+	function test_wpt_productions_before_1970() {
+		
+		$production_title = 'Production in 1960';
+		
+		$production_args = array(
+			'post_type'=>WPT_Production::post_type_name,
+			'post_title'=>$production_title,
+		);
+		$production_in_1960 = $this->factory->post->create($production_args);
+		
+		$event_date_in_1960 = strtotime('1960-10-10');
+
+		$event_args = array(
+			'post_type'=>WPT_Event::post_type_name
+		);
+		$event_in_1960 = $this->factory->post->create($event_args);
+		
+		add_post_meta($event_in_1960, WPT_Production::post_type_name, $production_in_1960);
+		add_post_meta($event_in_1960, 'event_date', date('Y-m-d H:i:s', $event_date_in_1960));
+		
+		global $wp_query;		
+		$wp_query->query_vars['wpt_year'] = '1960';
+		
+		$html = do_shortcode('[wpt_productions]');
+
+		$returned = substr_count($html, $production_title); 
+		$expected = 1;
+		$this->assertEquals($expected, $returned);
+		
+		$returned = substr_count($html, '<div class="wp_theatre_prod">');
+		$expected = 1;
+		$this->assertEquals($expected, $returned);
+	}
+	
 }
 ?>

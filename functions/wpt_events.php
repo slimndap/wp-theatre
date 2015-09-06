@@ -695,6 +695,7 @@ class WPT_Events extends WPT_Listing {
 				'key' => $wp_theatre->order->meta_key,
 				'value' => strtotime( $filters['start'], current_time( 'timestamp' ) ) - get_option( 'gmt_offset' ) * 3600,
 				'compare' => '>=',
+				'type' => 'NUMERIC',
 			);
 		}
 
@@ -710,6 +711,7 @@ class WPT_Events extends WPT_Listing {
 				'key' => $wp_theatre->order->meta_key,
 				'value' => strtotime( $filters['end'], current_time( 'timestamp' ) ) - get_option( 'gmt_offset' ) * 3600,
 				'compare' => '<=',
+				'type' => 'NUMERIC',
 			);
 		}
 
