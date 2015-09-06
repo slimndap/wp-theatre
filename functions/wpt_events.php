@@ -619,6 +619,8 @@ class WPT_Events extends WPT_Listing {
 	 * @since 	0.11.8	Support for 'post__in' and 'post__not_in'.
 	 *					Fixes #128.
 	 * @since	0.13	Added support for multiple productions.
+	 * @since	0.13.1	'Start' and 'end' filter explicitly set to 'NUMERIC'.
+	 *					Fixes #168.
 	 *
 		 * @return array Events.
 	 */

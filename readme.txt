@@ -24,7 +24,7 @@ __Available extensions__
 * [Timetable](http://theater.slimndap.com/downloads/timetable-for-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – Show your event showtimes in a clear table layout. Perfect for cinemas and festivals.
 * [Kijkwijzer](http://theater.slimndap.com/downloads/kijkwijzer-for-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – Add Kijkwijzer icons to your events.
 * [Ticketmatic](http://slimndap.com/product/ticketmatic-for-wordpress/)
-* [ActiveTickets](http://www.slimndap.com/product/activetickets-wordpress/)
+* [ActiveTickets](http://theater.slimndap.com/downloads/activetickets-for-wordpress/utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) - Automatically import your ActiveTickets events and sell them through your website.
 
 > <strong>Newsletter</strong><br>
 > This plugin is in active development and updated frequently. Please [sign-up for the newsletter](http://theater.slimndap.com/newsletter?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) to stay informed about upcoming features and successful showcases.
@@ -120,13 +120,17 @@ The new feature may be added directly to the Theater plugin or as an extension s
 Release Date: September 3rd, 2015
 
 * Enhancements
-** Production listings can now be filtered by start and end dates. See the updated [documentation](https://github.com/slimndap/wp-theatre/wiki/Shortcodes#production-listing).
-** Production listings can now be grouped and paginated by day, month or year.
-** Stripped all unnecessary elements off the event edit screen.
-** Made it possible to alter the behaviour of the tickets lightbox with a filter.
+    * Production listings can now be filtered by start and end dates. See the updated [documentation](https://github.com/slimndap/wp-theatre/wiki/Shortcodes#production-listing).
+    * Production listings can now be grouped and paginated by day, month or year.
+    * Stripped all unnecessary elements off the event edit screen.
+    * Made it possible to alter the behaviour of the tickets lightbox with a filter.
 
 See the [release post](http://theater.slimndap.com/theater-for-wordpress-0-13-released/?utm_source=wordpress.org&utm_medium=web&utm_content=changelog&utm_campaign=readme.txt) for examples.
 
+* Bugfixes
+	* Fixed a problem in production listings with events that start before 1-1-1970.
+	* Visibility of ticket buttons didn't account for timezones.
+	* Pagination for listings wasn't working when the listing page was the same as the front page.
 
 = 0.12 =
 
@@ -309,6 +313,9 @@ Release Date: December 29th, 2014
 * Basic version of the plugin.
 
 == Upgrade Notice ==
+
+= 0.13.1 =
+Fixes related to events that start before 1-1-1970, disappearing ticket buttons and list pagination on the front page.
 
 = 0.13 =
 Adds date filtering for production listings.
