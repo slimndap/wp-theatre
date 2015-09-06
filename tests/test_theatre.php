@@ -1048,4 +1048,42 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertEquals($event->time(array('html'=>'true', 'start'=>false)), $event->endtime_html());		
 	}
 	
+	function test_tickets_button_disappears_at_right_time() {
+		$default_timezone_offset = date('Z');
+		$wordpress_timezone_offset = $default_timezone_offset + 1;
+		
+		// Set the timezone for Wordpress to 1 hour later.
+		update_option('gmt_offset', $wordpress_timezone_offset );
+		
+		$production_args = array(
+			'post_type'=>WPT_Production::post_type_name
+		);	
+		$production_in_5_mins = $this->factory->post->create($production_args);
+
+		$event_args = array(
+			'post_type'=>WPT_Event::post_type_name
+		);
+		$in_5_mins_date = strtotime('+ 5 minutes', time() + HOUR_IN_SECONDS * $wordpress_timezone_offset);
+
+		$event_in_5_mins = $this->factory->post->create($event_args);
+		add_post_meta($event_in_5_mins, WPT_Production::post_type_name, $production_in_5_mins);
+		add_post_meta($event_in_5_mins, 'event_date', date('Y-m-d H:i:s', $in_5_mins_date));
+		
+		$tickets_url = 'http://theater.slimndap.com';
+		add_post_meta($event_in_5_mins, 'tickets_url', $tickets_url);
+		
+		$event = new WPT_Event($event_in_5_mins);
+
+		$tickets = $event->tickets();
+		$expected = 1;
+		$returned = substr_count($tickets, $tickets_url);
+		$this->assertEquals($expected, $returned);
+
+		$tickets_html = $event->tickets_html();
+		$expected = 1;
+		$returned = substr_count($tickets_html, $tickets_url);
+		$this->assertEquals($expected, $returned);
+		
+	}
+	
 }

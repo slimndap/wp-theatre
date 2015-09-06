@@ -626,6 +626,8 @@ class WPT_Event {
 	 * @since 	0.4
 	 * @since 	0.10.14	Deprecated the HTML argument.
 	 *					Use @see WPT_Event::tickets_html() instead.
+	 * @since	0.13.1	Check for upcoming event now accounts for timezones.
+	 *					Fixes #167.
 	 *
 	 * @return 	string	The tickets URL or ''.
 	 */
@@ -639,7 +641,7 @@ class WPT_Event {
 
 		if (
 			self::tickets_status_onsale == $this->tickets_status() &&
-			$this->datetime() > current_time( 'timestamp' )
+			$this->datetime() > current_time( 'timestamp', true )
 		) {
 			$tickets = $this->tickets_url();
 		}
@@ -692,6 +694,9 @@ class WPT_Event {
 	 * @since	0.10.14
 	 * @since	0.11.10	Don't return anything for historic events with an 'on sale' status.
 	 *					Fixes #118.
+	 * @since	0.13.1	Check for upcoming event now accounts for timezones.
+	 *					Fixes #167.
+	 *
 	 * @return 	string	The HTML for a valid event tickets link.
 	 */
 	public function tickets_html() {
@@ -704,7 +709,7 @@ class WPT_Event {
 
 		if ( self::tickets_status_onsale == $this->tickets_status() ) {
 			
-			if ( $this->datetime() > current_time( 'timestamp' ) ) {
+			if ( $this->datetime() > current_time( 'timestamp', true ) ) {
 				$html .= $this->tickets_url_html();
 	
 				$prices_html = $this->prices_html();
