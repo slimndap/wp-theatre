@@ -124,6 +124,7 @@ Release Date: September 3rd, 2015
     * Production listings can now be grouped and paginated by day, month or year.
     * Stripped all unnecessary elements off the event edit screen.
     * Made it possible to alter the behaviour of the tickets lightbox with a filter.
+    * You can now browse extensions inside the WordPress admin.
 
 See the [release post](http://theater.slimndap.com/theater-for-wordpress-0-13-released/?utm_source=wordpress.org&utm_medium=web&utm_content=changelog&utm_campaign=readme.txt) for examples.
 
@@ -313,6 +314,9 @@ Release Date: December 29th, 2014
 * Basic version of the plugin.
 
 == Upgrade Notice ==
+
+= 0.13.2 =
+Adds an extensions page to the Theater menu.
 
 = 0.13.1 =
 Fixes related to events that start before 1-1-1970, disappearing ticket buttons and list pagination on the front page.

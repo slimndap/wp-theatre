@@ -613,6 +613,15 @@ body.wp-admin.post-type-wp_theatre_event #wpt_event_publish .inside .submit {
   padding: 0;
   text-align: right;
 }
+.theater_page_wpt_extensions .plugin-icon {
+  line-height: 128px;
+  background-color: rgba(6, 156, 136, 0.75);
+  border-radius: 2px;
+}
+.theater_page_wpt_extensions .plugin-icon img {
+  height: auto;
+  vertical-align: middle;
+}
 @font-face {
   font-family: "theatre-webfont";
   src: url("../font/theatre-webfont.eot");
