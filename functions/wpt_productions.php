@@ -31,28 +31,53 @@ class WPT_Productions extends WPT_Listing {
 	}
 
 	/**
-	 * Gets an array of all categories with productions.
+	 * Gets all categories with productions.
 	 *
-	 * @since 0.5
-	 * @since 0.10		Renamed method from `categories()` to `get_categories()`.
-		 * @since 0.10.2	Now returns the slug instead of the term_id as the array keys.
-		 * @since 0.10.14	Significally decreased the number of queries used.
+	 * @since 	0.5
+	 * @since 	0.10	Renamed method from `categories()` to `get_categories()`.
+	 * @since 	0.10.2	Now returns the slug instead of the term_id as the array keys.
+	 * @since 	0.10.14	Significally decreased the number of queries used.
+	 * @since	0.??	Now uses the production filters.
+	 *					Added filters to manipulate the categories.
 	 *
-	 * @param 	array $filters	See WPT_Productions::get() for possible values.
-	 * @return 	array 			Categories.
+	 * @param 	array 	$filters	See WPT_Productions::get() for possible values.
+	 * @return 	array 				The categories.
 	 */
-	function get_categories() {
-		$productions = $this->get();
-		$production_ids = wp_list_pluck( $productions, 'ID' );
-		$terms = wp_get_object_terms( $production_ids, 'category' );
-
+	function get_categories($filters) {
 		$categories = array();
 
-		foreach ( $terms as $term ) {
-			$categories[ $term->slug ] = $term->name;
+		$productions = $this->get($filters);
+		
+		if (!empty($productions)) {
+			$production_ids = wp_list_pluck( $productions, 'ID' );
+	
+			/**
+			 * Filter the categories arguments.
+			 * For possible values see: 
+			 * https://codex.wordpress.org/Function_Reference/wp_get_object_terms
+			 * 
+			 * @since	0.??
+			 * @param	$args	array	The current arguments.
+			 */
+			$args = apply_filters('wpt/productions/categories/args', array() );
+			$terms = wp_get_object_terms( $production_ids, 'category', $args );
+	
+			foreach ( $terms as $term ) {
+				$categories[ $term->slug ] = $term->name;
+			}
+	
+			asort( $categories );
 		}
-
-		asort( $categories );
+		
+		/**
+		 * Filter the categories that have productions.
+		 * 
+		 * @since	0.??
+		 * @param	array	$categories	The current categories.
+		 * @param	array	$filters	The production filters.
+		 */
+		$categories = apply_filters('wpt/productions/categories', $categories, $filters);
+		
 		return $categories;
 	}
 

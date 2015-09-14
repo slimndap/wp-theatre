@@ -12,7 +12,7 @@ class WPT_Frontend {
 		add_shortcode( 'wpt_productions', array($this,'wpt_productions') );
 		add_shortcode( 'wpt_seasons', array($this,'wpt_productions') );
 
-		add_shortcode( 'wp_theatre_iframe', array($this,'wp_theatre_iframe') );
+		add_shortcode( 'wp_theatre_iframe', array($this,'get_iframe_html') );
 
 		add_shortcode( 'wpt_production_events', array($this,'wpt_production_events') );
 
@@ -544,14 +544,15 @@ class WPT_Frontend {
 	}
 
 	/**
-	 * Gets the HTML for the [wpt_event_tickets] shortcode.
+	 * Gets the HTML for the [wp_theatre_iframe] shortcode.
 	 *
-	 * @since  ?.?
-	 * @since  0.12		Work with the 'wpt_event_tickets' query var,
+	 * @since  	?.?
+	 * @since	0.12	Work with the 'wpt_event_tickets' query var,
 	 * 					instead of $_GET vars.
+	 * @since	0.13.4	Added the 'wpt/frontend/iframe/html' filter.
 	 * @return string	The HTML for the [wpt_event_tickets] shortcode.
 	 */
-	function wp_theatre_iframe() {
+	function get_iframe_html() {
 		$html = '';
 
 		$event_id = (int) get_query_var( 'wpt_event_tickets' );
@@ -563,6 +564,20 @@ class WPT_Frontend {
 			}
 		}
 
+		/**
+		 * Filter the HTML for the [wp_theatre_iframe] shortcode.
+		 * 
+		 * @since	0.??
+		 * @param 	string	$html			The HTML for the [wp_theatre_iframe] shortcode.
+		 * @param	string	$tickets_url	The event tickets url.
+		 * @pararm	int		$event_id		The event ID.
+		 */
+		$html = apply_filters('wpt/frontend/iframe/html', $html, $tickets_url, $event_id);
+
+		/**
+		 * @deprecated	0.??
+		 * Use 'wpt/frontend/iframe/html' filter instead.
+		 */
 		do_action( 'wp_theatre_iframe' );
 
 		return $html;
