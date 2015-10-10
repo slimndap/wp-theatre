@@ -42,13 +42,14 @@ install_test_suite() {
 	# set up testing suite
 	mkdir -p $WP_TESTS_DIR
 	cd $WP_TESTS_DIR
-	svn co --quiet http://develop.svn.wordpress.org/trunk/tests/phpunit/includes/
 
 	if [ $WP_VERSION == 'latest' ]; then 
 		local BRANCHE_NAME='trunk'
 	else
 		local BRANCHE_NAME="branches/$WP_VERSION"
 	fi
+
+	svn co --quiet http://develop.svn.wordpress.org/${BRANCHE_NAME}/tests/phpunit/includes/
 
 	wget -nv -O wp-tests-config.php http://develop.svn.wordpress.org/${BRANCHE_NAME}/wp-tests-config-sample.php
 	sed $ioption "s:dirname( __FILE__ ) . '/src/':'$WP_CORE_DIR':" wp-tests-config.php
