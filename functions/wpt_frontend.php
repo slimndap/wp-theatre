@@ -6,8 +6,6 @@ class WPT_Frontend {
 
 		add_filter( 'the_content', array($this, 'the_content') );
 
-		add_filter( 'pre_get_posts', array($this,'pre_get_posts') );
-
 		add_shortcode( 'wpt_events', array($this,'wpt_events') );
 		add_shortcode( 'wpt_productions', array($this,'wpt_productions') );
 		add_shortcode( 'wpt_seasons', array($this,'wpt_productions') );
@@ -91,22 +89,6 @@ class WPT_Frontend {
 		}
 
 		echo implode( "\n",$html )."\n";
-	}
-
-	function pre_get_posts($query) {
-
-		// add productions to tag and category archives
-		if ( is_category() || is_tag() && empty( $query->query_vars['suppress_filters'] ) ) {
-			$post_types = $query->get( 'post_type' );
-			if ( empty($post_types) ) {
-				$post_types = array('post');
-			}
-			if ( is_array( $post_types ) ) {
-				$post_types[] = WPT_Production::post_type_name;
-			}
-			$query->set( 'post_type',$post_types );
-		}
-		return $query;
 	}
 
 	/**
