@@ -113,8 +113,8 @@ class WPT_Event {
 
 		if ( ! isset($this->{$field}) ) {
 			$custom_value = get_post_meta( $this->ID, $field, true );
-	        if ( empty($custom_value) ) {
-	            $custom_value = $this->production()->custom( $field );
+	        if ( empty($custom_value) && $production = $this->production() ) {
+	            $custom_value = $production->custom( $field );
 	        }
 
 			$this->{$field} = apply_filters(
@@ -573,10 +573,23 @@ class WPT_Event {
 	 * @return WPT_Production Production.
 	 */
 	function production() {
-		if ( ! isset($this->production) ) {
-			$this->production = new WPT_Production( get_post_meta( $this->ID,WPT_Production::post_type_name, true ), $this->PostClass );
+		$production_id = get_post_meta( $this->ID,WPT_Production::post_type_name, true );
+		
+		// Bail if no production ID is set.
+		if (empty($production_id)) {
+			return false;
 		}
-		return $this->production;
+		
+		/*
+		 * Bail if production doesn't exist.
+		 * See: https://tommcfarlin.com/wordpress-post-exists-by-id/
+		 */
+		if (FALSE === get_post_status( $production_id )) {
+			return false;
+		}
+		
+		$production = new WPT_Production( $production_id, $this->PostClass );
+		return $production;
 	}
 
 	/**
@@ -700,7 +713,6 @@ class WPT_Event {
 	 * @return 	string	The HTML for a valid event tickets link.
 	 */
 	public function tickets_html() {
-
 		$html = '';
 
 		$tickets_status = $this->tickets_status();
@@ -720,7 +732,6 @@ class WPT_Event {
 		} else {
 			$html .= $this->tickets_status_html();
 		}
-
 		$html .= '</div>'; // .tickets
 
 		/**
@@ -837,7 +848,7 @@ class WPT_Event {
 		}
 
 		$tickets_url = get_post_meta( $this->ID,'tickets_url',true );
-
+	
 		if (
 			! empty($wp_theatre->wpt_tickets_options['integrationtype']) &&
 			'iframe' == $wp_theatre->wpt_tickets_options['integrationtype']  &&
@@ -888,8 +899,8 @@ class WPT_Event {
 		
 		$tickets_url_iframe = get_permalink( $tickets_iframe_page );
 		
-		if (get_option('permalink_structure')) {
-			$tickets_url_iframe = trailingslashit($tickets_url_iframe).$this->production()->post()->post_name.'/'.$this->ID;
+		if (get_option('permalink_structure') && $production = $this->production()) {
+			$tickets_url_iframe = trailingslashit($tickets_url_iframe).$production->post()->post_name.'/'.$this->ID;
 		} else {
 			$tickets_url_iframe = add_query_arg('wpt_event_tickets', $this->ID, $tickets_url_iframe);
 		}

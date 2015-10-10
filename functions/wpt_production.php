@@ -570,7 +570,7 @@ class WPT_Production {
 		if (!isset($this->{$field})) {
 			$this->{$field} = apply_filters(
 				'wpt_production_'.$field, 
-				get_post_meta($this->post()->ID, $field, true),
+				get_post_meta($this->ID, $field, true),
 				$field,
 				$this
 			);

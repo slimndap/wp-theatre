@@ -8,7 +8,7 @@ class WPT_Extensions_Promo {
 
 	function __construct() {
 		add_filter( 'plugin_row_meta', array( $this, 'add_plugin_row_meta' ), 10, 2 );
-		add_action( 'admin_menu', array( $this, 'add_menu' ) );
+		add_action( 'admin_menu', array( $this, 'add_menu' ), 40 );
 	}
 
 	/**
@@ -19,7 +19,7 @@ class WPT_Extensions_Promo {
 	 */
 	function add_menu() {
 		add_submenu_page(
-			'theatre',
+			'theater-events',
 			__( 'Theater Extensions','wp_theatre' ),
 			__( 'Extensions', 'wp_theatre' ),
 			'manage_options',

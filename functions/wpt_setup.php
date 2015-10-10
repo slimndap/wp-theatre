@@ -182,16 +182,16 @@
 			register_post_type( WPT_Production::post_type_name,
 				array(
 					'labels' => array(
-						'name' => __( 'Productions','wp_theatre'),
-						'singular_name' => __( 'Production','wp_theatre'),
+						'name' => __( 'Events (old)','wp_theatre'),
+						'singular_name' => __( 'Event','wp_theatre'),
 						'add_new' =>  _x('Add New', 'production','wp_theatre'),
-						'new_item' => __('New production','wp_theatre'),
-						'add_new_item' => __('Add new production','wp_theatre'),
-						'edit_item' => __('Edit production','wp_theatre')
+						'new_item' => __('New event','wp_theatre'),
+						'add_new_item' => __('Add new event','wp_theatre'),
+						'edit_item' => __('Edit event','wp_theatre')
 					),
 					'public' => true,
 					'has_archive' => false,
-					'show_in_menu'  => 'theatre',
+					'show_in_menu'  => false,
 					'show_in_admin_bar' => true,
 		  			'supports' => array('title', 'editor', 'excerpt', 'thumbnail','comments'),
 		  			'taxonomies' => array('category','post_tag'),
@@ -231,7 +231,7 @@
 				'public' => true,
 				'has_archive' => true,
 				'supports' => array('title','editor'),
-				'show_in_menu'  => 'theatre',
+				'show_in_menu'  => false,
 				)
 			);
 

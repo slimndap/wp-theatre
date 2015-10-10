@@ -60,12 +60,16 @@ class WPT_Event_Template extends WPT_Template {
 				if ( ! empty($args[0]) ) {
 					$size = $args[0];
 				}
-				$value = $this->object->production()->thumbnail_html($size, $filters);
+				if ($production = $this->object->production()) {
+					$value = $production->thumbnail_html($size, $filters);				
+				}
 				break;
 			case 'categories':
 			case 'content':
 			case 'excerpt':
-				$value = $this->object->production()->{$field}($value_args);
+				if ($production = $this->object->production()) {
+					$value = $production->{$field}($value_args);
+				}
 				break;
 			case 'startdate':
 			case 'date':

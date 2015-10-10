@@ -523,6 +523,9 @@
 #wpt_event_editor .inside .wpt_event_editor_listing table tr td.wpt_event_editor_event_actions {
   text-align: right;
 }
+#wpt_event_editor .inside .wpt_event_editor_listing table tr td .wp_theatre_event_remark {
+  font-style: italic;
+}
 #wpt_event_editor .inside .wpt_event_editor_create .wpt_event_editor_create_actions {
   display: none;
 }
@@ -622,6 +625,67 @@ body.wp-admin.post-type-wp_theatre_event #wpt_event_publish .inside .submit {
   height: auto;
   vertical-align: middle;
 }
+body.toplevel_page_theater-events .view-switch .view-compact:before {
+  content: '\f164';
+}
+body.toplevel_page_theater-events .view-switch .view-list:before {
+  content: '\f163';
+}
+body.toplevel_page_theater-events .wp-list-table tbody tr td.column-categories:empty:before {
+  content: '—';
+}
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod > *,
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event > * {
+  margin-left: 80px;
+}
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod figure,
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event figure {
+  width: 70px;
+  margin: 0;
+  float: left;
+}
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod figure img,
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event figure img {
+  width: 100%;
+  height: auto;
+  border-radius: 2px;
+}
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod .wp_theatre_prod_title,
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event .wp_theatre_prod_title,
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod .wp_theatre_event_title,
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event .wp_theatre_event_title {
+  font-weight: bold;
+}
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod .wp_theatre_event_location > *,
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event .wp_theatre_event_location > * {
+  display: inline;
+}
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod .wp_theatre_event_location .wp_theatre_event_venue + .wp_theatre_event_city:before,
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event .wp_theatre_event_location .wp_theatre_event_venue + .wp_theatre_event_city:before {
+  content: ', ';
+}
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod .wp_theatre_event_location .wp_theatre_event_venue + .wp_theatre_event_city:empty:before,
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event .wp_theatre_event_location .wp_theatre_event_venue + .wp_theatre_event_city:empty:before {
+  content: '';
+}
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod .wp_theatre_event_location .wp_theatre_event_venue:empty + .wp_theatre_event_city:before,
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event .wp_theatre_event_location .wp_theatre_event_venue:empty + .wp_theatre_event_city:before {
+  content: '';
+}
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod .wp_theatre_event_remark,
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event .wp_theatre_event_remark {
+  font-style: italic;
+}
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event_tickets:empty:before {
+  content: '—';
+}
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wpt_production_categories {
+  margin: 0;
+}
+body.toplevel_page_theater-events .wp-list-table tbody tr td .row-actions {
+  clear: left;
+  margin-left: 80px;
+}
 @font-face {
   font-family: "theatre-webfont";
   src: url("../font/theatre-webfont.eot");
@@ -629,7 +693,7 @@ body.wp-admin.post-type-wp_theatre_event #wpt_event_publish .inside .submit {
   font-weight: normal;
   font-style: normal;
 }
-#toplevel_page_theatre .wp-menu-image:before {
+#toplevel_page_theater-events .wp-menu-image:before {
   font-family: 'theatre-webfont' !important;
   content: '\e808';
 }

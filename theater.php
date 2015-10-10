@@ -43,18 +43,24 @@ class WP_Theatre {
 		// Setup
 		$this->setup = new WPT_Setup();
 		$this->admin = new WPT_Admin();
-		$this->events = new WPT_Events();
-		$this->productions = new WPT_Productions();
 		$this->order = new WPT_Order();
 		$this->feeds = new WPT_Feeds();
 		$this->transient = new WPT_Transient();
 		$this->listing_page = new WPT_Listing_Page();
 		$this->calendar = new WPT_Calendar();
 		$this->filter = new WPT_Filter();
+
 		$this->event_admin = new WPT_Event_Admin();
 		$this->event_editor = new WPT_Event_Editor();
-		$this->cart = new WPT_Cart();
+
+		$this->events = new WPT_Events();
+
 		$this->production_permalink = new WPT_Production_Permalink();
+
+		$this->productions = new WPT_Productions();
+		$this->productions_admin = new WPT_Productions_Admin();
+
+		$this->cart = new WPT_Cart();
 		$this->bulk_editor = new WPT_Bulk_Editor();
 		$this->extensions_updater= new WPT_Extensions_Updater();
 		$this->extensions_promo= new WPT_Extensions_Promo();
@@ -106,6 +112,7 @@ class WP_Theatre {
 		require_once(dirname(__FILE__) . '/functions/wpt_production_widget.php');
 
 		require_once(dirname(__FILE__) . '/functions/wpt_productions.php');
+		require_once(dirname(__FILE__) . '/functions/wpt_productions_admin.php');	
 
 		require_once(dirname(__FILE__) . '/functions/wpt_event.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_event_admin.php');	
@@ -132,6 +139,10 @@ class WP_Theatre {
 		require_once(dirname(__FILE__) . '/functions/extensions/wpt_extensions_promo.php');	
 
 		require_once(dirname(__FILE__) . '/functions/wpt_importer.php');	
+
+		require_once(dirname(__FILE__) . '/functions/list_table/wpt_list_table.php');	
+		require_once(dirname(__FILE__) . '/functions/list_table/wpt_list_table_productions.php');	
+		require_once(dirname(__FILE__) . '/functions/list_table/wpt_list_table_events.php');	
 
 		if (is_admin()) {
 		} else {

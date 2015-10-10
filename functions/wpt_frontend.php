@@ -572,7 +572,7 @@ class WPT_Frontend {
 		 * @param	string	$tickets_url	The event tickets url.
 		 * @pararm	int		$event_id		The event ID.
 		 */
-		$html = apply_filters('wpt/frontend/iframe/html', $html, $tickets_url, $event_id);
+		$html = apply_filters('wpt/frontend/iframe/html', $html, $event_id);
 
 		/**
 		 * @deprecated	0.??

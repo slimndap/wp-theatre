@@ -555,6 +555,18 @@ class WPT_Events extends WPT_Listing {
 		return $months;
 	}
 
+	function get_productions_by_keyword($keyword, $status = array('publish') ) {
+		global $wp_theatre;
+		$productions_args = array(
+			's' => $keyword,
+			'status' => $status,
+		);
+		$productions = $wp_theatre->productions->get($productions_args);
+		$production_ids = wp_list_pluck( $productions, 'ID' );
+		
+		return $production_ids;
+	}
+
 	/**
 	 * Gets all years that have events.
 	 *
@@ -629,22 +641,23 @@ class WPT_Events extends WPT_Listing {
 		global $wp_theatre;
 
 		$defaults = array(
-			'order' => 'asc',
-			'limit' => false,
-			'post__in' => false,
-			'post__not_in' => false,
-			'upcoming' => false,
-			'past' => false,
-			'start' => false,
-			'end' => false,
 			'cat' => false,
 			'category_name' => false,
 			'category__and' => false,
 			'category__in' => false,
 			'category__not_in' => false,
-			'season' => false,
+			'end' => false,
+			'limit' => false,
+			'order' => 'asc',
+			'past' => false,
+			'post__in' => false,
+			'post__not_in' => false,
 			'production' => false,
+			'season' => false,
+			's' => false,
+			'start' => false,
 			'status' => array( 'publish' ),
+			'upcoming' => false,
 		);
 
 		/**
@@ -725,6 +738,15 @@ class WPT_Events extends WPT_Listing {
 			$args['post__not_in'] = $filters['post__not_in'];
 		}
 
+		if($filters['s']) {
+			$productions_by_keyword = $this->get_productions_by_keyword($filters['s'], $filters['status']);
+			$args['meta_query'][] = array(
+				'key' => WPT_Production::post_type_name,
+				'value' => $productions_by_keyword,
+				'compare' => 'IN',				
+			);
+		}
+
 		if ( $filters['season'] ) {
 			$args['meta_query'][] = array(
 				'key' => WPT_Season::post_type_name,
@@ -774,7 +796,20 @@ class WPT_Events extends WPT_Listing {
 		$args = apply_filters( 'wpt_events_get_args',$args );
 		$args = apply_filters( 'wpt/events/get/args', $args, $filters );
 
-		$posts = get_posts( $args );
+		$posts = array();
+
+		/*
+		 * Don't try to retrieve productions if the 'post_in' argument is an empty array.
+		 * This can happen when the date filter doesn't match any productions.
+		 *
+         * This is different from the way that WP_Query handles an empty 'post__in' argument.
+		 */
+		if (
+			empty($filters['s']) ||				// True when 'post__in', 'start', 'end' and 'upcoming' filters are not used.
+			! empty($productions_by_keyword)	// True when the date filter resulted in matching productions.
+		) {
+			$posts = get_posts( $args );
+		}
 
 		$events = array();
 		for ( $i = 0;$i < count( $posts );$i++ ) {

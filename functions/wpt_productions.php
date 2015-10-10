@@ -760,12 +760,14 @@ class WPT_Productions extends WPT_Listing {
 			'category__not_in' => false,
 			'season' => false,
 			'ignore_sticky_posts' => false,
+			'status' => array('publish'),
+			's' => false,
 		);
 		$filters = wp_parse_args( $filters, $defaults );
 
 		$args = array(
 			'post_type' => WPT_Production::post_type_name,
-			'post_status' => 'publish',
+			'post_status' => $filters['status'],
 			'meta_query' => array(),
 			'order' => $filters['order'],
 		);
@@ -810,6 +812,10 @@ class WPT_Productions extends WPT_Listing {
 			$args['posts_per_page'] = $filters['limit'];
 		} else {
 			$args['posts_per_page'] = -1;
+		}
+
+		if ($filters['s']) {
+			$args['s'] = $filters['s'];
 		}
 
 		if (

@@ -717,8 +717,7 @@ class WPT_Event_Editor {
 		$html .= '</td>';
 
 		$html .= '<td>';
-		$html .= $event->venue( $args );
-		$html .= $event->city( $args );
+		$html .= $event->location( $args );
 		$html .= $event->remark( $args );
 		$html .= '</td>';
 

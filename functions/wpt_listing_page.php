@@ -549,8 +549,8 @@
 	     * @param 	int 	$post			The post ID.
 	     * @return	array					The new array of post display states.
 	     */
-	    public function set_display_post_state($post_states, $post) {   
-		    if ($post->ID== $this->page()->ID) {
+	    public function set_display_post_state($post_states, $post) { 
+		    if ($this->page() && $post->ID == $this->page()->ID)  {
 			    $post_states['wpt_listing_page'] = __('Events page', 'wp_theatre');
 		    }
 		    return $post_states;

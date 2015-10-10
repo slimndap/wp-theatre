@@ -3,7 +3,8 @@ class WPT_Admin {
 	function __construct() {
 		// Hooks (only in admin screens)
 		add_action( 'admin_init', array($this,'admin_init'));
-		add_action( 'admin_menu', array($this, 'admin_menu' ));
+		add_action( 'admin_menu', array($this, 'add_admin_menu' ), 10);
+		add_action( 'admin_menu', array($this, 'add_settings_menu' ), 30);
 		add_action( 'add_meta_boxes', array($this, 'add_meta_boxes'));
 		add_action( 'quick_edit_custom_box', array($this,'quick_edit_custom_box'), 10, 2 );
 
@@ -161,9 +162,27 @@ class WPT_Admin {
 		}
 	}
 
-	function admin_menu() {
-		add_menu_page( __('Theater','wp_theatre'), __('Theater','wp_theatre'), 'edit_posts', 'theatre', array(), 'none', 30);
-		add_submenu_page( 'theatre',__('Theater','wp_theatre').' '.__('Settings'), __('Settings'), 'manage_options', 'wpt_admin', array( $this, 'admin_page' ));
+	public function add_admin_menu() {
+		add_menu_page( 
+			__('Theater','wp_theatre'), 
+			__('Theater','wp_theatre'), 
+			'edit_posts', 
+			'theater-events', 
+			array(), 
+			'none', 
+			30
+		);	
+	}
+
+	public function add_settings_menu() {
+		add_submenu_page( 
+			'theater-events',
+			__('Theater','wp_theatre').' '.__('Settings'), 
+			__('Settings'), 
+			'manage_options', 
+			'wpt_admin', 
+			array( $this, 'admin_page' )
+		);
 	}
 	
 	/**
@@ -198,7 +217,11 @@ class WPT_Admin {
         ); 	
 	}
 
-	
+	public function productions_admin_html() {
+		$list_table = new WPT_Production_Admin_List_Table();
+		$list_table->prepare_items();
+		$list_table->display();
+	}
 
 	/**
 	 * Show a meta box with display settings for a production.
