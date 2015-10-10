@@ -37,7 +37,7 @@ class WPT_Productions extends WPT_Listing {
 	 * @since 	0.10	Renamed method from `categories()` to `get_categories()`.
 	 * @since 	0.10.2	Now returns the slug instead of the term_id as the array keys.
 	 * @since 	0.10.14	Significally decreased the number of queries used.
-	 * @since	0.??	Now uses the production filters.
+	 * @since	0.13.3	Now uses the production filters.
 	 *					Added filters to manipulate the categories.
 	 *
 	 * @param 	array 	$filters	See WPT_Productions::get() for possible values.
@@ -53,10 +53,11 @@ class WPT_Productions extends WPT_Listing {
 	
 			/**
 			 * Filter the categories arguments.
+			 * You can use this to alter the ordering of the categories.
 			 * For possible values see: 
 			 * https://codex.wordpress.org/Function_Reference/wp_get_object_terms
 			 * 
-			 * @since	0.??
+			 * @since	0.13.3
 			 * @param	$args	array	The current arguments.
 			 */
 			$args = apply_filters('wpt/productions/categories/args', array() );
@@ -72,7 +73,7 @@ class WPT_Productions extends WPT_Listing {
 		/**
 		 * Filter the categories that have productions.
 		 * 
-		 * @since	0.??
+		 * @since	0.13.3
 		 * @param	array	$categories	The current categories.
 		 * @param	array	$filters	The production filters.
 		 */
