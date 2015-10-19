@@ -521,6 +521,15 @@ class WPT_Events extends WPT_Listing {
 			$html .= $this->filter_pagination( 'category', $this->get_categories( $args ), $args );
 		}
 
+		/**
+		 * Filter the HTML of the page navigation for an event listing. 
+		 * 
+		 * @since	0.13.3
+		 * @param 	string 	$html	The HTML of the page navigation for an event listing.
+		 * @param 	array 	$args	The arguments being used for the event listing.
+		 */
+		$html = apply_filters('wpt/events/html/page/navigation', $html, $args);
+
 		return $html;
 	}
 
