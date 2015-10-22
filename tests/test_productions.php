@@ -90,7 +90,11 @@
 
 	function tearDown() {
 		parent::tearDown();
-		$this->_cleanup_query_vars(); 
+		
+		global $wpdb, $wp_query, $post; 
+        $wp_query = new WP_Query(); 
+        $post = null; 		
+        $this->_cleanup_query_vars(); 
 	}
 
 	function _cleanup_query_vars() { 
