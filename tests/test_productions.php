@@ -87,6 +87,11 @@
 		add_post_meta($upcoming_event, 'tickets_status', WPT_Event::tickets_status_hidden );
 		
 	}
+	
+	function tearDown() {
+		parent::tearDown();
+		 wp_set_current_user( 0 );
+	}
 
 	function _cleanup_query_vars() { 
 	    // clean out globals to stop them polluting wp and wp_query 
