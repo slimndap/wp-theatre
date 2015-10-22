@@ -25,15 +25,20 @@
 		 * @see WPT_Event::datetime()				To collect the dates for upcoming events.
 		 * @see WPT_Production::permalink()			To get the permalink for an event.
 		 *
-		 * @since 0.8
-		 * @since 0.10.6	Bugfix: calendar was showing months that have historic events.
+		 * @since	 0.8
+		 * @since 	0.10.6	Bugfix: calendar was showing months that have historic events.
 		 *					See https://wordpress.org/support/topic/calendar-wrong-month-shown-again.
-		 * @since 0.10.15	Bugfix: now accounts for timezones.
+		 * @since 	0.10.15	Bugfix: now accounts for timezones.
 		 *					Fixes #117.
+		 * @since	0.13.3	Bugfix: weekdays were showing up as question marks when using 
+		 *					a multibyte languege (eg. Russian).
+		 * 					Fixes #174.
 		 *
 		 * @return string The HTML for the calendar.
 		 */
 		function html() {
+			global $wp_locale;
+			
 			if (!$this->check_dependencies()) {
 				return '';
 			}
@@ -53,7 +58,7 @@
 			$sunday = strtotime('next Sunday');
 			for($i=0;$i<7;$i++) {
 				$thead_html.= '<th>';
-				$thead_html.= substr(date_i18n('D',$sunday + ($start_of_week * 60 * 60 * 24) + ($i * 60 * 60 * 24)) , 0 , 1);
+				$thead_html.= $wp_locale->get_weekday_initial( date_i18n('l',$sunday + ($start_of_week * 60 * 60 * 24) + ($i * 60 * 60 * 24)) );
 				$thead_html.= '</th>';
 			}
 			$thead_html.= '</tr></thead>';

@@ -87,6 +87,11 @@
 		add_post_meta($upcoming_event, 'tickets_status', WPT_Event::tickets_status_hidden );
 		
 	}
+	
+	function tearDown() {
+		parent::tearDown();
+		 wp_set_current_user( 0 );
+	}
 
 	function test_productions_are_loaded() {
 		$this->assertCount(5, $this->wp_theatre->productions->get());		
@@ -389,7 +394,11 @@
 		);
 		wp_update_post( $my_post );
 
-		$this->assertEquals(5, substr_count(do_shortcode('[wpt_productions]{{title}}{{excerpt}}[/wpt_productions]'), 'wp_theatre_prod_excerpt'));
+		$html = do_shortcode('[wpt_productions]{{title}}{{excerpt}}[/wpt_productions]');
+		$expected = 5;
+		$actual = substr_count( $html, 'wp_theatre_prod_excerpt');
+
+		$this->assertEquals($expected, $actual, $html);
 	}
 	
 	function test_wpt_productions_categories() {
@@ -454,9 +463,10 @@
 	}
 	
 	function test_wpt_productions_start_end() {
-		$returned = do_shortcode('[wpt_productions start="yesterday"]');
+		$html = do_shortcode('[wpt_productions start="yesterday"]');
+		$actual = substr_count($html, '"wp_theatre_prod"');
 		$expected = 5; // All productions, including the production that starts yesterday and the sticky productions.
-		$this->assertEquals($expected, substr_count($returned, '"wp_theatre_prod"'));
+		$this->assertEquals($expected, $actual, $html);
 		
 		$returned = do_shortcode('[wpt_productions start="today" end="+2 days"]');
 		$expected = 4; // 2 productions with matching events and 2 sticky productions.

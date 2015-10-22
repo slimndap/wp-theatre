@@ -87,6 +87,12 @@ class WPT_Test extends WP_UnitTestCase {
 		
 	}
 
+	function tearDown() {
+		parent::tearDown();
+		 wp_set_current_user( 0 );
+	}
+
+
 	function dump_events() {
 		$args = array(
 			'post_type'=>WPT_Event::post_type_name,
