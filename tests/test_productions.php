@@ -88,15 +88,6 @@
 		
 	}
 
-	function tearDown() {
-		parent::tearDown();
-		
-		global $wpdb, $wp_query, $post; 
-        $wp_query = new WP_Query(); 
-        $post = null; 		
-        $this->_cleanup_query_vars(); 
-	}
-
 	function _cleanup_query_vars() { 
 	    // clean out globals to stop them polluting wp and wp_query 
 	    foreach ( $GLOBALS['wp']->public_query_vars as $v ) 
