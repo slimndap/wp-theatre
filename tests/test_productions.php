@@ -98,6 +98,47 @@
 		$this->assertEquals(5, substr_count(do_shortcode('[wpt_productions]{{title}}{{excerpt}}[/wpt_productions]'), 'wp_theatre_prod_excerpt'));
 	}
 
+	// Test transients
+	function test_wpt_transient_productions() {
+		global $wp_query;
+		
+		do_shortcode('[wpt_productions]');
+		
+		$args = array(
+			'paginateby' => array(),
+			'post__in' => false,
+			'post__not_in' => false,
+			'upcoming' => false,
+			'season' => false,
+			'category' => false, // deprecated since v0.9.
+			'cat' => false,
+			'category_name' => false,
+			'category__and' => false,
+			'category__in' => false,
+			'category__not_in' => false,
+			'start' => false,
+			'end' => false,
+			'groupby' => false,
+			'limit' => false,
+			'order' => 'asc'
+		);
+		$unique_args = array_merge(
+			array( 'atts' => $args ), 
+			array( 'wp_query' => $wp_query->query_vars )
+		);
+		
+		$this->assertEquals(5, substr_count($this->wp_theatre->transient->get('p',$unique_args), '"wp_theatre_prod"'));
+		
+		/* 
+		 * Test if transients are off for logged in users 
+		 */
+		 
+		$user = new WP_User( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
+		wp_set_current_user( $user->ID );		
+        $this->assertFalse($this->wp_theatre->transient->get('p',$args));		
+		wp_set_current_user(0);		
+	}
+
 	
 }
 ?>
