@@ -1,7 +1,7 @@
 === Theater for WordPress ===
 Contributors: slimndap
 Tags: theatre, stage, venue, events, shows, concerts, tickets, ticketing, sports, performances, calendar, festival, workshops, theater, cinema
-Requires at least: 3.8
+Requires at least: 4.0
 Tested up to: 4.3
 Stable tag: trunk
 License: GPLv2
@@ -132,6 +132,9 @@ See the [release post](http://theater.slimndap.com/theater-for-wordpress-0-13-re
 	* Fixed a problem in production listings with events that start before 1-1-1970.
 	* Visibility of ticket buttons didn't account for timezones.
 	* Pagination for listings wasn't working when the listing page was the same as the front page.
+
+* Requirements
+	* The plugin is no longer tested for WordPress version prior to 4.0 (0.13.3).
 
 = 0.12 =
 
@@ -314,6 +317,9 @@ Release Date: December 29th, 2014
 * Basic version of the plugin.
 
 == Upgrade Notice ==
+
+= 0.13.3 =
+
 
 = 0.13.2 =
 Adds an extensions page to the Theater menu.
