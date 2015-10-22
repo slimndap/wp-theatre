@@ -88,6 +88,30 @@
 		
 	}
 
+	function tearDown() {
+		parent::tearDown();
+		$this->_cleanup_query_vars(); 
+	}
+
+	function _cleanup_query_vars() { 
+	    // clean out globals to stop them polluting wp and wp_query 
+	    foreach ( $GLOBALS['wp']->public_query_vars as $v ) 
+	        unset( $GLOBALS[$v] ); 
+	 
+	    foreach ( $GLOBALS['wp']->private_query_vars as $v ) 
+	        unset( $GLOBALS[$v] ); 
+	 
+	    foreach ( get_taxonomies( array() , 'objects' ) as $t ) { 
+	        if ( ! empty( $t->query_var ) ) 
+	            $GLOBALS['wp']->add_query_var( $t->query_var ); 
+	    } 
+	 
+	    foreach ( get_post_types( array() , 'objects' ) as $t ) { 
+	        if ( ! empty( $t->query_var ) ) 
+	            $GLOBALS['wp']->add_query_var( $t->query_var ); 
+	    } 
+	} 
+
 	function test_productions_are_loaded() {
 		$this->assertCount(5, $this->wp_theatre->productions->get());		
 	}
@@ -458,9 +482,10 @@
 	}
 	
 	function test_wpt_productions_start_end() {
-		$returned = do_shortcode('[wpt_productions start="yesterday"]');
+		$html = do_shortcode('[wpt_productions start="yesterday"]');
+		$actual = substr_count($html, '"wp_theatre_prod"');
 		$expected = 5; // All productions, including the production that starts yesterday and the sticky productions.
-		$this->assertEquals($expected, substr_count($returned, '"wp_theatre_prod"'));
+		$this->assertEquals($expected, $actual, $html);
 		
 		$returned = do_shortcode('[wpt_productions start="today" end="+2 days"]');
 		$expected = 4; // 2 productions with matching events and 2 sticky productions.
