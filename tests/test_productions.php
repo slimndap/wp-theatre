@@ -389,7 +389,11 @@
 		);
 		wp_update_post( $my_post );
 
-		$this->assertEquals(5, substr_count(do_shortcode('[wpt_productions]{{title}}{{excerpt}}[/wpt_productions]'), 'wp_theatre_prod_excerpt'));
+		$html = do_shortcode('[wpt_productions]{{title}}{{excerpt}}[/wpt_productions]');
+		$expected = 5;
+		$actual = substr_count( $html, 'wp_theatre_prod_excerpt');
+
+		$this->assertEquals($expected, $actual, $html);
 	}
 	
 	function test_wpt_productions_categories() {
