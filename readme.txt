@@ -23,6 +23,7 @@ __Available extensions__
 * [Events Slider](http://theater.slimndap.com/downloads/events-slider-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – Show your events in a touch enabled and responsive slider.
 * [Timetable](http://theater.slimndap.com/downloads/timetable-for-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – Show your event showtimes in a clear table layout. Perfect for cinemas and festivals.
 * [Kijkwijzer](http://theater.slimndap.com/downloads/kijkwijzer-for-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – Add Kijkwijzer icons to your events.
+* [BBFC](http://theater.slimndap.com/downloads/bbfc-for-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – Add British Board of Film Classification (BBFC) icons to your movies.
 * [Ticketmatic](http://slimndap.com/product/ticketmatic-for-wordpress/)
 * [ActiveTickets](http://theater.slimndap.com/downloads/activetickets-for-wordpress/utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) - Automatically import your ActiveTickets events and sell them through your website.
 
@@ -132,6 +133,7 @@ See the [release post](http://theater.slimndap.com/theater-for-wordpress-0-13-re
 	* Fixed a problem in production listings with events that start before 1-1-1970.
 	* Visibility of ticket buttons didn't account for timezones.
 	* Pagination for listings wasn't working when the listing page was the same as the front page.
+	* Weekdays were showing up as question marks when using a multibyte language (eg. Russian).
 
 * Requirements
 	* The plugin is no longer tested for WordPress version prior to 4.0 (0.13.3).
@@ -319,7 +321,7 @@ Release Date: December 29th, 2014
 == Upgrade Notice ==
 
 = 0.13.3 =
-
+Bugfix: weekdays were showing up as question marks when using a multibyte language (eg. Russian).
 
 = 0.13.2 =
 Adds an extensions page to the Theater menu.
