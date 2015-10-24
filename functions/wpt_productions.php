@@ -371,25 +371,33 @@ class WPT_Productions extends WPT_Listing {
 		 */
 
 		if ( ! empty($wp_query->query_vars['wpt_season']) ) {
-			return $this->get_html_for_season( $wp_query->query_vars['wpt_season'], $args ); }
+			$html = $this->get_html_for_season( $wp_query->query_vars['wpt_season'], $args ); 
+		} elseif ( ! empty($wp_query->query_vars['wpt_category']) ) {
+			$html = $this->get_html_for_category( $wp_query->query_vars['wpt_category'], $args ); 
+		} elseif ( ! empty($wp_query->query_vars['wpt_year']) ) {
+			$html = $this->get_html_for_year( $wp_query->query_vars['wpt_year'], $args ); 
+		} elseif ( ! empty($wp_query->query_vars['wpt_month']) ) {
+			$html = $this->get_html_for_month( $wp_query->query_vars['wpt_month'], $args ); 
+		} elseif ( ! empty($wp_query->query_vars['wpt_day']) ) {
+			$html = $this->get_html_for_day( $wp_query->query_vars['wpt_day'], $args ); 
+		} else {
+			/*
+			 * The user didn't select a page.
+			 * Show the full listing.
+			 */
+			$html = $this->get_html_grouped( $args );
+		}
 
-		if ( ! empty($wp_query->query_vars['wpt_category']) ) {
-			return $this->get_html_for_category( $wp_query->query_vars['wpt_category'], $args ); }
-
-		if ( ! empty($wp_query->query_vars['wpt_year']) ) {
-			return $this->get_html_for_year( $wp_query->query_vars['wpt_year'], $args ); }
-
-		if ( ! empty($wp_query->query_vars['wpt_month']) ) {
-			return $this->get_html_for_month( $wp_query->query_vars['wpt_month'], $args ); }
-
-		if ( ! empty($wp_query->query_vars['wpt_day']) ) {
-			return $this->get_html_for_day( $wp_query->query_vars['wpt_day'], $args ); }
-
-		/*
-		 * The user didn't select a page.
-		 * Show the full listing.
+		/**
+		 * Filter the HTML for a page in a listing.
+		 *
+		 * @since	0.13.4
+		 * @param	string	$html_group	The HTML for this page.
+		 * @param	array	$args		The arguments for the HTML of this listing.
 		 */
-		return $this->get_html_grouped( $args );
+		$html = apply_filters( 'wpt/productions/html/page', $html, $args );
+
+		return $html;
 	}
 
 	/**
@@ -617,6 +625,8 @@ class WPT_Productions extends WPT_Listing {
 	 *
 	 * @since 	0.10
 	 * @since	0.13	Added support for days, months and years.
+	 * @since	0.13.4	Show the pagination filters in the same order as the
+	 *					the 'paginateby' argument.
 	 *
 	 * @access protected
 	 * @param 	array $args     The arguments being used for the event listing.
@@ -628,45 +638,67 @@ class WPT_Productions extends WPT_Listing {
 
 		$html = '';
 
-		// Seasons navigation
-		if (
-			( ! empty($args['paginateby']) && in_array( 'season', $args['paginateby'] )) ||
-			! empty($wp_query->query_vars['wpt_season'])
-		) {
-			$html .= $this->filter_pagination( 'season', $this->get_seasons( $args ), $args );
+		$paginateby = empty($args['paginateby']) ? array() : $args['paginateby'];
+		
+		$filters = array(
+			'day' => array(
+							'query_arg' => 'wpt_day',
+							'callback' => array($this, 'get_days'),
+						),
+			'month' => array(
+							'query_arg' => 'wpt_month',
+							'callback' => array($this, 'get_months'),
+						),
+			'year' => array(
+							'query_arg' => 'wpt_year',
+							'callback' => array($this, 'get_years'),
+						),
+			'category' => array(
+							'query_arg' => 'wpt_category',
+							'callback' => array($this, 'get_categories'),
+						),
+			'season' => array(
+							'query_arg' => 'wpt_season',
+							'callback' => array($this, 'get_seasons'),
+						),
+		);
+		
+		/**
+		 * Filter the possible filters for a productions list.
+		 * 
+		 * @since 	0.13.4
+		 * @param	array	$filters	The current possible filters for a productions list.
+		 */
+		$filters = apply_filters('wpt/productions/page/navigation/filters', $filters);
+		
+		foreach ($filters as $filter_name => $filter_options) {
+			if (!empty($wp_query->query_vars[ $filter_options['query_arg'] ])) {
+				$paginateby[] = $filter_name;
+			}
+		}
+		
+		$paginateby = array_unique($paginateby);
+		
+		foreach($paginateby as $paginateby_filter) {
+			$options = call_user_func_array( 
+				$filters[ $paginateby_filter ]['callback'], 
+				array( $args ) 
+			);
+			$html.= $this->filter_pagination(
+				$paginateby_filter,
+				$options,
+				$args
+			);			
 		}
 
-		// Categories navigation
-		if (
-			( ! empty($args['paginateby']) && in_array( 'category', $args['paginateby'] )) ||
-			! empty($wp_query->query_vars['wpt_category'])
-		) {
-			$html .= $this->filter_pagination( 'category', $this->get_categories( $args ), $args );
-		}
-
-		// Years navigation
-		if (
-			( ! empty($args['paginateby']) && in_array( 'year', $args['paginateby'] )) ||
-			! empty($wp_query->query_vars['wpt_year'])
-		) {
-			$html .= $this->filter_pagination( 'year', $this->get_years( $args ), $args );
-		}
-
-		// Months navigation
-		if (
-			( ! empty($args['paginateby']) && in_array( 'month', $args['paginateby'] )) ||
-			! empty($wp_query->query_vars['wpt_month'])
-		) {
-			$html .= $this->filter_pagination( 'month', $this->get_months( $args ), $args );
-		}
-
-		// Days navigation
-		if (
-			( ! empty($args['paginateby']) && in_array( 'day', $args['paginateby'] )) ||
-			! empty($wp_query->query_vars['wpt_day'])
-		) {
-			$html .= $this->filter_pagination( 'day', $this->get_days( $args ), $args );
-		}
+		/**
+		 * Filter the HTML of the page navigation for productions list. 
+		 * 
+		 * @since	0.13.3
+		 * @param 	string 	$html	The HTML of the page navigation for an event listing.
+		 * @param 	array 	$args	The arguments being used for the event listing.
+		 */
+		$html = apply_filters('wpt/productions/html/page/navigation', $html, $args);
 
 		return $html;
 	}

@@ -477,9 +477,11 @@ class WPT_Events extends WPT_Listing {
 	 * @see WPT_Events::get_months()
 	 * @see WPT_Events::get_categories()
 	 *
-	 * @since 0.10
+	 * @since 	0.10
+	 * @since	0.13.4	Show the pagination filters in the same order as the
+	 *					the 'paginateby' argument.
 	 *
-	 * @access protected
+	 * @access 	protected
 	 * @param 	array $args     The arguments being used for the event listing.
 	 *							See WPT_Events::get_html() for possible values.
 	 * @return 	string			The HTML for the page navigation.
@@ -489,36 +491,53 @@ class WPT_Events extends WPT_Listing {
 
 		$html = '';
 
-		// Days navigation
-		if (
-			( ! empty($args['paginateby']) && in_array( 'day', $args['paginateby'] )) ||
-			! empty($wp_query->query_vars['wpt_day'])
-		) {
-			$html .= $this->filter_pagination( 'day', $this->get_days( $args ), $args );
+		$paginateby = empty($args['paginateby']) ? array() : $args['paginateby'];
+		
+		$filters = array(
+			'day' => array(
+							'query_arg' => 'wpt_day',
+							'callback' => array($this, 'get_days'),
+						),
+			'month' => array(
+							'query_arg' => 'wpt_month',
+							'callback' => array($this, 'get_months'),
+						),
+			'year' => array(
+							'query_arg' => 'wpt_year',
+							'callback' => array($this, 'get_years'),
+						),
+			'category' => array(
+							'query_arg' => 'wpt_category',
+							'callback' => array($this, 'get_categories'),
+						),
+		);
+		
+		/**
+		 * Filter the possible filters for an events list.
+		 * 
+		 * @since 	0.13.4
+		 * @param	array	$filters	The current possible filters for an events list.
+		 */
+		$filters = apply_filters('wpt/events/page/navigation/filters', $filters);
+		
+		foreach ($filters as $filter_name => $filter_options) {
+			if (!empty($wp_query->query_vars[ $filter_options['query_arg'] ])) {
+				$paginateby[] = $filter_name;
+			}
 		}
-
-		// Months navigation
-		if (
-			( ! empty($args['paginateby']) && in_array( 'month', $args['paginateby'] )) ||
-			! empty($wp_query->query_vars['wpt_month'])
-		) {
-			$html .= $this->filter_pagination( 'month', $this->get_months( $args ), $args );
-		}
-
-		// Years navigation
-		if (
-			( ! empty($args['paginateby']) && in_array( 'year', $args['paginateby'] )) ||
-			! empty($wp_query->query_vars['wpt_year'])
-		) {
-			$html .= $this->filter_pagination( 'year', $this->get_years( $args ), $args );
-		}
-
-		// Categories navigation
-		if (
-			( ! empty($args['paginateby']) && in_array( 'category', $args['paginateby'] )) ||
-			! empty($wp_query->query_vars['wpt_category'])
-		) {
-			$html .= $this->filter_pagination( 'category', $this->get_categories( $args ), $args );
+		
+		$paginateby = array_unique($paginateby);
+		
+		foreach($paginateby as $paginateby_filter) {
+			$options = call_user_func_array( 
+				$filters[ $paginateby_filter ]['callback'], 
+				array( $args ) 
+			);
+			$html.= $this->filter_pagination(
+				$paginateby_filter,
+				$options,
+				$args
+			);			
 		}
 
 		/**
