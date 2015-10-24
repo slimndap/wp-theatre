@@ -235,6 +235,25 @@ class WPT_Listing {
 	}
 	
 	/**
+	 * Gets the pagination filters for a listing.
+	 * 
+	 * @since	0.13.4
+	 * @return 	array	The pagination filters for a listing.
+	 */
+	public function get_pagination_filters() {
+		
+		/**
+		 * Filter the pagination filters for a listing.
+		 * 
+		 * @since	0.13.4
+		 * @param	array	The current pagination filters for a listing.
+		 */
+		$filters = apply_filters('wpt/listing/pagination/filters', array());
+		
+		return $filters;
+	}
+	
+	/**
 	 * Gets the page navigation for a listing in HTML.
 	 *
 	 * Override this method to create your own page navigation

@@ -470,6 +470,51 @@ class WPT_Events extends WPT_Listing {
 	}
 
 	/**
+	 * Gets the pagination filters for an event listing.
+	 * 
+	 * @since	0.13.4
+	 * @return 	array	The pagination filters for an event listing.
+	 */
+	public function get_pagination_filters() {
+		
+		$filters = parent::get_pagination_filters();
+
+		$filters['day'] =  array(
+			'title' => __('Days', 'wp_theatre'),
+			'query_arg' => 'wpt_day',
+			'callback' => array($this, 'get_days'),
+		);
+		
+		$filters['month'] =  array(
+			'title' => __('Months', 'wp_theatre'),
+			'query_arg' => 'wpt_month',
+			'callback' => array($this, 'get_months'),
+		);
+		
+		$filters['year'] = array(
+			'title' => __('Years', 'wp_theatre'),
+			'query_arg' => 'wpt_year',
+			'callback' => array($this, 'get_years'),
+		);
+		
+		$filters['category'] = array(
+			'title' => __('Categories', 'wp_theatre'),
+			'query_arg' => 'wpt_category',
+			'callback' => array($this, 'get_categories'),
+		);
+		
+		/**
+		 * Filter the pagination filters for an event listing.
+		 * 
+		 * @since 	0.13.4
+		 * @param	array	$filters	The current pagination filters for an event listing..
+		 */
+		$filters = apply_filters('wpt/events/pagination/filters', $filters);
+		
+		return $filters;
+	}
+
+	/**
 	 * Gets the page navigation for an event listing in HTML.
 	 *
 	 * @see WPT_Listing::filter_pagination()
@@ -493,32 +538,7 @@ class WPT_Events extends WPT_Listing {
 
 		$paginateby = empty($args['paginateby']) ? array() : $args['paginateby'];
 		
-		$filters = array(
-			'day' => array(
-							'query_arg' => 'wpt_day',
-							'callback' => array($this, 'get_days'),
-						),
-			'month' => array(
-							'query_arg' => 'wpt_month',
-							'callback' => array($this, 'get_months'),
-						),
-			'year' => array(
-							'query_arg' => 'wpt_year',
-							'callback' => array($this, 'get_years'),
-						),
-			'category' => array(
-							'query_arg' => 'wpt_category',
-							'callback' => array($this, 'get_categories'),
-						),
-		);
-		
-		/**
-		 * Filter the possible filters for an events list.
-		 * 
-		 * @since 	0.13.4
-		 * @param	array	$filters	The current possible filters for an events list.
-		 */
-		$filters = apply_filters('wpt/events/page/navigation/filters', $filters);
+		$filters = $this->get_pagination_filters();
 		
 		foreach ($filters as $filter_name => $filter_options) {
 			if (!empty($wp_query->query_vars[ $filter_options['query_arg'] ])) {
