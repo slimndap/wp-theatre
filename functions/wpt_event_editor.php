@@ -1014,14 +1014,14 @@ class WPT_Event_Editor {
 
 		$key = 'wpt_event_editor_'.$field['id'];
 
-		if ( empty($_POST[ $key ]) ) {
+		if ( empty($data[ $key ]) ) {
 			return;
 		}
 
-		$value = $_POST[ $key ];
+		$value = $data[ $key ];
 
-		if ( isset ( $_POST['wpt_event_editor_event_date'] ) ) {
-			$event_date = strtotime( $_POST['wpt_event_editor_event_date'] );
+		if ( isset ( $data['wpt_event_editor_event_date'] ) ) {
+			$event_date = strtotime( $data['wpt_event_editor_event_date'] );
 		} else {
 			$event_date = strtotime( get_post_meta( $event_id, 'event_date', true ) );
 		}
