@@ -320,6 +320,9 @@ Release Date: December 29th, 2014
 
 == Upgrade Notice ==
 
+= 0.13.4 =
+Bugfix: Event editor wasn't saving enddate when creating a new event.
+
 = 0.13.3 =
 Bugfix: weekdays were showing up as question marks when using a multibyte language (eg. Russian).
 
