@@ -129,7 +129,7 @@ class WPT_Events_Widget extends WP_Widget {
 		</p>
 		<p class="wpt_widget_template">
 		<label for="<?php echo $this->get_field_id( 'template' ); ?>"><?php _e( 'Template','wp_theatre' ); ?>:</label> 
-		<textarea class="widefat" id="<?php echo $this->get_field_id( 'template' ); ?>" name="<?php echo $this->get_field_name( 'template' ); ?>"><?php echo esc_attr( $values['template'] ); ?></textarea>
+		<textarea class="widefat" id="<?php echo $this->get_field_id( 'template' ); ?>" name="<?php echo $this->get_field_name( 'template' ); ?>"><?php echo esc_html( $values['template'] ); ?></textarea>
 		<em><?php _e('Optional, see <a href="https://github.com/slimndap/wp-theatre/wiki/Shortcodes#template" target="_blank">documentation</a>.','wp_theatre');?></em>
 		</p>
 		<?php 

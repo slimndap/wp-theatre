@@ -371,7 +371,7 @@
 			$options = array(
 				'above' => __('show above content','wp_theatre'),
 				'below' => __('show below content','wp_theatre'),
-				'not' => __('manually, using <code>'.$this->shortcode($this->options).'</code> shortcode','wp_theatre')
+				'not' => __('manually, using <code>'.esc_html($this->shortcode($this->options)).'</code> shortcode','wp_theatre')
 			);
 			
 			foreach($options as $key=>$value) {
@@ -589,7 +589,7 @@
 			echo '<p>';
 			echo '<textarea id="wpt_custom_css" name="wpt_listing_page[listing_page_template]">';
 			if (!empty($this->options['listing_page_template'])) {
-				echo $this->options['listing_page_template'];
+				echo esc_html($this->options['listing_page_template']);
 			}
 			echo '</textarea>';
 			echo '</p>';
@@ -604,7 +604,7 @@
 			echo '<p>';
 			echo '<textarea id="wpt_custom_css" name="wpt_listing_page[listing_page_template_on_production_page]">';
 			if (!empty($this->options['listing_page_template_on_production_page'])) {
-				echo $this->options['listing_page_template_on_production_page'];
+				echo esc_html($this->options['listing_page_template_on_production_page']);
 			}
 			echo '</textarea>';
 			echo '</p>';

@@ -443,7 +443,7 @@ class WPT_Admin {
 		echo '<p>';
 		echo '<textarea id="wpt_custom_css" name="wpt_style[custom_css]">';
 		if (!empty($wp_theatre->wpt_style_options['custom_css'])) {
-			echo $wp_theatre->wpt_style_options['custom_css'];
+			echo esc_html($wp_theatre->wpt_style_options['custom_css']);
 		}
 		echo '</textarea>';
 		echo '</p>';
