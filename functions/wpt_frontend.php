@@ -31,13 +31,14 @@ class WPT_Frontend {
 	 * 
 	 * @since	0.?
 	 * @since	0.13	Added thickbox args to manipulate the behaviour of the tickets thickbox.
+	 * @since	0.13.5	Moved main.js to footer.
 	 * @return 	void
 	 */
 	function enqueue_scripts() {
 		global $wp_theatre;
 
 		// Add built-in Theatre javascript
-		wp_enqueue_script( 'wp_theatre_js', plugins_url( '../js/main.js', __FILE__ ), array('jquery'), $wp_theatre->wpt_version );
+		wp_enqueue_script( 'wp_theatre_js', plugins_url( '../js/main.js', __FILE__ ), array('jquery'), $wp_theatre->wpt_version, true );
 
 		// Add built-in Theatre stylesheet
 		if ( ! empty($wp_theatre->wpt_style_options['stylesheet']) ) {
