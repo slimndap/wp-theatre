@@ -320,6 +320,9 @@ Release Date: December 29th, 2014
 
 == Upgrade Notice ==
 
+= 0.13.6 =
+Adds a new filter for event permalinks.
+
 = 0.13.5 =
 Fixed a problem with event templates that use HTML tags and moved Theater javascript to footer to improve loading speed.
 

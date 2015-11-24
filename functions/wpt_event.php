@@ -419,8 +419,56 @@ class WPT_Event {
 		}
 	}
 
-	function permalink($args = array()) {
-		return $this->production()->permalink( $args );
+	/**
+	 * Get the event permalink.
+	 *
+	 * The permalink is inherited from the parent production.
+	 * 
+	 * @since	0.?
+	 * @since	0.13.6	Added a 'wpt/event/permalink' filter.
+	 *					Moved HTML version to separate function.
+	 * @return 	string	The permalink.
+	 */
+	function permalink($deprecated = array()) {
+		
+		if ( ! empty($deprecated['html']) ) {
+			return $this->permalink_html( $deprecated );
+		}
+		
+		$permalink = $this->production()->permalink( $deprecated );
+		
+		/**
+		 * Filter the event permalink.
+		 * 
+		 * @since	0.13.6
+		 * @param	string		$permalink	The event permalink.
+		 * @param	WPT_Event	$event		The event.
+		 */
+		$permalink = apply_filters( 'wpt/event/permalink', $permalink, $this );
+		return $permalink;
+	}
+	
+	/**
+	 * Get the HTML for the event permalink.
+	 *
+	 * The permalink is inherited from the parent production.
+	 * 
+	 * @since	0.13.6
+	 * @return 	string	The HTML for the event permalink.
+	 */
+	function permalink_html( $args = array() ) {
+		$args['html'] = true;
+		$html = $this->production()->permalink( $args );
+			
+		/**
+		 * Filter the HTML for the event permalink.
+		 * 
+		 * @since	0.13.6
+		 * @param	string		$html	The HTML for the event permalink.
+		 * @param	WPT_Event	$event	The event.
+		 */
+		$html = apply_filters( 'wpt/event/permalink/html', $html, $this );
+		return $html;
 	}
 
 	/**
@@ -453,7 +501,7 @@ class WPT_Event {
 		 * Filter the event prices.
 		 *
 		 * @since	0.10.14
-		 * @param 	array 	$prices	The current prices.
+		 * @param 	array 		$prices	The current prices.
 		 * @param 	WPT_Event	$event	The event.
 		 */
 		$prices = apply_filters( 'wpt/event/prices',$prices, $this );

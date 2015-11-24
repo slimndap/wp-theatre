@@ -1092,4 +1092,38 @@ class WPT_Test extends WP_UnitTestCase {
 		
 	}
 	
+	function test_event_permalink_filter() {
+		global $wp_theatre;
+		
+		$func = create_function(
+			'$permalink, $event',
+			'return "http://slimndap.com";'
+		);
+		add_filter( 'wpt/event/permalink', $func, 10 , 2 );
+
+		$event = new WPT_Event($this->upcoming_event_with_prices);
+
+		$expected = 'http://slimndap.com';
+		$actual = $event->permalink();
+		$this->assertEquals( $expected, $actual);
+		
+	}
+	
+	function test_event_permalink_html_filter() {
+		global $wp_theatre;
+		
+		$func = create_function(
+			'$html, $event',
+			'return "<div>http://slimndap.com</div>";'
+		);
+		add_filter( 'wpt/event/permalink/html', $func, 10 , 2 );
+
+		$event = new WPT_Event($this->upcoming_event_with_prices);
+
+		$expected = '<div>http://slimndap.com</div>';
+		$actual = $event->permalink( array( 'html' => true ) );
+		$this->assertEquals( $expected, $actual);
+		
+	}
+	
 }
