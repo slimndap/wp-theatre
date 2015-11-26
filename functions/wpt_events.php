@@ -669,8 +669,9 @@ class WPT_Events extends WPT_Listing {
 	 * @since	0.13	Added support for multiple productions.
 	 * @since	0.13.1	'Start' and 'end' filter explicitly set to 'NUMERIC'.
 	 *					Fixes #168.
+	 * @since	0.1?	Replaced get_posts() with WP_Query.
 	 *
-		 * @return array Events.
+	 * @return array Events.
 	 */
 
 	public function get($filters = array()) {
@@ -822,13 +823,14 @@ class WPT_Events extends WPT_Listing {
 		$args = apply_filters( 'wpt_events_get_args',$args );
 		$args = apply_filters( 'wpt/events/get/args', $args, $filters );
 
-		$posts = get_posts( $args );
-
 		$events = array();
-		for ( $i = 0;$i < count( $posts );$i++ ) {
-			$event = new WPT_Event( $posts[ $i ] );
-			$events[] = $event;
+
+		$query = new WP_Query( $args );
+		while ( $query->have_posts() ) {
+			$query->the_post();
+			$events[] = new WPT_Event( $query->post );
 		}
+		wp_reset_postdata();
 
 		return $events;
 	}

@@ -783,6 +783,7 @@ class WPT_Productions extends WPT_Listing {
 	 * @since 	0.10	Renamed method from `load()` to `get()`.
 	 * 					Added 'order' to $args.
 	 * @since	0.13	Support for 'start' and 'end'.
+	 * @since	0.1?	Replaced get_posts() with WP_Query.
 	 *
 	 * @param array $args {
 	 *		string $order. 			See WP_Query.
@@ -803,7 +804,7 @@ class WPT_Productions extends WPT_Listing {
 		global $wp_theatre;
 
 		$defaults = array(
-			'order' => 'asc',
+			'order' => 'ASC',
 			'limit' => false,
 			'post__in' => false,
 			'post__not_in' => false,
@@ -925,7 +926,16 @@ class WPT_Productions extends WPT_Listing {
 			! isset($args['post__in']) ||	// True when 'post__in', 'start', 'end' and 'upcoming' filters are not used.
 			! empty($args['post__in'])		// True when the date filter resulted in matching productions.
 		) {
-			$posts = get_posts( $args );
+
+			// Ignore sticky posts. We will manually add them later on.
+			$args['ignore_sticky_posts'] = true;
+
+			$query = new WP_Query( $args );
+			while ( $query->have_posts() ) {
+				$query->the_post();
+				$posts[] = $query->post;
+			}
+			wp_reset_postdata();
 		}
 
 		/*
@@ -996,10 +1006,10 @@ class WPT_Productions extends WPT_Listing {
 				}
 			}
 		}
+		
 		$productions = array();
 		for ( $i = 0;$i < count( $posts );$i++ ) {
-			$key = $posts[ $i ]->ID;
-			$productions[] = new WPT_Production( $posts[ $i ]->ID );
+			$productions[] = new WPT_Production( $posts[ $i ] );
 		}
 
 		return $productions;

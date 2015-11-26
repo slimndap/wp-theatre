@@ -267,7 +267,7 @@
 	function test_order_productions_desc() {
 		$actual = array();
 		$args = array(
-			'order' => 'desc'
+			'order' => 'DESC'
 		);
 		$productions = $this->wp_theatre->productions->get($args);
 		foreach($productions as $production) {
