@@ -11,6 +11,8 @@
 
 class WPT_Events extends WPT_Listing {
 
+	public $query = false;
+
 	/**
 	 * Adds the page selectors for seasons and categories to the public query vars.
 	 *
@@ -823,12 +825,13 @@ class WPT_Events extends WPT_Listing {
 		$args = apply_filters( 'wpt_events_get_args',$args );
 		$args = apply_filters( 'wpt/events/get/args', $args, $filters );
 
+		// Reset the events.
 		$events = array();
 
-		$query = new WP_Query( $args );
-		while ( $query->have_posts() ) {
-			$query->the_post();
-			$events[] = new WPT_Event( $query->post );
+		$this->query = new WP_Query( $args );
+		while ( $this->query->have_posts() ) {
+			$this->query->the_post();
+			$events[] = new WPT_Event( $this->query->post );
 		}
 		wp_reset_postdata();
 
