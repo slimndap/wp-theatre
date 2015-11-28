@@ -714,7 +714,8 @@ class WPT_Test extends WP_UnitTestCase {
 	
 	// Test RSS feeds
 	function test_upcoming_productions_feed() {
-		$this->assertEquals(4, substr_count($this->wp_theatre->feeds->get_upcoming_productions(), '<item'));
+		global $wp_theatre;
+		$this->assertEquals(4, substr_count($wp_theatre->feeds->get_upcoming_productions(), '<item'));
 	}
 	
 	function test_upcoming_events_feed() {

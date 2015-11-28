@@ -253,12 +253,13 @@
 			$actual[] = $production->ID;
 		}
 		
+		// Sticky productions go first!
 		$expected = array(
+			$this->production_with_historic_event_sticky, // sticky, no upcoming events, follows creation order.
+			$this->production_with_upcoming_and_historic_events, // sticky, next week
 			$this->production_with_historic_event, // no upcoming events, follows creation order.
-			$this->production_with_historic_event_sticky, // no upcoming events, follows creation order.
 			$this->production_with_upcoming_events, // tomorrow
 			$this->production_with_upcoming_event, // in 2 days
-			$this->production_with_upcoming_and_historic_events // next week
 		);	
 		
 		$this->assertEquals($expected,$actual);
@@ -274,12 +275,13 @@
 			$actual[] = $production->ID;
 		}
 
+		// Sticky productions go first!
 		$expected = array(
-			$this->production_with_upcoming_and_historic_events, // next week
+			$this->production_with_upcoming_and_historic_events, // sticky, next week
+			$this->production_with_historic_event_sticky, // sticky, no upcoming events, follows creation order.
 			$this->production_with_upcoming_event, // in 2 days
 			$this->production_with_upcoming_events, // tomorrow
 			$this->production_with_historic_event, // no upcoming events, follows creation order.
-			$this->production_with_historic_event_sticky, // no upcoming events, follows creation order.
 		);
 		$this->assertEquals($expected,$actual);
 	}

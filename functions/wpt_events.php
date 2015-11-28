@@ -11,8 +11,6 @@
 
 class WPT_Events extends WPT_Listing {
 
-	public $query = false;
-
 	/**
 	 * Adds the page selectors for seasons and categories to the public query vars.
 	 *

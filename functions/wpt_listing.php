@@ -11,6 +11,8 @@
  
 class WPT_Listing {
 
+	public $query = false;
+
 	/**
 	 * Default arguments for all HTML methods.
 	 * 

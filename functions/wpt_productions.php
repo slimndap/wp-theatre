@@ -902,6 +902,9 @@ class WPT_Productions extends WPT_Listing {
 					$productions_by_date
 				);
 			}
+			if (empty($args['post__in'])) {
+				$args['post__in'] = array(0);
+			}
 		}
 
 		/**
@@ -914,105 +917,38 @@ class WPT_Productions extends WPT_Listing {
 		$args = apply_filters( 'wpt_productions_load_args',$args );
 		$args = apply_filters( 'wpt_productions_get_args',$args );
 
-		$posts = array();
-
-		/*
-		 * Don't try to retrieve productions if the 'post_in' argument is an empty array.
-		 * This can happen when the date filter doesn't match any productions.
-		 *
-         * This is different from the way that WP_Query handles an empty 'post__in' argument.
-		 */
+		// Ignore sticky posts. We will manually add them later on.
+		$args['ignore_sticky_posts'] = $filters['ignore_sticky_posts'];
 		if (
-			! isset($args['post__in']) ||	// True when 'post__in', 'start', 'end' and 'upcoming' filters are not used.
-			! empty($args['post__in'])		// True when the date filter resulted in matching productions.
+			!empty($args['cat']) ||
+			!empty($args['category_name']) ||
+			!empty($args['category__and']) ||
+			!empty($args['category__in']) ||
+			!empty($args['category__not_in']) ||
+			!empty($filters['post__in']) ||
+			$filters['season']
 		) {
-
-			// Ignore sticky posts. We will manually add them later on.
-			$args['ignore_sticky_posts'] = true;
-
-			$query = new WP_Query( $args );
-			while ( $query->have_posts() ) {
-				$query->the_post();
-				$posts[] = $query->post;
-			}
-			wp_reset_postdata();
+			$args['ignore_sticky_posts'] = true;			
 		}
 
-		/*
-		 * Add sticky productions.
-		 * Unless in filtered, paginated or grouped views.
-		 */
-		if (
-			! $filters['ignore_sticky_posts'] &&
-			empty($args['cat']) &&
-			empty($args['category_name']) &&
-			empty($args['category__and']) &&
-			empty($args['category__in']) &&
-			! $filters['post__in'] &&
-			! $filters['season'] &&
-			$args['posts_per_page'] < 0
-		) {
-			$sticky_posts = get_option( 'sticky_posts' );
-
-			if ( ! empty($sticky_posts) ) {
-				$sticky_offset = 0;
-
-				foreach ( $posts as $post ) {
-					if ( in_array( $post->ID,$sticky_posts ) ) {
-						$offset = array_search( $post->ID, $sticky_posts );
-						unset($sticky_posts[ $offset ]);
-					}
-				}
-
-				if ( ! empty($sticky_posts) ) {
-					/*
-					 * Respect $args['post__not_in']. Remove them from $sticky_posts.
-					 * We can't just add it to the `$sticky_args` below, because
-					 * `post__not_in` is overruled by `post__in'.
-					 */
-					if ( ! empty($args['post__not_in']) ) {
-						foreach ( $args['post__not_in'] as $post__not_in_id ) {
-							if ( in_array( $post__not_in_id,$sticky_posts ) ) {
-								$offset = array_search( $post__not_in_id, $sticky_posts );
-								unset($sticky_posts[ $offset ]);
-							}
-						}
-					}
-
-					/*
-					 * Continue if there are any $sticky_posts left.
-					 */
-					if ( ! empty($sticky_posts) ) {
-						$sticky_args = array(
-							'post__in' => $sticky_posts,
-							'post_type' => WPT_Production::post_type_name,
-							'post_status' => 'publish',
-							'nopaging' => true,
-						);
-
-						/*
-						 * Respect $args['category__not_in'].
-						 */
-						if ( ! empty($args['category__not_in']) ) {
-							$sticky_args['category__not_in'] = $args['category__not_in'];
-						}
-
-						$stickies = get_posts( $sticky_args );
-						foreach ( $stickies as $sticky_post ) {
-							array_splice( $posts, $sticky_offset, 0, array( $sticky_post ) );
-							$sticky_offset++;
-						}
-					}
-				}
-			}
-		}
-		
 		$productions = array();
-		for ( $i = 0;$i < count( $posts );$i++ ) {
-			$productions[] = new WPT_Production( $posts[ $i ] );
+
+		add_action('parse_query', array($this, 'force_is_home') );
+
+		$this->query = new WP_Query( $args );
+		while ( $this->query->have_posts() ) {
+			$this->query->the_post();
+			$productions[] = new WPT_Production($this->query->post);
 		}
+		wp_reset_postdata();
+
+		remove_action('parse_query', array($this, 'force_is_home') );
 
 		return $productions;
+	}
+
+	function force_is_home( $query ) {
+		$query->is_home = true;
 	}
 
 	/**
