@@ -40,7 +40,7 @@
 			global $wp_theatre;
 	
 			$args = array(
-				'upcoming'=>true
+				'start'=>'now'
 			);		
 			$productions = $wp_theatre->productions->get($args);
 			

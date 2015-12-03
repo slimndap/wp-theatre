@@ -4,8 +4,9 @@
  *
  * Uses this class to compile lists of productions or fully formatted HTML listings of productions.
  *
- * @since 0.5
- * @since 0.10	Complete rewrite, while maintaining backwards compatibility.
+ * @since 	0.5
+ * @since 	0.10	Complete rewrite, while maintaining backwards compatibility.
+ * @since	0.14	Use WP_Query instead of get_posts().
  */
 
 class WPT_Productions extends WPT_Listing {
@@ -199,7 +200,6 @@ class WPT_Productions extends WPT_Listing {
 		global $wp_theatre;
 
 		$years = array();
-
 		$production_ids = array();
 		foreach ( $this->get( $filters ) as $production ) {
 			$production_ids[] = $production->ID;
@@ -783,99 +783,59 @@ class WPT_Productions extends WPT_Listing {
 	 * @since 	0.10	Renamed method from `load()` to `get()`.
 	 * 					Added 'order' to $args.
 	 * @since	0.13	Support for 'start' and 'end'.
-	 * @since	0.1?	Replaced get_posts() with WP_Query.
+	 * @since	0.14	Replaced get_posts() with WP_Query.
 	 *
-	 * @param array $args {
-	 *		string $order. 			See WP_Query.
-	 *		int $season. 			Only return productions that are linked to $season.
-	 *		int $limit. 			See WP_Query.
-	 *		$post__in. 				See WP_Query.
-	 * 		$post__not_in. 			See WP_Query.
-	 * 		$cat. 					See WP_Query.
-	 * 		$category_name. 		See WP_Query.
-	 *  	category__and. 			See WP_Query.
-	 * 		category__in. 			See WP_Query.
-	 * 		category__not_in. 		See WP_Query.
-	 * 		ignore_sticky_posts. 	See WP_Query.
-	 * }
+	 * @param 	array	$args {
+	 *						string	$end
+	 *						int 	$season
+	 *						string	$start
+	 * 					}
+	 *					plus all $args of WP_Query.
 	 * @return array 	An array of WPT_Production objects.
 	 */
-	public function get($filters = array()) {
+	public function get($args = array()) {
+		
 		global $wp_theatre;
+		
+		$args_original = $args;
 
 		$defaults = array(
-			'order' => 'ASC',
-			'limit' => false,
-			'post__in' => false,
-			'post__not_in' => false,
-			'upcoming' => false,
-			'start' => false,
-			'end' => false,
-			'cat' => false,
-			'category_name' => false,
-			'category__and' => false,
-			'category__in' => false,
-			'category__not_in' => false,
-			'season' => false,
-			'ignore_sticky_posts' => false,
-		);
-		$filters = wp_parse_args( $filters, $defaults );
-
-		$args = array(
 			'post_type' => WPT_Production::post_type_name,
 			'post_status' => 'publish',
 			'meta_query' => array(),
-			'order' => $filters['order'],
+			'order' => 'ASC',
+			'end' => false,
+			'limit' => false,
+			'season' => false,
+			'start' => false,
+			'upcoming' => false,
 		);
+		$args = wp_parse_args( $args, $defaults );
 
-		if ( $filters['post__in'] ) {
-			$args['post__in'] = $filters['post__in'];
-		}
-
-		if ( $filters['post__not_in'] ) {
-			$args['post__not_in'] = $filters['post__not_in'];
-		}
-
-		if ( $filters['season'] ) {
+		if ( $args['season'] ) {
 			$args['meta_query'][] = array(
 				'key' => WPT_Season::post_type_name,
-				'value' => $filters['season'],
+				'value' => $args['season'],
 				'compare' => '=',
 			);
+			unset($args['season']);
+			$args['ignore_sticky_posts'] = true;
 		}
 
-		if ( $filters['cat'] ) {
-			$args['cat'] = $filters['cat'];
-		}
-
-		if ( $filters['category_name'] ) {
-			$args['category_name'] = $filters['category_name'];
-		}
-
-		if ( $filters['category__and'] ) {
-			$args['category__and'] = $filters['category__and'];
-		}
-
-		if ( $filters['category__in'] ) {
-			$args['category__in'] = $filters['category__in'];
-		}
-
-		if ( $filters['category__not_in'] ) {
-			$args['category__not_in'] = $filters['category__not_in'];
-		}
-
-		if ( $filters['limit'] ) {
-			$args['posts_per_page'] = $filters['limit'];
+		if ( $args['limit'] ) {
+			$args['posts_per_page'] = $args['limit'];
 		} else {
 			$args['posts_per_page'] = -1;
 		}
 
 		if (
-			$filters['upcoming'] &&
-			! $filters['start'] &&
-			! $filters['end']
+			$args['upcoming'] &&
+			! $args['start'] &&
+			! $args['end']
 		) {
-			$filters['start'] = 'now';
+			_deprecated_argument( 'WPT_Productions', '0.13', __( '"upcoming" is deprecated. Use "start=\'now\'" instead.' ) );
+			$args['start'] = 'now';
+			unset($args['upcoming']);
 		}
 
 		/*
@@ -892,8 +852,8 @@ class WPT_Productions extends WPT_Listing {
 		 * If this results in an empty list of production IDs then further execution is
 		 * halted and an empty array is returned, because there are no matching productions.
 		 */
-		if ( $filters['start'] || $filters['end'] ) {
-			$productions_by_date = $this->get_productions_by_date( $filters['start'], $filters['end'] );
+		if ( $args['start'] || $args['end'] ) {
+			$productions_by_date = $this->get_productions_by_date( $args['start'], $args['end'] );
 			if ( empty($args['post__in']) ) {
 				$args['post__in'] = $productions_by_date;
 			} else {
@@ -905,6 +865,8 @@ class WPT_Productions extends WPT_Listing {
 			if (empty($args['post__in'])) {
 				$args['post__in'] = array(0);
 			}
+			unset($args['start']);
+			unset($args['end']);
 		}
 
 		/**
@@ -917,24 +879,30 @@ class WPT_Productions extends WPT_Listing {
 		$args = apply_filters( 'wpt_productions_load_args',$args );
 		$args = apply_filters( 'wpt_productions_get_args',$args );
 
-		// Ignore sticky posts. We will manually add them later on.
-		$args['ignore_sticky_posts'] = $filters['ignore_sticky_posts'];
+		/**
+		 * Ignore sticky productions when:
+		 *
+		 * - a category filter is active
+		 * - in a paginated view
+		 * - a post__in filter is active
+		 */
 		if (
 			!empty($args['cat']) ||
 			!empty($args['category_name']) ||
 			!empty($args['category__and']) ||
 			!empty($args['category__in']) ||
 			!empty($args['category__not_in']) ||
-			!empty($filters['post__in']) ||
-			$filters['season']
+			!empty($args['paginateby']) ||
+			!empty($args_original['post__in'])
 		) {
 			$args['ignore_sticky_posts'] = true;			
 		}
 
 		$productions = array();
 
+		// Add action to fake is_home on WP_Query.
 		add_action('parse_query', array($this, 'force_is_home') );
-
+		
 		$this->query = new WP_Query( $args );
 		while ( $this->query->have_posts() ) {
 			$this->query->the_post();
@@ -942,11 +910,22 @@ class WPT_Productions extends WPT_Listing {
 		}
 		wp_reset_postdata();
 
+		// Remove action to fake is_home on WP_Query.
 		remove_action('parse_query', array($this, 'force_is_home') );
 
 		return $productions;
 	}
 
+	/**
+	 * Make WP_Query think is_home is true.
+	 *
+	 * WP_Query only support sticky posts (production) when is_home is true.
+	 * Hooked by @see WPT_Productions::get().
+	 * 
+	 * @since	0.14
+	 * @param 	WP_Query	$query
+	 * @return 	void
+	 */
 	function force_is_home( $query ) {
 		$query->is_home = true;
 	}

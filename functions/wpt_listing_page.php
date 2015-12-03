@@ -233,7 +233,7 @@
 			}
 
 		 	if ($args['listing_page_type']==WPT_Production::post_type_name) {
-			 	$shortcode_args.= ' upcoming="1"';
+			 	$shortcode_args.= ' start="now"';
 				return '[wpt_productions'.$shortcode_args.']'.$template.'[/wpt_productions]';
  			} else {
 				return '[wpt_events'.$shortcode_args.']'.$template.'[/wpt_events]';

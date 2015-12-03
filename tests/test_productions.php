@@ -99,7 +99,7 @@
 	
 	function test_upcoming_productions() {
 		$args = array(
-			'upcoming' => TRUE
+			'start' => 'now'
 		);
 		$this->assertCount(4, $this->wp_theatre->productions->get($args));		
 		
@@ -206,7 +206,7 @@
 	
 	function test_ignore_sticky_posts() {
 		$args = array(
-			'upcoming' => TRUE,
+			'start' => 'now',
 			'ignore_sticky_posts' => TRUE
 		);
 		$this->assertCount(3, $this->wp_theatre->productions->get($args));		
@@ -641,7 +641,7 @@
 		
 		$expected = 2;
 		$returned = substr_count($html, '<span class="wpt_listing_filter year-');
-		$this->assertEquals($expected, $returned);
+		$this->assertEquals($expected, $returned, $html);
 	}
 	
 	function test_wpt_productions_before_1970() {
