@@ -3,6 +3,15 @@
 	
 	class WPT_Test_Production extends WP_UnitTestCase {
 
+	function create_production( $args = array() ) {
+		$defaults = array(
+			'post_type' => WPT_Production::post_type_name,
+		);
+		$args = wp_parse_args( $args, $defaults );
+
+		return $this->factory->post->create( $args );
+	}
+
 	function setUp() {
 		global $wp_theatre;
 		
@@ -31,7 +40,7 @@
 		$this->category_film = wp_create_category('film');
 		
 		// create production with upcoming event
-		$this->production_with_upcoming_event = $this->factory->post->create($production_args);
+		$this->production_with_upcoming_event = $this->create_production( array( 'post_title' => 'production_with_upcoming_event' ) );
 		add_post_meta($this->production_with_upcoming_event, WPT_Season::post_type_name, $this->season1);
 		wp_set_post_categories($this->production_with_upcoming_event, array($this->category_muziek));
 		wp_set_post_tags($this->production_with_upcoming_event,array('upcoming'));
@@ -45,7 +54,7 @@
 		add_post_meta($this->upcoming_event_with_prices, 'city', 'Den Haag');
 		
 		// create production with 2 upcoming events
-		$this->production_with_upcoming_events = $this->factory->post->create($production_args);
+		$this->production_with_upcoming_events = $this->create_production( array( 'post_title' => 'production_with_upcoming_events' ) );
 		add_post_meta($this->production_with_upcoming_events, WPT_Season::post_type_name, $this->season2);
 		wp_set_post_categories($this->production_with_upcoming_events, array($this->category_muziek,$this->category_film));
 
@@ -60,14 +69,14 @@
 		add_post_meta($upcoming_event, 'tickets_status', WPT_Event::tickets_status_cancelled );
 		
 		// create production with a historic event
-		$this->production_with_historic_event = $this->factory->post->create($production_args);
+		$this->production_with_historic_event = $this->create_production( array( 'post_title' => 'production_with_historic_event' ) );
 		$event_id = $this->factory->post->create($event_args);
 		add_post_meta($event_id, WPT_Production::post_type_name, $this->production_with_historic_event);
 		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() - DAY_IN_SECONDS));
 		wp_set_post_tags($this->production_with_historic_event,array('historic'));
 
 		// create sticky production with a historic event
-		$this->production_with_historic_event_sticky = $this->factory->post->create($production_args);
+		$this->production_with_historic_event_sticky = $this->create_production( array( 'post_title' => 'production_with_historic_event_sticky' ) );
 		$event_id = $this->factory->post->create($event_args);
 		add_post_meta($event_id, WPT_Production::post_type_name, $this->production_with_historic_event_sticky);
 		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() - YEAR_IN_SECONDS));
@@ -75,14 +84,14 @@
 		wp_set_post_tags($this->production_with_historic_event_sticky,array('historic'));
 		
 		// create sticky production with an upcoming and a historic event
-		$this->production_with_upcoming_and_historic_events = $this->factory->post->create($production_args);
+		$this->production_with_upcoming_and_historic_events_sticky = $this->create_production( array( 'post_title' => 'production_with_upcoming_and_historic_event_sticky' ) );
 		$event_id = $this->factory->post->create($event_args);
-		add_post_meta($event_id, WPT_Production::post_type_name, $this->production_with_upcoming_and_historic_events);
+		add_post_meta($event_id, WPT_Production::post_type_name, $this->production_with_upcoming_and_historic_events_sticky);
 		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() - WEEK_IN_SECONDS));
 		$event_id = $this->factory->post->create($event_args);
-		add_post_meta($event_id, WPT_Production::post_type_name, $this->production_with_upcoming_and_historic_events);
+		add_post_meta($event_id, WPT_Production::post_type_name, $this->production_with_upcoming_and_historic_events_sticky);
 		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() + WEEK_IN_SECONDS));
-		stick_post($this->production_with_upcoming_and_historic_events);
+		stick_post($this->production_with_upcoming_and_historic_events_sticky);
 		add_post_meta($this->upcoming_event_with_prices, '_wpt_event_tickets_price', 12);
 		add_post_meta($upcoming_event, 'tickets_status', WPT_Event::tickets_status_hidden );
 		
@@ -129,12 +138,12 @@
 		// test with post__in
 		$this->assertEquals(1, substr_count(do_shortcode('[wpt_productions post__in="'.$this->production_with_upcoming_events.'"]'), '"wp_theatre_prod"'));
 
-		$this->assertEquals(2, substr_count(do_shortcode('[wpt_productions post__in="'.$this->production_with_upcoming_events.','.$this->production_with_upcoming_and_historic_events.'"]'), '"wp_theatre_prod"'));
+		$this->assertEquals(2, substr_count(do_shortcode('[wpt_productions post__in="'.$this->production_with_upcoming_events.','.$this->production_with_upcoming_and_historic_events_sticky.'"]'), '"wp_theatre_prod"'));
 
 		// test with an excluded post__not_in
 		$this->assertEquals(4, substr_count(do_shortcode('[wpt_productions post__not_in="'.$this->production_with_upcoming_events.'"]'), '"wp_theatre_prod"'));
 		
-		$this->assertEquals(3, substr_count(do_shortcode('[wpt_productions post__not_in="'.$this->production_with_upcoming_events.','.$this->production_with_upcoming_and_historic_events.'"]'), '"wp_theatre_prod"'));
+		$this->assertEquals(3, substr_count(do_shortcode('[wpt_productions post__not_in="'.$this->production_with_upcoming_events.','.$this->production_with_upcoming_and_historic_events_sticky.'"]'), '"wp_theatre_prod"'));
 	}
 	
 	function test_shortcode_wpt_productions_filter_category() {
@@ -256,7 +265,7 @@
 		// Sticky productions go first!
 		$expected = array(
 			$this->production_with_historic_event_sticky, // sticky, no upcoming events, follows creation order.
-			$this->production_with_upcoming_and_historic_events, // sticky, next week
+			$this->production_with_upcoming_and_historic_events_sticky, // sticky, next week
 			$this->production_with_historic_event, // no upcoming events, follows creation order.
 			$this->production_with_upcoming_events, // tomorrow
 			$this->production_with_upcoming_event, // in 2 days
@@ -277,7 +286,7 @@
 
 		// Sticky productions go first!
 		$expected = array(
-			$this->production_with_upcoming_and_historic_events, // sticky, next week
+			$this->production_with_upcoming_and_historic_events_sticky, // sticky, next week
 			$this->production_with_historic_event_sticky, // sticky, no upcoming events, follows creation order.
 			$this->production_with_upcoming_event, // in 2 days
 			$this->production_with_upcoming_events, // tomorrow
@@ -676,6 +685,47 @@
 		$returned = substr_count($html, '<div class="wp_theatre_prod">');
 		$expected = 1;
 		$this->assertEquals($expected, $returned);
+	}
+	
+	function test_wpt_productions_pagination() {
+		global $wp_theatre;
+		
+		$args = array(
+			'limit' => 2,
+		);
+		$productions = $wp_theatre->productions->get($args);
+
+		/**
+		 * Expect 3 productions on page 1:
+		 * - the first 2 productions.
+		 * - the sticky production that is not already parts of the first 2 productions.
+		 */
+		$expected = 3;
+		$actual = count( $productions );
+		$this->assertEquals( $expected, $actual );
+		
+		$expected = $this->production_with_historic_event_sticky;
+		$actual = $productions[0]->ID;
+		$this->assertEquals( $expected, $actual );
+		
+		$args = array(
+			'limit' => 2,
+			'paged' => 2,
+		);
+		$productions = $wp_theatre->productions->get($args);
+
+		/**
+		 * Expect 2 productions on page 2:
+		 * - the 3rd and 4th production.
+		 */
+		$expected = 2;
+		$actual = count( $productions );
+		$this->assertEquals( $expected, $actual );
+		
+		$expected = $this->production_with_upcoming_events;
+		$actual = $productions[0]->ID;
+		$this->assertEquals( $expected, $actual );
+		
 	}
 	
 }
