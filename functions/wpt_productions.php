@@ -626,31 +626,31 @@ class WPT_Productions extends WPT_Listing {
 		$filters = parent::get_pagination_filters();
 
 		$filters['day'] =  array(
-			'title' => __('Days', 'wp_theatre'),
+			'title' => __('Days', 'theatre'),
 			'query_arg' => 'wpt_day',
 			'callback' => array($this, 'get_days'),
 		);
 		
 		$filters['month'] =  array(
-			'title' => __('Months', 'wp_theatre'),
+			'title' => __('Months', 'theatre'),
 			'query_arg' => 'wpt_month',
 			'callback' => array($this, 'get_months'),
 		);
 		
 		$filters['year'] = array(
-			'title' => __('Years', 'wp_theatre'),
+			'title' => __('Years', 'theatre'),
 			'query_arg' => 'wpt_year',
 			'callback' => array($this, 'get_years'),
 		);
 		
 		$filters['category'] = array(
-			'title' => __('Categories', 'wp_theatre'),
+			'title' => __('Categories', 'theatre'),
 			'query_arg' => 'wpt_category',
 			'callback' => array($this, 'get_categories'),
 		);
 		
 		$filters['season'] = array(
-			'title' => __('Seasons', 'wp_theatre'),
+			'title' => __('Seasons', 'theatre'),
 			'query_arg' => 'wpt_season',
 			'callback' => array($this, 'get_seasons'),
 		);
