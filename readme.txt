@@ -320,6 +320,9 @@ Release Date: December 29th, 2014
 
 == Upgrade Notice ==
 
+= 0.13.7 =
+You can now translate this plugin on https://translate.wordpress.org/projects/wp-plugins/theatre.
+
 = 0.13.6 =
 Adds a new filter for event permalinks.
 
