@@ -20,8 +20,8 @@ class WPT_Extensions_Promo {
 	function add_menu() {
 		add_submenu_page(
 			'theatre',
-			__( 'Theater Extensions','wp_theatre' ),
-			__( 'Extensions', 'wp_theatre' ),
+			__( 'Theater Extensions','theatre' ),
+			__( 'Extensions', 'theatre' ),
 			'manage_options',
 			'wpt_extensions',
 			array( $this, 'get_page' )
@@ -49,7 +49,7 @@ class WPT_Extensions_Promo {
 			), 'http://theater.slimndap.com/extensions/'
 		);
 
-		$links[] = '<a href="' . esc_url( $extensions_link ) . '">' . esc_html__( 'Extensions', 'wp_theatre' ) . '</a>';
+		$links[] = '<a href="' . esc_url( $extensions_link ) . '">' . esc_html__( 'Extensions', 'theatre' ) . '</a>';
 
 		return $links;
 	}
@@ -92,8 +92,8 @@ class WPT_Extensions_Promo {
 	function get_page() {
 		$html = '';
 		$html .= '<div class="wrap">';
-		$html .= '<h1>'.esc_html__( 'Theater for WordPress extensions','wp_theatre' ).'</h1>';
-		$html .= '<p>'.__( 'Extensions are plugins that <strong><em>add functionality</em></strong> to the Theater for WordPress plugin.', 'wp_theatre' ).'</p>';
+		$html .= '<h1>'.esc_html__( 'Theater for WordPress extensions','theatre' ).'</h1>';
+		$html .= '<p>'.__( 'Extensions are plugins that <strong><em>add functionality</em></strong> to the Theater for WordPress plugin.', 'theatre' ).'</p>';
 
 		$html .= '<div class="widefat">';
 
@@ -124,7 +124,7 @@ class WPT_Extensions_Promo {
 			$html .= '<ul class="plugin-action-buttons">';
 
 			$html .= '<li>';
-			$html .= '<a href="'.$extension_link.'" class="button">'.__( 'Get extension','wp_theatre' ).'</a>';
+			$html .= '<a href="'.$extension_link.'" class="button">'.__( 'Get extension','theatre' ).'</a>';
 			$html .= '</li>';
 
 			$html .= '</ul>';
@@ -148,7 +148,7 @@ class WPT_Extensions_Promo {
 					'utm_campaign' => 'admin',
 				), 'http://theater.slimndap.com/extensions/'
 			);
-			$html .= '<p><a href="'.$extensions_link.'" class="button-primary">'.__( 'Browse all extensions','wp_theatre' ).'</a></p>';
+			$html .= '<p><a href="'.$extensions_link.'" class="button-primary">'.__( 'Browse all extensions','theatre' ).'</a></p>';
 		}
 
 		echo $html;
