@@ -12,9 +12,9 @@ class WPT_Events_Widget extends WP_Widget {
 	function __construct() {
 		parent::__construct(
 			'wpt_events_widget',
-			__( 'Theater Events','wp_theatre' ),
+			__( 'Theater Events','theatre' ),
 			array(
-				'description' => __( 'Display all upcoming events.', 'wp_theatre' ),
+				'description' => __( 'Display all upcoming events.', 'theatre' ),
 			)
 		);
 	}
@@ -112,7 +112,7 @@ class WPT_Events_Widget extends WP_Widget {
 
 	public function form( $instance ) {
 		$defaults = array(
-			'title' => __( 'Upcoming events', 'wp_theatre' ),
+			'title' => __( 'Upcoming events', 'theatre' ),
 			'limit' => 5,
 			'template' => ''
 		);
@@ -124,13 +124,13 @@ class WPT_Events_Widget extends WP_Widget {
 		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $values['title'] ); ?>">
 		</p>
 		<p>
-		<label for="<?php echo $this->get_field_id( 'limit' ); ?>"><?php _e( 'Number of events to show', 'wp_theatre' ); ?>:</label> 
+		<label for="<?php echo $this->get_field_id( 'limit' ); ?>"><?php _e( 'Number of events to show', 'theatre' ); ?>:</label> 
 		<input id="<?php echo $this->get_field_id( 'limit' ); ?>" name="<?php echo $this->get_field_name( 'limit' ); ?>" size="3" type="text" value="<?php echo esc_attr( $values['limit'] ); ?>">
 		</p>
 		<p class="wpt_widget_template">
-		<label for="<?php echo $this->get_field_id( 'template' ); ?>"><?php _e( 'Template','wp_theatre' ); ?>:</label> 
+		<label for="<?php echo $this->get_field_id( 'template' ); ?>"><?php _e( 'Template','theatre' ); ?>:</label> 
 		<textarea class="widefat" id="<?php echo $this->get_field_id( 'template' ); ?>" name="<?php echo $this->get_field_name( 'template' ); ?>"><?php echo esc_html( $values['template'] ); ?></textarea>
-		<em><?php _e('Optional, see <a href="https://github.com/slimndap/wp-theatre/wiki/Shortcodes#template" target="_blank">documentation</a>.','wp_theatre');?></em>
+		<em><?php _e('Optional, see <a href="https://github.com/slimndap/wp-theatre/wiki/Shortcodes#template" target="_blank">documentation</a>.','theatre');?></em>
 		</p>
 		<?php 
 	}

@@ -11,8 +11,8 @@
 		function __construct() {
 			parent::__construct(
 				'wpt_production_events_widget',
-				__('Theater Production Events','wp_theatre'), // Name
-				array( 'description' => __( 'Display all events for the current production.', 'wp_theatre' ), )
+				__('Theater Production Events','theatre'), // Name
+				array( 'description' => __( 'Display all events for the current production.', 'theatre' ), )
 			);
 		}
 	
@@ -51,7 +51,7 @@
 
 		public function form( $instance ) {
 			$defaults = array(
-				'title' => __( 'Upcoming events', 'wp_theatre' ),
+				'title' => __( 'Upcoming events', 'theatre' ),
 				'limit' => 5,
 				'template' => ''
 			);
@@ -63,9 +63,9 @@
 			<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $values['title'] ); ?>">
 			</p>
 			<p class="wpt_widget_template">
-			<label for="<?php echo $this->get_field_id( 'template' ); ?>"><?php _e( 'Template','wp_theatre' ); ?>:</label> 
+			<label for="<?php echo $this->get_field_id( 'template' ); ?>"><?php _e( 'Template','theatre' ); ?>:</label> 
 			<textarea class="widefat" id="<?php echo $this->get_field_id( 'template' ); ?>" name="<?php echo $this->get_field_name( 'template' ); ?>"><?php echo esc_html( $values['template'] ); ?></textarea>
-			<em><?php _e('Optional, see <a href="https://github.com/slimndap/wp-theatre/wiki/Shortcodes#template" target="_blank">documentation</a>.','wp_theatre');?></em>
+			<em><?php _e('Optional, see <a href="https://github.com/slimndap/wp-theatre/wiki/Shortcodes#template" target="_blank">documentation</a>.','theatre');?></em>
 			</p>
 			<?php 
 		}
@@ -76,8 +76,8 @@
 		function __construct() {
 			parent::__construct(
 				'wpt_productions_widget',
-				__('Theater Productions','wp_theatre'), // Name
-				array( 'description' => __( 'List of upcoming productions', 'wp_theatre' ), ) // Args
+				__('Theater Productions','theatre'), // Name
+				array( 'description' => __( 'List of upcoming productions', 'theatre' ), ) // Args
 			);
 		}
 	
@@ -112,7 +112,7 @@
 
 		public function form( $instance ) {
 			$defaults = array(
-				'title' => __( 'Upcoming productions', 'wp_theatre' ),
+				'title' => __( 'Upcoming productions', 'theatre' ),
 				'limit' => 5,
 				'template' => ''
 			);
@@ -124,13 +124,13 @@
 			<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $values['title'] ); ?>">
 			</p>
 			<p>
-			<label for="<?php echo $this->get_field_id( 'limit' ); ?>"><?php _e( 'Number of productions to show', 'wp_theatre' ); ?>:</label> 
+			<label for="<?php echo $this->get_field_id( 'limit' ); ?>"><?php _e( 'Number of productions to show', 'theatre' ); ?>:</label> 
 			<input id="<?php echo $this->get_field_id( 'limit' ); ?>" name="<?php echo $this->get_field_name( 'limit' ); ?>" size="3" type="text" value="<?php echo esc_attr( $values['limit'] ); ?>">
 			</p>
 			<p class="wpt_widget_template">
-			<label for="<?php echo $this->get_field_id( 'template' ); ?>"><?php _e( 'Template','wp_theatre' ); ?>:</label> 
+			<label for="<?php echo $this->get_field_id( 'template' ); ?>"><?php _e( 'Template','theatre' ); ?>:</label> 
 			<textarea class="widefat" id="<?php echo $this->get_field_id( 'template' ); ?>" name="<?php echo $this->get_field_name( 'template' ); ?>"><?php echo esc_html( $values['template'] ); ?></textarea><br />
-			<em><?php _e('Optional, see <a href="https://github.com/slimndap/wp-theatre/wiki/Shortcodes#template-2" target="_blank">documentation</a>.','wp_theatre');?></em>
+			<em><?php _e('Optional, see <a href="https://github.com/slimndap/wp-theatre/wiki/Shortcodes#template-2" target="_blank">documentation</a>.','theatre');?></em>
 			</p>
 			<?php 
 		}
@@ -140,8 +140,8 @@
 		function __construct() {
 			parent::__construct(
 				'wpt_cart_widget',
-				__('Theatre Cart','wp_theatre'), // Name
-				array( 'description' => __( 'Contents of the shopping cart.', 'wp_theatre' ), ) // Args
+				__('Theatre Cart','theatre'), // Name
+				array( 'description' => __( 'Contents of the shopping cart.', 'theatre' ), ) // Args
 			);
 		}
 	
@@ -168,7 +168,7 @@
 				$title = $instance[ 'title' ];
 			}
 			else {
-				$title = __( 'Cart', 'wp_theatre' );
+				$title = __( 'Cart', 'theatre' );
 			}
 			?>
 			<p>

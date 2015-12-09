@@ -316,8 +316,8 @@
 		function __construct() {
 			parent::__construct(
 				'wpt_calendar_widget',
-				__('Theater Calendar','wp_theatre'), // Name
-				array( 'description' => __( 'Calendar of upcoming events', 'wp_theatre' ), ) // Args
+				__('Theater Calendar','theatre'), // Name
+				array( 'description' => __( 'Calendar of upcoming events', 'theatre' ), ) // Args
 			);
 		}
 		
@@ -343,7 +343,7 @@
 		
 		public function form($instance) {
 			$defaults = array(
-				'title' => __( 'Upcoming events', 'wp_theatre' )
+				'title' => __( 'Upcoming events', 'theatre' )
 			);
 			$values = wp_parse_args( $instance, $defaults );
 

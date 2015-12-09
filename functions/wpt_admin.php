@@ -38,9 +38,9 @@ class WPT_Admin {
 
 
 		$this->tabs = array(
-			'wpt_style'=>__('Style','wp_theatre'),
-			'wpt_tickets'=>__('Tickets','wp_theatre'),
-			'wpt_language'=>__('Language','wp_theatre'),
+			'wpt_style'=>__('Style','theatre'),
+			'wpt_tickets'=>__('Tickets','theatre'),
+			'wpt_language'=>__('Language','theatre'),
 		);	
 		$this->tabs = apply_filters('wpt_admin_page_tabs',$this->tabs);
 	
@@ -77,7 +77,7 @@ class WPT_Admin {
 
 	        add_settings_field(
 	            'language_tickets', // ID
-	            __('Tickets','wp_theatre'), // Title 
+	            __('Tickets','theatre'), // Title 
 	            array( $this, 'settings_field_language_tickets' ), // Callback
 	            'wpt_language', // Page
 	            'language' // Section           
@@ -85,7 +85,7 @@ class WPT_Admin {
 	
 	        add_settings_field(
 	            'language_events', // ID
-	            __('Events','wp_theatre'), // Title 
+	            __('Events','theatre'), // Title 
 	            array( $this, 'settings_field_language_events' ), // Callback
 	            'wpt_language', // Page
 	            'language' // Section           
@@ -93,7 +93,7 @@ class WPT_Admin {
 	
 	        add_settings_field(
 	            'language_categories', // ID
-	            __('Categories','wp_theatre'), // Title 
+	            __('Categories','theatre'), // Title 
 	            array( $this, 'settings_field_language_categories' ), // Callback
 	            'wpt_language', // Page
 	            'language' // Section           
@@ -112,7 +112,7 @@ class WPT_Admin {
 	
 	        add_settings_field(
 	            'stylesheet', // ID
-	            __('Stylesheet','wp_theatre'), // Title 
+	            __('Stylesheet','theatre'), // Title 
 	            array( $this, 'settings_field_stylesheet' ), // Callback
 	            'wpt_style', // Page
 	            'display_section_id' // Section           
@@ -120,7 +120,7 @@ class WPT_Admin {
 
 	        add_settings_field(
 	            'css', // ID
-	            __('Custom CSS','wp_theatre'), // Title 
+	            __('Custom CSS','theatre'), // Title 
 	            array( $this, 'settings_field_css' ), // Callback
 	            'wpt_style', // Page
 	            'display_section_id' // Section           
@@ -137,7 +137,7 @@ class WPT_Admin {
 
 	        add_settings_field(
 	            'currenysymbol', // ID
-	            __('Currency symbol','wp_theatre'), // Title 
+	            __('Currency symbol','theatre'), // Title 
 	            array( $this, 'settings_field_currencysymbol' ), // Callback
 	            'wpt_tickets', // Page
 	            'tickets_integration' // Section           
@@ -145,7 +145,7 @@ class WPT_Admin {
 	
 	        add_settings_field(
 	            'integrationtype', // ID
-	            __('Open tickets screens in','wp_theatre'), // Title 
+	            __('Open tickets screens in','theatre'), // Title 
 	            array( $this, 'settings_field_integrationtype' ), // Callback
 	            'wpt_tickets', // Page
 	            'tickets_integration' // Section           
@@ -153,7 +153,7 @@ class WPT_Admin {
 	        
 	        add_settings_field(
 	            'iframepage', // ID
-	            __('Iframe page','wp_theatre'), // Title 
+	            __('Iframe page','theatre'), // Title 
 	            array( $this, 'settings_field_iframepage' ), // Callback
 	            'wpt_tickets', // Page
 	            'tickets_integration' // Section           
@@ -162,8 +162,8 @@ class WPT_Admin {
 	}
 
 	function admin_menu() {
-		add_menu_page( __('Theater','wp_theatre'), __('Theater','wp_theatre'), 'edit_posts', 'theatre', array(), 'none', 30);
-		add_submenu_page( 'theatre',__('Theater','wp_theatre').' '.__('Settings'), __('Settings'), 'manage_options', 'wpt_admin', array( $this, 'admin_page' ));
+		add_menu_page( __('Theater','theatre'), __('Theater','theatre'), 'edit_posts', 'theatre', array(), 'none', 30);
+		add_submenu_page( 'theatre',__('Theater','theatre').' '.__('Settings'), __('Settings'), 'manage_options', 'wpt_admin', array( $this, 'admin_page' ));
 	}
 	
 	/**
@@ -182,7 +182,7 @@ class WPT_Admin {
 		// Add a 'Seasons' metabox to the production admin screen.
 		add_meta_box(
             'wp_theatre_seasons',
-            __( 'Seasons','wp_theatre'),
+            __( 'Seasons','theatre'),
             array($this,'meta_box_seasons'),
             WPT_Production::post_type_name,
             'side'
@@ -191,7 +191,7 @@ class WPT_Admin {
 		// Add a 'Display' metabox to the production admin screen.
 		add_meta_box(
             'wp_theatre_display',
-            __('Display','wp_theatre'),
+            __('Display','theatre'),
             array($this,'meta_box_display'),
             WPT_Production::post_type_name,
             'side'
@@ -219,7 +219,7 @@ class WPT_Admin {
 			echo ' checked="checked"';
 		}
 		echo ' />';
-		echo __('Stick this production to all listings.','wp_theatre');
+		echo __('Stick this production to all listings.','theatre');
 		
 		echo '</label>';
 		
@@ -373,8 +373,8 @@ class WPT_Admin {
 					break;
 				case 'title' :
 					$new_columns[$key] = $value;			
-					$new_columns['thumbnail'] = __('Image','wp_theatre');
-					$new_columns['dates'] = __('Dates','wp_theatre');
+					$new_columns['thumbnail'] = __('Image','theatre');
+					$new_columns['dates'] = __('Dates','theatre');
 					break;
 				default :
 					$new_columns[$key] = $value;								
@@ -417,7 +417,7 @@ class WPT_Admin {
 	public function admin_page() {
         ?>
         <div class="wrap">
-       		<h1><?php echo __('Theater','wp_theatre').' '.__('Settings');?></h1>
+       		<h1><?php echo __('Theater','theatre').' '.__('Settings');?></h1>
             <h2 class="nav-tab-wrapper">
             <?php foreach ($this->tabs as $key=>$val) { ?>
             	<a class="nav-tab <?php echo $key==$this->tab?'nav-tab-active':'';?>" href="?page=wpt_admin&tab=<?php echo $key;?>">
@@ -457,29 +457,29 @@ class WPT_Admin {
 		if (!empty($wp_theatre->wpt_style_options['stylesheet'])) {
 			echo ' checked="checked"';
 		}
-		echo '>'.__('Enable built-in Theatre stylesheet','wp_theatre').'</option>';
+		echo '>'.__('Enable built-in Theatre stylesheet','theatre').'</option>';
 		echo '</label>';
     }
 
 	function settings_field_language_tickets() {
 		global $wp_theatre;
 		echo '<input type="text" id="language_tickets" name="wpt_language[language_tickets]" value="'.$wp_theatre->wpt_language_options['language_tickets'].'" />';
-		echo '<p class="description">'.__('Displayed on ticket buttons.','wp_theatre').'</p>';
-		echo '<p class="description">'.__('Can be overruled on a per-event basis.','wp_theatre').'</p>';
+		echo '<p class="description">'.__('Displayed on ticket buttons.','theatre').'</p>';
+		echo '<p class="description">'.__('Can be overruled on a per-event basis.','theatre').'</p>';
 
 	}
 
 	function settings_field_language_events() {
 		global $wp_theatre;
 		echo '<input type="text" id="language_events" name="wpt_language[language_events]" value="'.$wp_theatre->wpt_language_options['language_events'].'" />';
-		echo '<p class="description">'.__('Displayed above event listings.','wp_theatre').'</p>';
+		echo '<p class="description">'.__('Displayed above event listings.','theatre').'</p>';
 
 	}
 
 	function settings_field_language_categories() {
 		global $wp_theatre;
 		echo '<input type="text" id="language_categories" name="wpt_language[language_categories]" value="'.$wp_theatre->wpt_language_options['language_categories'].'" />';
-		echo '<p class="description">'.__('Displayed in category listings.','wp_theatre').'</p>';
+		echo '<p class="description">'.__('Displayed in category listings.','theatre').'</p>';
 
 	}
 
@@ -487,10 +487,10 @@ class WPT_Admin {
 		global $wp_theatre;
 
 		$options = array(
-			'self' => __('same window','wp_theatre'),
-			'iframe' => __('iframe','wp_theatre'),
-			'_blank' => __('new window','wp_theatre'),
-			'lightbox' => __('lightbox','wp_theatre')
+			'self' => __('same window','theatre'),
+			'iframe' => __('iframe','theatre'),
+			'_blank' => __('new window','theatre'),
+			'lightbox' => __('lightbox','theatre')
 		);
 		
 		foreach($options as $key=>$value) {
@@ -521,8 +521,8 @@ class WPT_Admin {
 			echo '>'.$page->post_title.'</option>';
 		}
 		echo '</select>';
-		echo '<p class="description">'.__('Select the page that embeds all Ticketing iframes.','wp_theatre').'</p>';
-		echo '<p class="description">'.__('The page must contain the following shortcode:','wp_theatre');
+		echo '<p class="description">'.__('Select the page that embeds all Ticketing iframes.','theatre').'</p>';
+		echo '<p class="description">'.__('The page must contain the following shortcode:','theatre');
 		echo '<pre>[wp_theatre_iframe]</pre>';
 		echo '</p>';
 	}

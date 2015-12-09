@@ -19,7 +19,7 @@ class WPT_Frontend {
 
 		add_shortcode( 'wpt_event_ticket_button', array($this,'wpt_event_ticket_button') );
 
-		$this->options = get_option( 'wp_theatre' );
+		$this->options = get_option( 'theatre' );
 
 		// Deprecated
 		add_shortcode( 'wp_theatre_events', array($this,'wpt_events') );
@@ -110,7 +110,7 @@ class WPT_Frontend {
 				isset( $wp_theatre->options['show_season_events'] ) &&
 				in_array( $wp_theatre->options['show_season_events'], array('above','below') )
 			) {
-				$events_html = '<h3>'.__( 'Events','wp_theatre' ).'</h3>';
+				$events_html = '<h3>'.__( 'Events','theatre' ).'</h3>';
 				$events_html .= '[wpt_season_events]';
 
 				switch ( $wp_theatre->options['show_season_events'] ) {
@@ -125,7 +125,7 @@ class WPT_Frontend {
 				isset( $wp_theatre->options['show_season_productions'] ) &&
 				in_array( $wp_theatre->options['show_season_productions'], array('above','below') )
 			) {
-				$productions_html = '<h3>'.__( 'Productions','wp_theatre' ).'</h3>';
+				$productions_html = '<h3>'.__( 'Productions','theatre' ).'</h3>';
 				$productions_html .= '[wpt_season_productions]';
 
 				switch ( $wp_theatre->options['show_season_productions'] ) {
@@ -643,10 +643,10 @@ class WPT_Frontend {
 		if (
 			isset($theatre_options['iframepage']) &&
 			$theatre_options['iframepage'] == get_the_id() &&
-			isset($_GET[ __( 'Event','wp_theatre' ) ])
+			isset($_GET[ __( 'Event','theatre' ) ])
 		) {
 			// We are on the tickets page, using the old style URL, let's redirect
-			$event = new WPT_Event( $_GET[ __( 'Event','wp_theatre' ) ] );
+			$event = new WPT_Event( $_GET[ __( 'Event','theatre' ) ] );
 			if ( ! empty($event) ) {
 				$tickets_url_iframe = $event->tickets_url_iframe();
 				if ( ! empty($tickets_url_iframe) ) {

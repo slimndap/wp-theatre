@@ -241,7 +241,7 @@ class WPT_Event {
 			// $this->duration = apply_filters('wpt_event_duration',human_time_diff(strtotime($this->post()->enddate), strtotime($this->post()->event_date)),$this);
 			$seconds = abs( strtotime( $this->post()->enddate ) - strtotime( $this->post()->event_date ) );
 			$minutes = (int) $seconds / 60;
-			$text = $minutes.' '._n( 'minute','minutes', $minutes, 'wp_theatre' );
+			$text = $minutes.' '._n( 'minute','minutes', $minutes, 'theatre' );
 			$this->duration = apply_filters( 'wpt_event_duration',$text,$this );
 		}
 
@@ -566,7 +566,7 @@ class WPT_Event {
 
 		if ( count( $prices ) ) {
 			if ( count( $prices ) > 1 ) {
-				$prices_summary .= __( 'from','wp_theatre' ).' ';
+				$prices_summary .= __( 'from','theatre' ).' ';
 			}
 			if ( ! empty($wp_theatre->wpt_tickets_options['currencysymbol']) ) {
 				$prices_summary .= $wp_theatre->wpt_tickets_options['currencysymbol'].' ';
@@ -721,7 +721,7 @@ class WPT_Event {
 		$tickets_button = get_post_meta( $this->ID,'tickets_button',true );
 
 		if ( empty($tickets_button) ) {
-			$tickets_button = __( 'Tickets', 'wp_theatre' );
+			$tickets_button = __( 'Tickets', 'theatre' );
 		}
 
 		/**
@@ -831,13 +831,13 @@ class WPT_Event {
 
 		switch ( $tickets_status ) {
 			case self::tickets_status_onsale :
-				$label = __( 'On sale','wp_theatre' );
+				$label = __( 'On sale','theatre' );
 				break;
 			case self::tickets_status_soldout :
-				$label = __( 'Sold out','wp_theatre' );
+				$label = __( 'Sold out','theatre' );
 				break;
 			case self::tickets_status_cancelled :
-				$label = __( 'Cancelled','wp_theatre' );
+				$label = __( 'Cancelled','theatre' );
 				break;
 			case self::tickets_status_hidden :
 				$label = '';

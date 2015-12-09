@@ -60,14 +60,14 @@
 
 		        add_settings_section(
 		            'wpt_listing_page_page', // ID
-		            __('Upcoming events','wp_theatre'), // Title
+		            __('Upcoming events','theatre'), // Title
 		            '', // Callback
 		            'wpt_listing_page' // Page
 		        );  
 
 		        add_settings_field(
 		            'wpt_listing_page_post_id', // ID
-		            __('Page to show upcoming events on','wp_theatre'), // Title 
+		            __('Page to show upcoming events on','theatre'), // Title 
 		            array( $this, 'settings_field_wpt_listing_page_post_id' ), // Callback
 		            'wpt_listing_page', // Page
 		            'wpt_listing_page_page' // Section           
@@ -75,7 +75,7 @@
 
 		        add_settings_field(
 		            'wpt_listing_page_position', // ID
-		            __('Position on page','wp_theatre'), // Title 
+		            __('Position on page','theatre'), // Title 
 		            array( $this, 'settings_field_wpt_listing_page_position' ), // Callback
 		            'wpt_listing_page', // Page
 		            'wpt_listing_page_page' // Section           
@@ -83,7 +83,7 @@
 		        
 		        add_settings_field(
 		            'wpt_listing_page_nav_events', // ID
-		            __('Arrange the events','wp_theatre'), // Title 
+		            __('Arrange the events','theatre'), // Title 
 		            array( $this, 'settings_field_wpt_listing_page_nav_events' ), // Callback
 		            'wpt_listing_page', // Page
 		            'wpt_listing_page_page' // Section           
@@ -91,7 +91,7 @@
 		        
 		        add_settings_field(
 		            'wpt_listing_page_template', // ID
-		            __('Template','wp_theatre'), // Title 
+		            __('Template','theatre'), // Title 
 		            array( $this, 'settings_field_wpt_listing_template' ), // Callback
 		            'wpt_listing_page', // Page
 		            'wpt_listing_page_page' // Section           
@@ -99,14 +99,14 @@
 		        
 		        add_settings_section(
 		            'wpt_listing_production_page', // ID
-		            __('Events on production pages','wp_theatre'), // Title
+		            __('Events on production pages','theatre'), // Title
 		            '', // Callback
 		            'wpt_listing_page' // Page
 		        );  
 		
 		        add_settings_field(
 		            'wpt_listing_page_position_on_production_page', // ID
-		            __('Position on page','wp_theatre'), // Title 
+		            __('Position on page','theatre'), // Title 
 		            array( $this, 'settings_field_wpt_listing_page_position_on_production_page' ), // Callback
 		            'wpt_listing_page', // Page
 		            'wpt_listing_production_page' // Section           
@@ -114,7 +114,7 @@
 
 		        add_settings_field(
 		            'wpt_listing_page_template_on_production_page', // ID
-		            __('Template','wp_theatre'), // Title 
+		            __('Template','theatre'), // Title 
 		            array( $this, 'settings_field_wpt_listing_template_on_production_page' ), // Callback
 		            'wpt_listing_page', // Page
 		            'wpt_listing_production_page' // Section           
@@ -369,9 +369,9 @@
 	 	
 	    public function settings_field_wpt_listing_page_position() {
 			$options = array(
-				'above' => __('show above content','wp_theatre'),
-				'below' => __('show below content','wp_theatre'),
-				'not' => __('manually, using <code>'.esc_html($this->shortcode($this->options)).'</code> shortcode','wp_theatre')
+				'above' => __('show above content','theatre'),
+				'below' => __('show below content','theatre'),
+				'not' => __('manually, using <code>'.esc_html($this->shortcode($this->options)).'</code> shortcode','theatre')
 			);
 			
 			foreach($options as $key=>$value) {
@@ -392,9 +392,9 @@
 	 	
 	    public function settings_field_wpt_listing_page_position_on_production_page() {
 			$options = array(
-				'above' => __('show above content','wp_theatre'),
-				'below' => __('show below content','wp_theatre'),
-				'' => __('manually, using <code>[wpt_production_events]</code> shortcode','wp_theatre')
+				'above' => __('show above content','theatre'),
+				'below' => __('show below content','theatre'),
+				'' => __('manually, using <code>[wpt_production_events]</code> shortcode','theatre')
 			);
 			
 			foreach($options as $key=>$value) {
@@ -419,8 +419,8 @@
 	 	
 	    public function settings_field_wpt_listing_page_type() {
 			$options = array(
-				WPT_Production::post_type_name => __('productions','wp_theatre'),
-				WPT_Event::post_type_name => __('events','wp_theatre')
+				WPT_Production::post_type_name => __('productions','theatre'),
+				WPT_Event::post_type_name => __('events','theatre')
 			);
 			
 			foreach($options as $key=>$value) {
@@ -441,16 +441,16 @@
 	 	
 	    public function settings_field_wpt_listing_page_nav_events() {
 			$options_groupby = array(
-				'day' => __('day','wp_theatre'),
-				'month' => __('month','wp_theatre'),
-				'year' => __('year','wp_theatre'),
-				'category' => __('category','wp_theatre')
+				'day' => __('day','theatre'),
+				'month' => __('month','theatre'),
+				'year' => __('year','theatre'),
+				'category' => __('category','theatre')
 			);
 			
 			$options = array(
-				'' => __('as a plain list','wp_theatre'),
-				'grouped' => __('grouped by','wp_theatre'),
-				'paginated' => __('paginate by','wp_theatre')
+				'' => __('as a plain list','theatre'),
+				'grouped' => __('grouped by','theatre'),
+				'paginated' => __('paginate by','theatre')
 			);
 			
 			echo '<div id="listing_page_nav_events" class="wpt_settings_radio_with_selects">';
@@ -496,13 +496,13 @@
 	 	
 	    public function settings_field_wpt_listing_page_nav_productions() {
 			$options_groupby = array(
-				'category' => __('category','wp_theatre')
+				'category' => __('category','theatre')
 			);
 			
 			$options = array(
-				'' => __('as a plain list','wp_theatre'),
-				'grouped' => __('grouped by','wp_theatre'),
-				'paginated' => __('paginate by','wp_theatre')
+				'' => __('as a plain list','theatre'),
+				'grouped' => __('grouped by','theatre'),
+				'paginated' => __('paginate by','theatre')
 			);
 			
 			echo '<div id="listing_page_nav_productions" class="wpt_settings_radio_with_selects">';
@@ -551,7 +551,7 @@
 	     */
 	    public function set_display_post_state($post_states, $post) {   
 		    if ($post->ID== $this->page()->ID) {
-			    $post_states['wpt_listing_page'] = __('Events page', 'wp_theatre');
+			    $post_states['wpt_listing_page'] = __('Events page', 'theatre');
 		    }
 		    return $post_states;
 	    }
@@ -562,11 +562,11 @@
 	 	
 	    public function settings_field_wpt_listing_page_groupby() {
 			$options = array(
-				'day' => __('day','wp_theatre'),
-				'month' => __('month','wp_theatre'),
-				'year' => __('year','wp_theatre'),
-				'category' => __('category','wp_theatre'),
-				'season' => __('season','wp_theatre')
+				'day' => __('day','theatre'),
+				'month' => __('month','theatre'),
+				'year' => __('year','theatre'),
+				'category' => __('category','theatre'),
+				'season' => __('season','theatre')
 			);
 			
 			foreach($options as $key=>$value) {
@@ -739,7 +739,7 @@
 	 	
 	 	function wpt_admin_page_tabs($tabs) {
 			$tabs = array_merge(
-				array('wpt_listing_page'=>__('Display','wp_theatre')),
+				array('wpt_listing_page'=>__('Display','theatre')),
 				$tabs
 			);
 			return $tabs;
@@ -822,7 +822,7 @@
 			$events_html = do_shortcode('[wpt_production_events]'.$template.'[/wpt_production_events]');
 
 			if (!empty($events_html)) {
-				$events_header_html = apply_filters('wpt_production_page_events_header','<h3>'.__('Events','wp_theatre').'</h3>');
+				$events_header_html = apply_filters('wpt_production_page_events_header','<h3>'.__('Events','theatre').'</h3>');
 				$events_html = $events_header_html.$events_html;
 			}
 			
@@ -858,8 +858,8 @@
 		function __construct() {
 			parent::__construct(
 				'wpt_categories_widget',
-				__('Theater Categories','wp_theatre'), // Name
-				array( 'description' => __( 'Categories with upcoming events', 'wp_theatre' ), ) // Args
+				__('Theater Categories','theatre'), // Name
+				array( 'description' => __( 'Categories with upcoming events', 'theatre' ), ) // Args
 			);
 		}
 		
@@ -902,7 +902,7 @@
 		
 		public function form($instance) {
 			$defaults = array(
-				'title' => __( 'Categories', 'wp_theatre' )
+				'title' => __( 'Categories', 'theatre' )
 			);
 			$values = wp_parse_args( $instance, $defaults );
 

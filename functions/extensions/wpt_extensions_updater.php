@@ -71,7 +71,7 @@ class WPT_Extensions_Updater {
 	public function add_settings_tab($tabs) {
 		$extensions = $this->get_extensions();
 		if (!empty($extensions)) {
-			$tabs['wpt_licenses'] = __( 'Licenses', 'wp_theatre' );		
+			$tabs['wpt_licenses'] = __( 'Licenses', 'theatre' );		
 		}
 		return $tabs;
 	}
@@ -85,7 +85,7 @@ class WPT_Extensions_Updater {
 	public function add_licenses_section() {
 		add_settings_section(
 			'wpt_license_keys',
-			__( 'License keys','wp_theatre' ),
+			__( 'License keys','theatre' ),
 			'',
 			'wpt_licenses'
 		);
@@ -222,9 +222,9 @@ class WPT_Extensions_Updater {
 		if ( false !== $license_key ) {
 			$html .= wp_nonce_field( $extension['slug'].'_nonce', $extension['slug'].'_nonce' );
 			if ( false !== $license_status && 'valid' == $license_status ) {
-				$html .= '<input type="submit" class="button-secondary" name="'.$extension['slug'].'_license_deactivate" value="'.__( 'Deactivate License', 'wp_theatre' ).'"/>';
+				$html .= '<input type="submit" class="button-secondary" name="'.$extension['slug'].'_license_deactivate" value="'.__( 'Deactivate License', 'theatre' ).'"/>';
 			} else {
-				$html .= '<input type="submit" class="button-secondary" name="'.$extension['slug'].'_license_activate" value="'.__( 'Activate License', 'wp_theatre' ).'"/>';
+				$html .= '<input type="submit" class="button-secondary" name="'.$extension['slug'].'_license_activate" value="'.__( 'Activate License', 'theatre' ).'"/>';
 			}
 		}
 		echo $html;

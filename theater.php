@@ -7,7 +7,7 @@
 	Author: Jeroen Schmit
 	Version: 0.13.6
 	Author URI: http://slimndap.com/
-	Text Domain: wp_theatre
+	Text Domain: theatre
 	Domain Path: /lang
 
 	This program is free software; you can redistribute it and/or modify

@@ -100,16 +100,16 @@ class WPT_Production {
 					$cities_text.= $cities[0];
 					break;
 				case 2:
-					$cities_text.= $cities[0].' '.__('and','wp_theatre').' '.$cities[1];
+					$cities_text.= $cities[0].' '.__('and','theatre').' '.$cities[1];
 					break;
 				case 3:
-					$cities_text.= $cities[0].', '.$cities[1].' '.__('and','wp_theatre').' '.$cities[2];
+					$cities_text.= $cities[0].', '.$cities[1].' '.__('and','theatre').' '.$cities[2];
 					break;
 			}
 			
 			
 			if (count($cities)>3) {
-				$cities_text = __('ao','wp_theatre').' '.$cities_text;
+				$cities_text = __('ao','theatre').' '.$cities_text;
 			}
 			$this->cities = apply_filters('wpt_production_cities',$cities_text, $this);
 		}
@@ -206,10 +206,10 @@ class WPT_Production {
 				} else {
 					if (time() < $first->datetime()) {
 						// serie starts in the future
-						$dates.= $first->startdate().' '.__('to','wp_theatre').' '.$last->startdate();
+						$dates.= $first->startdate().' '.__('to','theatre').' '.$last->startdate();
 					} else {
 						// serie is already running
-						$dates.= __('until','wp_theatre').' '.$last->startdate();
+						$dates.= __('until','theatre').' '.$last->startdate();
 					}
 				}
 			}
@@ -414,7 +414,7 @@ class WPT_Production {
 			if ($this->dates()!='') {
 				$short = $this->dates();
 				if ($this->cities()!='') {
-					$short .= ' '.__('in','wp_theatre').' '.$this->cities();
+					$short .= ' '.__('in','theatre').' '.$this->cities();
 				}
 				$short.='. ';
 				$this->summary .= ucfirst($short);

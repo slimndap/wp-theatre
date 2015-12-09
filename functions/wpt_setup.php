@@ -350,7 +350,7 @@
 		}
 		
 		function plugins_loaded(){
-			load_plugin_textdomain('wp_theatre', false, dirname( plugin_basename( __FILE__ ) ) . '/../lang/' );
+			load_plugin_textdomain('theatre', false, dirname( plugin_basename( __FILE__ ) ) . '/../lang/' );
 		}
 		
 		/*
