@@ -533,12 +533,16 @@ class WPT_Frontend {
 	 * @since	0.12	Work with the 'wpt_event_tickets' query var,
 	 * 					instead of $_GET vars.
 	 * @since	0.13.3	Added the 'wpt/frontend/iframe/html' filter.
+	 * @since	0.13.8	Fixed a PHP notice when the 'wpt_event_tickets' is not set.
+	 *					Eg. when the iframe page is called directly.
 	 * @return 	string	The HTML for the [wpt_event_tickets] shortcode.
 	 */
 	function get_iframe_html() {
 		$html = '';
 
 		$event_id = (int) get_query_var( 'wpt_event_tickets' );
+
+		$tickets_url = '';
 
 		if ( ! empty($event_id) ) {
 			$tickets_url = get_post_meta( $event_id,'tickets_url',true );
