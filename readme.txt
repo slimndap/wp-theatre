@@ -117,6 +117,10 @@ The new feature may be added directly to the Theater plugin or as an extension s
 
 == Changelog ==
 
+= 0.14 =
+
+* The plugin is now ready for [language packs for plugins hosted on WordPress.org](https://make.wordpress.org/plugins/2015/09/01/plugin-translations-on-wordpress-org/). This makes it much easier for you to contribute a translation of the plugin in your native language.
+
 = 0.13 =
 
 Release Date: September 3rd, 2015
