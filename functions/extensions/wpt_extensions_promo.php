@@ -62,13 +62,17 @@ class WPT_Extensions_Promo {
 	 * The response is stored in a transient for 24 hours.
 	 *
 	 * @since	0.13.2
+	 * @since	0.14.1	Increased timeout of extensions feed retrieval.
 	 * @access 	private
 	 * @return 	array	The extensions.
 	 */
 	private function get_extensions() {
 
 		if ( false === ( $response = get_transient( 'wpt_extensions_promo_feed' ) ) ) {
-			$response = wp_remote_get( 'http://theater.slimndap.com/wp-json/theater/v1/extensions' );
+			$args = array(
+				'timeout' => 30,	
+			);
+			$response = wp_remote_get( 'http://theater.slimndap.com/wp-json/theater/v1/extensions', $args );
 			set_transient( 'wpt_extensions_promo_feed', $response, DAY_IN_SECONDS );
 		}
 
@@ -87,6 +91,7 @@ class WPT_Extensions_Promo {
 	 * Outputs the HTML for the Extensions page.
 	 *
 	 * @since	0.13.2
+	 * @since	0.14.1	Extensions page layout was broken in WP 4.4.
 	 * @return 	void
 	 */
 	function get_page() {
@@ -112,12 +117,13 @@ class WPT_Extensions_Promo {
 
 			$html .= '<div class="plugin-card-top">';
 
-			$html .= '<a href="'.$extension_link.'" class="plugin-icon">';
-			$html .= $extension->thumbnail;
-			$html .= '</a>';
-
 			$html .= '<div class="name column-name">';
-			$html .= '<h4>'.esc_html( $extension->title ).'</h4>';
+			$html .= '<h3>';
+			$html .= '<a href="'.$extension_link.'" class="">';
+			$html .= esc_html( $extension->title );
+			$html .= '<span class="plugin-icon">'.$extension->thumbnail.'</span>';
+			$html .= '</a>';
+			$html .= '</h3>';
 			$html .= '</div>';
 
 			$html .= '<div class="action-links">';

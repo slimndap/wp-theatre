@@ -27,6 +27,7 @@ __Available extensions__
 * [BBFC](http://theater.slimndap.com/downloads/bbfc-for-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – Add British Board of Film Classification (BBFC) icons to your movies.
 * [Ticketmatic](http://slimndap.com/product/ticketmatic-for-wordpress/)
 * [ActiveTickets](http://theater.slimndap.com/downloads/activetickets-for-wordpress/utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) - Automatically import your ActiveTickets events and sell them through your website.
+* [Veezi](http://theater.slimndap.com/downloads/veezi-for-wordpress/utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) - Automatically import your Veezi films and sell them through your website.
 
 > <strong>Newsletter</strong><br>
 > This plugin is in active development and updated frequently. Please [sign-up for the newsletter](http://theater.slimndap.com/newsletter?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) to stay informed about upcoming features and successful showcases.
@@ -56,7 +57,7 @@ __Installation__
 
 __Add events__
 
-Theater for Wordpress uses _productions_ to group your _events_. Each production can have one or more events.
+Theater for WordPress uses _productions_ to group your _events_. Each production can have one or more events.
 
 Add your first event:
 
@@ -89,9 +90,9 @@ The page that you created now shows your upcoming events.
 
 == Screenshots ==
 
-1. Manage events in the Wordpress admin.
+1. Manage events in the WordPress admin.
 2. The event editor.
-3. Manage events in the Wordpress admin
+3. Manage events in the WordPress admin.
 4. Your upcoming events listed on your website.
 5. Event details.
 
@@ -119,7 +120,9 @@ The new feature may be added directly to the Theater plugin or as an extension s
 
 = 0.14 =
 
-* The plugin is now ready for [language packs for plugins hosted on WordPress.org](https://make.wordpress.org/plugins/2015/09/01/plugin-translations-on-wordpress-org/). This makes it much easier for you to contribute a translation of the plugin in your native language.
+Release Date: February 2nd, 2016
+
+* The plugin is now ready for [language packs hosted on WordPress.org](https://make.wordpress.org/plugins/2015/09/01/plugin-translations-on-wordpress-org/). This makes it much easier for you to contribute a translation of the plugin in your native language. Add you translation [here](https://translate.wordpress.org/projects/wp-plugins/theatre).
 
 = 0.13 =
 
@@ -324,6 +327,10 @@ Release Date: December 29th, 2014
 * Basic version of the plugin.
 
 == Upgrade Notice ==
+
+= 0.14.1 =
+
+Fixes some layout glitches on the Theater extensions page.
 
 = 0.13.7 =
 You can now translate this plugin on https://translate.wordpress.org/projects/wp-plugins/theatre.
