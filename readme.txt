@@ -2,7 +2,7 @@
 Contributors: slimndap
 Tags: theatre, stage, venue, events, shows, concerts, tickets, ticketing, sports, performances, calendar, festival, workshops, theater, cinema
 Requires at least: 4.0
-Tested up to: 4.3
+Tested up to: 4.4
 Stable tag: trunk
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -27,7 +27,7 @@ __Available extensions__
 * [BBFC](http://theater.slimndap.com/downloads/bbfc-for-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – Add British Board of Film Classification (BBFC) icons to your movies.
 * [Ticketmatic](http://slimndap.com/product/ticketmatic-for-wordpress/)
 * [ActiveTickets](http://theater.slimndap.com/downloads/activetickets-for-wordpress/utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) - Automatically import your ActiveTickets events and sell them through your website.
-* [Veezi](http://theater.slimndap.com/downloads/veezi-for-wordpress/utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) - Automatically import your Veezi films and sell them through your website.
+* [Veezi](http://theater.slimndap.com/downloads/veezi-for-wordpress/utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) - Automatically import your Veezi films and sell them on your website.
 
 > <strong>Newsletter</strong><br>
 > This plugin is in active development and updated frequently. Please [sign-up for the newsletter](http://theater.slimndap.com/newsletter?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) to stay informed about upcoming features and successful showcases.
@@ -122,8 +122,14 @@ The new feature may be added directly to the Theater plugin or as an extension s
 
 Release Date: February 2nd, 2016
 
-* The plugin is now ready for [language packs hosted on WordPress.org](https://make.wordpress.org/plugins/2015/09/01/plugin-translations-on-wordpress-org/). This makes it much easier for you to contribute a translation of the plugin in your native language. Add you translation [here](https://translate.wordpress.org/projects/wp-plugins/theatre).
+* Enhancements
+    * The plugin is now ready for [language packs hosted on WordPress.org](https://make.wordpress.org/plugins/2015/09/01/plugin-translations-on-wordpress-org/). This makes it much easier for you to contribute a translation of the plugin in your native language. Add you translation [here](https://translate.wordpress.org/projects/wp-plugins/theatre).
 
+* Bugfixes
+    * Fixed some layout glitches on the Theater extensions page (0.14.1).
+    * Listings were not working correctly if you combined the `start` and `post__not_in` params (0.14.2).
+    * Event imports didn't always clean up properly (0.14.2).
+    
 = 0.13 =
 
 Release Date: September 3rd, 2015
@@ -328,8 +334,10 @@ Release Date: December 29th, 2014
 
 == Upgrade Notice ==
 
-= 0.14.1 =
+= 0.14.2 =
+Fixes some bugs in event lists and event imports.
 
+= 0.14.1 =
 Fixes some layout glitches on the Theater extensions page.
 
 = 0.13.7 =
