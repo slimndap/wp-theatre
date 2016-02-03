@@ -783,6 +783,8 @@ class WPT_Productions extends WPT_Listing {
 	 * @since 	0.10	Renamed method from `load()` to `get()`.
 	 * 					Added 'order' to $args.
 	 * @since	0.13	Support for 'start' and 'end'.
+	 * @since	0.14.2	Fixed a conflict when using 'start' and 'post__not_in' together.
+	 *					See #183.
 	 *
 	 * @param array $args {
 	 *		string $order. 			See WP_Query.
@@ -901,6 +903,11 @@ class WPT_Productions extends WPT_Listing {
 					$productions_by_date
 				);
 			}
+			// Remove production that are in 'post__not_in'.
+			if (!empty($args['post__not_in'])) {
+			    $args['post__in'] = array_diff($args['post__in'], $args['post__not_in']);
+			}
+
 		}
 
 		/**

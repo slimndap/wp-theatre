@@ -676,5 +676,27 @@
 		$this->assertEquals($expected, $returned);
 	}
 	
+	/**
+	 * Test if 'start' and 'post__not_in' work nicely together. 
+	 * See: https://github.com/slimndap/wp-theatre/issues/183
+	 */
+	function test_wpt_productions_with_startdate_and_post__not_in() {
+		global $wp_theatre;
+		
+		$args = array(
+			'start' => 'now',
+			'post__not_in' => array($this->production_with_upcoming_event),	
+		);
+		
+		$productions = $wp_theatre->productions->get($args);
+		
+		$expected = 3; // All upcoming productions except $this->production_with_upcoming_event.
+		$actual = count($productions);
+
+		$this->assertEquals($expected, $actual);
+		
+		
+	}
+	
 }
 ?>
