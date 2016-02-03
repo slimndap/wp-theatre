@@ -89,6 +89,7 @@ class WPT_Test_Importer extends WP_UnitTestCase {
 		$args = array(
 			'post_type' => WPT_Production::post_type_name,
 			'post_status' => array('all'),	
+			'posts_per_page' => -1,
 		);
 		foreach( get_posts($args) as $production) {
 			wp_update_post( array(
@@ -100,6 +101,7 @@ class WPT_Test_Importer extends WP_UnitTestCase {
 		$args = array(
 			'post_type' => WPT_Event::post_type_name,
 			'post_status' => array('all'),	
+			'posts_per_page' => -1,
 		);
 		foreach( get_posts($args) as $event) {
 			wp_update_post( array(
@@ -267,6 +269,45 @@ class WPT_Test_Importer extends WP_UnitTestCase {
 		$expected = $error;
 		
 		$this->assertContains($expected, $actual);
+	}
+	
+	
+	/**
+	 * Test if previously imported event are properly rmoved after the next import.
+	 * See: https://github.com/slimndap/wp-theatre/issues/182
+	 */
+	function test_import_events_cleanup() {
+		global $wp_theatre;
+
+		$importer = new WPT_Demo_Importer();
+
+		// Store the originals feed (with only 4 events).
+		$feed_small = $importer->feed;
+		
+		// Replace feed with 30 events.
+		$feed_large = array(
+			array('Today', 'Tomorrow'),
+		);
+		for($i=2;$i<30;$i++) {
+			$feed_large[] = array('Today + '.$i.' days');
+		}
+		$importer->feed = $feed_large;
+
+		// Import the 30 events
+		$importer->execute();
+		$this->publish_all();
+		$events = $wp_theatre->events->get();
+		$this->assertCount(30, $events);
+		
+		// Import again, but with the originals feed.
+		$importer->feed = $feed_small;
+		$importer->execute();
+		$this->publish_all();
+		$events = $wp_theatre->events->get();
+		
+		// All events from the large feed should be gone.
+		$this->assertCount(4, $events);
+		
 	}
 
 }

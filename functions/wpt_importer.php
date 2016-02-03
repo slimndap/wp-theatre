@@ -378,10 +378,9 @@
 		}
 
 		/**
-		 * Updates the thumbnails of a production from a URL.
+		 * Updates the thumbnail of a production from a URL.
 		 *
 		 * Use this helper function to import thumbnails while processing your feed.
-		 * If no existing event is found then a new one is created.
 		 * 
 		 * @since 0.10
 		 *
@@ -470,7 +469,9 @@
 		/**
 		 * Gets all events that are marked.
 		 *
- 		 * @since 0.10
+ 		 * @since 	0.10
+ 		 * @since	0.14.3	Added 'posts_per_page' argument to ensure that all marked events are returned.
+ 		 *					Fixes #182.
 		 *
 		 * @see WPT_Importer::mark_upcoming_events()
 		 * @see WPT_Importer::unmark_events()
@@ -483,6 +484,7 @@
 			$args = array(
 				'post_type' => WPT_Event::post_type_name,
 				'post_status' => 'any',
+				'posts_per_page' => -1,
 				'meta_query' => array(
 					array(
 						'key' => $this->marker,
@@ -520,7 +522,9 @@
 		/**
 		 * Mark any previously imported upcoming events.
 		 * 
-		 * @since 0.10
+		 * @since 	0.10
+ 		 * @since	0.14.3	Added 'posts_per_page' argument to ensure that all events are marked.
+ 		 *					Fixes #182.
 		 *
 		 * @see WPT_Importer::execute()
 		 * 
@@ -534,6 +538,7 @@
 			$args = array(
 				'post_type' => WPT_Event::post_type_name,
 				'post_status' => 'any',
+				'posts_per_page' => -1,
 				'meta_query' => array(
 					array(
 						'key' => '_wpt_source',
