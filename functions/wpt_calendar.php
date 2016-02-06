@@ -253,14 +253,18 @@
 		
 		/**
 		 * check_dependencies function.
-		 * 
+		 *
+		 * @since	0.? 
+	     * @since	0.14.4	Bugfix: Avoid PHP errors when no listing page is set.
+	     *					Fixes #181.
+	     *
 		 * @access public
 		 * @return void
 		 */
 		function check_dependencies() {
 			global $wp_theatre;
 
-			$everything_ok = $wp_theatre->listing_page->page() instanceof WP_Post;
+			$everything_ok = ($listing_page = $wp_theatre->listing_page->page()) && $listing_page instanceof WP_Post;
 			
 			if (!$everything_ok) {
 				

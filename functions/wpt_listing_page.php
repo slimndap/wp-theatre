@@ -545,12 +545,14 @@
 	     * Adds the 'Events page' display state to the listing page in the pages list tabel.
 	     * 
 	     * @since	0.13
+	     * @since	0.14.4	Bugfix: Avoid PHP errors when no listing page is set.
+	     *					Fixes #181.
 	     * @param 	array 	$post_states	An array of post display states.
 	     * @param 	int 	$post			The post ID.
 	     * @return	array					The new array of post display states.
 	     */
-	    public function set_display_post_state($post_states, $post) {   
-		    if ($post->ID== $this->page()->ID) {
+	    public function set_display_post_state($post_states, $post) { 
+			if ( ($listing_page = $this->page()) && $post->ID == $listing_page->ID ) {
 			    $post_states['wpt_listing_page'] = __('Events page', 'theatre');
 		    }
 		    return $post_states;
