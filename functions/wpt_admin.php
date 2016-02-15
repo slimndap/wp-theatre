@@ -316,7 +316,7 @@ class WPT_Admin {
 		remove_action( 'save_post', array( $this, 'save_production' ) );
 		remove_action( 'save_post', array( $wp_theatre->event_editor, 'save_event' ) );
 
-		$post = get_post($post_id);
+		$production_post = get_post($post_id);
 
 		$args = array(
 			'status' => array( 'any', 'auto-draft' ),
@@ -330,15 +330,15 @@ class WPT_Admin {
 				continue;
 			}
 
-			$post_for_update = array(
+			$event_post = array(
 				'ID'=>$event->ID,
 				'post_status'=>get_post_status($post_id),
 				'edit_date'=>true,
-				'post_date'=>$post->post_date,
-				'post_date_gmt'=>get_gmt_from_date($post->post_date),
+				'post_date'=>$production_post->post_date,
+				'post_date_gmt'=>get_gmt_from_date($production_post->post_date),
 			);
 
-			wp_update_post($post_for_update);
+			wp_update_post($event_post);
 
 		}
 

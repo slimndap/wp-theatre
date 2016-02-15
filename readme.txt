@@ -24,6 +24,7 @@ __Available extensions__
 * [Events Slider](http://theater.slimndap.com/downloads/events-slider-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – Show your events in a touch enabled and responsive slider.
 * [Timetable](http://theater.slimndap.com/downloads/timetable-for-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – Show your event showtimes in a clear table layout. Perfect for cinemas and festivals.
 * [Kijkwijzer](http://theater.slimndap.com/downloads/kijkwijzer-for-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – Add Kijkwijzer icons to your events.
+* [MPAA](http://theater.slimndap.com/downloads/mpaa-for-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – Add Motion Picture Association of America (MPAA) film rating labels to your movies.
 * [BBFC](http://theater.slimndap.com/downloads/bbfc-for-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – Add British Board of Film Classification (BBFC) icons to your movies.
 * [Ticketmatic](http://slimndap.com/product/ticketmatic-for-wordpress/)
 * [ActiveTickets](http://theater.slimndap.com/downloads/activetickets-for-wordpress/utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) - Automatically import your ActiveTickets events and sell them through your website.
@@ -129,6 +130,8 @@ Release Date: February 2nd, 2016
     * Fixed some layout glitches on the Theater extensions page (0.14.1).
     * Listings were not working correctly if you combined the `start` and `post__not_in` params (0.14.2).
     * Event imports didn't always clean up properly (0.14.2).
+    * Fixed a problem when saving a production with multiple events (0.14.3). Thank you [tomaszkoziara](https://github.com/tomaszkoziara)!
+    * Fixed several PHP warnings when no listing page is set in the Theater settings.
     
 = 0.13 =
 
@@ -333,6 +336,9 @@ Release Date: December 29th, 2014
 * Basic version of the plugin.
 
 == Upgrade Notice ==
+
+= 0.14.3 =
+Fixes a problem when saving a production with multiple events and several PHP warnings when no listing page is set.
 
 = 0.14.2 =
 Fixes some bugs in event lists and event imports.

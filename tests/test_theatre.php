@@ -1126,4 +1126,44 @@ class WPT_Test extends WP_UnitTestCase {
 		
 	}
 	
+	function test_if_events_dont_disappear_too_early() {
+		global $wp_theatre;
+		
+		$default_timezone_offset = date('Z');
+		$wordpress_timezone_offset = $default_timezone_offset + 1;
+		
+		// Set the timezone for Wordpress to 1 hour later.
+		update_option('gmt_offset', $wordpress_timezone_offset );
+		
+		// Prepare an event that starts in 50 minutes.
+		$production_args = array(
+			'post_type'=>WPT_Production::post_type_name,
+			'post_title' => 'Production in 50 minutes',
+		);	
+		$production_in_50_mins = $this->factory->post->create($production_args);
+
+		$event_args = array(
+			'post_type'=>WPT_Event::post_type_name,
+			'post_title' => 'Event in 50 minutes',
+		);
+		$in_50_mins_date = strtotime('+ 50 minutes', time() + HOUR_IN_SECONDS * $wordpress_timezone_offset);
+
+		echo date('Y-m-d H:i:s', $in_50_mins_date);
+
+		$event_in_50_mins = $this->factory->post->create($event_args);
+		add_post_meta($event_in_50_mins, WPT_Production::post_type_name, $production_in_50_mins);
+		add_post_meta($event_in_50_mins, 'event_date', date('Y-m-d H:i:s', $in_50_mins_date));
+		
+		$event = new WPT_Event($event_in_50_mins);
+		
+		$args = array(
+			'start' => 'now',	
+		);
+		
+		$expected = 'Production in 50 minutes';
+		$actual = do_shortcode('[wpt_events]');
+		$this->assertContains( $expected, $actual);
+		
+	}
+	
 }

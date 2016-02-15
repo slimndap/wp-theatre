@@ -255,7 +255,7 @@
 		 * check_dependencies function.
 		 *
 		 * @since	0.? 
-	     * @since	0.14.4	Bugfix: Avoid PHP errors when no listing page is set.
+	     * @since	0.14.3	Bugfix: Avoid PHP errors when no listing page is set.
 	     *					Fixes #181.
 	     *
 		 * @access public

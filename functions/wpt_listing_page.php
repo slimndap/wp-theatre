@@ -545,7 +545,7 @@
 	     * Adds the 'Events page' display state to the listing page in the pages list tabel.
 	     * 
 	     * @since	0.13
-	     * @since	0.14.4	Bugfix: Avoid PHP errors when no listing page is set.
+	     * @since	0.14.3	Bugfix: Avoid PHP errors when no listing page is set.
 	     *					Fixes #181.
 	     * @param 	array 	$post_states	An array of post display states.
 	     * @param 	int 	$post			The post ID.
