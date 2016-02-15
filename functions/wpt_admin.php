@@ -262,10 +262,13 @@ class WPT_Admin {
 	 * Save meta data for a production and its events.
 	 * Triggered by de 'save_post'-action when you save a production in the admin.
 	 *
-	 * @since ?.?
-	 * @since 0.11.3	Unhook WPT_Event_Editor::save_event() to avoid loops.
+	 * @since 	?.?
+	 * @since 	0.11.3	Unhook WPT_Event_Editor::save_event() to avoid loops.
 	 *					See: https://github.com/slimndap/wp-theatre/issues/125
-	 * @since 0.12		Added support for events with an 'auto-draft' post_status.
+	 * @since 	0.12	Added support for events with an 'auto-draft' post_status.
+	 * @since	0.14.3	Productions with multiple events were not saving properly.
+	 *					Fixes #187.
+	 *					@props tomaszkoziara
 	 *
 	 * @param 	int		$post_id
 	 * @return 	void
