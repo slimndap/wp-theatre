@@ -131,7 +131,7 @@ Release Date: February 2nd, 2016
     * Listings were not working correctly if you combined the `start` and `post__not_in` params (0.14.2).
     * Event imports didn't always clean up properly (0.14.2).
     * Fixed a problem when saving a production with multiple events (0.14.3). Thank you [tomaszkoziara](https://github.com/tomaszkoziara)!
-    * Fixed several PHP warnings when no listing page is set in the Theater settings.
+    * Fixed several PHP warnings when no listing page is set in the Theater settings (0.14.3).
     
 = 0.13 =
 
@@ -153,7 +153,7 @@ See the [release post](http://theater.slimndap.com/theater-for-wordpress-0-13-re
 	* Weekdays were showing up as question marks when using a multibyte language (eg. Russian).
 
 * Requirements
-	* The plugin is no longer tested for WordPress version prior to 4.0 (0.13.3).
+	* The plugin is no longer tested on WordPress versions prior to 4.0 (0.13.3).
 
 = 0.12 =
 
