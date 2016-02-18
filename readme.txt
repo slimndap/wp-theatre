@@ -1,11 +1,12 @@
 === Theater for WordPress ===
 Contributors: slimndap
 Tags: theatre, stage, venue, events, shows, concerts, tickets, ticketing, sports, performances, calendar, festival, workshops, theater, cinema
-Requires at least: 3.8
-Tested up to: 4.3
+Requires at least: 4.0
+Tested up to: 4.4
 Stable tag: trunk
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CZERCBG5SUGQW
 
 A free plugin to publish your events on a WordPress website. Perfect for theaters, clubs, cinemas and festivals.
 
@@ -23,8 +24,11 @@ __Available extensions__
 * [Events Slider](http://theater.slimndap.com/downloads/events-slider-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – Show your events in a touch enabled and responsive slider.
 * [Timetable](http://theater.slimndap.com/downloads/timetable-for-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – Show your event showtimes in a clear table layout. Perfect for cinemas and festivals.
 * [Kijkwijzer](http://theater.slimndap.com/downloads/kijkwijzer-for-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – Add Kijkwijzer icons to your events.
+* [MPAA](http://theater.slimndap.com/downloads/mpaa-for-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – Add Motion Picture Association of America (MPAA) film rating labels to your movies.
+* [BBFC](http://theater.slimndap.com/downloads/bbfc-for-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – Add British Board of Film Classification (BBFC) icons to your movies.
 * [Ticketmatic](http://slimndap.com/product/ticketmatic-for-wordpress/)
 * [ActiveTickets](http://theater.slimndap.com/downloads/activetickets-for-wordpress/utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) - Automatically import your ActiveTickets events and sell them through your website.
+* [Veezi](http://theater.slimndap.com/downloads/veezi-for-wordpress/utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) - Automatically import your Veezi films and sell them on your website.
 
 > <strong>Newsletter</strong><br>
 > This plugin is in active development and updated frequently. Please [sign-up for the newsletter](http://theater.slimndap.com/newsletter?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) to stay informed about upcoming features and successful showcases.
@@ -54,7 +58,7 @@ __Installation__
 
 __Add events__
 
-Theater for Wordpress uses _productions_ to group your _events_. Each production can have one or more events.
+Theater for WordPress uses _productions_ to group your _events_. Each production can have one or more events.
 
 Add your first event:
 
@@ -87,9 +91,9 @@ The page that you created now shows your upcoming events.
 
 == Screenshots ==
 
-1. Manage events in the Wordpress admin.
+1. Manage events in the WordPress admin.
 2. The event editor.
-3. Manage events in the Wordpress admin
+3. Manage events in the WordPress admin.
 4. Your upcoming events listed on your website.
 5. Event details.
 
@@ -115,6 +119,20 @@ The new feature may be added directly to the Theater plugin or as an extension s
 
 == Changelog ==
 
+= 0.14 =
+
+Release Date: February 2nd, 2016
+
+* Enhancements
+    * The plugin is now ready for [language packs hosted on WordPress.org](https://make.wordpress.org/plugins/2015/09/01/plugin-translations-on-wordpress-org/). This makes it much easier for you to contribute a translation of the plugin in your native language. Add you translation [here](https://translate.wordpress.org/projects/wp-plugins/theatre).
+
+* Bugfixes
+    * Fixed some layout glitches on the Theater extensions page (0.14.1).
+    * Listings were not working correctly if you combined the `start` and `post__not_in` params (0.14.2).
+    * Event imports didn't always clean up properly (0.14.2).
+    * Fixed a problem when saving a production with multiple events (0.14.3). Thank you [tomaszkoziara](https://github.com/tomaszkoziara)!
+    * Fixed several PHP warnings when no listing page is set in the Theater settings (0.14.3).
+    
 = 0.13 =
 
 Release Date: September 3rd, 2015
@@ -132,6 +150,10 @@ See the [release post](http://theater.slimndap.com/theater-for-wordpress-0-13-re
 	* Fixed a problem in production listings with events that start before 1-1-1970.
 	* Visibility of ticket buttons didn't account for timezones.
 	* Pagination for listings wasn't working when the listing page was the same as the front page.
+	* Weekdays were showing up as question marks when using a multibyte language (eg. Russian).
+
+* Requirements
+	* The plugin is no longer tested on WordPress versions prior to 4.0 (0.13.3).
 
 = 0.12 =
 
@@ -314,6 +336,30 @@ Release Date: December 29th, 2014
 * Basic version of the plugin.
 
 == Upgrade Notice ==
+
+= 0.14.3 =
+Fixes a problem when saving a production with multiple events and several PHP warnings when no listing page is set.
+
+= 0.14.2 =
+Fixes some bugs in event lists and event imports.
+
+= 0.14.1 =
+Fixes some layout glitches on the Theater extensions page.
+
+= 0.13.7 =
+You can now translate this plugin on https://translate.wordpress.org/projects/wp-plugins/theatre.
+
+= 0.13.6 =
+Adds a new filter for event permalinks.
+
+= 0.13.5 =
+Fixed a problem with event templates that use HTML tags and moved Theater javascript to footer to improve loading speed.
+
+= 0.13.4 =
+Bugfix: Event editor wasn't saving enddate when creating a new event.
+
+= 0.13.3 =
+Bugfix: weekdays were showing up as question marks when using a multibyte language (eg. Russian).
 
 = 0.13.2 =
 Adds an extensions page to the Theater menu.

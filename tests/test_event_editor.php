@@ -334,12 +334,14 @@ class WPT_Test_Event_Editor_Ajax extends WP_Ajax_UnitTestCase {
 
 		$_POST['nonce'] = wp_create_nonce( 'wpt_event_editor_ajax_nonce' );
 
-		$event_date = date( 'Y-m-d H:i', + WEEK_IN_SECONDS );
+		$event_date = date( 'Y-m-d H:i', time() + WEEK_IN_SECONDS );
+		$enddate = date( 'Y-m-d H:i', time() + WEEK_IN_SECONDS + HOUR_IN_SECONDS );
 		$venue = 'Paradiso';
 		$extra_value = 'coming soon!';
 		$post_data = array(
 			'wpt_event_editor_nonce' => wp_create_nonce( 'wpt_event_editor' ),
 			'wpt_event_editor_event_date' => $event_date,
+			'wpt_event_editor_enddate' => $enddate,
 			'wpt_event_editor_venue' => $venue,
 			'post_ID' => $production_id,
 			'wpt_event_editor_extra_field' => $extra_value,
@@ -358,6 +360,7 @@ class WPT_Test_Event_Editor_Ajax extends WP_Ajax_UnitTestCase {
 		$this->assertCount( 1, $events );
 
 		$this->assertEquals( $event_date, date( 'Y-m-d H:i', $events[0]->datetime() ) );
+		$this->assertEquals( $enddate, date( 'Y-m-d H:i', $events[0]->datetime( true ) ) );
 		$this->assertEquals( $venue, $events['0']->venue() );
 		$this->assertEquals( $extra_value, $events[0]->custom( 'extra_field' ) );
 

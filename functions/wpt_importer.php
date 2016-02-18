@@ -378,10 +378,9 @@
 		}
 
 		/**
-		 * Updates the thumbnails of a production from a URL.
+		 * Updates the thumbnail of a production from a URL.
 		 *
 		 * Use this helper function to import thumbnails while processing your feed.
-		 * If no existing event is found then a new one is created.
 		 * 
 		 * @since 0.10
 		 *
@@ -470,7 +469,9 @@
 		/**
 		 * Gets all events that are marked.
 		 *
- 		 * @since 0.10
+ 		 * @since 	0.10
+ 		 * @since	0.14.3	Bugfix: Added 'posts_per_page' argument to ensure that all marked events are returned.
+ 		 *					Fixes #182.
 		 *
 		 * @see WPT_Importer::mark_upcoming_events()
 		 * @see WPT_Importer::unmark_events()
@@ -483,6 +484,7 @@
 			$args = array(
 				'post_type' => WPT_Event::post_type_name,
 				'post_status' => 'any',
+				'posts_per_page' => -1,
 				'meta_query' => array(
 					array(
 						'key' => $this->marker,
@@ -520,7 +522,9 @@
 		/**
 		 * Mark any previously imported upcoming events.
 		 * 
-		 * @since 0.10
+		 * @since 	0.10
+ 		 * @since	0.14.3	Bugfix: Added 'posts_per_page' argument to ensure that all events are marked.
+ 		 *					Fixes #182.
 		 *
 		 * @see WPT_Importer::execute()
 		 * 
@@ -534,6 +538,7 @@
 			$args = array(
 				'post_type' => WPT_Event::post_type_name,
 				'post_status' => 'any',
+				'posts_per_page' => -1,
 				'meta_query' => array(
 					array(
 						'key' => '_wpt_source',
@@ -699,14 +704,14 @@
 	
 	        add_settings_section(
 	            $this->slug.'_settings', // ID
-	            __('Import','wp_theatre'), // Title
+	            __('Import','theatre'), // Title
 	            '', // Callback
 	            $this->slug // Page
 	        );  
 
 	        add_settings_field(
 	            'schedule', // ID
-	            __('Schedule','wp_theatre'), // Title 
+	            __('Schedule','theatre'), // Title 
 	            array( $this, 'settings_field_schedule' ), // Callback
 	            $this->slug, // Page
 	            $this->slug.'_settings' // Section           
@@ -720,14 +725,14 @@
 	
 	        add_settings_section(
 	            $this->slug.'_status', // ID
-	            __('Status','wp_theatre'), // Title
+	            __('Status','theatre'), // Title
 	            '', // Callback
 	            $this->slug // Page
 	        );  
 
 	        add_settings_field(
 	            'status', // ID
-	            __('Ready for import','wp_theatre'), // Title 
+	            __('Ready for import','theatre'), // Title 
 	            array( $this, 'settings_field_status' ), // Callback
 	            $this->slug, // Page
 	            $this->slug.'_status' // Section           
@@ -735,7 +740,7 @@
 	        
 	        add_settings_field(
 	            'next import', // ID
-	            __('Next import','wp_theatre'), // Title 
+	            __('Next import','theatre'), // Title 
 	            array( $this, 'settings_field_next_import' ), // Callback
 	            $this->slug, // Page
 	            $this->slug.'_status' // Section           
@@ -743,7 +748,7 @@
 	        
 	        add_settings_field(
 	            'last import', // ID
-	            __('Last import','wp_theatre'), // Title 
+	            __('Last import','theatre'), // Title 
 	            array( $this, 'settings_field_last_import' ), // Callback
 	            $this->slug, // Page
 	            $this->slug.'_status' // Section           
@@ -770,7 +775,7 @@
 
 			echo '<select id="schedule" name="'.$this->slug.'[schedule]">';
 			
-			echo '<option value="manual">'.__('Manual','wp_theatre').'</option>';
+			echo '<option value="manual">'.__('Manual','theatre').'</option>';
 
 			foreach($schedules as $name => $value) {
 
@@ -789,7 +794,7 @@
 				$import_url = add_query_arg('wpt_import', $this->slug);
 				$import_url = wp_nonce_url( $import_url, 'wpt_import' );
 	
-				echo '<p><a href="'.esc_url($import_url).'">'.__('Run import now','wp_theatre').'</a></>';				
+				echo '<p><a href="'.esc_url($import_url).'">'.__('Run import now','theatre').'</a></>';				
 				
 			}
 		}
@@ -809,9 +814,9 @@
 			echo '<p>';
 			
 			if ($this->ready_for_import()) {
-				_e('Yes','wp_theatre');
+				_e('Yes','theatre');
 			} else {
-				_e('No','wp_theatre');
+				_e('No','theatre');
 			}
 
 			echo '</p>';
@@ -830,7 +835,7 @@
 		function settings_field_next_import() {
 			
 			if ($timestamp = wp_next_scheduled( $this->slug.'_import' )) {
-				echo sprintf(__('In %s.','wp_theatre'),human_time_diff($timestamp));
+				echo sprintf(__('In %s.','theatre'),human_time_diff($timestamp));
 			}
 		}
 		
@@ -851,7 +856,7 @@
 			
 			if (!empty($this->stats['start'])) {
 				echo '<tr>';
-				echo '<th><strong>'.__('Start','wp_theatre').'</strong></th>';
+				echo '<th><strong>'.__('Start','theatre').'</strong></th>';
 
 				echo '<td>'.
 					date_i18n(get_option('date_format'), $this->stats['start']).
@@ -863,7 +868,7 @@
 
 				if (!empty($this->stats['end'])) {
 					echo '<tr>';
-					echo '<th>'.__('Duration','wp_theatre').'</th>';
+					echo '<th>'.__('Duration','theatre').'</th>';
 					echo '<td>'.human_time_diff($this->stats['start'], $this->stats['end']).'</td>';				
 					echo '</tr>';
 				}
@@ -875,14 +880,14 @@
 				 */
 
 				if (!empty($this->stats['errors'])) {
-					$msg = '<p><strong>'.__('Import failed. Please try again, or contact your help desk if the problem persists.','wp_theatre'). '</strong></p>';
+					$msg = '<p><strong>'.__('Import failed. Please try again, or contact your help desk if the problem persists.','theatre'). '</strong></p>';
 					if (defined('WP_DEBUG') && WP_DEBUG === true) {
 						foreach ($this->stats['errors'] as $error) {
 							$msg .= '<p>'.$error.'</p>';
 						}
 					}
 					echo '<tr>';
-					echo '<th>'.__('Error','wp_theatre').'</th>';
+					echo '<th>'.__('Error','theatre').'</th>';
 					echo '<td>'.$msg.'</td>';				
 					echo '</tr>';
 				}

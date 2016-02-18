@@ -12,9 +12,9 @@ class WPT_Production_Widget extends WP_Widget {
 	function __construct() {
 		parent::__construct(
 			'wpt_production_widget',
-			__( 'Theater Production','wp_theatre' ),
+			__( 'Theater Production','theatre' ),
 			array(
-				'description' => __( 'Display a single theater production.', 'wp_theatre' ),
+				'description' => __( 'Display a single theater production.', 'theatre' ),
 			)
 		);
 	}
@@ -104,7 +104,7 @@ class WPT_Production_Widget extends WP_Widget {
 	public function form( $instance ) {
 		global $wp_theatre;
 		$defaults = array(
-			'title' => __( 'Production', 'wp_theatre' ),
+			'title' => __( 'Production', 'theatre' ),
 			'template' => '',
 		);
 		$values = wp_parse_args( $instance, $defaults );
@@ -116,7 +116,7 @@ class WPT_Production_Widget extends WP_Widget {
 		</p>
 
 		<p>
-		<label for="<?php echo $this->get_field_id( 'production' ); ?>"><?php _e( 'Production','wp_theatre' ); ?>:</label> 
+		<label for="<?php echo $this->get_field_id( 'production' ); ?>"><?php _e( 'Production','theatre' ); ?>:</label> 
 		<select class="widefat" id="<?php echo $this->get_field_id( 'production' ); ?>" name="<?php echo $this->get_field_name( 'production' ); ?>">
 			<option value=""></option>
 			<?php
@@ -137,9 +137,9 @@ class WPT_Production_Widget extends WP_Widget {
 
 
 		<p class="wpt_widget_template">
-		<label for="<?php echo $this->get_field_id( 'template' ); ?>"><?php _e( 'Template','wp_theatre' ); ?>:</label> 
-		<textarea class="widefat" id="<?php echo $this->get_field_id( 'template' ); ?>" name="<?php echo $this->get_field_name( 'template' ); ?>"><?php echo esc_attr( $values['template'] ); ?></textarea>
-		<em><?php _e( 'Optional, see <a href="https://github.com/slimndap/wp-theatre/wiki/Shortcodes#template" target="_blank">documentation</a>.','wp_theatre' );?></em>
+		<label for="<?php echo $this->get_field_id( 'template' ); ?>"><?php _e( 'Template','theatre' ); ?>:</label> 
+		<textarea class="widefat" id="<?php echo $this->get_field_id( 'template' ); ?>" name="<?php echo $this->get_field_name( 'template' ); ?>"><?php echo esc_html( $values['template'] ); ?></textarea>
+		<em><?php _e( 'Optional, see <a href="https://github.com/slimndap/wp-theatre/wiki/Shortcodes#template" target="_blank">documentation</a>.','theatre' );?></em>
 		</p>
 		<?php
 	}

@@ -241,7 +241,7 @@ class WPT_Event {
 			// $this->duration = apply_filters('wpt_event_duration',human_time_diff(strtotime($this->post()->enddate), strtotime($this->post()->event_date)),$this);
 			$seconds = abs( strtotime( $this->post()->enddate ) - strtotime( $this->post()->event_date ) );
 			$minutes = (int) $seconds / 60;
-			$text = $minutes.' '._n( 'minute','minutes', $minutes, 'wp_theatre' );
+			$text = $minutes.' '._n( 'minute','minutes', $minutes, 'theatre' );
 			$this->duration = apply_filters( 'wpt_event_duration',$text,$this );
 		}
 
@@ -419,8 +419,56 @@ class WPT_Event {
 		}
 	}
 
-	function permalink($args = array()) {
-		return $this->production()->permalink( $args );
+	/**
+	 * Get the event permalink.
+	 *
+	 * The permalink is inherited from the parent production.
+	 * 
+	 * @since	0.?
+	 * @since	0.13.6	Added a 'wpt/event/permalink' filter.
+	 *					Moved HTML version to separate function.
+	 * @return 	string	The permalink.
+	 */
+	function permalink($deprecated = array()) {
+		
+		if ( ! empty($deprecated['html']) ) {
+			return $this->permalink_html( $deprecated );
+		}
+		
+		$permalink = $this->production()->permalink( $deprecated );
+		
+		/**
+		 * Filter the event permalink.
+		 * 
+		 * @since	0.13.6
+		 * @param	string		$permalink	The event permalink.
+		 * @param	WPT_Event	$event		The event.
+		 */
+		$permalink = apply_filters( 'wpt/event/permalink', $permalink, $this );
+		return $permalink;
+	}
+	
+	/**
+	 * Get the HTML for the event permalink.
+	 *
+	 * The permalink is inherited from the parent production.
+	 * 
+	 * @since	0.13.6
+	 * @return 	string	The HTML for the event permalink.
+	 */
+	function permalink_html( $args = array() ) {
+		$args['html'] = true;
+		$html = $this->production()->permalink( $args );
+			
+		/**
+		 * Filter the HTML for the event permalink.
+		 * 
+		 * @since	0.13.6
+		 * @param	string		$html	The HTML for the event permalink.
+		 * @param	WPT_Event	$event	The event.
+		 */
+		$html = apply_filters( 'wpt/event/permalink/html', $html, $this );
+		return $html;
 	}
 
 	/**
@@ -453,7 +501,7 @@ class WPT_Event {
 		 * Filter the event prices.
 		 *
 		 * @since	0.10.14
-		 * @param 	array 	$prices	The current prices.
+		 * @param 	array 		$prices	The current prices.
 		 * @param 	WPT_Event	$event	The event.
 		 */
 		$prices = apply_filters( 'wpt/event/prices',$prices, $this );
@@ -518,7 +566,7 @@ class WPT_Event {
 
 		if ( count( $prices ) ) {
 			if ( count( $prices ) > 1 ) {
-				$prices_summary .= __( 'from','wp_theatre' ).' ';
+				$prices_summary .= __( 'from','theatre' ).' ';
 			}
 			if ( ! empty($wp_theatre->wpt_tickets_options['currencysymbol']) ) {
 				$prices_summary .= $wp_theatre->wpt_tickets_options['currencysymbol'].' ';
@@ -686,7 +734,7 @@ class WPT_Event {
 		$tickets_button = get_post_meta( $this->ID,'tickets_button',true );
 
 		if ( empty($tickets_button) ) {
-			$tickets_button = __( 'Tickets', 'wp_theatre' );
+			$tickets_button = __( 'Tickets', 'theatre' );
 		}
 
 		/**
@@ -794,13 +842,13 @@ class WPT_Event {
 
 		switch ( $tickets_status ) {
 			case self::tickets_status_onsale :
-				$label = __( 'On sale','wp_theatre' );
+				$label = __( 'On sale','theatre' );
 				break;
 			case self::tickets_status_soldout :
-				$label = __( 'Sold out','wp_theatre' );
+				$label = __( 'Sold out','theatre' );
 				break;
 			case self::tickets_status_cancelled :
-				$label = __( 'Cancelled','wp_theatre' );
+				$label = __( 'Cancelled','theatre' );
 				break;
 			case self::tickets_status_hidden :
 				$label = '';

@@ -25,7 +25,7 @@ class WPT_Production_Permalink {
 	public function add_settings() {
 		add_settings_section(
 			'wpt_production_permalink',
-			__( 'Theater permalinks', 'wp_theatre' ),
+			__( 'Theater permalinks', 'theatre' ),
 			array( $this, 'settings_section' ),
 			'permalink'
 		);
@@ -38,7 +38,7 @@ class WPT_Production_Permalink {
 	 * @return 	string	The default permalink base.
 	 */
 	public function get_base_default() {
-		$default = '/'._x( 'production', 'slug', 'wp_theatre' );
+		$default = '/'._x( 'production', 'slug', 'theatre' );
 
 		/**
 		 * Filter the default production permalink base.
@@ -125,7 +125,7 @@ class WPT_Production_Permalink {
 
 		$html = '';
 
-		$html .= wpautop( __( 'These settings control the permalinks used for Theater productions. These settings only apply when <strong>not using "default" permalinks above</strong>.', 'wp_theatre' ) );
+		$html .= wpautop( __( 'These settings control the permalinks used for Theater productions. These settings only apply when <strong>not using "default" permalinks above</strong>.', 'theatre' ) );
 
 		$html .= '<table class="form-table">';
 		$html .= '<tbody>';
@@ -133,8 +133,8 @@ class WPT_Production_Permalink {
 		$permalink_options = array(
 			'production' => array(
 				'structure' => $this->get_base_default(),
-				'title' => __( 'Production', 'wp_theatre' ),
-				'example' => home_url().trailingslashit( $this->get_base_default() ).__( 'sample-production','wp_theatre' ),
+				'title' => __( 'Production', 'theatre' ),
+				'example' => home_url().trailingslashit( $this->get_base_default() ).__( 'sample-production','theatre' ),
 			),
 		);
 
@@ -161,7 +161,7 @@ class WPT_Production_Permalink {
 		$html .= '<th>';
 		$html .= '<label>';
 		$html .= '<input name="wpt_production_permalink_base" type="radio" value="custom" '.checked( $option_checked, false, false ).' />';
-		$html .= __( 'Custom Base', 'wp_theatre' );
+		$html .= __( 'Custom Base', 'theatre' );
 		$html .= '</label>';
 		$html .= '</th>';
 		$html .= '<td>';

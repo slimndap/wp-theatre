@@ -332,10 +332,10 @@
   margin-left: 8px;
 }
 .xdsoft_datetimepicker .xdsoft_copyright a {
-  color: #eeeeee !important;
+  color: #eee !important;
 }
 .xdsoft_datetimepicker .xdsoft_copyright a:hover {
-  color: #aaaaaa !important;
+  color: #aaa !important;
 }
 .xdsoft_time_box {
   position: relative;
@@ -434,13 +434,13 @@
   color: #666;
 }
 .xdsoft_datetimepicker.xdsoft_dark .xdsoft_copyright {
-  color: #333333 !important;
+  color: #333 !important;
 }
 .xdsoft_datetimepicker.xdsoft_dark .xdsoft_copyright a {
-  color: #111111 !important;
+  color: #111 !important;
 }
 .xdsoft_datetimepicker.xdsoft_dark .xdsoft_copyright a:hover {
-  color: #555555 !important;
+  color: #555 !important;
 }
 .xdsoft_dark .xdsoft_time_box {
   border: 1px solid #333;
@@ -465,17 +465,17 @@
   position: relative;
   padding: 4px 17px 4px 33px;
   border: 1px solid #d7d8da;
-  background: -moz-linear-gradient(top, #ffffff 0%, #f4f8fa 73%);
+  background: -moz-linear-gradient(top, #fff 0%, #f4f8fa 73%);
   /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffffff), color-stop(73%, #f4f8fa));
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fff), color-stop(73%, #f4f8fa));
   /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top, #ffffff 0%, #f4f8fa 73%);
+  background: -webkit-linear-gradient(top, #fff 0%, #f4f8fa 73%);
   /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(top, #ffffff 0%, #f4f8fa 73%);
+  background: -o-linear-gradient(top, #fff 0%, #f4f8fa 73%);
   /* Opera 11.10+ */
-  background: -ms-linear-gradient(top, #ffffff 0%, #f4f8fa 73%);
+  background: -ms-linear-gradient(top, #fff 0%, #f4f8fa 73%);
   /* IE10+ */
-  background: linear-gradient(to bottom, #ffffff 0%, #f4f8fa 73%);
+  background: linear-gradient(to bottom, #fff 0%, #f4f8fa 73%);
   /* W3C */
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff', endColorstr='#f4f8fa', GradientType=0);
   /* IE6-9 */
@@ -485,17 +485,17 @@
 .xdsoft_datetimepicker .blue-gradient-button:hover span,
 .xdsoft_datetimepicker .blue-gradient-button:focus span {
   color: #454551;
-  background: -moz-linear-gradient(top, #f4f8fa 0%, #ffffff 73%);
+  background: -moz-linear-gradient(top, #f4f8fa 0%, #FFF 73%);
   /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f4f8fa), color-stop(73%, #ffffff));
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f4f8fa), color-stop(73%, #FFF));
   /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top, #f4f8fa 0%, #ffffff 73%);
+  background: -webkit-linear-gradient(top, #f4f8fa 0%, #FFF 73%);
   /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(top, #f4f8fa 0%, #ffffff 73%);
+  background: -o-linear-gradient(top, #f4f8fa 0%, #FFF 73%);
   /* Opera 11.10+ */
-  background: -ms-linear-gradient(top, #f4f8fa 0%, #ffffff 73%);
+  background: -ms-linear-gradient(top, #f4f8fa 0%, #FFF 73%);
   /* IE10+ */
-  background: linear-gradient(to bottom, #f4f8fa 0%, #ffffff 73%);
+  background: linear-gradient(to bottom, #f4f8fa 0%, #FFF 73%);
   /* W3C */
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f4f8fa', endColorstr='#FFF', GradientType=0);
   /* IE6-9 */
@@ -616,12 +616,20 @@ body.wp-admin.post-type-wp_theatre_event #wpt_event_publish .inside .submit {
   padding: 0;
   text-align: right;
 }
+.theater_page_wpt_extensions .plugin-card .name,
+.theater_page_wpt_extensions .plugin-card .desc {
+  margin-right: 148px;
+}
+.theater_page_wpt_extensions .plugin-card .action-links {
+  width: auto;
+}
 .theater_page_wpt_extensions .plugin-icon {
   line-height: 128px;
   background-color: rgba(6, 156, 136, 0.75);
   border-radius: 2px;
 }
 .theater_page_wpt_extensions .plugin-icon img {
+  width: 100%;
   height: auto;
   vertical-align: middle;
 }

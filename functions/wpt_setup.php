@@ -95,7 +95,7 @@
 	
 			$plugin_links = array(
 				'<a href="' . admin_url( 'admin.php?page=wpt_admin' ) . '">' . __( 'Settings') . '</a>',
-				'<a href="https://github.com/slimndap/wp-theatre/wiki">' . __( 'Docs', 'wp_theatre' ) . '</a>',
+				'<a href="https://github.com/slimndap/wp-theatre/wiki">' . __( 'Docs', 'theatre' ) . '</a>',
 			);
 	
 			return array_merge( $plugin_links, $links );
@@ -206,11 +206,11 @@
 			register_post_type( WPT_Event::post_type_name,
 				array(
 					'labels' => array(
-						'name' => __( 'Events','wp_theatre'),
-						'singular_name' => __( 'Event','wp_theatre'),
-						'new_item' => __('New event','wp_theatre'),
-						'add_new_item' => __('Add new event','wp_theatre'),
-						'edit_item' => __('Edit event','wp_theatre')
+						'name' => __( 'Events','theatre'),
+						'singular_name' => __( 'Event','theatre'),
+						'new_item' => __('New event','theatre'),
+						'add_new_item' => __('Add new event','theatre'),
+						'edit_item' => __('Edit event','theatre')
 	
 					),
 					'public' => true,
@@ -225,8 +225,8 @@
 			register_post_type( 'wp_theatre_season',
 				array(
 					'labels' => array(
-						'name' => __( 'Seasons','wp_theatre'),
-						'singular_name' => __( 'Season','wp_theatre')
+						'name' => __( 'Seasons','theatre'),
+						'singular_name' => __( 'Season','theatre')
 					),
 				'public' => true,
 				'has_archive' => true,
@@ -290,7 +290,7 @@
 			// Adds once weekly to the existing schedules.
 			$schedules['wpt_schedule'] = array(
 				'interval' => 5*60,
-				'display' => __( 'Every 5 minutes', 'wp_theatre' )
+				'display' => __( 'Every 5 minutes', 'theatre' )
 			);
 			return $schedules;
 		}
@@ -326,7 +326,7 @@
 		
 		function gettext($translated_text, $text, $domain) {
 			global $wp_theatre;
-			if ($domain=='wp_theatre') {
+			if ($domain=='theatre') {
 				switch ( $text ) {
 					case 'Tickets' :
 						if (!empty($wp_theatre->wpt_language_options['language_tickets'])) {
@@ -350,7 +350,7 @@
 		}
 		
 		function plugins_loaded(){
-			load_plugin_textdomain('wp_theatre', false, dirname( plugin_basename( __FILE__ ) ) . '/../lang/' );
+			load_plugin_textdomain('theatre', false, dirname( plugin_basename( __FILE__ ) ) . '/../lang/' );
 		}
 		
 		/*

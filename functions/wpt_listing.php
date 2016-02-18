@@ -174,6 +174,22 @@ class WPT_Listing {
 
 		}
 
+		/**
+		 * Filter the HTML of the navigation for a listing filter.
+		 * 
+		 * @since	0.13.3
+		 * @since	0.13.4	Added the listing object to the filter variables.
+		 *
+		 * @param	string	$html		The HTML of the navigation for a listing filter.
+		 * @param	string	$field		The field being filtered.
+		 *								Eg. 'month' or 'category'.
+		 * @param	array	$options	The possible values for the filter.
+		 * @param	array	$args		The arguments used for the listing.
+		 * @param	object	$listing	The listing object.
+		 */
+		$html = apply_filters('wpt/listing/pagination/filter/html',$html, $field, $options, $args, $this);
+		$html = apply_filters('wpt/listing/pagination/filter/html/field='.$field, $html, $options, $args, $this);
+
 		return '<div class="wpt_listing_filter_pagination '.$field.'">'.$html.'</div>';
 
 	}
@@ -218,6 +234,25 @@ class WPT_Listing {
 		}
 		
 		return apply_filters('wpt_listing_html', $html, $args);
+	}
+	
+	/**
+	 * Gets the pagination filters for a listing.
+	 * 
+	 * @since	0.13.4
+	 * @return 	array	The pagination filters for a listing.
+	 */
+	public function get_pagination_filters() {
+		
+		/**
+		 * Filter the pagination filters for a listing.
+		 * 
+		 * @since	0.13.4
+		 * @param	array	The current pagination filters for a listing.
+		 */
+		$filters = apply_filters('wpt/listing/pagination/filters', array());
+		
+		return $filters;
 	}
 	
 	/**

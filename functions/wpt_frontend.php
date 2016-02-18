@@ -6,8 +6,6 @@ class WPT_Frontend {
 
 		add_filter( 'the_content', array($this, 'the_content') );
 
-		add_filter( 'pre_get_posts', array($this,'pre_get_posts') );
-
 		add_shortcode( 'wpt_events', array($this,'wpt_events') );
 		add_shortcode( 'wpt_productions', array($this,'wpt_productions') );
 		add_shortcode( 'wpt_seasons', array($this,'wpt_productions') );
@@ -21,7 +19,7 @@ class WPT_Frontend {
 
 		add_shortcode( 'wpt_event_ticket_button', array($this,'wpt_event_ticket_button') );
 
-		$this->options = get_option( 'wp_theatre' );
+		$this->options = get_option( 'theatre' );
 
 		// Deprecated
 		add_shortcode( 'wp_theatre_events', array($this,'wpt_events') );
@@ -33,13 +31,14 @@ class WPT_Frontend {
 	 * 
 	 * @since	0.?
 	 * @since	0.13	Added thickbox args to manipulate the behaviour of the tickets thickbox.
+	 * @since	0.13.5	Moved main.js to footer.
 	 * @return 	void
 	 */
 	function enqueue_scripts() {
 		global $wp_theatre;
 
 		// Add built-in Theatre javascript
-		wp_enqueue_script( 'wp_theatre_js', plugins_url( '../js/main.js', __FILE__ ), array('jquery'), $wp_theatre->wpt_version );
+		wp_enqueue_script( 'wp_theatre_js', plugins_url( '../js/main.js', __FILE__ ), array('jquery'), $wp_theatre->wpt_version, true );
 
 		// Add built-in Theatre stylesheet
 		if ( ! empty($wp_theatre->wpt_style_options['stylesheet']) ) {
@@ -93,22 +92,6 @@ class WPT_Frontend {
 		echo implode( "\n",$html )."\n";
 	}
 
-	function pre_get_posts($query) {
-
-		// add productions to tag and category archives
-		if ( is_category() || is_tag() && empty( $query->query_vars['suppress_filters'] ) ) {
-			$post_types = $query->get( 'post_type' );
-			if ( empty($post_types) ) {
-				$post_types = array('post');
-			}
-			if ( is_array( $post_types ) ) {
-				$post_types[] = WPT_Production::post_type_name;
-			}
-			$query->set( 'post_type',$post_types );
-		}
-		return $query;
-	}
-
 	/**
 	 * Adds events listing to the content of a production page.
 	 *
@@ -127,7 +110,7 @@ class WPT_Frontend {
 				isset( $wp_theatre->options['show_season_events'] ) &&
 				in_array( $wp_theatre->options['show_season_events'], array('above','below') )
 			) {
-				$events_html = '<h3>'.__( 'Events','wp_theatre' ).'</h3>';
+				$events_html = '<h3>'.__( 'Events','theatre' ).'</h3>';
 				$events_html .= '[wpt_season_events]';
 
 				switch ( $wp_theatre->options['show_season_events'] ) {
@@ -142,7 +125,7 @@ class WPT_Frontend {
 				isset( $wp_theatre->options['show_season_productions'] ) &&
 				in_array( $wp_theatre->options['show_season_productions'], array('above','below') )
 			) {
-				$productions_html = '<h3>'.__( 'Productions','wp_theatre' ).'</h3>';
+				$productions_html = '<h3>'.__( 'Productions','theatre' ).'</h3>';
 				$productions_html .= '[wpt_season_productions]';
 
 				switch ( $wp_theatre->options['show_season_productions'] ) {
@@ -549,13 +532,17 @@ class WPT_Frontend {
 	 * @since  	?.?
 	 * @since	0.12	Work with the 'wpt_event_tickets' query var,
 	 * 					instead of $_GET vars.
-	 * @since	0.13.4	Added the 'wpt/frontend/iframe/html' filter.
-	 * @return string	The HTML for the [wpt_event_tickets] shortcode.
+	 * @since	0.13.3	Added the 'wpt/frontend/iframe/html' filter.
+	 * @since	0.14	Fixed a PHP notice when the 'wpt_event_tickets' is not set.
+	 *					Eg. when the iframe page is called directly.
+	 * @return 	string	The HTML for the [wpt_event_tickets] shortcode.
 	 */
 	function get_iframe_html() {
 		$html = '';
 
 		$event_id = (int) get_query_var( 'wpt_event_tickets' );
+
+		$tickets_url = '';
 
 		if ( ! empty($event_id) ) {
 			$tickets_url = get_post_meta( $event_id,'tickets_url',true );
@@ -567,7 +554,7 @@ class WPT_Frontend {
 		/**
 		 * Filter the HTML for the [wp_theatre_iframe] shortcode.
 		 * 
-		 * @since	0.??
+		 * @since	0.13.3
 		 * @param 	string	$html			The HTML for the [wp_theatre_iframe] shortcode.
 		 * @param	string	$tickets_url	The event tickets url.
 		 * @pararm	int		$event_id		The event ID.
@@ -575,7 +562,7 @@ class WPT_Frontend {
 		$html = apply_filters('wpt/frontend/iframe/html', $html, $event_id);
 
 		/**
-		 * @deprecated	0.??
+		 * @deprecated	0.13.3
 		 * Use 'wpt/frontend/iframe/html' filter instead.
 		 */
 		do_action( 'wp_theatre_iframe' );
@@ -660,10 +647,10 @@ class WPT_Frontend {
 		if (
 			isset($theatre_options['iframepage']) &&
 			$theatre_options['iframepage'] == get_the_id() &&
-			isset($_GET[ __( 'Event','wp_theatre' ) ])
+			isset($_GET[ __( 'Event','theatre' ) ])
 		) {
 			// We are on the tickets page, using the old style URL, let's redirect
-			$event = new WPT_Event( $_GET[ __( 'Event','wp_theatre' ) ] );
+			$event = new WPT_Event( $_GET[ __( 'Event','theatre' ) ] );
 			if ( ! empty($event) ) {
 				$tickets_url_iframe = $event->tickets_url_iframe();
 				if ( ! empty($tickets_url_iframe) ) {

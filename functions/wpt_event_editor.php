@@ -37,7 +37,7 @@ class WPT_Event_Editor {
 	public function add_events_meta_box() {
 		add_meta_box(
 			'wpt_event_editor',
-			__( 'Events', 'wp_theatre' ),
+			__( 'Events', 'theatre' ),
 			array( $this, 'events_meta_box' ),
 			WPT_Production::post_type_name,
 			'normal',
@@ -170,9 +170,9 @@ class WPT_Event_Editor {
 			'duration' => 2 * HOUR_IN_SECONDS,
 			'datetime_format' => 'Y-m-d H:i',
 			'event_date' => date( 'Y-m-d H:i', strtotime( 'Today 8 PM' ) ),
-			'tickets_button' => __( 'Tickets', 'wp_theatre' ),
+			'tickets_button' => __( 'Tickets', 'theatre' ),
 			'tickets_status' => WPT_Event::tickets_status_onsale,
-			'confirm_delete_message' => __( 'Are you sure that you want to delete this event?', 'wp_theatre' ),
+			'confirm_delete_message' => __( 'Are you sure that you want to delete this event?', 'theatre' ),
 			'language' => $language_parts[0],
 			'editor' => false,
 		);
@@ -255,33 +255,33 @@ class WPT_Event_Editor {
 		$fields = array(
 			array(
 				'id' => 'event_date',
-				'title' => __( 'Start time', 'wp_theatre' ),
+				'title' => __( 'Start time', 'theatre' ),
 			),
 			array(
 				'id' => 'enddate',
-				'title' => __( 'End time', 'wp_theatre' ),
+				'title' => __( 'End time', 'theatre' ),
 				'save' => array(
 					'callback' => array( $this, 'save_enddate' ),
 				),
 			),
 			array(
 				'id' => 'venue',
-				'title' => __( 'Venue', 'wp_theatre' ),
+				'title' => __( 'Venue', 'theatre' ),
 			),
 			array(
 				'id' => 'city',
-				'title' => __( 'City', 'wp_theatre' ),
+				'title' => __( 'City', 'theatre' ),
 			),
 			array(
 				'id' => 'remark',
-				'title' => __( 'Remark', 'wp_theatre' ),
+				'title' => __( 'Remark', 'theatre' ),
 				'edit' => array(
-					'placeholder' => __( 'e.g. Premiere or Try-out', 'wp_theatre' ),
+					'placeholder' => __( 'e.g. Premiere or Try-out', 'theatre' ),
 				),
 			),
 			array(
 				'id' => 'tickets_status',
-				'title' => __( 'Tickets status', 'wp_theatre' ),
+				'title' => __( 'Tickets status', 'theatre' ),
 				'edit' => array(
 					'callback' => array( $this, 'get_control_tickets_status_html' ),
 				),
@@ -291,27 +291,27 @@ class WPT_Event_Editor {
 			),
 			array(
 				'id' => 'tickets_url',
-				'title' => __( 'Tickets URL', 'wp_theatre' ),
+				'title' => __( 'Tickets URL', 'theatre' ),
 				'edit' => array(
 					'placeholder' => 'http://',
 				),
 			),
 			array(
 				'id' => 'tickets_button',
-				'title' => __( 'Text for tickets link', 'wp_theatre' ),
+				'title' => __( 'Text for tickets link', 'theatre' ),
 				'edit' => array(
-					'description' => sprintf( __( 'Leave blank for \'%s\'', 'wp_theatre' ), $defaults['tickets_button'] ),
+					'description' => sprintf( __( 'Leave blank for \'%s\'', 'theatre' ), $defaults['tickets_button'] ),
 				),
 			),
 			array(
 				'id' => '_wpt_event_tickets_price',
-				'title' => __( 'Prices', 'wp_theatre' ),
+				'title' => __( 'Prices', 'theatre' ),
 				'get' => array(
 					'callback' => array( $this, 'get_prices' ),
 				),
 				'edit' => array(
 					'callback' => array( $this, 'get_control_prices_html' ),
-					'description' => __( 'Place extra prices on a new line.', 'wp_theatre' ),
+					'description' => __( 'Place extra prices on a new line.', 'theatre' ),
 				),
 				'save' => array(
 					'callback' => array( $this, 'save_prices' ),
@@ -577,10 +577,10 @@ class WPT_Event_Editor {
 		$html = '';
 
 		$tickets_status_options = array(
-			WPT_Event::tickets_status_onsale => __( 'On sale', 'wp_theatre' ),
-			WPT_Event::tickets_status_soldout => __( 'Sold Out', 'wp_theatre' ),
-			WPT_Event::tickets_status_cancelled => __( 'Cancelled', 'wp_theatre' ),
-			WPT_Event::tickets_status_hidden => __( 'Hidden', 'wp_theatre' ),
+			WPT_Event::tickets_status_onsale => __( 'On sale', 'theatre' ),
+			WPT_Event::tickets_status_soldout => __( 'Sold Out', 'theatre' ),
+			WPT_Event::tickets_status_cancelled => __( 'Cancelled', 'theatre' ),
+			WPT_Event::tickets_status_hidden => __( 'Hidden', 'theatre' ),
 		);
 		$tickets_status_options = apply_filters( 'wpt_event_editor_tickets_status_options', $tickets_status_options );
 
@@ -612,7 +612,7 @@ class WPT_Event_Editor {
 			false
 		);
 		$html .= '/>';
-		$html .= '<span>'.__( 'Other', 'wp_theatre' ).': </span>';
+		$html .= '<span>'.__( 'Other', 'theatre' ).': </span>';
 		$html .= '</label>';
 		$html .= '<input type="text" name="wpt_event_editor_'.$field['id'].'_other"';
 		if ( ! in_array( $value, array_keys( $tickets_status_options ) ) ) {
@@ -835,14 +835,14 @@ class WPT_Event_Editor {
 		$html .= '<div class="wpt_event_editor_create_form">'.$this->get_form_html( $production_id ).'</div>';
 
 		$html_actions = '<div class="wpt_event_editor_create_actions wpt_event_editor_create_actions_closed">';
-		$html_actions .= '<a href="#" class="button wpt_event_editor_create_open">'.__( 'Add a new event','wp_theatre' ).'</a>';
+		$html_actions .= '<a href="#" class="button wpt_event_editor_create_open">'.__( 'Add a new event','theatre' ).'</a>';
 		$html_actions .= '</div>';
 
 		$html .= $html_actions;
 
 		$html_actions = '<div class="wpt_event_editor_create_actions wpt_event_editor_create_actions_open">';
-		$html_actions .= '<a href="#" class="button wpt_event_editor_create_save">'.__( 'Save event','wp_theatre' ).'</a>';
-		$html_actions .= '<a href="#" class="button wpt_event_editor_create_cancel">'.__( 'Cancel','wp_theatre' ).'</a>';
+		$html_actions .= '<a href="#" class="button wpt_event_editor_create_save">'.__( 'Save event','theatre' ).'</a>';
+		$html_actions .= '<a href="#" class="button wpt_event_editor_create_cancel">'.__( 'Cancel','theatre' ).'</a>';
 		$html_actions .= '</div>';
 
 		$html .= $html_actions;
@@ -1013,14 +1013,14 @@ class WPT_Event_Editor {
 
 		$key = 'wpt_event_editor_'.$field['id'];
 
-		if ( empty($_POST[ $key ]) ) {
+		if ( empty($data[ $key ]) ) {
 			return;
 		}
 
-		$value = $_POST[ $key ];
+		$value = $data[ $key ];
 
-		if ( isset ( $_POST['wpt_event_editor_event_date'] ) ) {
-			$event_date = strtotime( $_POST['wpt_event_editor_event_date'] );
+		if ( isset ( $data['wpt_event_editor_event_date'] ) ) {
+			$event_date = strtotime( $data['wpt_event_editor_event_date'] );
 		} else {
 			$event_date = strtotime( get_post_meta( $event_id, 'event_date', true ) );
 		}

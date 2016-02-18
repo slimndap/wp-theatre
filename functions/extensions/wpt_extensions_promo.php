@@ -20,8 +20,8 @@ class WPT_Extensions_Promo {
 	function add_menu() {
 		add_submenu_page(
 			'theater-events',
-			__( 'Theater Extensions','wp_theatre' ),
-			__( 'Extensions', 'wp_theatre' ),
+			__( 'Theater Extensions','theatre' ),
+			__( 'Extensions', 'theatre' ),
 			'manage_options',
 			'wpt_extensions',
 			array( $this, 'get_page' )
@@ -49,7 +49,7 @@ class WPT_Extensions_Promo {
 			), 'http://theater.slimndap.com/extensions/'
 		);
 
-		$links[] = '<a href="' . esc_url( $extensions_link ) . '">' . esc_html__( 'Extensions', 'wp_theatre' ) . '</a>';
+		$links[] = '<a href="' . esc_url( $extensions_link ) . '">' . esc_html__( 'Extensions', 'theatre' ) . '</a>';
 
 		return $links;
 	}
@@ -62,13 +62,17 @@ class WPT_Extensions_Promo {
 	 * The response is stored in a transient for 24 hours.
 	 *
 	 * @since	0.13.2
+	 * @since	0.14.1	Increased timeout of extensions feed retrieval.
 	 * @access 	private
 	 * @return 	array	The extensions.
 	 */
 	private function get_extensions() {
 
 		if ( false === ( $response = get_transient( 'wpt_extensions_promo_feed' ) ) ) {
-			$response = wp_remote_get( 'http://theater.slimndap.com/wp-json/theater/v1/extensions' );
+			$args = array(
+				'timeout' => 30,	
+			);
+			$response = wp_remote_get( 'http://theater.slimndap.com/wp-json/theater/v1/extensions', $args );
 			set_transient( 'wpt_extensions_promo_feed', $response, DAY_IN_SECONDS );
 		}
 
@@ -87,13 +91,14 @@ class WPT_Extensions_Promo {
 	 * Outputs the HTML for the Extensions page.
 	 *
 	 * @since	0.13.2
+	 * @since	0.14.1	Extensions page layout was broken in WP 4.4.
 	 * @return 	void
 	 */
 	function get_page() {
 		$html = '';
 		$html .= '<div class="wrap">';
-		$html .= '<h1>'.esc_html__( 'Theater for WordPress extensions','wp_theatre' ).'</h1>';
-		$html .= '<p>'.__( 'Extensions are plugins that <strong><em>add functionality</em></strong> to the Theater for WordPress plugin.', 'wp_theatre' ).'</p>';
+		$html .= '<h1>'.esc_html__( 'Theater for WordPress extensions','theatre' ).'</h1>';
+		$html .= '<p>'.__( 'Extensions are plugins that <strong><em>add functionality</em></strong> to the Theater for WordPress plugin.', 'theatre' ).'</p>';
 
 		$html .= '<div class="widefat">';
 
@@ -112,19 +117,20 @@ class WPT_Extensions_Promo {
 
 			$html .= '<div class="plugin-card-top">';
 
-			$html .= '<a href="'.$extension_link.'" class="plugin-icon">';
-			$html .= $extension->thumbnail;
-			$html .= '</a>';
-
 			$html .= '<div class="name column-name">';
-			$html .= '<h4>'.esc_html( $extension->title ).'</h4>';
+			$html .= '<h3>';
+			$html .= '<a href="'.$extension_link.'" class="">';
+			$html .= esc_html( $extension->title );
+			$html .= '<span class="plugin-icon">'.$extension->thumbnail.'</span>';
+			$html .= '</a>';
+			$html .= '</h3>';
 			$html .= '</div>';
 
 			$html .= '<div class="action-links">';
 			$html .= '<ul class="plugin-action-buttons">';
 
 			$html .= '<li>';
-			$html .= '<a href="'.$extension_link.'" class="button">'.__( 'Get extension','wp_theatre' ).'</a>';
+			$html .= '<a href="'.$extension_link.'" class="button">'.__( 'Get extension','theatre' ).'</a>';
 			$html .= '</li>';
 
 			$html .= '</ul>';
@@ -148,7 +154,7 @@ class WPT_Extensions_Promo {
 					'utm_campaign' => 'admin',
 				), 'http://theater.slimndap.com/extensions/'
 			);
-			$html .= '<p><a href="'.$extensions_link.'" class="button-primary">'.__( 'Browse all extensions','wp_theatre' ).'</a></p>';
+			$html .= '<p><a href="'.$extensions_link.'" class="button-primary">'.__( 'Browse all extensions','theatre' ).'</a></p>';
 		}
 
 		echo $html;

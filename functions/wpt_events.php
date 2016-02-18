@@ -470,6 +470,51 @@ class WPT_Events extends WPT_Listing {
 	}
 
 	/**
+	 * Gets the pagination filters for an event listing.
+	 * 
+	 * @since	0.13.4
+	 * @return 	array	The pagination filters for an event listing.
+	 */
+	public function get_pagination_filters() {
+		
+		$filters = parent::get_pagination_filters();
+
+		$filters['day'] =  array(
+			'title' => __('Days', 'theatre'),
+			'query_arg' => 'wpt_day',
+			'callback' => array($this, 'get_days'),
+		);
+		
+		$filters['month'] =  array(
+			'title' => __('Months', 'theatre'),
+			'query_arg' => 'wpt_month',
+			'callback' => array($this, 'get_months'),
+		);
+		
+		$filters['year'] = array(
+			'title' => __('Years', 'theatre'),
+			'query_arg' => 'wpt_year',
+			'callback' => array($this, 'get_years'),
+		);
+		
+		$filters['category'] = array(
+			'title' => __('Categories', 'theatre'),
+			'query_arg' => 'wpt_category',
+			'callback' => array($this, 'get_categories'),
+		);
+		
+		/**
+		 * Filter the pagination filters for an event listing.
+		 * 
+		 * @since 	0.13.4
+		 * @param	array	$filters	The current pagination filters for an event listing..
+		 */
+		$filters = apply_filters('wpt/events/pagination/filters', $filters);
+		
+		return $filters;
+	}
+
+	/**
 	 * Gets the page navigation for an event listing in HTML.
 	 *
 	 * @see WPT_Listing::filter_pagination()
@@ -477,9 +522,11 @@ class WPT_Events extends WPT_Listing {
 	 * @see WPT_Events::get_months()
 	 * @see WPT_Events::get_categories()
 	 *
-	 * @since 0.10
+	 * @since 	0.10
+	 * @since	0.13.4	Show the pagination filters in the same order as the
+	 *					the 'paginateby' argument.
 	 *
-	 * @access protected
+	 * @access 	protected
 	 * @param 	array $args     The arguments being used for the event listing.
 	 *							See WPT_Events::get_html() for possible values.
 	 * @return 	string			The HTML for the page navigation.
@@ -489,37 +536,38 @@ class WPT_Events extends WPT_Listing {
 
 		$html = '';
 
-		// Days navigation
-		if (
-			( ! empty($args['paginateby']) && in_array( 'day', $args['paginateby'] )) ||
-			! empty($wp_query->query_vars['wpt_day'])
-		) {
-			$html .= $this->filter_pagination( 'day', $this->get_days( $args ), $args );
+		$paginateby = empty($args['paginateby']) ? array() : $args['paginateby'];
+		
+		$filters = $this->get_pagination_filters();
+		
+		foreach ($filters as $filter_name => $filter_options) {
+			if (!empty($wp_query->query_vars[ $filter_options['query_arg'] ])) {
+				$paginateby[] = $filter_name;
+			}
+		}
+		
+		$paginateby = array_unique($paginateby);
+		
+		foreach($paginateby as $paginateby_filter) {
+			$options = call_user_func_array( 
+				$filters[ $paginateby_filter ]['callback'], 
+				array( $args ) 
+			);
+			$html.= $this->filter_pagination(
+				$paginateby_filter,
+				$options,
+				$args
+			);			
 		}
 
-		// Months navigation
-		if (
-			( ! empty($args['paginateby']) && in_array( 'month', $args['paginateby'] )) ||
-			! empty($wp_query->query_vars['wpt_month'])
-		) {
-			$html .= $this->filter_pagination( 'month', $this->get_months( $args ), $args );
-		}
-
-		// Years navigation
-		if (
-			( ! empty($args['paginateby']) && in_array( 'year', $args['paginateby'] )) ||
-			! empty($wp_query->query_vars['wpt_year'])
-		) {
-			$html .= $this->filter_pagination( 'year', $this->get_years( $args ), $args );
-		}
-
-		// Categories navigation
-		if (
-			( ! empty($args['paginateby']) && in_array( 'category', $args['paginateby'] )) ||
-			! empty($wp_query->query_vars['wpt_category'])
-		) {
-			$html .= $this->filter_pagination( 'category', $this->get_categories( $args ), $args );
-		}
+		/**
+		 * Filter the HTML of the page navigation for an event listing. 
+		 * 
+		 * @since	0.13.3
+		 * @param 	string 	$html	The HTML of the page navigation for an event listing.
+		 * @param 	array 	$args	The arguments being used for the event listing.
+		 */
+		$html = apply_filters('wpt/events/html/page/navigation', $html, $args);
 
 		return $html;
 	}

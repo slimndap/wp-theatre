@@ -5,9 +5,9 @@
 	Plugin URI: http://theater.slimndap.com/
 	Description: Turn your Wordpress website into a theater website.
 	Author: Jeroen Schmit
-	Version: 0.13.2
+	Version: 0.14.3
 	Author URI: http://slimndap.com/
-	Text Domain: wp_theatre
+	Text Domain: theatre
 	Domain Path: /lang
 
 	This program is free software; you can redistribute it and/or modify
@@ -28,7 +28,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	
-$wpt_version = '0.13.2';
+$wpt_version = '0.14.3';
 
 class WP_Theatre {
 	function __construct() {
@@ -246,10 +246,10 @@ class WP_Theatre {
  	
  	function deprecated_options() {
 	 	if (empty($this->wpt_style_options)) {
-		 	$this->wpt_style_options = get_option( 'wp_theatre' );
+		 	$this->wpt_style_options = get_option( 'theatre' );
 	 	}
 	 	if (empty($this->wpt_tickets_options)) {
-		 	$this->wpt_tickets_options = get_option( 'wp_theatre' );
+		 	$this->wpt_tickets_options = get_option( 'theatre' );
 	 	}
  	}
 }
