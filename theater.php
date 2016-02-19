@@ -113,6 +113,7 @@ class WP_Theatre {
 
 		require_once(dirname(__FILE__) . '/functions/wpt_productions.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_productions_admin.php');	
+		require_once(dirname(__FILE__) . '/functions/wpt_productions_list_table.php');	
 
 		require_once(dirname(__FILE__) . '/functions/wpt_event.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_event_admin.php');	
@@ -140,9 +141,6 @@ class WP_Theatre {
 
 		require_once(dirname(__FILE__) . '/functions/wpt_importer.php');	
 
-		require_once(dirname(__FILE__) . '/functions/list_table/wpt_list_table.php');	
-		require_once(dirname(__FILE__) . '/functions/list_table/wpt_list_table_productions.php');	
-		require_once(dirname(__FILE__) . '/functions/list_table/wpt_list_table_events.php');	
 
 		if (is_admin()) {
 		} else {

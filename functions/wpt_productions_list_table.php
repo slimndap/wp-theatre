@@ -1,16 +1,27 @@
 <?php
 
-class WPT_List_Table_Productions extends WPT_List_Table {
+if(!class_exists('WP_List_Table')){
+    require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
+}	
 
-   	function __construct(){
-	   
-        parent::__construct( array(
-            'singular'  => __('production','theatre'),
-            'plural'    => __('productions', 'theatre'),
-            'ajax'      => false,
-        ) );
-    }
+/**
+ * List Table for the Productions Admin Page (default view).
+ * 
+ * @since	0.15
+ * @extends	WP_List_Table
+ * @see		WPT_Productions_Admin
+ * @see		https://codex.wordpress.org/Class_Reference/WP_List_Table
+ * @see		https://pippinsplugins.com/creating-wp-list-tables-by-hand/
+ */
+class WPT_Productions_List_Table extends WP_List_Table {
 
+	/**
+	 * Gets the HTML of the production categories for use in the category column.
+	 * 
+	 * @since	0.15
+	 * @param 	WPT_Production	$production	The Production.
+	 * @return	string						The HTML of the production categories.
+	 */
 	function column_categories($production) {
 		$args = array(
 			'html' => true,
@@ -20,13 +31,21 @@ class WPT_List_Table_Productions extends WPT_List_Table {
 
 	function column_cb($production){ 
 		return sprintf( 
-			'<input type="checkbox" name="%1$s[]" value="%2$s" />', 
-			$this->_args['singular'], 
+			'<input type="checkbox" name="production[]" value="%1$s" />', 
 			$production->ID
 		); 
 	}
 
+	/**
+	 * Gets the HTML of the production title and action for use in the title column.
+	 *
+	 * @since	0.15
+	 * @param 	WPT_Production	$production	The Production.
+	 * @return	string						The HTML of the production title and actions.
+	 */
     function column_title($production){
+	    
+	    // Define the actions for this production.
         if ('trash' == get_post_status($production->ID) ) {
 	        $restore_url = add_query_arg('action', 'untrash', get_edit_post_link( $production->ID ));
 	        $restore_url = wp_nonce_url($restore_url, 'untrash-post_'.$production->ID);
@@ -41,8 +60,10 @@ class WPT_List_Table_Productions extends WPT_List_Table {
 				'view' => '<a href="'.get_permalink($production->ID).'">'.__('View').'</a>',
 			);		    		        
         }
+        
+        // Set the production template.
         $production_args = array(
-	    	'template' => '{{thumbnail}}{{title_in_list_table}}{{dates}}{{cities}}',  
+	    	'template' => '{{thumbnail}}{{title}}{{dates}}{{cities}}',  
         );
         
         return sprintf('%1$s %2$s',
@@ -51,6 +72,38 @@ class WPT_List_Table_Productions extends WPT_List_Table {
         );
     }
     
+    
+	/**
+	 * Gets the bulk actions for the productions.
+	 * 
+	 * @since	0.15
+	 * @return	array	The bulk actions.
+	 */
+	function get_bulk_actions() {
+		
+		if (!empty($_REQUEST['post_status']) && 'trash' == $_REQUEST['post_status']) {
+			$actions = array(
+				'restore' => __('Restore'),
+				'delete' => __('Delete Permanently'),
+			);
+		} else {
+			$actions = array(
+				'publish' => __('Publish'),
+				'draft' => __('Save as Draft', 'theatre'),
+				'trash' => __('Move to Trash'),
+			);
+		}
+
+		return $actions;
+	}	
+
+	
+	/**
+	 * Gets the columns for the list table.
+	 * 
+	 * @since	0.15
+	 * @return	array	The columns.
+	 */
 	function get_columns(){
         $columns = array(
             'cb' => '<input type="checkbox" />',
@@ -60,6 +113,12 @@ class WPT_List_Table_Productions extends WPT_List_Table {
         return $columns;
     }
 
+	/**
+	 * Gets the sortable columns for the list table.
+	 * 
+	 * @since	0.15
+	 * @return	array	The sortable columns.
+	 */
 	function get_sortable_columns() { 
 		$sortable_columns = array( 
 			'title' => array('title',false),
@@ -67,6 +126,52 @@ class WPT_List_Table_Productions extends WPT_List_Table {
 		return $sortable_columns; 
 	}
     
+    /**
+     * Gets the views for the list table.
+     * 
+	 * @since	0.15
+	 * @return	array	The views.
+     */
+    function get_views() {
+	    $num_posts = wp_count_posts(WPT_Production::post_type_name, 'readable');
+
+	    $views = array();
+
+		ob_start();
+		?><a href="<?php echo add_query_arg('post_status', '');?>" <?php
+			if (empty($_REQUEST['post_status'])) {
+				?> class="current"<?php
+			}
+		?>><?php _e('All'); ?></a><?php		
+	    $views['all'] = ob_get_clean();
+	    
+		$views_available = array(
+			'publish' => __('Published'),
+			'draft' => __('Draft'),
+			'trash' => __('Trash'),
+		);
+	    
+	    foreach ($views_available as $key=>$val) {
+		    if (!empty($num_posts->{$key})) {
+				ob_start();
+				?><a href="<?php echo add_query_arg('post_status', $key);?>" <?php
+					if (!empty($_REQUEST['post_status']) && $key == $_REQUEST['post_status']) {
+						?> class="current"<?php
+					}
+				?>><?php echo $val; ?></a><?php		
+			    $views[$key] = ob_get_clean();
+		    } 
+	    }
+	    return $views;
+    }
+
+    /**
+     * Queries and filters the productions, handles sorting, and pagination, and any 
+     * other data-manipulation required prior to rendering.
+     *
+     * @since	0.15
+     * @return 	void
+     */
     function prepare_items() {
 	    global $wp_theatre;
 
@@ -120,5 +225,5 @@ class WPT_List_Table_Productions extends WPT_List_Table {
 	 	);
 	 	
 	}
-	
+    
 }
