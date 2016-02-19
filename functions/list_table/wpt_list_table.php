@@ -14,17 +14,9 @@ class WPT_List_Table extends WP_List_Table {
 		$this->modes = $wp_theatre->productions_admin->get_list_table_modes();
 
         parent::__construct( $args );
-        
+                
     }
 
-	function column_cb($production){ 
-		return sprintf( 
-			'<input type="checkbox" name="%1$s[]" value="%2$s" />', 
-			$this->_args['singular'], 
-			$production->ID
-		); 
-	}
-    
     protected function get_filter_categories_html() {
 
 		$cat = '';
@@ -121,7 +113,8 @@ class WPT_List_Table extends WP_List_Table {
     
 	function extra_tablenav( $which ) {
 		$html = '';
-		if ( 'top' == $which ) {
+		if ( 'top' == $which) {
+			/*
 			$html.= '<div class="alignleft actions">';
 			
 			$html.= $this->get_filter_dates_html();
@@ -130,7 +123,7 @@ class WPT_List_Table extends WP_List_Table {
 			$html.= get_submit_button( __( 'Filter' ), 'button', 'filter_action', false, array( 'id' => 'post-query-submit' ) );
 			
 			$html.= '</div>';
-
+			*/
 			$html.= $this->get_mode_switcher_html();
 		}
 		
@@ -139,9 +132,9 @@ class WPT_List_Table extends WP_List_Table {
 	
 	function get_bulk_actions() {
 		$actions = array();
-		$actions['publish'] = __('Publish', 'wp_theatre');
-		$actions['draft'] = __('Save as draft', 'wp_theatre');
-		$actions['trash'] = __('Move to trash', 'wp_theatre');
+		$actions['publish'] = __('Publish', 'theatre');
+		$actions['draft'] = __('Save as draft', 'theatre');
+		$actions['trash'] = __('Move to trash', 'theatre');
 		return $actions;
 	}
 	

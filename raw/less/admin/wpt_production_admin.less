@@ -26,16 +26,26 @@ body {
 						.wp_theatre_prod,
 						.wp_theatre_event {
 							> * {
-								margin-left: 80px;
+								margin-left: 32px + 10px;
 							}
 							figure {
-								width: 70px;
+								width: 32px;
 								margin: 0;
 								float: left;
+								border-radius: 2px;
+								overflow: hidden;
 								img {
 									width: 100%;
 									height: auto;
-									border-radius: 2px;
+								}
+								&.placeholder {
+									background-color: #c5c5c5;
+									text-align: center;
+									height: 32px;
+									.dashicons {
+										line-height: 32px;
+										color: white;
+									}
 								}
 							}
 							.wp_theatre_prod_title,
@@ -82,7 +92,7 @@ body {
 						}
 						.row-actions {
 							clear: left;
-							margin-left: 80px;
+							margin-left: 32px + 10px;
 						}
 					}
 				}

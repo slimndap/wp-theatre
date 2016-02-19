@@ -9,6 +9,7 @@ class WPT_Productions_Admin {
 		add_action( 'admin_menu', array( $this, 'add_submenu' ), 20 );
 		add_filter( 'wpt_production_title_in_list_table_html', array( $this, 'get_production_title_with_edit_link' ), 10, 2 );
 		add_filter( 'wpt_event_title_in_list_table_html', array( $this, 'get_event_title_with_edit_link' ), 10, 3 );
+        add_filter('wpt/production/thumbnail/html', array($this, 'add_production_thumbnail_placeholder'), 10, 4);
 		add_action( 'init', array( $this, 'set_list_table_mode' ) );
 	}
 
@@ -42,8 +43,8 @@ class WPT_Productions_Admin {
 	 */
 	public function get_list_table_modes() {
 		$modes = array(
-			'compact' => _x( 'Compact', 'list table', 'wp_theatre' ),
-			'list' => _x( 'List', 'list table', 'wp_theatre' ),
+			'compact' => _x( 'Compact', 'list table', 'theatre' ),
+			'list' => _x( 'List', 'list table', 'theatre' ),
 		);
 
 		
@@ -75,16 +76,16 @@ class WPT_Productions_Admin {
 		$html .= '<div class="wp_theatre_prod_title">';
 
 		if ( $production = $event->production() ) {
-			$html .= '<a href="'.get_edit_post_link( $production->ID ).'">';
-			$html .= $production->title();
-			$html .= '</a>';
-
 			ob_start();
+			if ('trash' == get_post_status($production->ID) ) {
+				echo $production->title();
+			} else {				
+				?><a href="<?php echo get_edit_post_link( $production->ID ); ?>"><?php echo $production->title(); ?></a><?php
+			}
 			_post_states( $production->post() );
-			$html .= ob_get_contents();
-			ob_end_clean();
+			$html .= ob_get_clean();
 		} else {
-			$html .= sprintf( '(%s)', __( 'no title','wp_theatre' ) );
+			$html .= sprintf( '(%s)', __( 'no title','theatre' ) );
 		}
 
 		$html .= '</div>';
@@ -100,19 +101,20 @@ class WPT_Productions_Admin {
 	 * @return void
 	 */
 	function get_production_title_with_edit_link($html, $production) {
-		$html = '';
-
-		$html .= '<div class="wp_theatre_prod_title">';
-		$html .= '<a href="'.get_edit_post_link( $production->ID ).'">';
-		$html .= $production->title();
-		$html .= '</a>';
-
 		ob_start();
-		_post_states( $production->post() );
-		$html .= ob_get_contents();
-		ob_end_clean();
+		?><div class="wp_theatre_prod_title"><?php
+			
+			if ('trash' == get_post_status($production->ID) ) {
+				echo $production->title();
+			} else {				
+				?><a href="<?php echo get_edit_post_link( $production->ID ); ?>"><?php echo $production->title(); ?></a><?php
+			}
+	
+			_post_states( $production->post() );
+			
+		?></div><?php
+		$html .= ob_get_clean();
 
-		$html .= '</div>';
 		return $html;
 	}
 
@@ -134,6 +136,26 @@ class WPT_Productions_Admin {
 		return $html;
 	}
 
+	function add_production_thumbnail_placeholder($html, $size, $filters, $production) {
+		if (!is_admin()) {
+			return $html;
+		}
+		
+		if (empty($_GET['page'])) {
+			return $html;
+		}
+		
+		if ('theater-events' != $_GET['page']) {
+			return $html;
+		}
+		
+		
+		if (empty($html)) {
+			$html = '<figure class="placeholder"><span class="dashicons dashicons-tickets-alt"></span></figure>';
+		}
+		return $html;
+	}
+
 	/**
 	 * add_submenu function.
 	 * 
@@ -143,8 +165,8 @@ class WPT_Productions_Admin {
 	function add_submenu() {
 		add_submenu_page(
 			'theater-events',
-			__( 'Events', 'wp_theatre' ),
-			__( 'Events', 'wp_theatre' ),
+			__( 'Events', 'theatre' ),
+			__( 'Events', 'theatre' ),
 			'edit_posts',
 			'theater-events',
 			array(
@@ -162,18 +184,6 @@ class WPT_Productions_Admin {
 	 */
 	public function admin_html() {
 		global $mode;
-
-		$html = '';
-
-		$html .= '<div class="wrap">';
-
-		$html .= '<h1>'.__( 'Events','wp_theatre' );
-
-		$html .= '<a href="'.admin_url( 'post-new.php?post_type='.WPT_Production::post_type_name ).'" class="page-title-action">'.__( 'Add new' ).'</a>';
-
-		$html .= $this->get_search_results_summary_html();
-
-		$html .= '</h1>';
 
 		switch ( $this->get_list_table_mode() ) {
 			case 'list' :
@@ -195,26 +205,28 @@ class WPT_Productions_Admin {
 		$list_table = apply_filters( 'wpt/production/admin/html/list_table?mode='.$mode, $list_table );
 
 		ob_start();
-		$list_table->search_box( __( 'Search events', 'wp_theatre' ), WPT_Production::post_type_name );
-		$html .= $list_table->views();
-		$html .= ob_get_contents();
-		ob_end_clean();
+		
+		?><div class="wrap">
+			<h1><?php _e( 'Events','theatre' ); ?>
+				<a href="<?php echo admin_url( 'post-new.php?post_type='.WPT_Production::post_type_name );?>" class="page-title-action">
+					<?php _e('Add new'); ?>
+				</a>
+				<?php echo $this->get_search_results_summary_html(); ?>
+			</h1><?php
+		
+			$list_table->views();
+	
+			?><form method="get">
+				<input type="hidden" name="page" value="theater-events" /><?php
+	
+				$list_table->prepare_items();
+				$list_table->search_box( __( 'Search events', 'theatre' ), WPT_Production::post_type_name );
+				$list_table->display();
+					
+			?></form>
+		</div><?php
 
-		$html .= '<form method="get">';
-
-		$html .= '<input type="hidden" name="page" value="theater-events" />';
-
-		$list_table->prepare_items();
-
-		ob_start();
-		$list_table->search_box( __( 'Search events', 'wp_theatre' ), WPT_Production::post_type_name );
-		$list_table->display();
-		$html .= ob_get_contents();
-		ob_end_clean();
-
-		$html .= '</form>';
-
-		$html .= '</div>';
+		$html = ob_get_clean();
 
 		echo $html;
 	}

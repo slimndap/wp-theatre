@@ -37,7 +37,7 @@ class WPT_Event_Editor {
 	public function add_events_meta_box() {
 		add_meta_box(
 			'wpt_event_editor',
-			__( 'Events', 'theatre' ),
+			__( 'Dates', 'theatre' ),
 			array( $this, 'events_meta_box' ),
 			WPT_Production::post_type_name,
 			'normal',
@@ -835,13 +835,13 @@ class WPT_Event_Editor {
 		$html .= '<div class="wpt_event_editor_create_form">'.$this->get_form_html( $production_id ).'</div>';
 
 		$html_actions = '<div class="wpt_event_editor_create_actions wpt_event_editor_create_actions_closed">';
-		$html_actions .= '<a href="#" class="button wpt_event_editor_create_open">'.__( 'Add a new event','theatre' ).'</a>';
+		$html_actions .= '<a href="#" class="button wpt_event_editor_create_open">'.__( 'Add a new date','theatre' ).'</a>';
 		$html_actions .= '</div>';
 
 		$html .= $html_actions;
 
 		$html_actions = '<div class="wpt_event_editor_create_actions wpt_event_editor_create_actions_open">';
-		$html_actions .= '<a href="#" class="button wpt_event_editor_create_save">'.__( 'Save event','theatre' ).'</a>';
+		$html_actions .= '<a href="#" class="button wpt_event_editor_create_save">'.__( 'Save date','theatre' ).'</a>';
 		$html_actions .= '<a href="#" class="button wpt_event_editor_create_cancel">'.__( 'Cancel','theatre' ).'</a>';
 		$html_actions .= '</div>';
 

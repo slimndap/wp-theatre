@@ -1056,7 +1056,11 @@ class WPT_Event {
 		);
 		$args = wp_parse_args( $args, $defaults );
 		if ( ! isset($this->title) ) {
-			$this->title = apply_filters( 'wpt_event_title',$this->production()->title(),$this );
+			$title = '';
+			if ($production = $this->production() ) {
+				$title = $production->title();
+			}
+			$this->title = apply_filters( 'wpt_event_title',$title,$this );
 		}
 
 		if ( $args['html'] ) {

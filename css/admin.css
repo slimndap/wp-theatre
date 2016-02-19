@@ -644,19 +644,31 @@ body.toplevel_page_theater-events .wp-list-table tbody tr td.column-categories:e
 }
 body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod > *,
 body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event > * {
-  margin-left: 80px;
+  margin-left: 42px;
 }
 body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod figure,
 body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event figure {
-  width: 70px;
+  width: 32px;
   margin: 0;
   float: left;
+  border-radius: 2px;
+  overflow: hidden;
 }
 body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod figure img,
 body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event figure img {
   width: 100%;
   height: auto;
-  border-radius: 2px;
+}
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod figure.placeholder,
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event figure.placeholder {
+  background-color: #c5c5c5;
+  text-align: center;
+  height: 32px;
+}
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod figure.placeholder .dashicons,
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event figure.placeholder .dashicons {
+  line-height: 32px;
+  color: white;
 }
 body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod .wp_theatre_prod_title,
 body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event .wp_theatre_prod_title,
@@ -692,7 +704,7 @@ body.toplevel_page_theater-events .wp-list-table tbody tr td .wpt_production_cat
 }
 body.toplevel_page_theater-events .wp-list-table tbody tr td .row-actions {
   clear: left;
-  margin-left: 80px;
+  margin-left: 42px;
 }
 @font-face {
   font-family: "theatre-webfont";
