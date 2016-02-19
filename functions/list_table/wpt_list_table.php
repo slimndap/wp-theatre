@@ -63,12 +63,9 @@ class WPT_List_Table extends WP_List_Table {
     
     protected function get_mode_switcher_html() {
 	    global $wp_theatre;
-	    $html = '';
 		ob_start();
 		$this->view_switcher( $wp_theatre->productions_admin->get_list_table_mode() );			
-		$html.= ob_get_contents();
-		ob_end_clean();
-		return $html;
+		return ob_get_clean();
     }
     
     function get_views() {
@@ -124,7 +121,7 @@ class WPT_List_Table extends WP_List_Table {
 			
 			$html.= '</div>';
 			*/
-			$html.= $this->get_mode_switcher_html();
+			//$html.= $this->get_mode_switcher_html();
 		}
 		
 		echo $html;

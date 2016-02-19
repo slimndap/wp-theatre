@@ -27,7 +27,7 @@ class WPT_Event_Admin {
 	public function add_event_editor_meta_box() {
 		add_meta_box(
 			'wpt_event_editor', 
-			__('Event','theatre'), 
+			__('Event date','theatre'), 
 			array($this,'event_editor_meta_box'), 
 			WPT_Event::post_type_name, 
 			'normal', 
@@ -56,7 +56,7 @@ class WPT_Event_Admin {
 				$fields,
 				array(
 					'id' => WPT_Production::post_type_name,
-					'title' => __('Production','theatre'),
+					'title' => __('Event','theatre'),
 					'edit' => array(
 						'callback' => array($this, 'get_control_production_html'),
 					),
@@ -143,7 +143,7 @@ class WPT_Event_Admin {
 	 */
 	public function publish_meta_box($event) {
 		$html = '';
-		$html.= submit_button( __( 'Update Event', 'theatre' ), 'primary button-large' );
+		$html.= submit_button( __( 'Update Event Date', 'theatre' ), 'primary button-large' );
 		echo $html;
 	}
 	

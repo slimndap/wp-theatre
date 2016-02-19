@@ -32,6 +32,16 @@ class WPT_Productions_Admin {
 		$mode_default = apply_filters( 'wpt/production/admin/listing_table/mode/default', 'compact' );
 
 		$mode = get_user_setting( 'wpt_production_admin_listing_table_mode', $mode_default );
+		
+		/*
+		 * Check if the mode is allowed for this list table.
+		 * Otherwise use the first entry in the allowed modes.
+		 */
+		$allowed_modes = $this->get_list_table_modes();
+		if (!array_key_exists($mode, $allowed_modes)) {
+			$mode = key($allowed_modes); // See http://stackoverflow.com/a/1028677
+		}
+		
 		return $mode;
 	}
 
@@ -47,6 +57,10 @@ class WPT_Productions_Admin {
 			'list' => _x( 'List', 'list table', 'theatre' ),
 		);
 
+
+		if (!empty($_GET['post_status']) && 'trash' == $_GET['post_status']) {
+			unset($modes['list']);
+		}
 		
 		/**
 		 * modes
@@ -71,25 +85,21 @@ class WPT_Productions_Admin {
 	 * @return void
 	 */
 	function get_event_title_with_edit_link($html, $field, $event) {
-		$html = '';
-
-		$html .= '<div class="wp_theatre_prod_title">';
-
-		if ( $production = $event->production() ) {
-			ob_start();
-			if ('trash' == get_post_status($production->ID) ) {
-				echo $production->title();
-			} else {				
-				?><a href="<?php echo get_edit_post_link( $production->ID ); ?>"><?php echo $production->title(); ?></a><?php
+		ob_start();
+		?><div class="wp_theatre_prod_title"><?php			
+			if ( $production = $event->production() ) {
+				if ('trash' == get_post_status($production->ID) ) {
+					echo $production->title();
+				} else {				
+					?><a href="<?php echo get_edit_post_link( $production->ID ); ?>"><?php echo $production->title(); ?></a><?php
+				}
+				_post_states( $production->post() );
+			} else {
+				printf( '(%s)', __( 'no title','theatre' ) );
 			}
-			_post_states( $production->post() );
-			$html .= ob_get_clean();
-		} else {
-			$html .= sprintf( '(%s)', __( 'no title','theatre' ) );
-		}
 
-		$html .= '</div>';
-		return $html;
+		?></div><?php
+		return ob_get_clean();
 	}
 
 	/**
@@ -113,7 +123,7 @@ class WPT_Productions_Admin {
 			_post_states( $production->post() );
 			
 		?></div><?php
-		$html .= ob_get_clean();
+		$html = ob_get_clean();
 
 		return $html;
 	}
@@ -209,7 +219,7 @@ class WPT_Productions_Admin {
 		?><div class="wrap">
 			<h1><?php _e( 'Events','theatre' ); ?>
 				<a href="<?php echo admin_url( 'post-new.php?post_type='.WPT_Production::post_type_name );?>" class="page-title-action">
-					<?php _e('Add new'); ?>
+					<?php _e('Add new event', 'theatre'); ?>
 				</a>
 				<?php echo $this->get_search_results_summary_html(); ?>
 			</h1><?php

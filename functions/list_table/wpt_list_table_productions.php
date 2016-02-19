@@ -5,8 +5,8 @@ class WPT_List_Table_Productions extends WPT_List_Table {
    	function __construct(){
 	   
         parent::__construct( array(
-            'singular'  => __('production','wp_theatre'),
-            'plural'    => __('productions', 'wp_theatre'),
+            'singular'  => __('production','theatre'),
+            'plural'    => __('productions', 'theatre'),
             'ajax'      => false,
         ) );
     }
@@ -54,8 +54,8 @@ class WPT_List_Table_Productions extends WPT_List_Table {
 	function get_columns(){
         $columns = array(
             'cb' => '<input type="checkbox" />',
-            'title' => 'Event',
-            'categories' => 'Categories',
+            'title' => __('Event', 'theatre'),
+            'categories' => __('Categories', 'theatre'),
         );
         return $columns;
     }
@@ -81,7 +81,7 @@ class WPT_List_Table_Productions extends WPT_List_Table {
 	    
 	    $production_args['status'] = 'any';
 	    
-	    if (!empty($_REQUEST['orderby']) && !empty($_REQUEST['order'] && 'title' == $_REQUEST['orderby'])) {
+	    if (!empty($_REQUEST['orderby']) && !empty($_REQUEST['order']) && 'title' == $_REQUEST['orderby']) {
 		    $production_args['order'] = $_REQUEST['order'];
 	    }
 	    

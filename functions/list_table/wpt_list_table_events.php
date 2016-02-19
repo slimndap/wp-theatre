@@ -4,8 +4,8 @@ class WPT_List_Table_Events extends WPT_List_Table {
 
    function __construct(){
         parent::__construct( array(
-            'singular'  => __('production','wp_theatre'),
-            'plural'    => __('productions', 'wp_theatre'),
+            'singular'  => __('production','theatre'),
+            'plural'    => __('productions', 'theatre'),
             'ajax'      => false,
         ) );
     }

@@ -622,12 +622,12 @@ class WPT_Event {
 	 */
 	function production() {
 		$production_id = get_post_meta( $this->ID,WPT_Production::post_type_name, true );
-		
+
 		// Bail if no production ID is set.
 		if (empty($production_id)) {
 			return false;
 		}
-		
+
 		/*
 		 * Bail if production doesn't exist.
 		 * See: https://tommcfarlin.com/wordpress-post-exists-by-id/
