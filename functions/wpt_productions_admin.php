@@ -31,7 +31,7 @@ class WPT_Productions_Admin {
 		}
 		
 		// Bail if not on Productions Admin Page.
-		if (empty($_GET['page']) && 'theater-events' != $_GET['page']) {
+		if (empty($_GET['page']) || 'theater-events' != $_GET['page']) {
 			return $html;
 		}		
 		
@@ -60,7 +60,7 @@ class WPT_Productions_Admin {
 		}
 		
 		// Bail if not on Productions Admin Page.
-		if (empty($_GET['page']) && 'theater-events' != $_GET['page']) {
+		if (empty($_GET['page']) || 'theater-events' != $_GET['page']) {
 			return $html;
 		}
 		
