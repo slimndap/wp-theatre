@@ -177,6 +177,28 @@ if ( ! empty( $_REQUEST['post_status'] ) && $key == $_REQUEST['post_status'] ) {
 	}
 
 	/**
+	 * Outputs the message to be displayed when there are no events.
+	 *
+	 * @since	0.15
+	 * @return void
+	 */
+	function no_items() {
+		ob_start();
+
+		?><p><?php
+			_e( 'No events found.', 'theatre' );
+		?></p><?php
+if ( empty( $_REQUEST['s'] ) ) {
+	?><p><?php
+		printf(
+			__( '<a href="%s">Add your first event.</a>', 'theatre' ),
+			admin_url( 'post-new.php?post_type='.WPT_Production::post_type_name )
+		);
+	?></p><?php
+}
+	}
+
+	/**
 	 * Queries and filters the productions, handles sorting, and pagination, and any
 	 * other data-manipulation required prior to rendering.
 	 *
@@ -207,9 +229,9 @@ if ( ! empty( $_REQUEST['post_status'] ) && $key == $_REQUEST['post_status'] ) {
 	    if ( ! empty( $_REQUEST['s'] ) ) {
 		    $production_args['s'] = sanitize_text_field( $_REQUEST['s'] );
 	    }
-		
+
 		$productions = $wp_theatre->productions->get( $production_args );
-		
+
 		// Sort the productions.
 	    if ( ! empty( $_REQUEST['orderby'] ) && ! empty( $_REQUEST['order'] ) && 'title' == $_REQUEST['orderby'] ) {
 		    if ( 'desc' == $_REQUEST['order'] ) {
@@ -220,13 +242,13 @@ if ( ! empty( $_REQUEST['post_status'] ) && $key == $_REQUEST['post_status'] ) {
 	    }
 
 	    $current_page = $this->get_pagenum();
-		
+
 		$total_items = count( $productions );
-		
+
 		$productions = array_slice( $productions,(($current_page -1) * $per_page),$per_page );
-		
+
 		$this->items = $productions;
-		
+
 		$this->set_pagination_args(
 			array(
 				'total_items' => $total_items,
