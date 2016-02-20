@@ -121,7 +121,7 @@ class WPT_Productions_Admin {
 
 			$list_table->views();
 
-			?><form method="get">
+			?><form method="post">
 				<input type="hidden" name="page" value="theater-events" /><?php
 
 				$list_table->prepare_items();

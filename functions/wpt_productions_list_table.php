@@ -15,6 +15,16 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
  */
 class WPT_Productions_List_Table extends WP_List_Table {
 
+	function __construct() {
+		parent::__construct(
+			array(
+				'singular' => 'production',
+				'plural'   => 'productions',
+				'ajax'     => false,
+			)
+		);
+	}
+
 	/**
 	 * Gets the HTML of the production categories for use in the category column.
 	 *
@@ -31,7 +41,8 @@ class WPT_Productions_List_Table extends WP_List_Table {
 
 	function column_cb( $production ) {
 		return sprintf(
-			'<input type="checkbox" name="production[]" value="%1$s" />',
+			'<input type="checkbox" name="%1$s[]" value="%2$s" />',
+			$this->_args['singular'],
 			$production->ID
 		);
 	}
@@ -181,6 +192,9 @@ if ( ! empty( $_REQUEST['post_status'] ) && $key == $_REQUEST['post_status'] ) {
 		$hidden = array();
 		$sortable = $this->get_sortable_columns();
 		$this->_column_headers = array( $columns, $hidden, $sortable );
+		
+		// Process bulk actions.
+		$this->process_bulk_actions();
 
 	    $production_args = array();
 
@@ -224,5 +238,64 @@ if ( ! empty( $_REQUEST['post_status'] ) && $key == $_REQUEST['post_status'] ) {
 	 		)
 	 	);
 
+	}
+
+	/**
+	 * Processes bulk actions .
+	 *
+	 * @since	0.15
+	 * @return void
+	 */
+	function process_bulk_actions() {
+
+		//Bail if no productions are selected.
+		if ( empty( $_REQUEST['production'] ) || ! is_array( $_REQUEST['production'] ) ) {
+			return;
+		}
+
+		// Bail if nonce is missing.
+		if ( ! isset( $_REQUEST['_wpnonce'] ) || empty( $_REQUEST['_wpnonce'] ) ) {
+	        return;
+	    }
+
+		// Bail if nonce is invalid.
+		if ( ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'bulk-' . $this->_args['plural'] ) ) {
+			return;
+		}
+
+		// Start processing...
+		if ( $action = $this->current_action() ) {
+	        foreach ( $_POST['production'] as $production_id ) {
+				switch ( $action ) {
+					case 'publish':
+						wp_publish_post( $production_id );
+		                break;
+
+		            case 'draft':
+		            	$production_post = array(
+			            	'ID' => $production_id,
+			            	'post_status' => 'draft',
+		            	);
+		            	wp_update_post( $production_post );
+		                break;
+
+		            case 'trash':
+			            wp_trash_post( $production_id );
+		                break;
+
+		            case 'restore':
+			            wp_untrash_post( $production_id );
+		                break;
+
+		            case 'delete':
+			            wp_delete_post( $production_id );
+		                break;
+
+		            default:
+		                return;
+		                break;
+				}
+	        }
+		}
 	}
 }
