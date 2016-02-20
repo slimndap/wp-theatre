@@ -192,25 +192,13 @@ if ( ! empty( $_REQUEST['post_status'] ) && $key == $_REQUEST['post_status'] ) {
 		$hidden = array();
 		$sortable = $this->get_sortable_columns();
 		$this->_column_headers = array( $columns, $hidden, $sortable );
-		
+
 		// Process bulk actions.
 		$this->process_bulk_actions();
 
 	    $production_args = array();
 
 	    $production_args['status'] = 'any';
-
-	    if ( ! empty( $_REQUEST['orderby'] ) && ! empty( $_REQUEST['order'] ) && 'title' == $_REQUEST['orderby'] ) {
-		    $production_args['order'] = $_REQUEST['order'];
-	    }
-
-	    if ( ! empty( $_REQUEST['cat'] ) && is_numeric( $_REQUEST['cat'] ) ) {
-		    $production_args['cat'] = $_REQUEST['cat'];
-	    }
-
-	    if ( ! empty( $_REQUEST['dates'] ) && 'upcoming' == $_REQUEST['dates'] ) {
-		    $production_args['start'] = 'now';
-	    }
 
 	    if ( ! empty( $_REQUEST['post_status'] ) ) {
 		    $production_args['status'] = array( $_REQUEST['post_status'] );
@@ -221,6 +209,19 @@ if ( ! empty( $_REQUEST['post_status'] ) && $key == $_REQUEST['post_status'] ) {
 	    }
 
 	 	$productions = $wp_theatre->productions->get( $production_args );
+
+	 	// Sort the productions.
+	    if ( ! empty( $_REQUEST['orderby'] ) && ! empty( $_REQUEST['order'] ) && 'title' == $_REQUEST['orderby'] ) {
+		    if ( 'desc' == $_REQUEST['order'] ) {
+			    usort( $productions, function( $a, $b ) {
+				    return strcmp( $b->title(), $a->title() );
+			    });
+		    } else {
+			    usort( $productions, function( $a, $b ) {
+				    return strcmp( $a->title(), $b->title() );
+			    });
+		    }
+	    }
 
 	    $current_page = $this->get_pagenum();
 
