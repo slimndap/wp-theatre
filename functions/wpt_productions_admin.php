@@ -7,7 +7,10 @@
 class WPT_Productions_Admin {
 
 	function __construct() {
-		add_action( 'admin_menu', array( $this, 'add_submenu' ) );
+
+		// Priority 6 places the submenu item at the top of the theater menu.
+		add_action( 'admin_menu', array( $this, 'add_submenu' ), 6 );
+		
 		add_filter( 'wpt_production_title_html', array( $this, 'add_production_title_edit_link' ), 10, 2 );
 		add_filter( 'wpt/production/thumbnail/html', array( $this, 'add_production_thumbnail_placeholder' ), 10, 4 );
 	}

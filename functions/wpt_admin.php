@@ -3,7 +3,15 @@ class WPT_Admin {
 	function __construct() {
 		// Hooks (only in admin screens)
 		add_action( 'admin_init', array($this,'admin_init'));
-		add_action( 'admin_menu', array($this, 'add_admin_menu' ), 10);
+		
+		/*
+		 * Add Theater menu with a priority of 5 to make it possible to add submenu items
+		 * before register_post_type() does. This way the productions admin page (6) can
+		 * appears above the seasons menu.
+		 * @since 0.15
+		 */
+		add_action( 'admin_menu', array($this, 'add_admin_menu' ), 5);
+		
 		add_action( 'admin_menu', array($this, 'add_settings_menu' ), 30);
 		add_action( 'add_meta_boxes', array($this, 'add_meta_boxes'));
 		add_action( 'quick_edit_custom_box', array($this,'quick_edit_custom_box'), 10, 2 );

@@ -231,7 +231,7 @@
 				'public' => true,
 				'has_archive' => true,
 				'supports' => array('title','editor'),
-				'show_in_menu'  => false,
+				'show_in_menu'  => 'theater-events',
 				)
 			);
 
