@@ -207,37 +207,33 @@ if ( ! empty( $_REQUEST['post_status'] ) && $key == $_REQUEST['post_status'] ) {
 	    if ( ! empty( $_REQUEST['s'] ) ) {
 		    $production_args['s'] = sanitize_text_field( $_REQUEST['s'] );
 	    }
-
-	 	$productions = $wp_theatre->productions->get( $production_args );
-
-	 	// Sort the productions.
+		
+		$productions = $wp_theatre->productions->get( $production_args );
+		
+		// Sort the productions.
 	    if ( ! empty( $_REQUEST['orderby'] ) && ! empty( $_REQUEST['order'] ) && 'title' == $_REQUEST['orderby'] ) {
 		    if ( 'desc' == $_REQUEST['order'] ) {
-			    usort( $productions, function( $a, $b ) {
-				    return strcmp( $b->title(), $a->title() );
-			    });
+			    usort( $productions, array( $this, 'sort_productions_desc' ) );
 		    } else {
-			    usort( $productions, function( $a, $b ) {
-				    return strcmp( $a->title(), $b->title() );
-			    });
+			    usort( $productions, array( $this, 'sort_productions_asc' ) );
 		    }
 	    }
 
 	    $current_page = $this->get_pagenum();
-
-	 	$total_items = count( $productions );
-
-	 	$productions = array_slice( $productions,(($current_page -1) * $per_page),$per_page );
-
-	 	$this->items = $productions;
-
-	 	$this->set_pagination_args(
-	 		array(
-	 			'total_items' => $total_items,
-	 			'per_page' => $per_page,
-	 			'total_pages' => ceil( $total_items / $per_page ),
-	 		)
-	 	);
+		
+		$total_items = count( $productions );
+		
+		$productions = array_slice( $productions,(($current_page -1) * $per_page),$per_page );
+		
+		$this->items = $productions;
+		
+		$this->set_pagination_args(
+			array(
+				'total_items' => $total_items,
+				'per_page' => $per_page,
+				'total_pages' => ceil( $total_items / $per_page ),
+			)
+		);
 
 	}
 
@@ -298,5 +294,33 @@ if ( ! empty( $_REQUEST['post_status'] ) && $key == $_REQUEST['post_status'] ) {
 				}
 	        }
 		}
+	}
+
+	/**
+	 * Sorts two productions alphabetically in ascending order.
+	 *
+	 * Used as a callback for usort in @see WPT_Productions_List_Table::prepare_items().
+	 *
+	 * @since	0.15
+	 * @param 	WPT_Production	$production_a
+	 * @param 	WPT_Production	$production_b
+	 * @return 	int
+	 */
+	private function sort_productions_asc( $production_a, $production_b ) {
+		return strcmp( $production_a->title(), $production_b->title() );
+	}
+
+	/**
+	 * Sorts two productions alphabetically in descending order.
+	 *
+	 * Used as a callback for usort in @see WPT_Productions_List_Table::prepare_items().
+	 *
+	 * @since	0.15
+	 * @param 	WPT_Production	$production_a
+	 * @param 	WPT_Production	$production_b
+	 * @return 	int
+	 */
+	private function sort_productions_desc( $production_a, $production_b ) {
+		return strcmp( $production_b->title(), $production_a->title() );
 	}
 }
