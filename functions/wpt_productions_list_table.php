@@ -39,6 +39,13 @@ class WPT_Productions_List_Table extends WP_List_Table {
 		return $production->categories( $args );
 	}
 
+	/**
+	 * Gets the HTML for the checkbox in the bulk actions column.
+	 * 
+	 * @since	0.15
+	 * @param 	WPT_Production	$production	The Production.
+	 * @return 	string						The HTML for the checkbox.
+	 */
 	function column_cb( $production ) {
 		return sprintf(
 			'<input type="checkbox" name="%1$s[]" value="%2$s" />',

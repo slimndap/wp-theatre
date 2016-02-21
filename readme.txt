@@ -119,6 +119,14 @@ The new feature may be added directly to the Theater plugin or as an extension s
 
 == Changelog ==
 
+= 0.15 =
+
+Release Date: February 26th, 2016
+
+* Enhancements
+    * Renamed 'productions' to 'events'.
+    * Stripped all unnecessary elements off the events admin screen.
+    
 = 0.14 =
 
 Release Date: February 2nd, 2016
