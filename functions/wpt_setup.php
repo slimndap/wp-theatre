@@ -182,7 +182,7 @@
 			register_post_type( WPT_Production::post_type_name,
 				array(
 					'labels' => array(
-						'name' => __( 'Events (old)','wp_theatre'),
+						'name' => __( 'Events','wp_theatre'),
 						'singular_name' => __( 'Event','wp_theatre'),
 						'add_new' =>  _x('Add New', 'production','wp_theatre'),
 						'new_item' => __('New event','wp_theatre'),
