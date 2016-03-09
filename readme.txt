@@ -125,7 +125,7 @@ Release Date: February 2nd, 2016
 
 * Enhancements
     * The plugin is now ready for [language packs hosted on WordPress.org](https://make.wordpress.org/plugins/2015/09/01/plugin-translations-on-wordpress-org/). This makes it much easier for you to contribute a translation of the plugin in your native language. Add you translation [here](https://translate.wordpress.org/projects/wp-plugins/theatre).
-    * The `[wpt_events]` shortcode now accepts a `production` parameter to limit the a events list to one or more productions (0.14.4). See the updated [documentation]:(https://github.com/slimndap/wp-theatre/wiki/Shortcodes#event-listing) for examples.
+    * The `[wpt_events]` shortcode now accepts a `production` parameter to limit the a events list to one or more productions (0.14.4). See the updated [documentation](https://github.com/slimndap/wp-theatre/wiki/Shortcodes#event-listing) for examples.
     
 
 * Bugfixes
