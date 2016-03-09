@@ -614,7 +614,7 @@ class WPT_Frontend {
 			return;
 		}
 
-		if (empty($content)) {
+		if (empty($template)) {
 			$template = '{{remark}}{{datetime}}{{location}}{{tickets}}';		
 		}
 
