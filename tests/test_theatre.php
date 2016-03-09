@@ -338,6 +338,12 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertEquals(2, substr_count(do_shortcode('[wpt_production_events production="'.$this->production_with_upcoming_events.'"]'), '"wp_theatre_event"'));		
 	}
 	
+	function test_shortcode_wpt_production_events_with_multiple_productions() {
+		$actual = substr_count(do_shortcode('[wpt_production_events production="'.$this->production_with_upcoming_events.', '.$this->production_with_upcoming_and_historic_events.'"]'), '"wp_theatre_event"');
+		$expected = 3;
+		$this->assertEquals($expected, $actual);		
+	}
+	
 	/**
 	 * Tests if [wpt_production_events] only shows upcoming events 
 	 * when no time filters are set.
@@ -626,24 +632,25 @@ class WPT_Test extends WP_UnitTestCase {
 		 * Set 'start' to 'now' (with quotes).
 		 */
 		$defaults = array(
-			'paginateby'=>array(),
+			'cat' => false,
+			'category' => false, // deprecated since v0.9.
+			'category_name' => false,
+			'category__and' => false,
+			'category__in' => false,
+			'category__not_in' => false,
+			'day' => false,
+			'end' => false,
+			'groupby' => false,
+			'limit' => false,
+			'month' => false,
+			'order' => 'asc',
+			'paginateby' => array(),
 			'post__in' => false,
 			'post__not_in' => false,
-			'category'=> false, // deprecated since v0.9.
-			'cat'=>false,
-			'category_name'=>false,
-			'category__and'=>false,
-			'category__in'=>false,
-			'category__not_in'=>false,
-			'day' => false,
-			'month' => false,
-			'year' => false,
-			'season'=> false,
+			'production' => false,
+			'season' => false,
 			'start' => 'now',
-			'end' => false,
-			'groupby'=>false,
-			'limit'=>false,
-			'order'=>'asc',
+			'year' => false,
 		);
 		
 		$unique_args = array_merge(

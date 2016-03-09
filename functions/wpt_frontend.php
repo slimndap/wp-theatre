@@ -181,11 +181,12 @@ class WPT_Frontend {
 	/**
 	 * Gets output for the [wpt_events] shortcode.
 	 *
-	 * @since ?
-	 * @since 0.10.9	Improved the unique key for transients.
+	 * @since 	0.?
+	 * @since 	0.10.9	Improved the unique key for transients.
 	 *					Fixes issue #97.
-	 * @since 0.11.8	Support for 'post__in' and 'post__not_in'.
+	 * @since 	0.11.8	Support for 'post__in' and 'post__not_in'.
 	 *					Fixes #128.
+	 * @since	0.14.4	Support for 'production'.
 	 *
 	 * @param 	array 	$atts
 	 * @param 	string 	$content (default: null)
@@ -196,24 +197,25 @@ class WPT_Frontend {
 		global $wp_query;
 
 		$defaults = array(
-			'paginateby' => array(),
-			'post__in' => false,
-			'post__not_in' => false,
-			'category' => false, // deprecated since v0.9.
 			'cat' => false,
+			'category' => false, // deprecated since v0.9.
 			'category_name' => false,
 			'category__and' => false,
 			'category__in' => false,
 			'category__not_in' => false,
 			'day' => false,
-			'month' => false,
-			'year' => false,
-			'season' => false,
-			'start' => false,
 			'end' => false,
 			'groupby' => false,
 			'limit' => false,
+			'month' => false,
 			'order' => 'asc',
+			'paginateby' => array(),
+			'post__in' => false,
+			'post__not_in' => false,
+			'production' => false,
+			'season' => false,
+			'start' => false,
+			'year' => false,
 		);
 
 		/**
@@ -236,10 +238,17 @@ class WPT_Frontend {
 
 		if ( ! empty($atts['post__in']) ) {
 			$atts['post__in'] = explode( ',',$atts['post__in'] );
+			$atts['post__in'] = array_map('trim',$atts['post__in']);
 		}
 
 		if ( ! empty($atts['post__not_in']) ) {
 			$atts['post__not_in'] = explode( ',',$atts['post__not_in'] );
+			$atts['post__not_in'] = array_map('trim',$atts['post__not_in']);
+		}
+
+		if ( ! empty($atts['production']) ) {
+			$atts['production'] = explode( ',',$atts['production'] );
+			$atts['production'] = array_map('trim',$atts['production']);
 		}
 
 		if ( ! empty($atts['year']) ) {
@@ -571,49 +580,46 @@ class WPT_Frontend {
 	}
 
 	/*
-	 * Shortcode to display the upcoming events of a production.
+	 * Gets the HTML output for the [wpt_production_events] shortcode.
 	 *
      * Examples:
 	 *     [wpt_production_events production=123]
+	 *     [wpt_production_events production=123,456]
 	 *     [wpt_production_events production=123]{{title|permalink}}{{datetime}}{{tickets}}[/wpt_production_events]
 	 *
 	 * On the page of a single production you can leave out the production:
 	 *
 	 *     [wpt_production_events]
 	 *
+	 * @since 	0.?
+	 * @since	0.14.4	Use the [wpt_events] shortcode to render the output.
+	 * @param 	array	$atts		The shortcode attributes.
+	 * @param 	string	$template 	The template. Default <null>.
+	 * @return 	string				The HTML output for the [wpt_production_events] shortcode.
 	 */
-
-	function wpt_production_events($atts, $content=null) {
+	function wpt_production_events($atts, $template=null) {
 		global $wp_theatre;
 
 		$atts = shortcode_atts( array(
 			'production' => false
-		), $atts );
-		extract( $atts );
+		), $atts, 'wpt_production_events' );
 
-		if ( ! $production && is_singular( WPT_Production::post_type_name ) ) {
-			$production = get_the_ID();
+		// Fallback to ID of current production.
+		if ( empty($atts['production']) && is_singular( WPT_Production::post_type_name ) ) {
+			$atts['production'] = get_the_ID();
 		}
 
-		if ( $production ) {
-			$args = array(
-				'production' => $production,
-				'start' => 'now'
-			);
-
-			if ( ! is_null( $content ) && ! empty($content) ) {
-				$args['template'] = html_entity_decode( $content );
-			} else {
-				$args['template'] = '{{remark}} {{datetime}} {{location}} {{tickets}}';
-			}
-
-			if ( ! ( $html = $wp_theatre->transient->get( 'e', array_merge( $args, $_GET ) ) ) ) {
-				$html = $wp_theatre->events->get_html( $args );
-				$wp_theatre->transient->set( 'e', array_merge( $args, $_GET ), $html );
-			}
-
-			return $html;
+		// Bail if no production is defined.
+		if (empty($atts['production'])) {
+			return;
 		}
+
+		if (empty($template)) {
+			$template = '{{remark}}{{datetime}}{{location}}{{tickets}}';		
+		}
+
+		$shortcode = '[wpt_events production="'.$atts['production'].'"]'.$template.'[/wpt_events]';
+		return do_shortcode($shortcode);
 	}
 
 	function wpt_event_ticket_button($atts, $content=null) {
