@@ -18,12 +18,14 @@
 				'slug' => '',
 				'name' => '',
 				'options' => array(),
+				'callbacks' => array(),
 			);
 			$args = wp_parse_args($args, $defaults);
 			
 			$this->slug = $args['slug'];
 			$this->name = $args['name'];
 			$this->options = $args['options'];
+			$this->callbacks = $args['callbacks'];
 			$this->marker = '_'.$this->slug.'_marker';
 			$this->options = get_option($this->slug);
 			$this->stats = get_option($this->slug.'_stats');
@@ -34,6 +36,10 @@
 			add_filter('admin_init',array($this,'add_settings_fields'));
 			add_filter('wpt_admin_page_tabs',array($this,'add_settings_tab'));
 			add_action($this->slug.'_import', array($this, 'execute' ));
+			
+			add_action( 'add_meta_boxes', array($this, 'add_production_metabox') );
+			add_action('wpt_importer/production/metabox/actions/importer='.$this->slug, array($this, 'add_production_metabox_reimport_button'), 10, 2);
+			add_action('admin_init', array( $this, 'reimport_production' ));
 			
 		}
 		
@@ -69,6 +75,30 @@
 			return false;
 		}
 
+		function production_metabox($post) {
+			ob_start();
+			?><p><?php printf(__('This production is imported from %s.', 'theatre'), $this->name); ?></p><?php
+			
+			$message = ob_get_clean();
+			
+			$message = apply_filters('wpt/importer/production/metabox/message', $message, $post);
+			$message = apply_filters('wpt/importer/production/metabox/message/importer='.$this->slug, $message, $post);
+			
+			echo $message;
+			
+			$actions = array();
+			$actions = apply_filters('wpt_importer/production/metabox/actions', $actions, $post);
+			$actions = apply_filters('wpt_importer/production/metabox/actions/importer='.$this->slug, $actions, $post);
+			
+			ob_start();
+			?><div class="wpt_importer_production_metabox_actions"><?php
+			foreach ($actions as $action) {
+				?><a href="<?php echo $action['url'];?>" class="button"><?php echo $action['label'];?></a><?php
+			}
+			?></div><?php
+			echo ob_get_clean();
+		}
+		
 		/**
 		 * Adds an error to the importer stats.
 		 *
@@ -84,6 +114,55 @@
 			}
 			$this->stats['errors'][] = $error;				
 		}
+
+		function add_production_metabox($post_type) {
+
+			if (WPT_Production::post_type_name!=$post_type) {
+				return;
+			}
+
+			if (empty($_GET['post'])) {
+				return false;
+			}
+			
+			$production_id = intval($_GET['post']);			
+
+			$production_metabox_visible = $this->slug == get_post_meta($production_id, '_wpt_source', true);
+
+			$production_metabox_visible = apply_filters('wpt/importer/production/metabox/visible', $production_metabox_visible, $production_id);
+			$production_metabox_visible = apply_filters('wpt/importer/production/metabox/visible/importer='.$this->slug, $production_metabox_visible, $production_id);
+			
+			if ($production_metabox_visible) {
+				add_meta_box(
+	                'wpt_importer_'.$this->slug,
+	                $this->name,
+	                array( $this, 'production_metabox' ),
+	                $post_type,
+	                'side',
+	                'high'
+	            );	
+				
+			}
+			
+            	
+        }
+        
+        function add_production_metabox_reimport_button($actions, $post) {
+
+	        if (empty($this->callbacks['reimport_production'])) {
+		        return $actions;
+	        }
+	        
+	        $url = add_query_arg('wpt_reimport', $this->slug);
+	        $url = wp_nonce_url($url, 'wpt_reimport');
+	        
+	        $actions[] = array(
+		        'label' => __('Re-import', 'theater'),
+		        'url' => $url,
+	        );
+	        
+	        return $actions;
+        }
 
 		/**
 		 * Created a new event.
@@ -465,6 +544,18 @@
 			
 			$this->save_stats();
 		}
+		
+		function execute_reimport($production_id) {
+			$this->mark_production_events($production_id);
+			
+			$reimport_result = call_user_func_array( $this->callbacks['reimport_production'], array( $production_id ) );
+			
+			if ($reimport_result) {
+				$this->remove_marked_events();			
+			} else {
+				$this->unmark_events();
+			}			
+		}
 
 		/**
 		 * Gets all events that are marked.
@@ -519,6 +610,38 @@
 			}
 		}
 		
+		private function mark_production_events($production_id) {
+			global $wp_theatre;
+			
+			$args = array(
+				'post_type' => WPT_Event::post_type_name,
+				'post_status' => 'any',
+				'posts_per_page' => -1,
+				'meta_query' => array(
+					array(
+						'key' => '_wpt_source',
+						'value' => $this->slug,
+					),
+					array(
+						'key' => $wp_theatre->order->meta_key,
+						'value' => time(),
+						'compare' => '>=',
+					),
+					array(
+						'key' => WPT_Production::post_type_name,
+						'value' => $production_id,
+						'compare' => '=',						
+					)
+				),
+			);
+			
+			$events = get_posts($args);
+			
+			foreach($events as $event) {
+				add_post_meta($event->ID, $this->marker, 1, true);
+			}			
+		}
+		
 		/**
 		 * Mark any previously imported upcoming events.
 		 * 
@@ -557,6 +680,34 @@
 			foreach($events as $event) {
 				add_post_meta($event->ID, $this->marker, 1, true);
 			}
+			
+		}
+		
+		function reimport_production() {
+			
+			if (empty($_GET['wpt_reimport'])) {
+				return;
+			}
+			
+			if ($this->slug != $_GET['wpt_reimport']) {
+				return false;
+			}
+			
+			if (!check_admin_referer( 'wpt_reimport' )) {
+				return false;
+			}
+			
+			if (empty($this->callbacks['reimport_production'])) {
+				return false;
+			}
+			
+			if (empty($_GET['post'])) {
+				return false;
+			}
+			
+			$production_id = intval($_GET['post']);
+			
+			$this->execute_reimport($production_id);
 			
 		}
 		
