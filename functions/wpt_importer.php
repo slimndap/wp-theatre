@@ -39,7 +39,7 @@
 			
 			add_action( 'add_meta_boxes', array($this, 'add_production_metabox') );
 			add_action('wpt_importer/production/metabox/actions/importer='.$this->slug, array($this, 'add_production_metabox_reimport_button'), 10, 2);
-			add_action('admin_init', array( $this, 'reimport_production' ));
+			add_action('wp_loaded', array( $this, 'reimport_production' ));
 			
 		}
 		
@@ -75,18 +75,55 @@
 			return false;
 		}
 
+		
+		/**
+		 * Outputs the metabox for the importer on the production edit form.
+		 * 
+		 * The metabox tells the user that the production was imported with the current importer.
+		 * It can also hold buttons with action that are specific to this importer.
+		 *
+		 * @since	0.14.5
+		 * @param 	WP_Post	$post	The current post (production).
+		 */
 		function production_metabox($post) {
 			ob_start();
 			?><p><?php printf(__('This production is imported from %s.', 'theatre'), $this->name); ?></p><?php
 			
 			$message = ob_get_clean();
 			
+			/**
+			 * Filter the message inside the metabox.
+			 * 
+			 * @since	0.14.5
+			 * @param	string	$message	The message.
+			 * @param	WP_Post	$post		The post (production).
+			 */
 			$message = apply_filters('wpt/importer/production/metabox/message', $message, $post);
 			$message = apply_filters('wpt/importer/production/metabox/message/importer='.$this->slug, $message, $post);
 			
 			echo $message;
 			
 			$actions = array();
+			
+			/**
+			 * Filter the actions inside the metabox.
+			 *
+			 * Use this filter to add actions that are specific to this importer.
+			 *
+			 * Actions use this format:
+			 *
+			 * 	array(
+		     * 		'label' => 'Do something',
+		     *		'url' => 'http://slimndap.com',
+	         *	);
+	         *
+	         * Used by @see WPT_Importer::add_production_metabox_reimport_button() to add a button
+	         * that re-imports the current production.
+			 * 
+			 * @since	0.14.5
+			 * @param 	array	$actions	The actions.
+			 * @param	WP_Post	$post		The post (production).
+			 */
 			$actions = apply_filters('wpt_importer/production/metabox/actions', $actions, $post);
 			$actions = apply_filters('wpt_importer/production/metabox/actions/importer='.$this->slug, $actions, $post);
 			
@@ -115,40 +152,63 @@
 			$this->stats['errors'][] = $error;				
 		}
 
+		/**
+		 * Adds a metabox for this importer to the production edit form.
+		 * 
+		 * @since	0.14.5
+		 * @param 	string	$post_type	The post type of the current post.
+		 */
 		function add_production_metabox($post_type) {
 
+			// Bail if the current post is not a production.
 			if (WPT_Production::post_type_name!=$post_type) {
 				return;
 			}
 
-			if (empty($_GET['post'])) {
-				return false;
-			}
-			
 			$production_id = intval($_GET['post']);			
 
+			// Show the metabox if the production was imported by this importer.
 			$production_metabox_visible = $this->slug == get_post_meta($production_id, '_wpt_source', true);
 
+			/**
+			 * Filters the visibility of this metabox.
+			 * 
+			 * Importers can use this to set their own visibility rules.
+			 * 
+			 * @since	0.14.5
+			 * @param	bool	$production_metabox_visible	Show this metabox?
+			 * @param	int		$production_id				The production ID.
+			 */
 			$production_metabox_visible = apply_filters('wpt/importer/production/metabox/visible', $production_metabox_visible, $production_id);
 			$production_metabox_visible = apply_filters('wpt/importer/production/metabox/visible/importer='.$this->slug, $production_metabox_visible, $production_id);
 			
-			if ($production_metabox_visible) {
-				add_meta_box(
-	                'wpt_importer_'.$this->slug,
-	                $this->name,
-	                array( $this, 'production_metabox' ),
-	                $post_type,
-	                'side',
-	                'high'
-	            );	
-				
+			// Bail if visibility is set to false.
+			if (!$production_metabox_visible) {
+				return;	
 			}
-			
+
+			add_meta_box(
+                'wpt_importer_'.$this->slug,
+                $this->name,
+                array( $this, 'production_metabox' ),
+                $post_type,
+                'side',
+                'high'
+            );	
             	
         }
         
+        /**
+         * Adds a re-import action to the metabox on the production edit form.
+         * 
+         * @since	0.14.5
+         * @param 	array	$actions	The current actions inside the metabox.
+         * @param 	WP_Post	$post		The post (production).
+         * @return	array				The updated actions inside the metabox.
+         */
         function add_production_metabox_reimport_button($actions, $post) {
-
+	        
+	        // Bail if no re-import callback is defined.
 	        if (empty($this->callbacks['reimport_production'])) {
 		        return $actions;
 	        }
@@ -165,7 +225,7 @@
         }
 
 		/**
-		 * Created a new event.
+		 * Creates a new event.
 		 *
 		 * Use this helper function to create a new event while processing your feed.
 		 * 
@@ -545,6 +605,18 @@
 			$this->save_stats();
 		}
 		
+		/**
+		 * Executes the re-import of a production.
+		 * 
+		 * 1. Mark previously imported upcoming events for this production.
+		 * 2. Runs the re-import callback function.
+		 * 3. If successful: Remove all previously imported upcoming events for this production
+		 *    that are no longer present in your feed.
+		 *    If unsuccesful: Clean up, unmark all previously imported events for this production.
+		 *
+		 * @since	0.14.5
+		 * @param 	int	$production_id	The production ID.
+		 */
 		function execute_reimport($production_id) {
 			$this->mark_production_events($production_id);
 			
@@ -610,6 +682,14 @@
 			}
 		}
 		
+		/**
+		 * Marks all upcoming events of a production.
+		 * 
+		 * @see 	WPT_Importer::execute_reimport()
+		 * @access  private
+		 * @since	0.14.5
+		 * @param 	int		$production_id	The production ID.
+		 */
 		private function mark_production_events($production_id) {
 			global $wp_theatre;
 			
@@ -683,6 +763,19 @@
 			
 		}
 		
+		/**
+		 * Executes the re-import of a production when the 'Re-import'-link is clicked in 
+		 * the metabox for this importer on the production edit form.
+		 * 
+		 * Hooked into the `wp_loaded` option.
+		 * 
+		 * @since 0.14.5
+		 *
+		 * @see WPT_Importer::execute_reimport()
+		 * @see WPT_Importer::init()
+		 *
+		 * @return void
+		 */
 		function reimport_production() {
 			
 			if (empty($_GET['wpt_reimport'])) {
