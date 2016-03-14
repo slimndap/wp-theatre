@@ -217,7 +217,7 @@
 	        $url = wp_nonce_url($url, 'wpt_reimport');
 	        
 	        $actions[] = array(
-		        'label' => __('Re-import', 'theater'),
+		        'label' => __('Re-import', 'theatre'),
 		        'url' => $url,
 	        );
 	        
@@ -1019,7 +1019,7 @@
 
 			echo '<select id="schedule" name="'.$this->slug.'[schedule]">';
 			
-			echo '<option value="manual">'.__('Manual','theatre').'</option>';
+			echo '<option value="manual">'.__('Manually','theatre').'</option>';
 
 			foreach($schedules as $name => $value) {
 
