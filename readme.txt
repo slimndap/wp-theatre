@@ -339,6 +339,9 @@ Release Date: December 29th, 2014
 
 == Upgrade Notice ==
 
+= 0.14.6 =
+Adds two new filters to manipulate the appearance of events in lists.
+
 = 0.14.5 =
 Internal improvements that can be used by importer extensions. No real need to update if you are not importing events from an external ticketing solution.
 

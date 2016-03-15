@@ -449,10 +449,40 @@ class WPT_Events extends WPT_Listing {
 				$html_group = '';
 				foreach ( $events as $event ) {
 					$event_args = array();
+					
+					/*
+					 * Use the general default template for events.
+					 * @see WPT_Event_Template::get_default();
+					 */
+					$template = false;
+					
+					/**
+					 * Filter the default template for events in lists.
+					 * 
+					 * @since	0.14.6
+					 * @param	string	$template	The default template.
+					 */
+					$template = apply_filters('wpt/events/event/template/default', $template);
+					
 					if ( ! empty($args['template']) ) {
-						$event_args = array( 'template' => $args['template'] );
+						$template = $args['template'];
 					}
-					$html_group .= $event->html( $event_args );
+
+					$event_args = array( 'template' => $template );
+
+					$html_event = $event->html( $event_args );
+					
+					/**
+					 * Filters the event HTML in lists.
+					 * 
+					 * @since	0.14.6
+					 * 
+					 * @param	string		$html_event	The event HTML.
+					 * @param	WPT_Event	$event		The event.
+					 */
+					$html_event = apply_filters('wpt/events/event/html', $html_event, $event);
+					
+					$html_group .= $html_event;
 				}
 
 				/**

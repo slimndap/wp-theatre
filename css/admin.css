@@ -503,6 +503,44 @@
 .wpt_settings_radio_with_selects {
   line-height: 2em;
 }
+.wpt_meta_box_form {
+  width: 100%;
+  border-spacing: 0;
+  color: #555;
+}
+.wpt_meta_box_form tr th,
+.wpt_meta_box_form tr td {
+  border-top: 1px solid #F0F0F0;
+  border-left: 1px solid #E1E1E1;
+  text-align: left;
+  vertical-align: top;
+  padding: 8px 12px;
+}
+.wpt_meta_box_form tr th {
+  background: #F9F9F9;
+  border-left: none;
+  width: 24%;
+}
+.wpt_meta_box_form tr th p {
+  color: #777;
+  font-weight: normal;
+  font-style: normal;
+}
+.wpt_meta_box_form tr td {
+  border-right: none;
+}
+.wpt_meta_box_form tr td input[type=text] {
+  width: 100%;
+}
+.wpt_meta_box_form tr td textarea {
+  max-width: 100%;
+  width: 200px;
+  height: 6em;
+}
+.wpt_meta_box_form tr:first-child th,
+.wpt_meta_box_form tr:first-child td {
+  border-top: none;
+}
 #wpt_event_editor .inside {
   padding: 0;
   margin: 0;
@@ -526,46 +564,8 @@
 #wpt_event_editor .inside .wpt_event_editor_create .wpt_event_editor_create_actions {
   display: none;
 }
-#wpt_event_editor .inside .wpt_event_editor_form {
-  width: 100%;
-  border-spacing: 0;
-  color: #555;
-}
-#wpt_event_editor .inside .wpt_event_editor_form tr th,
-#wpt_event_editor .inside .wpt_event_editor_form tr td {
-  border-top: 1px solid #F0F0F0;
-  border-left: 1px solid #E1E1E1;
-  text-align: left;
-  vertical-align: top;
-  padding: 8px 12px;
-}
-#wpt_event_editor .inside .wpt_event_editor_form tr th {
-  background: #F9F9F9;
-  border-left: none;
-  width: 24%;
-}
-#wpt_event_editor .inside .wpt_event_editor_form tr th p {
-  color: #777;
-  font-weight: normal;
-  font-style: normal;
-}
-#wpt_event_editor .inside .wpt_event_editor_form tr td {
-  border-right: none;
-}
-#wpt_event_editor .inside .wpt_event_editor_form tr td input[type=text] {
-  width: 100%;
-}
 #wpt_event_editor .inside .wpt_event_editor_form tr td input[type=text][name=wpt_event_editor_tickets_status_other] {
   width: auto;
-}
-#wpt_event_editor .inside .wpt_event_editor_form tr td textarea {
-  max-width: 100%;
-  width: 200px;
-  height: 6em;
-}
-#wpt_event_editor .inside .wpt_event_editor_form tr:first-child th,
-#wpt_event_editor .inside .wpt_event_editor_form tr:first-child td {
-  border-top: none;
 }
 body.js #wpt_event_editor .inside .wpt_event_editor_create .wpt_event_editor_create_actions {
   display: block;
