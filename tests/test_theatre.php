@@ -216,7 +216,7 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertEquals(4, substr_count(do_shortcode('[wpt_events]'), '"wp_theatre_event"'));
 	}
 	
-	function test_shortcode_wpt_events_default_template_filter() {
+	function test_shortcode_wpt_event_default_template_filter() {
 		$func = create_function(
 			'$template',
 			'$template = "{{title}} test content";	return $template;'
@@ -225,6 +225,30 @@ class WPT_Test extends WP_UnitTestCase {
 		add_filter('wpt_event_template_default', $func);
 		
 		$this->assertContains('test content', do_shortcode('[wpt_events]'));
+	}
+	
+	function test_shortcode_wpt_events_default_template_filter() {
+		$func = create_function(
+			'$template',
+			'$template = "{{title}} test content";	return $template;'
+		);
+		
+		add_filter('wpt/events/event/template/default', $func);
+		
+		$this->assertContains('test content', do_shortcode('[wpt_events]'));
+	}
+	
+	function test_shortcode_wpt_events_event_html_filter() {
+		$func = create_function(
+			'$html, $event',
+			'$html = "<wrap>$html</wrap>";	return $html;'
+		);		
+		add_filter('wpt/events/event/html', $func, 10, 2);
+		
+		$expected = '<div class="wpt_listing wpt_context_default wpt_events"><wrap>';
+		$actual = do_shortcode('[wpt_events]');
+		
+		$this->assertContains($expected, $actual);
 	}
 	
 	function test_shortcode_wpt_events_magic_dates() {
