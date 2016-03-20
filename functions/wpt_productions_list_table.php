@@ -23,6 +23,8 @@ class WPT_Productions_List_Table extends WP_List_Table {
 				'ajax'     => false,
 			)
 		);
+		
+		$this->process_bulk_actions();
 	}
 
 	/**
@@ -176,7 +178,10 @@ if ( empty( $_REQUEST['post_status'] ) ) {
 if ( ! empty( $_REQUEST['post_status'] ) && $key == $_REQUEST['post_status'] ) {
 	?> class="current"<?php
 }
-				?>><?php echo $val; ?></a><?php
+				?>><?php 
+					echo $val; 
+					?><span class="count"> (<?php echo $num_posts->{$key};?>)</span>
+				</a><?php
 			    $views[ $key ] = ob_get_clean();
 		    }
 	    }
@@ -198,7 +203,7 @@ if ( ! empty( $_REQUEST['post_status'] ) && $key == $_REQUEST['post_status'] ) {
 if ( empty( $_REQUEST['s'] ) ) {
 	?><p><?php
 		printf(
-			__( '<a href="%s">Add your first event.</a>', 'theatre' ),
+			__( '<a href="%s">Add an event.</a>', 'theatre' ),
 			admin_url( 'post-new.php?post_type='.WPT_Production::post_type_name )
 		);
 	?></p><?php
@@ -215,7 +220,7 @@ if ( empty( $_REQUEST['s'] ) ) {
 	function prepare_items() {
 	    global $wp_theatre;
 
-	    $per_page = 10;
+	    $per_page = 20;
 
 	    $columns = $this->get_columns();
 		$hidden = array();
@@ -223,7 +228,7 @@ if ( empty( $_REQUEST['s'] ) ) {
 		$this->_column_headers = array( $columns, $hidden, $sortable );
 
 		// Process bulk actions.
-		$this->process_bulk_actions();
+		//$this->process_bulk_actions();
 
 	    $production_args = array();
 
@@ -267,10 +272,9 @@ if ( empty( $_REQUEST['s'] ) ) {
 	}
 
 	/**
-	 * Processes bulk actions .
+	 * Processes bulk actions.
 	 *
 	 * @since	0.15
-	 * @return void
 	 */
 	function process_bulk_actions() {
 
