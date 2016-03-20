@@ -150,7 +150,7 @@
 			'return \'<div class="wrap">\'.$html.\'</div>\';'
 		);
 
-		add_filter('wpt/event/html/?context=default', $wrap_event, 10, 2);
+		add_filter('wpt/event/html/context=default', $wrap_event, 10, 2);
 		
 		$actual = do_shortcode('[wpt_events]');
 		$expected = '<div class="wrap">';
@@ -165,7 +165,7 @@
 			'$html, $event',
 			'return \'<div class="wrap">\'.$html.\'</div>\';'
 		);
-		add_filter('wpt/event/html/?context=production_events', $wrap_event, 10, 2);
+		add_filter('wpt/event/html/context=production_events', $wrap_event, 10, 2);
 		
 		$actual = do_shortcode('[wpt_production_events production="'.$this->production_with_upcoming_events.'"]');
 		$expected = '<div class="wrap">';
@@ -179,7 +179,7 @@
 			'$html, $event',
 			'return \'<div class="wrap">\'.$html.\'</div>\';'
 		);
-		add_filter('wpt/event/html/?context=custom', $wrap_event, 10, 2);
+		add_filter('wpt/event/html/context=custom', $wrap_event, 10, 2);
 		
 		$actual = do_shortcode('[wpt_events context="custom"]');
 		$expected = '<div class="wrap">';
@@ -193,7 +193,7 @@
 			'$html, $event',
 			'return \'<div class="wrap">\'.$html.\'</div>\';'
 		);
-		add_filter('wpt/event/html/?context=default', $wrap_event, 10, 2);
+		add_filter('wpt/event/html/context=default', $wrap_event, 10, 2);
 		
 		$actual = do_shortcode('[wpt_production_events production="'.$this->production_with_upcoming_events.'"]');
 		$expected = '<div class="wrap">';
@@ -227,7 +227,7 @@
 			'return \'<div class="wrap">\'.$html.\'</div>\';'
 		);
 
-		add_filter('wpt/production/html/?context=default', $wrap_production, 10, 2);
+		add_filter('wpt/production/html/context=default', $wrap_production, 10, 2);
 		
 		$actual = do_shortcode('[wpt_productions]');
 		$expected = '<div class="wrap">';
@@ -242,7 +242,7 @@
 			'$html, $production',
 			'return \'<div class="wrap">\'.$html.\'</div>\';'
 		);
-		add_filter('wpt/production/html/?context=custom', $wrap_production, 10, 2);
+		add_filter('wpt/production/html/context=custom', $wrap_production, 10, 2);
 		
 		$actual = do_shortcode('[wpt_productions context="custom"]');
 		$expected = '<div class="wrap">';
@@ -256,7 +256,7 @@
 			'$html, $production',
 			'return \'<div class="wrap">\'.$html.\'</div>\';'
 		);
-		add_filter('wpt/production/html/?context=default', $wrap_production, 10, 2);
+		add_filter('wpt/production/html/context=default', $wrap_production, 10, 2);
 		
 		$actual = do_shortcode('[wpt_productions context="custom"]');
 		$expected = '<div class="wrap">';

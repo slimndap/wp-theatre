@@ -91,7 +91,7 @@ class WPT_Context {
 		 * @param	WPT_Event	$event	The event.
 		 * @param	array		$args	The listing args (if the event is part of a listing).
 		 */
-		$html = apply_filters( 'wpt/event/html/?context='.$context, $html, $template, $args, $event );
+		$html = apply_filters( 'wpt/event/html/context='.$context, $html, $template, $args, $event );
 		return $html;
 	}
 
@@ -115,7 +115,7 @@ class WPT_Context {
 		 * @param	WPT_Production	$production	The production.
 		 * @param	array			$args		The listing args (if the production is part of a listing).
 		 */
-		$html = apply_filters( 'wpt/production/html/?context='.$context, $html, $production, $args );
+		$html = apply_filters( 'wpt/production/html/context='.$context, $html, $production, $args );
 		return $html;
 	}
 }
