@@ -82,12 +82,10 @@ class WPT_Productions_List_Table extends WP_List_Table {
 		}
 
 		// Set the production template.
-		$production_args = array(
-	    	'template' => '{{thumbnail}}{{title}}{{dates}}{{cities}}',
-		);
+		$template = '{{thumbnail}}{{title}}{{dates}}{{cities}}';
 
 		return sprintf('%1$s %2$s',
-			$production->html( $production_args ),
+			$production->html( $template ),
 			$this->row_actions( $actions )
 		);
 	}
