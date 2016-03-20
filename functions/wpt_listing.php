@@ -194,8 +194,34 @@ class WPT_Listing {
 
 	}
 
+	/**
+	 * Gets the classes of a listing.
+	 * 
+	 * @since	0.?
+	 * @since	0.14.7	Added a new 'wpt/listing/classes' filter.
+	 *					Deprecated the 'wpt_listing_classes' filter.
+	 * @param 	array 	$args 	The listing args.
+	 * @return	array			The classes of a listing.
+	 */
 	protected function get_classes_for_html($args=array()) {
-		return apply_filters('wpt_listing_classes',array('wpt_listing'), $args);
+		
+		$classes = array('wpt_listing');
+		
+		/**
+		 * Filters the classes of a listing
+		 * 
+		 * @since	0.14.7
+		 * @param	array	$classes	The classes of a listing.
+		 * @param	array	$args		The listing args.
+		 */
+		$classes = apply_filters('wpt/listing/classes',$classes, $args);
+
+		/**
+		 * @deprecated	0.14.7
+		 */
+		$classes = apply_filters('wpt_listing_classes',$classes);
+
+		return $classes;
 	}
 	
 	/**

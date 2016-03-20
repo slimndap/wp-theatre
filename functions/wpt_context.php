@@ -7,14 +7,14 @@
 class WPT_Context {
 	function __construct() {
 
-		add_filter( 'wpt_listing_classes', array( $this, 'add_context_to_listing_classes' ), 10, 2 );
+		add_filter( 'wpt/listing/classes', array( $this, 'add_context_to_listing_classes' ), 10, 2 );
 
 		add_filter( 'shortcode_atts_wpt_events', array( $this, 'add_context_to_listing_shortcode' ), 10, 3 );
 		add_filter( 'shortcode_atts_wpt_production_events', array( $this, 'add_context_to_production_events_shortcode' ), 10, 3 );
 		add_filter( 'shortcode_atts_wpt_productions', array( $this, 'add_context_to_listing_shortcode' ), 10, 3 );
 
-		add_filter( 'wpt_event_html', array( $this, 'add_event_html_context_filter' ), 10, 3 );
-		add_filter( 'wpt_production_html', array( $this, 'add_production_html_context_filter' ), 10, 3 );
+		add_filter( 'wpt/event/html', array( $this, 'add_event_html_context_filter' ), 10, 4 );
+		add_filter( 'wpt/production/html', array( $this, 'add_production_html_context_filter' ), 10, 4 );
 
 	}
 
@@ -74,12 +74,13 @@ class WPT_Context {
 	 * Adds a new context-aware filter to the event HTML output.
 	 *
 	 * @since	0.14.7
-	 * @param 	string		$html	The HTML of the event.
-	 * @param	WPT_Event	$event	The event.
-	 * @param	array		$args	The listing args (if the event is part of a listing).
-	 * @return	string				The filtered HTML of the event.
+	 * @param 	string				$html		The HTML of the event.
+	 * @param	WPT_Event_Template	$template	The event template
+	 * @param	array				$args		The listing args (if the event is part of a listing).
+	 * @param	WPT_Event			$event		The event.
+	 * @return	string							The filtered HTML of the event.
 	 */
-	function add_event_html_context_filter( $html, $event, $args ) {
+	function add_event_html_context_filter( $html, $template, $args, $event ) {
 		$context = empty( $args['context'] ) ? 'default' : $args['context'];
 
 		/**
@@ -90,7 +91,7 @@ class WPT_Context {
 		 * @param	WPT_Event	$event	The event.
 		 * @param	array		$args	The listing args (if the event is part of a listing).
 		 */
-		$html = apply_filters( 'wpt/event/html/?context='.$context, $html, $event, $args );
+		$html = apply_filters( 'wpt/event/html/?context='.$context, $html, $template, $args, $event );
 		return $html;
 	}
 
@@ -103,7 +104,7 @@ class WPT_Context {
 	 * @param	array			$args		The listing args (if the production is part of a listing).
 	 * @return	string						The filtered HTML of the production.
 	 */
-	function add_production_html_context_filter( $html, $production, $args ) {
+	function add_production_html_context_filter( $html, $template, $args, $production ) {
 		$context = empty( $args['context'] ) ? 'default' : $args['context'];
 
 		/**

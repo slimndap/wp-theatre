@@ -87,7 +87,8 @@ class WPT_Productions extends WPT_Listing {
 	 *
 	 * @see WPT_Listing::get_classes_for_html()
 	 *
-	 * @since 0.10
+	 * @since 	0.10
+	 * @since	0.14.7	Added $args to parent::get_classes_for_html().
 	 *
 	 * @access 	protected
 	 * @param 	array $args 	See WPT_Productions::get_html() for possible values. Default: array().
@@ -425,6 +426,7 @@ class WPT_Productions extends WPT_Listing {
 	 *
 	 * @since 	0.10
 	 * @since	0.13	Added support for days, months and years.
+	 * @since	0.14.7	Added $args to $production->html().
 	 *
 	 * @see WPT_Production::html();
 	 * @see WPT_Productions::get_html_for_season();

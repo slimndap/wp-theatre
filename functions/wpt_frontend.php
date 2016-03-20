@@ -333,9 +333,10 @@ class WPT_Frontend {
 	/**
 	 * Gets output for the [wpt_productions] shortcode.
 	 *
-	 * @since ?
-	 * @since 0.10.9	Improved the unique key for transients.
+	 * @since 	0.?
+	 * @since	0.10.9	Improved the unique key for transients.
 	 *					Fixes issue #97.
+	 * @since	0.14.7	Added $shortcode to shortcode_atts().
 	 *
 	 * @param 	array 	$atts
 	 * @param 	string 	$content (default: null)
@@ -593,6 +594,8 @@ class WPT_Frontend {
 	 *
 	 * @since 	0.?
 	 * @since	0.14.4	Use the [wpt_events] shortcode to render the output.
+	 * @since	0.14.7	Added support for filtered shortcode atts.
+	 *
 	 * @param 	array	$atts		The shortcode attributes.
 	 * @param 	string	$template 	The template. Default <null>.
 	 * @return 	string				The HTML output for the [wpt_production_events] shortcode.

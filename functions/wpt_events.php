@@ -60,7 +60,8 @@ class WPT_Events extends WPT_Listing {
 	 *
 	 * @see WPT_Listing::get_classes_for_html()
 	 *
-	 * @since 0.10
+	 * @since 	0.10
+	 * @since	0.14.7	Added $args to parent::get_classes_for_html().
 	 *
 	 * @access 	protected
 	 * @param 	array $args 	See WPT_Events::get_html() for possible values. Default: array().
@@ -374,7 +375,8 @@ class WPT_Events extends WPT_Listing {
 	 * The events can be grouped inside a page by setting $groupby.
 	 * If $groupby is not set then all events are show in a single, ungrouped list.
 	 *
-	 * @since 0.10
+	 * @since 	0.10
+	 * @since	0.14.7	Added $args to $event->html().
 	 *
 	 * @see WPT_Event::html();
 	 * @see WPT_Events::get_html_for_month();

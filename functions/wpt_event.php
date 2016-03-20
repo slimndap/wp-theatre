@@ -1091,18 +1091,15 @@ class WPT_Event {
 	}
 
 	/**
-	 * HTML version of the event.
+	 * Gets the HTML for an event.
+	 * 
+	 * @since 	0.4
+	 * @since 	0.10.8	Added a filter to the default template.
+	 * @since	0.14.7	Added the $args parameter.
 	 *
-	 * @since 0.4
-	 * @since 0.10.8	Added a filter to the default template.
-	 *
-	 * @param array $args {
-	 *
-	 *	   @type array $fields Fields to include. Default <array('title','remark', 'datetime','location')>.
-	 *     @type bool $thumbnail Include thumbnail? Default <true>.
-	 *     @type bool $tickets Include tickets button? Default <true>.
-	 * }
-	 * @return string HTML.
+	 * @param	string	$template	The template for the event HTML.
+	 * @param 	array	$args		The listing args (if the event is part of a listing).
+	 * @return 	string				The HTML for an event.
 	 */
 	function html($template='', $args = array()) {
 		if (is_array($template)) {
@@ -1131,8 +1128,29 @@ class WPT_Event {
 			$html = str_replace( '{{tickets}}', $tickets, $html );
 		}
 
-		// Filters
-		$html = apply_filters( 'wpt_event_html',$html, $this, $args );
+		/**
+		 * Filter the HTML output for an event.
+		 * 
+		 * @since	0.14.7
+		 * @param	string				$html		The HTML output for an event.
+		 * @param	WPT_Event_Template	$template	The event template.
+		 * @param	array				$args		The listing args (if the event is part of a listing).
+		 * @param	WPT_Event			$event		The event.
+		 */
+		$html = apply_filters( 'wpt/event/html',$html, $template, $args, $this );
+				
+		/**
+		 * @deprecated	0.14.7
+		 */
+		$html = apply_filters( 'wpt_event_html',$html, $this );
+		
+		/**
+		 * Filter the classes for an event.
+		 *
+		 * @since 	0.?
+		 * @param	array		$classes	The classes for an event.
+		 * @param	WPT_Event	$event		The event.
+		 */
 		$classes = apply_filters( 'wpt_event_classes',$classes, $this );
 
 		// Wrapper

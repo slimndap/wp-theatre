@@ -600,17 +600,15 @@ class WPT_Production {
 	}
 
 	/**
-	 * HTML version of the production.
+	 * Gets the HTML for a production.
+	 * 
+	 * @since 	0.4
+	 * @since 	0.10.8	Added a filter to the default template.
+	 * @since	0.14.7	Added the $args parameter.
 	 *
-	 * @since 0.4
-	 * @since 0.10.8	Added a filter to the default template.
-	 *
-	 * @param array $args {
-	 *
-	 *	   @type array $fields Fields to include. Default <array('title','dates','cities')>.
-	 *     @type bool $thumbnail Include thumbnail? Default <true>.
-	 * }
-	 * @return string HTML.
+	 * @param	string	$template	The template for the production HTML.
+	 * @param 	array	$args		The listing args (if the production is part of a listing).
+	 * @return 	string				The HTML for a production.
 	 */
 	function html($template = '', $args = array()) {
 		global $wp_theatre;
@@ -629,8 +627,29 @@ class WPT_Production {
 		$template = new WPT_Production_Template($this, $template);
 		$html = $template->get_merged();
 
-		// Filters
-		$html = apply_filters('wpt_production_html',$html, $this, $args);
+		/**
+		 * Filter the HTML output for a production.
+		 * 
+		 * @since	0.14.7
+		 * @param	string				$html		The HTML output for a production.
+		 * @param	WPT_Event_Template	$template	The production template.
+		 * @param	array				$args		The listing args (if the production is part of a listing).
+		 * @param	WPT_Production		$production	The production.
+		 */
+		$html = apply_filters( 'wpt/production/html',$html, $template, $args, $this );
+				
+		/**
+		 * @deprecated	0.14.7
+		 */
+		$html = apply_filters('wpt_production_html',$html, $this);
+
+		/**
+		 * Filter the classes for a production.
+		 *
+		 * @since 	0.?
+		 * @param	array		$classes	The classes for a production.
+		 * @param	WPT_Event	$event		The production.
+		 */
 		$classes = apply_filters('wpt_production_classes',$classes, $this);
 
 		// Wrapper
