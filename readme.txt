@@ -339,6 +339,9 @@ Release Date: December 29th, 2014
 
 == Upgrade Notice ==
 
+= 0.14.7 = 
+Adds context information to listings, useful for styling and context-aware hooks.
+
 = 0.14.6 =
 Adds two new filters to manipulate the appearance of events in lists.
 

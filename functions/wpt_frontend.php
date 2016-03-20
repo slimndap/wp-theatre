@@ -1,34 +1,34 @@
 <?php
 class WPT_Frontend {
 	function __construct() {
-		add_action( 'init', array($this,'enqueue_scripts') );
-		add_action( 'wp_head', array($this,'wp_head') );
+		add_action( 'init', array( $this, 'enqueue_scripts' ) );
+		add_action( 'wp_head', array( $this, 'wp_head' ) );
 
-		add_filter( 'the_content', array($this, 'the_content') );
+		add_filter( 'the_content', array( $this, 'the_content' ) );
 
-		add_shortcode( 'wpt_events', array($this,'wpt_events') );
-		add_shortcode( 'wpt_productions', array($this,'wpt_productions') );
-		add_shortcode( 'wpt_seasons', array($this,'wpt_productions') );
+		add_shortcode( 'wpt_events', array( $this, 'wpt_events' ) );
+		add_shortcode( 'wpt_productions', array( $this, 'wpt_productions' ) );
+		add_shortcode( 'wpt_seasons', array( $this, 'wpt_productions' ) );
 
-		add_shortcode( 'wp_theatre_iframe', array($this,'get_iframe_html') );
+		add_shortcode( 'wp_theatre_iframe', array( $this, 'get_iframe_html' ) );
 
-		add_shortcode( 'wpt_production_events', array($this,'wpt_production_events') );
+		add_shortcode( 'wpt_production_events', array( $this, 'wpt_production_events' ) );
 
-		add_shortcode( 'wpt_season_productions', array($this,'wpt_season_productions') );
-		add_shortcode( 'wpt_season_events', array($this,'wpt_season_events') );
+		add_shortcode( 'wpt_season_productions', array( $this, 'wpt_season_productions' ) );
+		add_shortcode( 'wpt_season_events', array( $this, 'wpt_season_events' ) );
 
-		add_shortcode( 'wpt_event_ticket_button', array($this,'wpt_event_ticket_button') );
+		add_shortcode( 'wpt_event_ticket_button', array( $this, 'wpt_event_ticket_button' ) );
 
 		$this->options = get_option( 'theatre' );
 
 		// Deprecated
-		add_shortcode( 'wp_theatre_events', array($this,'wpt_events') );
-		add_action( 'template_redirect', array($this,'redirect_deprecated_tickets_page_url') );
+		add_shortcode( 'wp_theatre_events', array( $this, 'wpt_events' ) );
+		add_action( 'template_redirect', array( $this, 'redirect_deprecated_tickets_page_url' ) );
 	}
 
 	/**
 	 * Enqueues the Theater javascript and CSS files.
-	 * 
+	 *
 	 * @since	0.?
 	 * @since	0.13	Added thickbox args to manipulate the behaviour of the tickets thickbox.
 	 * @since	0.13.5	Moved main.js to footer.
@@ -38,37 +38,37 @@ class WPT_Frontend {
 		global $wp_theatre;
 
 		// Add built-in Theatre javascript
-		wp_enqueue_script( 'wp_theatre_js', plugins_url( '../js/main.js', __FILE__ ), array('jquery'), $wp_theatre->wpt_version, true );
+		wp_enqueue_script( 'wp_theatre_js', plugins_url( '../js/main.js', __FILE__ ), array( 'jquery' ), $wp_theatre->wpt_version, true );
 
 		// Add built-in Theatre stylesheet
-		if ( ! empty($wp_theatre->wpt_style_options['stylesheet']) ) {
+		if ( ! empty( $wp_theatre->wpt_style_options['stylesheet'] ) ) {
 			wp_enqueue_style( 'wp_theatre', plugins_url( '../css/style.css', __FILE__ ), null, $wp_theatre->wpt_version );
 		}
 
 		// Add Thickbox files
 		if (
-			! empty($wp_theatre->wpt_tickets_options['integrationtype']) &&
+			! empty( $wp_theatre->wpt_tickets_options['integrationtype'] ) &&
 			'lightbox' == $wp_theatre->wpt_tickets_options['integrationtype']
 		) {
 			wp_enqueue_script( 'thickbox' );
-			
+
 			$thickbox_args = array(
 				'width' => 800,
 				'height' => 600,
 				'disable_width' => false,
 			);
-			
+
 			/**
 			 * Filter the thickbox arguments.
-			 * 
+			 *
 			 * @since	0.13
-			 * 
+			 *
 			 * @param 	array	The thickbox arguments.
 			 */
-			$thickbox_args = apply_filters('wpt/frontend/thickbox/args', $thickbox_args);
-			
-			wp_localize_script('thickbox', 'thickbox_args', $thickbox_args);
-			
+			$thickbox_args = apply_filters( 'wpt/frontend/thickbox/args', $thickbox_args );
+
+			wp_localize_script( 'thickbox', 'thickbox_args', $thickbox_args );
+
 			wp_enqueue_style( 'thickbox', includes_url( '/js/thickbox/thickbox.css' ), null, $wp_theatre->wpt_version );
 		}
 	}
@@ -82,7 +82,7 @@ class WPT_Frontend {
 
 		$html[] = '<meta name="generator" content="Theater '.$wpt_version.'" />';
 
-		if ( ! empty($wp_theatre->wpt_style_options['custom_css']) ) {
+		if ( ! empty( $wp_theatre->wpt_style_options['custom_css'] ) ) {
 			$html[] .= '<!-- Custom Theater CSS -->';
 			$html[] .= '<style>';
 			$html[] .= $wp_theatre->wpt_style_options['custom_css'];
@@ -102,13 +102,13 @@ class WPT_Frontend {
 	 * @param 	string 	$content
 	 * @return 	void
 	 */
-	public function the_content($content) {
+	public function the_content( $content ) {
 		global $wp_theatre;
 
 		if ( is_singular( WPT_Production::post_type_name ) && is_main_query() ) {
 			if (
 				isset( $wp_theatre->options['show_season_events'] ) &&
-				in_array( $wp_theatre->options['show_season_events'], array('above','below') )
+				in_array( $wp_theatre->options['show_season_events'], array( 'above', 'below' ) )
 			) {
 				$events_html = '<h3>'.__( 'Events','theatre' ).'</h3>';
 				$events_html .= '[wpt_season_events]';
@@ -123,7 +123,7 @@ class WPT_Frontend {
 			}
 			if (
 				isset( $wp_theatre->options['show_season_productions'] ) &&
-				in_array( $wp_theatre->options['show_season_productions'], array('above','below') )
+				in_array( $wp_theatre->options['show_season_productions'], array( 'above', 'below' ) )
 			) {
 				$productions_html = '<h3>'.__( 'Productions','theatre' ).'</h3>';
 				$productions_html .= '[wpt_season_productions]';
@@ -192,7 +192,7 @@ class WPT_Frontend {
 	 * @param 	string 	$content (default: null)
 	 * @return 	string 	The HTML output.
 	 */
-	function wpt_events($atts, $content=null) {
+	function wpt_events( $atts, $content = null ) {
 		global $wp_theatre;
 		global $wp_query;
 
@@ -228,60 +228,60 @@ class WPT_Frontend {
 
 		$atts = shortcode_atts( $defaults, $atts, 'wpt_events' );
 
-		if ( ! empty($atts['paginateby']) ) {
+		if ( ! empty( $atts['paginateby'] ) ) {
 			$fields = explode( ',',$atts['paginateby'] );
 			for ( $i = 0;$i < count( $fields );$i++ ) {
-				$fields[$i] = trim( $fields[$i] );
+				$fields[ $i ] = trim( $fields[ $i ] );
 			}
 			$atts['paginateby'] = $fields;
 		}
 
-		if ( ! empty($atts['post__in']) ) {
+		if ( ! empty( $atts['post__in'] ) ) {
 			$atts['post__in'] = explode( ',',$atts['post__in'] );
-			$atts['post__in'] = array_map('trim',$atts['post__in']);
+			$atts['post__in'] = array_map( 'trim',$atts['post__in'] );
 		}
 
-		if ( ! empty($atts['post__not_in']) ) {
+		if ( ! empty( $atts['post__not_in'] ) ) {
 			$atts['post__not_in'] = explode( ',',$atts['post__not_in'] );
-			$atts['post__not_in'] = array_map('trim',$atts['post__not_in']);
+			$atts['post__not_in'] = array_map( 'trim',$atts['post__not_in'] );
 		}
 
-		if ( ! empty($atts['production']) ) {
+		if ( ! empty( $atts['production'] ) ) {
 			$atts['production'] = explode( ',',$atts['production'] );
-			$atts['production'] = array_map('trim',$atts['production']);
+			$atts['production'] = array_map( 'trim',$atts['production'] );
 		}
 
-		if ( ! empty($atts['year']) ) {
+		if ( ! empty( $atts['year'] ) ) {
 			$atts['start'] = date( 'Y-m-d',strtotime( $atts['year'].'-01-01' ) );
 			$atts['end'] = date( 'Y-m-d',strtotime( $atts['year'].'-01-01 + 1 year' ) );
 		}
 
-		if ( ! empty($atts['month']) ) {
+		if ( ! empty( $atts['month'] ) ) {
 			$atts['start'] = date( 'Y-m-d',strtotime( $atts['month'] ) );
 			$atts['end'] = date( 'Y-m-d',strtotime( $atts['month'].' + 1 month' ) );
 		}
 
-		if ( ! empty($atts['day']) ) {
+		if ( ! empty( $atts['day'] ) ) {
 			$atts['start'] = date( 'Y-m-d',strtotime( $atts['day'] ) );
 			$atts['end'] = date( 'Y-m-d',strtotime( $atts['day'].' + 1 day' ) );
 		}
 
-		if ( ! empty($atts['category__in']) ) {
+		if ( ! empty( $atts['category__in'] ) ) {
 			$atts['category__in'] = explode( ',',$atts['category__in'] );
 		}
 
-		if ( ! empty($atts['category__not_in']) ) {
+		if ( ! empty( $atts['category__not_in'] ) ) {
 			$atts['category__not_in'] = explode( ',',$atts['category__not_in'] );
 		}
 
 		if (
-			empty($atts['start']) &&
-			empty($atts['end'])
+			empty( $atts['start'] ) &&
+			empty( $atts['end'] )
 		) {
 			$atts['start'] = 'now';
 		}
 
-		if ( ! is_null( $content ) && ! empty($content) ) {
+		if ( ! is_null( $content ) && ! empty( $content ) ) {
 			$atts['template'] = html_entity_decode( $content );
 		}
 
@@ -290,13 +290,13 @@ class WPT_Frontend {
 		 * Use `cat`, `category_name`, `category__and`, `category__in` or `category__not_in` instead.
 		 */
 
-		if ( ! empty($atts['category']) ) {
+		if ( ! empty( $atts['category'] ) ) {
 			$categories = array();
 			$fields = explode( ',',$atts['category'] );
 			for ( $i = 0;$i < count( $fields );$i++ ) {
-				$category_id = trim( $fields[$i] );
+				$category_id = trim( $fields[ $i ] );
 				if ( is_numeric( $category_id ) ) {
-					$categories[] = trim( $fields[$i] );
+					$categories[] = trim( $fields[ $i ] );
 				} else {
 					if ( $category = get_category_by_slug( $category_id ) ) {
 						$categories[] = $category->term_id;
@@ -342,7 +342,7 @@ class WPT_Frontend {
 	 * @param 	string 	$content (default: null)
 	 * @return 	string 	The HTML output.
 	 */
-	function wpt_productions($atts, $content=null) {
+	function wpt_productions( $atts, $content = null ) {
 		global $wp_theatre;
 		global $wp_query;
 
@@ -362,36 +362,36 @@ class WPT_Frontend {
 			'end' => false,
 			'groupby' => false,
 			'limit' => false,
-			'order' => 'asc'
+			'order' => 'asc',
 		);
 
 		$atts = shortcode_atts( $defaults,$atts, 'wpt_productions' );
 
-		if ( ! empty($atts['paginateby']) ) {
+		if ( ! empty( $atts['paginateby'] ) ) {
 			$fields = explode( ',',$atts['paginateby'] );
 			for ( $i = 0;$i < count( $fields );$i++ ) {
-				$fields[$i] = trim( $fields[$i] );
+				$fields[ $i ] = trim( $fields[ $i ] );
 			}
 			$atts['paginateby'] = $fields;
 		}
 
-		if ( ! empty($atts['post__in']) ) {
+		if ( ! empty( $atts['post__in'] ) ) {
 			$atts['post__in'] = explode( ',',$atts['post__in'] );
 		}
 
-		if ( ! empty($atts['post__not_in']) ) {
+		if ( ! empty( $atts['post__not_in'] ) ) {
 			$atts['post__not_in'] = explode( ',',$atts['post__not_in'] );
 		}
 
-		if ( ! empty($atts['category__in']) ) {
+		if ( ! empty( $atts['category__in'] ) ) {
 			$atts['category__in'] = explode( ',',$atts['category__in'] );
 		}
 
-		if ( ! empty($atts['category__not_in']) ) {
+		if ( ! empty( $atts['category__not_in'] ) ) {
 			$atts['category__not_in'] = explode( ',',$atts['category__not_in'] );
 		}
 
-		if ( ! is_null( $content ) && ! empty($content) ) {
+		if ( ! is_null( $content ) && ! empty( $content ) ) {
 			$atts['template'] = html_entity_decode( $content );
 		}
 
@@ -400,13 +400,13 @@ class WPT_Frontend {
 		 * Use `cat`, `category_name`, `category__and`, `category__in` or `category__not_in` instead.
 		 */
 
-		if ( ! empty($atts['category']) ) {
+		if ( ! empty( $atts['category'] ) ) {
 			$categories = array();
 			$fields = explode( ',',$atts['category'] );
 			for ( $i = 0;$i < count( $fields );$i++ ) {
-				$category_id = trim( $fields[$i] );
+				$category_id = trim( $fields[ $i ] );
 				if ( is_numeric( $category_id ) ) {
-					$categories[] = trim( $fields[$i] );
+					$categories[] = trim( $fields[ $i ] );
 				} else {
 					if ( $category = get_category_by_slug( $category_id ) ) {
 						$categories[] = $category->term_id;
@@ -441,33 +441,33 @@ class WPT_Frontend {
 		return $html;
 	}
 
-	function wpt_seasons($atts, $content=null) {
+	function wpt_seasons( $atts, $content = null ) {
 		global $wp_theatre;
 
 		$atts = shortcode_atts( array(
 			'thumbnail' => true,
 			'fields' => null,
 			'upcoming' => true,
-			'paginateby' => null
+			'paginateby' => null,
 		), $atts );
 
-		if ( ! empty($atts['fields']) ) {
+		if ( ! empty( $atts['fields'] ) ) {
 			$fields = explode( ',',$atts['fields'] );
 			for ( $i = 0;$i < count( $fields );$i++ ) {
-				$fields[$i] = trim( $fields[$i] );
+				$fields[ $i ] = trim( $fields[ $i ] );
 			}
 			$atts['fields'] = $fields;
 		}
 
-		if ( ! empty($atts['paginateby']) ) {
+		if ( ! empty( $atts['paginateby'] ) ) {
 			$fields = explode( ',',$atts['paginateby'] );
 			for ( $i = 0;$i < count( $fields );$i++ ) {
-				$fields[$i] = trim( $fields[$i] );
+				$fields[ $i ] = trim( $fields[ $i ] );
 			}
 			$atts['paginateby'] = $fields;
 		}
 
-		if ( ! empty($atts['thumbnail']) ) {
+		if ( ! empty( $atts['thumbnail'] ) ) {
 			$atts['thumbnail'] = $atts['thumbnail'] == 1;
 		}
 
@@ -475,7 +475,7 @@ class WPT_Frontend {
 		return $wp_theatre->seasons->html( $atts );
 	}
 
-	function wpt_season_events($atts, $content=null) {
+	function wpt_season_events( $atts, $content = null ) {
 		global $wp_theatre;
 
 		$atts = shortcode_atts( array(
@@ -484,20 +484,20 @@ class WPT_Frontend {
 			'paginateby' => array(),
 			'season' => false,
 			'groupby' => false,
-			'limit' => false
+			'limit' => false,
 		), $atts);
 
 		if ( is_singular( WPT_Season::post_type_name ) ) {
 			$atts['season'] = get_the_ID();
 
-			if ( ! is_null( $content ) && ! empty($content) ) {
+			if ( ! is_null( $content ) && ! empty( $content ) ) {
 				$atts['template'] = html_entity_decode( $content );
 			}
 
-			if ( ! empty($atts['paginateby']) ) {
+			if ( ! empty( $atts['paginateby'] ) ) {
 				$fields = explode( ',',$atts['paginateby'] );
 				for ( $i = 0;$i < count( $fields );$i++ ) {
-					$fields[$i] = trim( $fields[$i] );
+					$fields[ $i ] = trim( $fields[ $i ] );
 				}
 				$atts['paginateby'] = $fields;
 			}
@@ -506,7 +506,7 @@ class WPT_Frontend {
 		}
 	}
 
-	function wpt_season_productions($atts, $content=null) {
+	function wpt_season_productions( $atts, $content = null ) {
 		global $wp_theatre;
 
 		$atts = shortcode_atts( array(
@@ -514,20 +514,20 @@ class WPT_Frontend {
 			'upcoming' => false,
 			'season' => false,
 			'groupby' => false,
-			'limit' => false
+			'limit' => false,
 		), $atts);
 
 		if ( is_singular( WPT_Season::post_type_name ) ) {
 			$atts['season'] = get_the_ID();
 
-			if ( ! is_null( $content ) && ! empty($content) ) {
+			if ( ! is_null( $content ) && ! empty( $content ) ) {
 				$atts['template'] = html_entity_decode( $content );
 			}
 
-			if ( ! empty($atts['paginateby']) ) {
+			if ( ! empty( $atts['paginateby'] ) ) {
 				$fields = explode( ',',$atts['paginateby'] );
 				for ( $i = 0;$i < count( $fields );$i++ ) {
-					$fields[$i] = trim( $fields[$i] );
+					$fields[ $i ] = trim( $fields[ $i ] );
 				}
 				$atts['paginateby'] = $fields;
 			}
@@ -554,22 +554,22 @@ class WPT_Frontend {
 
 		$tickets_url = '';
 
-		if ( ! empty($event_id) ) {
+		if ( ! empty( $event_id ) ) {
 			$tickets_url = get_post_meta( $event_id,'tickets_url',true );
-			if ( ! empty($tickets_url) ) {
+			if ( ! empty( $tickets_url ) ) {
 				$html .= '<iframe src="'.$tickets_url.'" class="wp_theatre_iframe"></iframe>';
 			}
 		}
 
 		/**
 		 * Filter the HTML for the [wp_theatre_iframe] shortcode.
-		 * 
+		 *
 		 * @since	0.13.3
 		 * @param 	string	$html			The HTML for the [wp_theatre_iframe] shortcode.
 		 * @param	string	$tickets_url	The event tickets url.
 		 * @pararm	int		$event_id		The event ID.
 		 */
-		$html = apply_filters('wpt/frontend/iframe/html', $html, $tickets_url, $event_id);
+		$html = apply_filters( 'wpt/frontend/iframe/html', $html, $tickets_url, $event_id );
 
 		/**
 		 * @deprecated	0.13.3
@@ -600,46 +600,46 @@ class WPT_Frontend {
 	 * @param 	string	$template 	The template. Default <null>.
 	 * @return 	string				The HTML output for the [wpt_production_events] shortcode.
 	 */
-	function wpt_production_events($atts, $template=null) {
+	function wpt_production_events( $atts, $template = null ) {
 		global $wp_theatre;
 
 		$atts = shortcode_atts( array(
-			'production' => false
+			'production' => false,
 		), $atts, 'wpt_production_events' );
 
 		// Fallback to ID of current production.
-		if ( empty($atts['production']) && is_singular( WPT_Production::post_type_name ) ) {
+		if ( empty( $atts['production'] ) && is_singular( WPT_Production::post_type_name ) ) {
 			$atts['production'] = get_the_ID();
 		}
 
 		// Bail if no production is defined.
-		if (empty($atts['production'])) {
+		if ( empty( $atts['production'] ) ) {
 			return;
 		}
 
-		if (empty($template)) {
-			$template = '{{remark}}{{datetime}}{{location}}{{tickets}}';		
+		if ( empty( $template ) ) {
+			$template = '{{remark}}{{datetime}}{{location}}{{tickets}}';
 		}
 
 		$shortcode_atts = '';
-		foreach($atts as $key=>$value) {
-			$shortcode_atts.= $key.'="'.$value.'" ';
+		foreach ( $atts as $key => $value ) {
+			$shortcode_atts .= $key.'="'.$value.'" ';
 		}
 
 		$shortcode = '[wpt_events '.$shortcode_atts.']'.$template.'[/wpt_events]';
-		return do_shortcode($shortcode);
+		return do_shortcode( $shortcode );
 	}
 
-	function wpt_event_ticket_button($atts, $content=null) {
+	function wpt_event_ticket_button( $atts, $content = null ) {
 		$atts = shortcode_atts( array(
-			'id' => false
+			'id' => false,
 		), $atts );
 		extract( $atts );
 
 		if ( $id ) {
 			$event = new WPT_Event( $id );
 			$args = array(
-				'html' => true
+				'html' => true,
 			);
 			return $event->tickets( $args );
 		}
@@ -659,15 +659,15 @@ class WPT_Frontend {
 
 		$theatre_options = $wp_theatre->wpt_tickets_options;
 		if (
-			isset($theatre_options['iframepage']) &&
+			isset( $theatre_options['iframepage'] ) &&
 			$theatre_options['iframepage'] == get_the_id() &&
-			isset($_GET[ __( 'Event','theatre' ) ])
+			isset( $_GET[ __( 'Event','theatre' ) ] )
 		) {
 			// We are on the tickets page, using the old style URL, let's redirect
 			$event = new WPT_Event( $_GET[ __( 'Event','theatre' ) ] );
-			if ( ! empty($event) ) {
+			if ( ! empty( $event ) ) {
 				$tickets_url_iframe = $event->tickets_url_iframe();
-				if ( ! empty($tickets_url_iframe) ) {
+				if ( ! empty( $tickets_url_iframe ) ) {
 					// Redirect, Moved Permanently
 					wp_redirect( $tickets_url_iframe, 301 );
 					exit();
@@ -675,8 +675,6 @@ class WPT_Frontend {
 			}
 		}
 	}
-
-
 }
 
 ?>
