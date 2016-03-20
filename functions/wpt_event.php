@@ -1104,7 +1104,7 @@ class WPT_Event {
 	 * }
 	 * @return string HTML.
 	 */
-	function html($template='') {
+	function html($template='', $args = array()) {
 		if (is_array($template)) {
 			$defaults = array(
 				'template' => '',
@@ -1132,7 +1132,7 @@ class WPT_Event {
 		}
 
 		// Filters
-		$html = apply_filters( 'wpt_event_html',$html, $this );
+		$html = apply_filters( 'wpt_event_html',$html, $this, $args );
 		$classes = apply_filters( 'wpt_event_classes',$classes, $this );
 
 		// Wrapper

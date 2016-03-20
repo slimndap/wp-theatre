@@ -195,7 +195,7 @@ class WPT_Listing {
 	}
 
 	protected function get_classes_for_html($args=array()) {
-		return apply_filters('wpt_events_classes',array('wpt_listing'));
+		return apply_filters('wpt_listing_classes',array('wpt_listing'), $args);
 	}
 	
 	/**

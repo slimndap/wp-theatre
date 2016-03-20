@@ -96,7 +96,7 @@ class WPT_Productions extends WPT_Listing {
 	protected function get_classes_for_html($args = array()) {
 
 		// Start with the default classes for listings.
-		$classes = parent::get_classes_for_html();
+		$classes = parent::get_classes_for_html($args);
 
 		$classes[] = 'wpt_productions';
 
@@ -518,11 +518,7 @@ class WPT_Productions extends WPT_Listing {
 				$productions = $this->preload_productions_with_events( $productions );
 				$html_group = '';
 				foreach ( $productions as $production ) {
-					$production_args = array();
-					if ( ! empty($args['template']) ) {
-						$production_args = array( 'template' => $args['template'] );
-					}
-					$html_group .= $production->html( $production_args );
+					$html_group .= $production->html( $args['template'], $args );
 				}
 
 				/**

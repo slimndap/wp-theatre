@@ -612,7 +612,7 @@ class WPT_Production {
 	 * }
 	 * @return string HTML.
 	 */
-	function html($template = '') {
+	function html($template = '', $args = array()) {
 		global $wp_theatre;
 		
 		if (is_array($template)) {
@@ -630,7 +630,7 @@ class WPT_Production {
 		$html = $template->get_merged();
 
 		// Filters
-		$html = apply_filters('wpt_production_html',$html, $this);
+		$html = apply_filters('wpt_production_html',$html, $this, $args);
 		$classes = apply_filters('wpt_production_classes',$classes, $this);
 
 		// Wrapper

@@ -242,11 +242,10 @@ class WPT_Test extends WP_UnitTestCase {
 		$func = create_function(
 			'$html, $event',
 			'$html = "<wrap>$html</wrap>";	return $html;'
-		);
-		
+		);		
 		add_filter('wpt/events/event/html', $func, 10, 2);
 		
-		$expected = '<div class="wpt_listing wpt_events"><wrap>';
+		$expected = '<div class="wpt_listing wpt_context_default wpt_events"><wrap>';
 		$actual = do_shortcode('[wpt_events]');
 		
 		$this->assertContains($expected, $actual);

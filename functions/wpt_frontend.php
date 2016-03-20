@@ -364,7 +364,7 @@ class WPT_Frontend {
 			'order' => 'asc'
 		);
 
-		$atts = shortcode_atts( $defaults,$atts );
+		$atts = shortcode_atts( $defaults,$atts, 'wpt_productions' );
 
 		if ( ! empty($atts['paginateby']) ) {
 			$fields = explode( ',',$atts['paginateby'] );
@@ -618,7 +618,12 @@ class WPT_Frontend {
 			$template = '{{remark}}{{datetime}}{{location}}{{tickets}}';		
 		}
 
-		$shortcode = '[wpt_events production="'.$atts['production'].'"]'.$template.'[/wpt_events]';
+		$shortcode_atts = '';
+		foreach($atts as $key=>$value) {
+			$shortcode_atts.= $key.'="'.$value.'" ';
+		}
+
+		$shortcode = '[wpt_events '.$shortcode_atts.']'.$template.'[/wpt_events]';
 		return do_shortcode($shortcode);
 	}
 

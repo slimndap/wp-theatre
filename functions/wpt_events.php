@@ -69,7 +69,7 @@ class WPT_Events extends WPT_Listing {
 	protected function get_classes_for_html($args = array()) {
 
 		// Start with the default classes for listings.
-		$classes = parent::get_classes_for_html();
+		$classes = parent::get_classes_for_html($args);
 
 		$classes[] = 'wpt_events';
 
@@ -448,8 +448,7 @@ class WPT_Events extends WPT_Listing {
 				$events = $this->preload_events_with_productions( $events );
 				$html_group = '';
 				foreach ( $events as $event ) {
-					$event_args = array();
-					
+
 					/*
 					 * Use the general default template for events.
 					 * @see WPT_Event_Template::get_default();
@@ -468,9 +467,7 @@ class WPT_Events extends WPT_Listing {
 						$template = $args['template'];
 					}
 
-					$event_args = array( 'template' => $template );
-
-					$html_event = $event->html( $event_args );
+					$html_event = $event->html( $template, $args );
 					
 					/**
 					 * Filters the event HTML in lists.
