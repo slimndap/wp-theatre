@@ -9,9 +9,9 @@ class WPT_Context {
 
 		add_filter( 'wpt_listing_classes', array( $this, 'add_context_to_listing_classes' ), 10, 2 );
 
-		add_filter( 'shortcode_atts_wpt_events', array( $this, 'add_context_to_listing_shortcode' ), 10, 4 );
-		add_filter( 'shortcode_atts_wpt_production_events', array( $this, 'add_context_to_production_events_shortcode' ), 10, 4 );
-		add_filter( 'shortcode_atts_wpt_productions', array( $this, 'add_context_to_listing_shortcode' ), 10, 4 );
+		add_filter( 'shortcode_atts_wpt_events', array( $this, 'add_context_to_listing_shortcode' ), 10, 3 );
+		add_filter( 'shortcode_atts_wpt_production_events', array( $this, 'add_context_to_production_events_shortcode' ), 10, 3 );
+		add_filter( 'shortcode_atts_wpt_productions', array( $this, 'add_context_to_listing_shortcode' ), 10, 3 );
 
 		add_filter( 'wpt_event_html', array( $this, 'add_event_html_context_filter' ), 10, 3 );
 		add_filter( 'wpt_production_html', array( $this, 'add_production_html_context_filter' ), 10, 3 );
@@ -46,10 +46,9 @@ class WPT_Context {
 	 * @param 	array	$out		The output array of shortcode attributes.
 	 * @param 	array	$pairs		The supported attributes and their defaults.
 	 * @param 	array	$atts		The user defined shortcode attributes.
-	 * @param 	string	$shortcode	The shortcode name.
 	 * @return	array				The output array of shortcode attributes, including the context.
 	 */
-	function add_context_to_listing_shortcode( $out, $pairs, $atts, $shortcode ) {
+	function add_context_to_listing_shortcode( $out, $pairs, $atts ) {
 		if ( empty( $atts['context'] ) ) {
 			return $out;
 		}
@@ -64,10 +63,9 @@ class WPT_Context {
 	 * @param 	array	$out		The output array of shortcode attributes.
 	 * @param 	array	$pairs		The supported attributes and their defaults.
 	 * @param 	array	$atts		The user defined shortcode attributes.
-	 * @param 	string	$shortcode	The shortcode name.
 	 * @return	array				The output array of shortcode attributes, including the context.
 	 */
-	function add_context_to_production_events_shortcode( $out, $pairs, $atts, $shortcode ) {
+	function add_context_to_production_events_shortcode( $out, $pairs, $atts ) {
 		$out['context'] = 'production_events';
 		return $out;
 	}
