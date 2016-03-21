@@ -21,7 +21,7 @@ class WPT_Productions extends WPT_Listing {
 	 * @param 	array 	$vars	The current public query vars.
 	 * @return 	array			The new public query vars.
 	 */
-	public function add_query_vars($vars) {
+	public function add_query_vars( $vars ) {
 		$vars[] = 'wpt_day';
 		$vars[] = 'wpt_month';
 		$vars[] = 'wpt_year';
@@ -43,42 +43,42 @@ class WPT_Productions extends WPT_Listing {
 	 * @param 	array 	$filters	See WPT_Productions::get() for possible values.
 	 * @return 	array 				The categories.
 	 */
-	function get_categories($filters) {
+	function get_categories( $filters ) {
 		$categories = array();
 
-		$productions = $this->get($filters);
-		
-		if (!empty($productions)) {
+		$productions = $this->get( $filters );
+
+		if ( ! empty( $productions ) ) {
 			$production_ids = wp_list_pluck( $productions, 'ID' );
-	
+
 			/**
 			 * Filter the categories arguments.
 			 * You can use this to alter the ordering of the categories.
-			 * For possible values see: 
+			 * For possible values see:
 			 * https://codex.wordpress.org/Function_Reference/wp_get_object_terms
-			 * 
+			 *
 			 * @since	0.13.3
 			 * @param	$args	array	The current arguments.
 			 */
-			$args = apply_filters('wpt/productions/categories/args', array() );
+			$args = apply_filters( 'wpt/productions/categories/args', array() );
 			$terms = wp_get_object_terms( $production_ids, 'category', $args );
-	
+
 			foreach ( $terms as $term ) {
 				$categories[ $term->slug ] = $term->name;
 			}
-	
+
 			asort( $categories );
 		}
-		
+
 		/**
 		 * Filter the categories that have productions.
-		 * 
+		 *
 		 * @since	0.13.3
 		 * @param	array	$categories	The current categories.
 		 * @param	array	$filters	The production filters.
 		 */
-		$categories = apply_filters('wpt/productions/categories', $categories, $filters);
-		
+		$categories = apply_filters( 'wpt/productions/categories', $categories, $filters );
+
 		return $categories;
 	}
 
@@ -87,21 +87,22 @@ class WPT_Productions extends WPT_Listing {
 	 *
 	 * @see WPT_Listing::get_classes_for_html()
 	 *
-	 * @since 0.10
+	 * @since 	0.10
+	 * @since	0.14.7	Added $args to parent::get_classes_for_html().
 	 *
 	 * @access 	protected
 	 * @param 	array $args 	See WPT_Productions::get_html() for possible values. Default: array().
 	 * @return 	array 			The CSS classes.
 	 */
-	protected function get_classes_for_html($args = array()) {
+	protected function get_classes_for_html( $args = array() ) {
 
 		// Start with the default classes for listings.
-		$classes = parent::get_classes_for_html();
+		$classes = parent::get_classes_for_html( $args );
 
 		$classes[] = 'wpt_productions';
 
 		// Thumbnail
-		if ( ! empty($args['template']) && false === strpos( $args['template'],'{{thumbnail}}' ) ) {
+		if ( ! empty( $args['template'] ) && false === strpos( $args['template'],'{{thumbnail}}' ) ) {
 			$classes[] = 'wpt_productions_without_thumbnail';
 		}
 
@@ -127,7 +128,7 @@ class WPT_Productions extends WPT_Listing {
 	 *							See WPT_Productions::get() for possible values.
 	 * @return 	array 			The days.
 	 */
-	private function get_days($filters) {
+	private function get_days( $filters ) {
 		global $wp_theatre;
 
 		$days = array();
@@ -138,7 +139,7 @@ class WPT_Productions extends WPT_Listing {
 		}
 		$production_ids = array_unique( $production_ids );
 
-		if ( ! empty($production_ids) ) {
+		if ( ! empty( $production_ids ) ) {
 			// Inherit the date filters from the production filters.
 			$event_defaults = array(
 				'upcoming' => false,
@@ -161,7 +162,7 @@ class WPT_Productions extends WPT_Listing {
 	 *							See WPT_Productions::get() for possible values.
 	 * @return 	array 			The months.
 	 */
-	private function get_months($filters) {
+	private function get_months( $filters ) {
 		global $wp_theatre;
 
 		$months = array();
@@ -172,7 +173,7 @@ class WPT_Productions extends WPT_Listing {
 		}
 		$production_ids = array_unique( $production_ids );
 
-		if ( ! empty($production_ids) ) {
+		if ( ! empty( $production_ids ) ) {
 			// Inherit the date filters from the production filters.
 			$event_defaults = array(
 				'upcoming' => false,
@@ -195,7 +196,7 @@ class WPT_Productions extends WPT_Listing {
 	 *							See WPT_Productions::get() for possible values.
 	 * @return 	array 			The years.
 	 */
-	private function get_years($filters) {
+	private function get_years( $filters ) {
 		global $wp_theatre;
 
 		$years = array();
@@ -206,7 +207,7 @@ class WPT_Productions extends WPT_Listing {
 		}
 		$production_ids = array_unique( $production_ids );
 
-		if ( ! empty($production_ids) ) {
+		if ( ! empty( $production_ids ) ) {
 			// Inherit the date filters from the production filters.
 			$event_defaults = array(
 				'upcoming' => false,
@@ -233,14 +234,14 @@ class WPT_Productions extends WPT_Listing {
 	 * @param 	array $args 	See WPT_Productions::get_html() for possible values.
 	 * @return 	string			The HTML.
 	 */
-	private function get_html_for_day($day, $args = array()) {
+	private function get_html_for_day( $day, $args = array() ) {
 
 		/*
 		 * Set the `start`-filter to today.
 		 * Except when the active `start`-filter is set to a later date.
 		 */
 		if (
-			empty($args['start']) ||
+			empty( $args['start'] ) ||
 			(strtotime( $args['start'] ) < strtotime( $day ))
 		) {
 			$args['start'] = $day;
@@ -251,7 +252,7 @@ class WPT_Productions extends WPT_Listing {
 		 * Except when the active `end`-filter is set to an earlier date.
 		 */
 		if (
-			empty($args['end']) ||
+			empty( $args['end'] ) ||
 			(strtotime( $args['end'] ) > strtotime( $day.' +1 day' ))
 		) {
 			$args['end'] = $day.' +1 day';
@@ -275,14 +276,14 @@ class WPT_Productions extends WPT_Listing {
 	 * @param 	array 	$args 	See WPT_Productions::get_html() for possible values.
 	 * @return 	string			The HTML.
 	 */
-	private function get_html_for_month($month, $args = array()) {
+	private function get_html_for_month( $month, $args = array() ) {
 
 		/*
 		 * Set the `start`-filter to the first day of the month.
 		 * Except when the active `start`-filter is set to a later date.
 		 */
 		if (
-			empty($args['start']) ||
+			empty( $args['start'] ) ||
 			(strtotime( $args['start'] ) < strtotime( $month ))
 		) {
 			$args['start'] = $month;
@@ -293,7 +294,7 @@ class WPT_Productions extends WPT_Listing {
 		 * Except when the active `end`-filter is set to an earlier date.
 		 */
 		if (
-			empty($args['end']) ||
+			empty( $args['end'] ) ||
 			(strtotime( $args['end'] ) > strtotime( $month.' +1 month' ))
 		) {
 			$args['end'] = $month.' +1 month';
@@ -317,14 +318,14 @@ class WPT_Productions extends WPT_Listing {
 	 * @param 	array 	$args 	See WPT_Productions::get_html() for possible values.
 	 * @return 	string			The HTML.
 	 */
-	private function get_html_for_year($year, $args = array()) {
+	private function get_html_for_year( $year, $args = array() ) {
 
 		/*
 		 * Set the `start`-filter to the first day of the year.
 		 * Except when the active `start`-filter is set to a later date.
 		 */
 		if (
-			empty($args['start']) ||
+			empty( $args['start'] ) ||
 			(strtotime( $args['start'] ) < strtotime( $year.'-01-01' ))
 		) {
 			$args['start'] = $year.'-01-01';
@@ -335,7 +336,7 @@ class WPT_Productions extends WPT_Listing {
 		 * Except when the active `end`-filter is set to an earlier date.
 		 */
 		if (
-			empty($args['end']) ||
+			empty( $args['end'] ) ||
 			(strtotime( $args['end'] ) > strtotime( $year.'-01-01 +1 year' ))
 		) {
 			$args['end'] = $year.'-01-01 +1 year';
@@ -361,7 +362,7 @@ class WPT_Productions extends WPT_Listing {
 	 * @param 	array $args 	See WPT_Productions::get_html() for possible values.
 	 * @return 	string			The HTML.
 	 */
-	protected function get_html_for_page($args = array()) {
+	protected function get_html_for_page( $args = array() ) {
 		global $wp_query;
 
 		/*
@@ -370,16 +371,16 @@ class WPT_Productions extends WPT_Listing {
 		 * @see WPT_Events::get_html_page_navigation().
 		 */
 
-		if ( ! empty($wp_query->query_vars['wpt_season']) ) {
-			$html = $this->get_html_for_season( $wp_query->query_vars['wpt_season'], $args ); 
-		} elseif ( ! empty($wp_query->query_vars['wpt_category']) ) {
-			$html = $this->get_html_for_category( $wp_query->query_vars['wpt_category'], $args ); 
-		} elseif ( ! empty($wp_query->query_vars['wpt_year']) ) {
-			$html = $this->get_html_for_year( $wp_query->query_vars['wpt_year'], $args ); 
-		} elseif ( ! empty($wp_query->query_vars['wpt_month']) ) {
-			$html = $this->get_html_for_month( $wp_query->query_vars['wpt_month'], $args ); 
-		} elseif ( ! empty($wp_query->query_vars['wpt_day']) ) {
-			$html = $this->get_html_for_day( $wp_query->query_vars['wpt_day'], $args ); 
+		if ( ! empty( $wp_query->query_vars['wpt_season'] ) ) {
+			$html = $this->get_html_for_season( $wp_query->query_vars['wpt_season'], $args );
+		} elseif ( ! empty( $wp_query->query_vars['wpt_category'] ) ) {
+			$html = $this->get_html_for_category( $wp_query->query_vars['wpt_category'], $args );
+		} elseif ( ! empty( $wp_query->query_vars['wpt_year'] ) ) {
+			$html = $this->get_html_for_year( $wp_query->query_vars['wpt_year'], $args );
+		} elseif ( ! empty( $wp_query->query_vars['wpt_month'] ) ) {
+			$html = $this->get_html_for_month( $wp_query->query_vars['wpt_month'], $args );
+		} elseif ( ! empty( $wp_query->query_vars['wpt_day'] ) ) {
+			$html = $this->get_html_for_day( $wp_query->query_vars['wpt_day'], $args );
 		} else {
 			/*
 			 * The user didn't select a page.
@@ -412,7 +413,7 @@ class WPT_Productions extends WPT_Listing {
 	 * @param 	array $args 	See WPT_Productions::get_html() for possible values.
 	 * @return 	string			The HTML.
 	 */
-	private function get_html_for_season($season_id, $args = array()) {
+	private function get_html_for_season( $season_id, $args = array() ) {
 		$args['season'] = $season_id;
 		return $this->get_html_grouped( $args );
 	}
@@ -425,6 +426,7 @@ class WPT_Productions extends WPT_Listing {
 	 *
 	 * @since 	0.10
 	 * @since	0.13	Added support for days, months and years.
+	 * @since	0.14.7	Added $args to $production->html().
 	 *
 	 * @see WPT_Production::html();
 	 * @see WPT_Productions::get_html_for_season();
@@ -434,7 +436,7 @@ class WPT_Productions extends WPT_Listing {
 	 * @param 	array $args 	See WPT_Productions::get_html() for possible values.
 	 * @return 	string			The HTML.
 	 */
-	private function get_html_grouped($args = array()) {
+	private function get_html_grouped( $args = array() ) {
 
 		$args = wp_parse_args( $args, $this->default_args_for_html );
 
@@ -508,8 +510,8 @@ class WPT_Productions extends WPT_Listing {
 				 * No stickies in paginated or grouped views
 				 */
 				if (
-					! empty($args['paginateby']) ||
-					! empty($args['groupby'])
+					! empty( $args['paginateby'] ) ||
+					! empty( $args['groupby'] )
 				) {
 					$args['ignore_sticky_posts'] = true;
 				}
@@ -518,11 +520,7 @@ class WPT_Productions extends WPT_Listing {
 				$productions = $this->preload_productions_with_events( $productions );
 				$html_group = '';
 				foreach ( $productions as $production ) {
-					$production_args = array();
-					if ( ! empty($args['template']) ) {
-						$production_args = array( 'template' => $args['template'] );
-					}
-					$html_group .= $production->html( $production_args );
+					$html_group .= $production->html( $args['template'], $args );
 				}
 
 				/**
@@ -577,7 +575,7 @@ class WPT_Productions extends WPT_Listing {
 	 * }
 		 * @return string HTML.
 	 */
-	public function get_html($args = array()) {
+	public function get_html( $args = array() ) {
 
 		$html = parent::get_html( $args );
 
@@ -607,7 +605,7 @@ class WPT_Productions extends WPT_Listing {
 	 * @param 	array $args 			See WPT_Productions::get_html() for possible values.
 	 * @return 	string					The HTML.
 	 */
-	private function get_html_for_category($category_slug, $args = array()) {
+	private function get_html_for_category( $category_slug, $args = array() ) {
 		if ( $category = get_category_by_slug( $category_slug ) ) {
 				$args['cat'] = $category->term_id;
 		}
@@ -617,52 +615,52 @@ class WPT_Productions extends WPT_Listing {
 
 	/**
 	 * Gets the pagination filters for a production listing.
-	 * 
+	 *
 	 * @since	0.13.4
 	 * @return 	array	The pagination filters for a production listing.
 	 */
 	public function get_pagination_filters() {
-		
+
 		$filters = parent::get_pagination_filters();
 
-		$filters['day'] =  array(
-			'title' => __('Days', 'theatre'),
+		$filters['day'] = array(
+			'title' => __( 'Days', 'theatre' ),
 			'query_arg' => 'wpt_day',
-			'callback' => array($this, 'get_days'),
+			'callback' => array( $this, 'get_days' ),
 		);
-		
-		$filters['month'] =  array(
-			'title' => __('Months', 'theatre'),
+
+		$filters['month'] = array(
+			'title' => __( 'Months', 'theatre' ),
 			'query_arg' => 'wpt_month',
-			'callback' => array($this, 'get_months'),
+			'callback' => array( $this, 'get_months' ),
 		);
-		
+
 		$filters['year'] = array(
-			'title' => __('Years', 'theatre'),
+			'title' => __( 'Years', 'theatre' ),
 			'query_arg' => 'wpt_year',
-			'callback' => array($this, 'get_years'),
+			'callback' => array( $this, 'get_years' ),
 		);
-		
+
 		$filters['category'] = array(
-			'title' => __('Categories', 'theatre'),
+			'title' => __( 'Categories', 'theatre' ),
 			'query_arg' => 'wpt_category',
-			'callback' => array($this, 'get_categories'),
+			'callback' => array( $this, 'get_categories' ),
 		);
-		
+
 		$filters['season'] = array(
-			'title' => __('Seasons', 'theatre'),
+			'title' => __( 'Seasons', 'theatre' ),
 			'query_arg' => 'wpt_season',
-			'callback' => array($this, 'get_seasons'),
+			'callback' => array( $this, 'get_seasons' ),
 		);
-		
+
 		/**
 		 * Filter the pagination filters for a production listing.
-		 * 
+		 *
 		 * @since 	0.13.4
 		 * @param	array	$filters	The pagination filters for a production listing.
 		 */
-		$filters = apply_filters('wpt/productions/pagination/filters', $filters);
-		
+		$filters = apply_filters( 'wpt/productions/pagination/filters', $filters );
+
 		return $filters;
 	}
 
@@ -684,45 +682,45 @@ class WPT_Productions extends WPT_Listing {
 	 *							See WPT_Events::get_html() for possible values.
 	 * @return 	string			The HTML for the page navigation.
 	 */
-	protected function get_html_page_navigation($args = array()) {
+	protected function get_html_page_navigation( $args = array() ) {
 		global $wp_query;
 
 		$html = '';
 
-		$paginateby = empty($args['paginateby']) ? array() : $args['paginateby'];
-		
+		$paginateby = empty( $args['paginateby'] ) ? array() : $args['paginateby'];
+
 		$filters = $this->get_pagination_filters();
-		
-		foreach ($filters as $filter_name => $filter_options) {
-			if (!empty($wp_query->query_vars[ $filter_options['query_arg'] ])) {
+
+		foreach ( $filters as $filter_name => $filter_options ) {
+			if ( ! empty( $wp_query->query_vars[ $filter_options['query_arg'] ] ) ) {
 				$paginateby[] = $filter_name;
 			}
 		}
-		
-		$paginateby = array_unique($paginateby);
-		
-		foreach($paginateby as $paginateby_filter) {
-			if (!empty($filters[ $paginateby_filter ])) {				
-				$options = call_user_func_array( 
-					$filters[ $paginateby_filter ]['callback'], 
-					array( $args ) 
+
+		$paginateby = array_unique( $paginateby );
+
+		foreach ( $paginateby as $paginateby_filter ) {
+			if ( ! empty( $filters[ $paginateby_filter ] ) ) {
+				$options = call_user_func_array(
+					$filters[ $paginateby_filter ]['callback'],
+					array( $args )
 				);
-				$html.= $this->filter_pagination(
+				$html .= $this->filter_pagination(
 					$paginateby_filter,
 					$options,
 					$args
-				);			
+				);
 			}
 		}
 
 		/**
-		 * Filter the HTML of the page navigation for productions list. 
-		 * 
+		 * Filter the HTML of the page navigation for productions list.
+		 *
 		 * @since	0.13.3
 		 * @param 	string 	$html	The HTML of the page navigation for an event listing.
 		 * @param 	array 	$args	The arguments being used for the event listing.
 		 */
-		$html = apply_filters('wpt/productions/html/page/navigation', $html, $args);
+		$html = apply_filters( 'wpt/productions/html/page/navigation', $html, $args );
 
 		return $html;
 	}
@@ -736,7 +734,7 @@ class WPT_Productions extends WPT_Listing {
 	 * @param 	string 	$end	The end time. Can be anything that strtotime understands.
 	 * @return 	array			The productions.
 	 */
-	private function get_productions_by_date($start = false, $end = false) {
+	private function get_productions_by_date( $start = false, $end = false ) {
 		global $wp_theatre;
 		$productions = array();
 		if ( $start || $end ) {
@@ -801,7 +799,7 @@ class WPT_Productions extends WPT_Listing {
 	 * }
 	 * @return array 	An array of WPT_Production objects.
 	 */
-	public function get($filters = array()) {
+	public function get( $filters = array() ) {
 		global $wp_theatre;
 
 		$defaults = array(
@@ -895,7 +893,7 @@ class WPT_Productions extends WPT_Listing {
 		 */
 		if ( $filters['start'] || $filters['end'] ) {
 			$productions_by_date = $this->get_productions_by_date( $filters['start'], $filters['end'] );
-			if ( empty($args['post__in']) ) {
+			if ( empty( $args['post__in'] ) ) {
 				$args['post__in'] = $productions_by_date;
 			} else {
 				$args['post__in'] = array_intersect(
@@ -904,10 +902,9 @@ class WPT_Productions extends WPT_Listing {
 				);
 			}
 			// Remove production that are in 'post__not_in'.
-			if (!empty($args['post__not_in'])) {
-			    $args['post__in'] = array_diff($args['post__in'], $args['post__not_in']);
+			if ( ! empty( $args['post__not_in'] ) ) {
+			    $args['post__in'] = array_diff( $args['post__in'], $args['post__not_in'] );
 			}
-
 		}
 
 		/**
@@ -929,8 +926,8 @@ class WPT_Productions extends WPT_Listing {
          * This is different from the way that WP_Query handles an empty 'post__in' argument.
 		 */
 		if (
-			! isset($args['post__in']) ||	// True when 'post__in', 'start', 'end' and 'upcoming' filters are not used.
-			! empty($args['post__in'])		// True when the date filter resulted in matching productions.
+			! isset( $args['post__in'] ) ||	// True when 'post__in', 'start', 'end' and 'upcoming' filters are not used.
+			! empty( $args['post__in'] )		// True when the date filter resulted in matching productions.
 		) {
 			$posts = get_posts( $args );
 		}
@@ -941,37 +938,37 @@ class WPT_Productions extends WPT_Listing {
 		 */
 		if (
 			! $filters['ignore_sticky_posts'] &&
-			empty($args['cat']) &&
-			empty($args['category_name']) &&
-			empty($args['category__and']) &&
-			empty($args['category__in']) &&
+			empty( $args['cat'] ) &&
+			empty( $args['category_name'] ) &&
+			empty( $args['category__and'] ) &&
+			empty( $args['category__in'] ) &&
 			! $filters['post__in'] &&
 			! $filters['season'] &&
 			$args['posts_per_page'] < 0
 		) {
 			$sticky_posts = get_option( 'sticky_posts' );
 
-			if ( ! empty($sticky_posts) ) {
+			if ( ! empty( $sticky_posts ) ) {
 				$sticky_offset = 0;
 
 				foreach ( $posts as $post ) {
 					if ( in_array( $post->ID,$sticky_posts ) ) {
 						$offset = array_search( $post->ID, $sticky_posts );
-						unset($sticky_posts[ $offset ]);
+						unset( $sticky_posts[ $offset ] );
 					}
 				}
 
-				if ( ! empty($sticky_posts) ) {
+				if ( ! empty( $sticky_posts ) ) {
 					/*
 					 * Respect $args['post__not_in']. Remove them from $sticky_posts.
 					 * We can't just add it to the `$sticky_args` below, because
 					 * `post__not_in` is overruled by `post__in'.
 					 */
-					if ( ! empty($args['post__not_in']) ) {
+					if ( ! empty( $args['post__not_in'] ) ) {
 						foreach ( $args['post__not_in'] as $post__not_in_id ) {
 							if ( in_array( $post__not_in_id,$sticky_posts ) ) {
 								$offset = array_search( $post__not_in_id, $sticky_posts );
-								unset($sticky_posts[ $offset ]);
+								unset( $sticky_posts[ $offset ] );
 							}
 						}
 					}
@@ -979,7 +976,7 @@ class WPT_Productions extends WPT_Listing {
 					/*
 					 * Continue if there are any $sticky_posts left.
 					 */
-					if ( ! empty($sticky_posts) ) {
+					if ( ! empty( $sticky_posts ) ) {
 						$sticky_args = array(
 							'post__in' => $sticky_posts,
 							'post_type' => WPT_Production::post_type_name,
@@ -990,7 +987,7 @@ class WPT_Productions extends WPT_Listing {
 						/*
 						 * Respect $args['category__not_in'].
 						 */
-						if ( ! empty($args['category__not_in']) ) {
+						if ( ! empty( $args['category__not_in'] ) ) {
 							$sticky_args['category__not_in'] = $args['category__not_in'];
 						}
 
@@ -1023,7 +1020,7 @@ class WPT_Productions extends WPT_Listing {
 	 * @param 	array	$productions	An array of WPT_Production objects.
 	 * @return 	array					An array of WPT_Production objects, with the events preloaded.
 	 */
-	private function preload_productions_with_events($productions) {
+	private function preload_productions_with_events( $productions ) {
 		global $wp_theatre;
 		$production_ids = array();
 
@@ -1058,7 +1055,7 @@ class WPT_Productions extends WPT_Listing {
 
 		foreach ( $events as $event ) {
 			$production_id = get_post_meta( $event->ID, WPT_Production::post_type_name, true );
-			if ( ! empty($production_id) ) {
+			if ( ! empty( $production_id ) ) {
 				$productions_with_keys[ $production_id ][] = new WPT_Event( $event );
 			}
 		}
@@ -1075,7 +1072,7 @@ class WPT_Productions extends WPT_Listing {
 	 * @deprecated 0.10
 	 * @see WPT_Productions::get_categories()
 	 */
-	public function categories($filters = array()) {
+	public function categories( $filters = array() ) {
 		_deprecated_function( 'WPT_Productions::categories()', '0.10', 'WPT_Productions::get_categories()' );
 		return $this->get_categories( $filters );
 	}
@@ -1084,11 +1081,9 @@ class WPT_Productions extends WPT_Listing {
 	 * @deprecated 0.10
 	 * @see WPT_Productions::get_seasons()
 	 */
-	public function seasons($filters = array()) {
+	public function seasons( $filters = array() ) {
 		_deprecated_function( 'WPT_Productions::get_seasons()', '0.10', 'WPT_Productions::get_seasons()' );
 		return $this->get_seasons( $filters );
 	}
-
-
 }
 ?>

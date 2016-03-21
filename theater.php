@@ -5,7 +5,7 @@
 	Plugin URI: http://theater.slimndap.com/
 	Description: Turn your Wordpress website into a theater website.
 	Author: Jeroen Schmit
-	Version: 0.14.6
+	Version: 0.14.7
 	Author URI: http://slimndap.com/
 	Text Domain: theatre
 	Domain Path: /lang
@@ -28,7 +28,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	
-$wpt_version = '0.14.6';
+$wpt_version = '0.14.7';
 
 class WP_Theatre {
 	function __construct() {
@@ -50,6 +50,7 @@ class WP_Theatre {
 		$this->transient = new WPT_Transient();
 		$this->listing_page = new WPT_Listing_Page();
 		$this->calendar = new WPT_Calendar();
+		$this->context = new WPT_Context();
 		$this->filter = new WPT_Filter();
 		$this->event_admin = new WPT_Event_Admin();
 		$this->event_editor = new WPT_Event_Editor();
@@ -124,6 +125,7 @@ class WP_Theatre {
 		require_once(dirname(__FILE__) . '/functions/wpt_transient.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_listing_page.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_calendar.php');	
+		require_once(dirname(__FILE__) . '/functions/wpt_context.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_filter.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_cart.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_bulk_editor.php');	

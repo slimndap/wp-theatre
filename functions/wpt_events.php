@@ -21,7 +21,7 @@ class WPT_Events extends WPT_Listing {
 	 * @param array $vars	The current public query vars.
 	 * @return array		The new public query vars.
 	 */
-	public function add_query_vars($vars) {
+	public function add_query_vars( $vars ) {
 		$vars[] = 'wpt_day';
 		$vars[] = 'wpt_month';
 		$vars[] = 'wpt_year';
@@ -40,7 +40,7 @@ class WPT_Events extends WPT_Listing {
 	 * @param 	array $filters	See WPT_Events::get() for possible values.
 	 * @return 	array 			Categories.
 	 */
-	function get_categories($filters = array()) {
+	function get_categories( $filters = array() ) {
 		$filters['category'] = false;
 		$events = $this->get( $filters );
 		$event_ids = wp_list_pluck( $events, 'ID' );
@@ -60,21 +60,22 @@ class WPT_Events extends WPT_Listing {
 	 *
 	 * @see WPT_Listing::get_classes_for_html()
 	 *
-	 * @since 0.10
+	 * @since 	0.10
+	 * @since	0.14.7	Added $args to parent::get_classes_for_html().
 	 *
 	 * @access 	protected
 	 * @param 	array $args 	See WPT_Events::get_html() for possible values. Default: array().
 	 * @return 	array 			The CSS classes.
 	 */
-	protected function get_classes_for_html($args = array()) {
+	protected function get_classes_for_html( $args = array() ) {
 
 		// Start with the default classes for listings.
-		$classes = parent::get_classes_for_html();
+		$classes = parent::get_classes_for_html( $args );
 
 		$classes[] = 'wpt_events';
 
 		// Thumbnail
-		if ( ! empty($args['template']) && false === strpos( $args['template'],'{{thumbnail}}' ) ) {
+		if ( ! empty( $args['template'] ) && false === strpos( $args['template'],'{{thumbnail}}' ) ) {
 			$classes[] = 'wpt_events_without_thumbnail';
 		}
 
@@ -106,14 +107,14 @@ class WPT_Events extends WPT_Listing {
 	 * @param 	array $filters	See WPT_Events::get() for possible values.
 	 * @return 	array 			Days.
 	 */
-	function get_days($filters = array()) {
+	function get_days( $filters = array() ) {
 		$events = $this->get( $filters );
 		$days = array();
 		foreach ( $events as $event ) {
 			$days[ date( 'Y-m-d',$event->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ] = date_i18n( 'D j M',$event->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
 		}
 
-		if ( ! empty($filters['order']) && 'desc' == $filters['order'] ) {
+		if ( ! empty( $filters['order'] ) && 'desc' == $filters['order'] ) {
 			krsort( $days );
 		} else {
 			ksort( $days );
@@ -159,7 +160,7 @@ class WPT_Events extends WPT_Listing {
 	 * }
 		 * @return string HTML.
 	 */
-	public function get_html($args = array()) {
+	public function get_html( $args = array() ) {
 
 		$html = parent::get_html( $args );
 
@@ -189,7 +190,7 @@ class WPT_Events extends WPT_Listing {
 	 * @param 	array $args 				See WPT_Events::get_html() for possible values.
 	 * @return 	string						The HTML.
 	 */
-	private function get_html_for_category($category_slug, $args = array()) {
+	private function get_html_for_category( $category_slug, $args = array() ) {
 		if ( $category = get_category_by_slug( $category_slug ) ) {
 				$args['cat'] = $category->term_id;
 		}
@@ -209,14 +210,14 @@ class WPT_Events extends WPT_Listing {
 	 * @param 	array $args 	See WPT_Events::get_html() for possible values.
 	 * @return 	string			The HTML.
 	 */
-	private function get_html_for_day($day, $args = array()) {
+	private function get_html_for_day( $day, $args = array() ) {
 
 		/*
 		 * Set the `start`-filter to today.
 		 * Except when the active `start`-filter is set to a later date.
 		 */
 		if (
-			empty($args['start']) ||
+			empty( $args['start'] ) ||
 			(strtotime( $args['start'] ) < strtotime( $day ))
 		) {
 			$args['start'] = $day;
@@ -227,7 +228,7 @@ class WPT_Events extends WPT_Listing {
 		 * Except when the active `end`-filter is set to an earlier date.
 		 */
 		if (
-			empty($args['end']) ||
+			empty( $args['end'] ) ||
 			(strtotime( $args['end'] ) > strtotime( $day.' +1 day' ))
 		) {
 			$args['end'] = $day.' +1 day';
@@ -248,14 +249,14 @@ class WPT_Events extends WPT_Listing {
 	 * @param 	array $args 	See WPT_Events::get_html() for possible values.
 	 * @return 	string			The HTML.
 	 */
-	private function get_html_for_month($month, $args = array()) {
+	private function get_html_for_month( $month, $args = array() ) {
 
 		/*
 		 * Set the `start`-filter to the first day of the month.
 		 * Except when the active `start`-filter is set to a later date.
 		 */
 		if (
-			empty($args['start']) ||
+			empty( $args['start'] ) ||
 			(strtotime( $args['start'] ) < strtotime( $month ))
 		) {
 			$args['start'] = $month;
@@ -266,7 +267,7 @@ class WPT_Events extends WPT_Listing {
 		 * Except when the active `end`-filter is set to an earlier date.
 		 */
 		if (
-			empty($args['end']) ||
+			empty( $args['end'] ) ||
 			(strtotime( $args['end'] ) > strtotime( $month.' +1 month' ))
 		) {
 			$args['end'] = $month.' +1 month';
@@ -287,14 +288,14 @@ class WPT_Events extends WPT_Listing {
 	 * @param 	array $args 	See WPT_Events::get_html() for possible values.
 	 * @return 	string			The HTML.
 	 */
-	private function get_html_for_year($year, $args = array()) {
+	private function get_html_for_year( $year, $args = array() ) {
 
 		/*
 		 * Set the `start`-filter to the first day of the year.
 		 * Except when the active `start`-filter is set to a later date.
 		 */
 		if (
-			empty($args['start']) ||
+			empty( $args['start'] ) ||
 			(strtotime( $args['start'] ) < strtotime( $year.'-01-01' ))
 		) {
 			$args['start'] = $year.'-01-01';
@@ -305,7 +306,7 @@ class WPT_Events extends WPT_Listing {
 		 * Except when the active `end`-filter is set to an earlier date.
 		 */
 		if (
-			empty($args['end']) ||
+			empty( $args['end'] ) ||
 			(strtotime( $args['end'] ) > strtotime( $year.'-01-01 +1 year' ))
 		) {
 			$args['end'] = $year.'-01-01 +1 year';
@@ -329,7 +330,7 @@ class WPT_Events extends WPT_Listing {
 	 * @param 	array $args 	See WPT_Events::get_html() for possible values.
 	 * @return 	string			The HTML.
 	 */
-	protected function get_html_for_page($args = array()) {
+	protected function get_html_for_page( $args = array() ) {
 		global $wp_query;
 
 		$html = '';
@@ -340,13 +341,13 @@ class WPT_Events extends WPT_Listing {
 		 * @see WPT_Events::get_html_page_navigation().
 		 */
 
-		if ( ! empty($wp_query->query_vars['wpt_year']) ) {
+		if ( ! empty( $wp_query->query_vars['wpt_year'] ) ) {
 			$html = $this->get_html_for_year( $wp_query->query_vars['wpt_year'], $args );
-		} elseif ( ! empty($wp_query->query_vars['wpt_month']) ) {
+		} elseif ( ! empty( $wp_query->query_vars['wpt_month'] ) ) {
 			$html = $this->get_html_for_month( $wp_query->query_vars['wpt_month'], $args );
-		} elseif ( ! empty($wp_query->query_vars['wpt_day']) ) {
+		} elseif ( ! empty( $wp_query->query_vars['wpt_day'] ) ) {
 			$html = $this->get_html_for_day( $wp_query->query_vars['wpt_day'], $args );
-		} elseif ( ! empty($wp_query->query_vars['wpt_category']) ) {
+		} elseif ( ! empty( $wp_query->query_vars['wpt_category'] ) ) {
 			$html = $this->get_html_for_category( $wp_query->query_vars['wpt_category'], $args );
 		} else {
 			/*
@@ -374,7 +375,8 @@ class WPT_Events extends WPT_Listing {
 	 * The events can be grouped inside a page by setting $groupby.
 	 * If $groupby is not set then all events are show in a single, ungrouped list.
 	 *
-	 * @since 0.10
+	 * @since 	0.10
+	 * @since	0.14.7	Added $args to $event->html().
 	 *
 	 * @see WPT_Event::html();
 	 * @see WPT_Events::get_html_for_month();
@@ -385,7 +387,7 @@ class WPT_Events extends WPT_Listing {
 	 * @param 	array $args 	See WPT_Events::get_html() for possible values.
 	 * @return 	string			The HTML.
 	 */
-	private function get_html_grouped($args = array()) {
+	private function get_html_grouped( $args = array() ) {
 
 		$args = wp_parse_args( $args, $this->default_args_for_html );
 
@@ -448,40 +450,37 @@ class WPT_Events extends WPT_Listing {
 				$events = $this->preload_events_with_productions( $events );
 				$html_group = '';
 				foreach ( $events as $event ) {
-					$event_args = array();
-					
+
 					/*
 					 * Use the general default template for events.
 					 * @see WPT_Event_Template::get_default();
 					 */
 					$template = false;
-					
+
 					/**
 					 * Filter the default template for events in lists.
-					 * 
+					 *
 					 * @since	0.14.6
 					 * @param	string	$template	The default template.
 					 */
-					$template = apply_filters('wpt/events/event/template/default', $template);
-					
-					if ( ! empty($args['template']) ) {
+					$template = apply_filters( 'wpt/events/event/template/default', $template );
+
+					if ( ! empty( $args['template'] ) ) {
 						$template = $args['template'];
 					}
 
-					$event_args = array( 'template' => $template );
+					$html_event = $event->html( $template, $args );
 
-					$html_event = $event->html( $event_args );
-					
 					/**
 					 * Filters the event HTML in lists.
-					 * 
+					 *
 					 * @since	0.14.6
-					 * 
+					 *
 					 * @param	string		$html_event	The event HTML.
 					 * @param	WPT_Event	$event		The event.
 					 */
-					$html_event = apply_filters('wpt/events/event/html', $html_event, $event);
-					
+					$html_event = apply_filters( 'wpt/events/event/html', $html_event, $event );
+
 					$html_group .= $html_event;
 				}
 
@@ -501,46 +500,46 @@ class WPT_Events extends WPT_Listing {
 
 	/**
 	 * Gets the pagination filters for an event listing.
-	 * 
+	 *
 	 * @since	0.13.4
 	 * @return 	array	The pagination filters for an event listing.
 	 */
 	public function get_pagination_filters() {
-		
+
 		$filters = parent::get_pagination_filters();
 
-		$filters['day'] =  array(
-			'title' => __('Days', 'theatre'),
+		$filters['day'] = array(
+			'title' => __( 'Days', 'theatre' ),
 			'query_arg' => 'wpt_day',
-			'callback' => array($this, 'get_days'),
+			'callback' => array( $this, 'get_days' ),
 		);
-		
-		$filters['month'] =  array(
-			'title' => __('Months', 'theatre'),
+
+		$filters['month'] = array(
+			'title' => __( 'Months', 'theatre' ),
 			'query_arg' => 'wpt_month',
-			'callback' => array($this, 'get_months'),
+			'callback' => array( $this, 'get_months' ),
 		);
-		
+
 		$filters['year'] = array(
-			'title' => __('Years', 'theatre'),
+			'title' => __( 'Years', 'theatre' ),
 			'query_arg' => 'wpt_year',
-			'callback' => array($this, 'get_years'),
+			'callback' => array( $this, 'get_years' ),
 		);
-		
+
 		$filters['category'] = array(
-			'title' => __('Categories', 'theatre'),
+			'title' => __( 'Categories', 'theatre' ),
 			'query_arg' => 'wpt_category',
-			'callback' => array($this, 'get_categories'),
+			'callback' => array( $this, 'get_categories' ),
 		);
-		
+
 		/**
 		 * Filter the pagination filters for an event listing.
-		 * 
+		 *
 		 * @since 	0.13.4
 		 * @param	array	$filters	The current pagination filters for an event listing..
 		 */
-		$filters = apply_filters('wpt/events/pagination/filters', $filters);
-		
+		$filters = apply_filters( 'wpt/events/pagination/filters', $filters );
+
 		return $filters;
 	}
 
@@ -561,43 +560,43 @@ class WPT_Events extends WPT_Listing {
 	 *							See WPT_Events::get_html() for possible values.
 	 * @return 	string			The HTML for the page navigation.
 	 */
-	protected function get_html_page_navigation($args = array()) {
+	protected function get_html_page_navigation( $args = array() ) {
 		global $wp_query;
 
 		$html = '';
 
-		$paginateby = empty($args['paginateby']) ? array() : $args['paginateby'];
-		
+		$paginateby = empty( $args['paginateby'] ) ? array() : $args['paginateby'];
+
 		$filters = $this->get_pagination_filters();
-		
-		foreach ($filters as $filter_name => $filter_options) {
-			if (!empty($wp_query->query_vars[ $filter_options['query_arg'] ])) {
+
+		foreach ( $filters as $filter_name => $filter_options ) {
+			if ( ! empty( $wp_query->query_vars[ $filter_options['query_arg'] ] ) ) {
 				$paginateby[] = $filter_name;
 			}
 		}
-		
-		$paginateby = array_unique($paginateby);
-		
-		foreach($paginateby as $paginateby_filter) {
-			$options = call_user_func_array( 
-				$filters[ $paginateby_filter ]['callback'], 
-				array( $args ) 
+
+		$paginateby = array_unique( $paginateby );
+
+		foreach ( $paginateby as $paginateby_filter ) {
+			$options = call_user_func_array(
+				$filters[ $paginateby_filter ]['callback'],
+				array( $args )
 			);
-			$html.= $this->filter_pagination(
+			$html .= $this->filter_pagination(
 				$paginateby_filter,
 				$options,
 				$args
-			);			
+			);
 		}
 
 		/**
-		 * Filter the HTML of the page navigation for an event listing. 
-		 * 
+		 * Filter the HTML of the page navigation for an event listing.
+		 *
 		 * @since	0.13.3
 		 * @param 	string 	$html	The HTML of the page navigation for an event listing.
 		 * @param 	array 	$args	The arguments being used for the event listing.
 		 */
-		$html = apply_filters('wpt/events/html/page/navigation', $html, $args);
+		$html = apply_filters( 'wpt/events/html/page/navigation', $html, $args );
 
 		return $html;
 	}
@@ -617,14 +616,14 @@ class WPT_Events extends WPT_Listing {
 	 * @param array $filters	See WPT_Events::get() for possible values.
 	 * @return array 			Months.
 	 */
-	function get_months($filters = array()) {
+	function get_months( $filters = array() ) {
 		$events = $this->get( $filters );
 		$months = array();
 		foreach ( $events as $event ) {
 			$months[ date( 'Y-m',$event->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ] = date_i18n( 'M Y',$event->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
 		}
 
-		if ( ! empty($filters['order']) && 'desc' == $filters['order'] ) {
+		if ( ! empty( $filters['order'] ) && 'desc' == $filters['order'] ) {
 			krsort( $months );
 		} else {
 			ksort( $months );
@@ -645,14 +644,14 @@ class WPT_Events extends WPT_Listing {
 	 * @param 	array $filters	See WPT_Events::get() for possible values.
 	 * @return 	array 			Years.
 	 */
-	function get_years($filters = array()) {
+	function get_years( $filters = array() ) {
 		$events = $this->get( $filters );
 		$years = array();
 		foreach ( $events as $event ) {
 			$years[ date( 'Y',$event->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ] = date_i18n( 'Y',$event->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
 		}
 
-		if ( ! empty($filters['order']) && 'desc' == $filters['order'] ) {
+		if ( ! empty( $filters['order'] ) && 'desc' == $filters['order'] ) {
 			krsort( $years );
 		} else {
 			ksort( $years );
@@ -677,7 +676,7 @@ class WPT_Events extends WPT_Listing {
 
 		$events = get_posts( $args );
 
-		if ( empty($events) ) {
+		if ( empty( $events ) ) {
 			return false;
 		} else {
 			return new WPT_Event( $events[0] );
@@ -703,7 +702,7 @@ class WPT_Events extends WPT_Listing {
 		 * @return array Events.
 	 */
 
-	public function get($filters = array()) {
+	public function get( $filters = array() ) {
 		global $wp_theatre;
 
 		$defaults = array(
@@ -874,7 +873,7 @@ class WPT_Events extends WPT_Listing {
 	 * @param 	array	$events		An array of WPT_Event objects.
 	 * @return 	array				An array of WPT_Event objects, with the production preloaded.
 	 */
-	private function preload_events_with_productions($events) {
+	private function preload_events_with_productions( $events ) {
 
 		$production_ids = array();
 
@@ -911,7 +910,7 @@ class WPT_Events extends WPT_Listing {
 	 * @deprecated 0.10
 	 * @see WPT_Events::get_categories()
 	 */
-	public function categories($filters = array()) {
+	public function categories( $filters = array() ) {
 		_deprecated_function( 'WPT_Events::categories()', '0.10', 'WPT_Events::get_categories()' );
 		return $this->get_categories( $filters );
 	}
@@ -920,7 +919,7 @@ class WPT_Events extends WPT_Listing {
 	 * @deprecated 0.10
 	 * @see WPT_Events::get_days()
 	 */
-	public function days($filters = array()) {
+	public function days( $filters = array() ) {
 		_deprecated_function( 'WPT_Events::days()', '0.10', 'WPT_Events::get_days()' );
 		return $this->get_days( $filters );
 	}
@@ -929,11 +928,9 @@ class WPT_Events extends WPT_Listing {
 	 * @deprecated 0.10
 	 * @see WPT_Events::get_months()
 	 */
-	public function months($filters = array()) {
+	public function months( $filters = array() ) {
 		_deprecated_function( 'WPT_Events::months()', '0.10', 'WPT_Events::get_months()' );
 		return $this->get_months( $filters );
 	}
-
-
 }
 ?>
