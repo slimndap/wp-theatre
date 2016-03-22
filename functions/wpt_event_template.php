@@ -27,6 +27,8 @@ class WPT_Event_Template extends WPT_Template {
 	 * Gets the value for a field from an event.
 	 *
 	 * @since 	0.12.1
+	 * @since	0.15	Fixed an error when no production is set for the event.
+	 *
 	 * @access 	protected
 	 * @param 	string	$field		The field.
 	 * @param 	array 	$args		Arguments for the field (optional).

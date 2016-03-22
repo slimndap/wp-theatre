@@ -8,6 +8,8 @@ class WPT_Extensions_Promo {
 
 	function __construct() {
 		add_filter( 'plugin_row_meta', array( $this, 'add_plugin_row_meta' ), 10, 2 );
+		
+		// Add the 'extensions' submenu with priority 40 to move it below the 'settings' submenu.
 		add_action( 'admin_menu', array( $this, 'add_menu' ), 40 );
 	}
 

@@ -111,6 +111,7 @@ class WPT_Productions_Admin {
 	public function page_html() {
 
 		$list_table = new WPT_Productions_List_Table();
+		$list_table->process_bulk_actions();
 
 		ob_start();
 

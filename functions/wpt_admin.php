@@ -10,9 +10,9 @@ class WPT_Admin {
 		 * appears above the seasons menu.
 		 * @since 0.15
 		 */
-		add_action( 'admin_menu', array($this, 'add_admin_menu' ), 5);
-		
+		add_action( 'admin_menu', array($this, 'add_theater_menu' ), 5);		
 		add_action( 'admin_menu', array($this, 'add_settings_menu' ), 30);
+		
 		add_action( 'add_meta_boxes', array($this, 'add_meta_boxes'));
 		add_action( 'quick_edit_custom_box', array($this,'quick_edit_custom_box'), 10, 2 );
 
@@ -170,7 +170,14 @@ class WPT_Admin {
 		}
 	}
 
-	public function add_admin_menu() {
+	/**
+	 * Adds a 'Theater' admin menu.
+	 * 
+	 * @since	0.?
+	 * @since	0.15	No longer adds the 'Settings' submenu.
+	 *					@see WPT_Admin::add_settings_menu().
+	 */
+	function add_theater_menu() {
 		add_menu_page( 
 			__('Theater','wp_theatre'), 
 			__('Theater','wp_theatre'), 
@@ -182,7 +189,13 @@ class WPT_Admin {
 		);	
 	}
 
-	public function add_settings_menu() {
+	/**
+	 * Adds a 'Settings' submenu to the 'Theater' menu.
+	 * 
+	 * @since	0.15
+	 * @see		WPT_Admin::add_theater_menu().
+	 */
+	function add_settings_menu() {
 		add_submenu_page( 
 			'theater-events',
 			__('Theater','wp_theatre').' '.__('Settings'), 
@@ -223,12 +236,6 @@ class WPT_Admin {
             WPT_Production::post_type_name,
             'side'
         );
-	}
-
-	public function productions_admin_html() {
-		$list_table = new WPT_Production_Admin_List_Table();
-		$list_table->prepare_items();
-		$list_table->display();
 	}
 
 	/**

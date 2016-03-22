@@ -783,6 +783,7 @@ class WPT_Productions extends WPT_Listing {
 	 * @since	0.13	Support for 'start' and 'end'.
 	 * @since	0.14.2	Fixed a conflict when using 'start' and 'post__not_in' together.
 	 *					See #183.
+	 * @since	0.15	Added support for 's' (keyword search).
 	 *
 	 * @param array $args {
 	 *		string $order. 			See WP_Query.

@@ -22,7 +22,7 @@ class WPT_Event_Admin {
 	 * 
 	 * @since	0.11
 	 * @since	0.13	Moved from WPT_Event_Editor to WPT_Event_Admin.
-	 * @return 	void
+	 * @since	0.15	Renamed title of metabox from 'Event' to 'Event date'.
 	 */
 	public function add_event_editor_meta_box() {
 		add_meta_box(
@@ -40,6 +40,8 @@ class WPT_Event_Admin {
 	 * 
 	 * @since	0.11
 	 * @since	0.13	Moved from WPT_Event_Editor to WPT_Event_Admin.
+	 * @since	0.15	Renamed production field label from 'Production' to 'Event'.
+	 *
 	 * @param 	array 	$fields		The currently defined fields for the event editor.
 	 * @param 	int 	$event_id	The event that being edited.
 	 * @return 	array				The fields, with a production field added at the beginning.
@@ -138,8 +140,9 @@ class WPT_Event_Admin {
 	 * Outputs the contents of the Publish meta box.
 	 * 
 	 * @since	0.13
+	 * @since	0.15	Renamed button label from 'Update Event' to 'Update Event Date'.
+	 *
 	 * @param 	int		$event	The event ID.
-	 * @return 	void
 	 */
 	public function publish_meta_box($event) {
 		$html = '';

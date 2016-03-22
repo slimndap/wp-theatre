@@ -22,9 +22,7 @@ class WPT_Productions_List_Table extends WP_List_Table {
 				'plural'   => 'productions',
 				'ajax'     => false,
 			)
-		);
-		
-		$this->process_bulk_actions();
+		);		
 	}
 
 	/**
@@ -224,9 +222,6 @@ if ( empty( $_REQUEST['s'] ) ) {
 		$hidden = array();
 		$sortable = $this->get_sortable_columns();
 		$this->_column_headers = array( $columns, $hidden, $sortable );
-
-		// Process bulk actions.
-		//$this->process_bulk_actions();
 
 	    $production_args = array();
 

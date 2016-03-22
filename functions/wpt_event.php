@@ -93,7 +93,8 @@ class WPT_Event {
 	 * Returns value of a custom field.
 	 * Fallback to production is custom field doesn't exist for event.
 	 *
-	 * @since 0.8.3
+	 * @since 	0.8.3
+	 * @since	0.15	Fixed an error when no production is set for the event.
 	 *
 	 * @param string $field
 	 * @param array $args {
@@ -616,9 +617,12 @@ class WPT_Event {
 	 *
 	 * Returns the production of the event as a WPT_Production object.
 	 *
-	 * @since 0.4
+	 * @since 	0.4
+	 * @since	0.15	Removed local caching of event production.
+	 *					Return <false> if no production is set.
 	 *
-	 * @return WPT_Production Production.
+	 * @return 	WPT_Production 	The production.
+	 *							Returns <false> if no production is set.
 	 */
 	function production() {
 		$production_id = get_post_meta( $this->ID,WPT_Production::post_type_name, true );
@@ -1035,9 +1039,10 @@ class WPT_Event {
 	 *
 	 * The title is taken from the parent production, since event don't have titles.
 	 *
-	 * @since ?.?
-	 * @since 0.10.10	Fixed the name of the 'wpt_event_title'-filter.
+	 * @since 	?.?
+	 * @since 	0.10.10	Fixed the name of the 'wpt_event_title'-filter.
 	 *					Closes #114.
+	 * @since	0.15	Fixed an error when no production is set for the event.
 	 *
 	 * @param array $args {
 	 * 		@type bool 	$html 		Return HTML? Default <false>.

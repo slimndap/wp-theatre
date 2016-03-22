@@ -171,6 +171,7 @@
 		 * @since 	?.?
 		 * @since 	0.12	Slug is dynamic.
 		 *					Archive is disabled.
+		 * @since	0.15	Renamed post type title from 'Production' to 'Event'.
 		 *
 		 * @see		WPT_Production_Permalink::get_permalink()	The production permalink.
 		 *				

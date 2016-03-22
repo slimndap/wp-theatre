@@ -32,7 +32,8 @@ class WPT_Event_Editor {
 	/**
 	 * Adds the event editor meta box to the production admin page.
 	 *
-	 * @since 0.11
+	 * @since 	0.11
+	 * @since	0.15	Renamed metabox title from 'Events' to 'Dates'.
 	 */
 	public function add_events_meta_box() {
 		add_meta_box(
@@ -699,6 +700,8 @@ class WPT_Event_Editor {
 	 * Gets the HTML for a single event in a listing.
 	 *
 	 * @since 	0.11
+	 * @since	0.15	Replaced 'venue + city' with 'location'.
+	 *
 	 * @access 	private
 	 * @param 	WPT_Event 	$event	The event.
 	 * @return 	string				The HTML.
@@ -826,6 +829,9 @@ class WPT_Event_Editor {
 	 * Gets the HTML to create a new event for a production.
 	 *
 	 * @since	0.11.5
+	 * @since	0.15	Renamed add new label from 'Add a new event' to 'Add a new date'.
+	 * 					Renamed save label from 'Save event' to 'Save date'.
+	 *
 	 * @param 	int 	$production_id	The production.
 	 * @return 	string					The HTML.
 	 */
