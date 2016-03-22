@@ -6,7 +6,6 @@
 	Description: Turn your Wordpress website into a theater website.
 	Author: Jeroen Schmit
 	Version: 0.15
-	Version: 0.14.7
 	Author URI: http://slimndap.com/
 	Text Domain: theatre
 	Domain Path: /lang

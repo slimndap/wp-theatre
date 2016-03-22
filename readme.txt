@@ -3,7 +3,7 @@ Contributors: slimndap
 Tags: theatre, stage, venue, events, shows, concerts, tickets, ticketing, sports, performances, calendar, festival, workshops, theater, cinema
 Requires at least: 4.0
 Tested up to: 4.4
-Stable tag: 0.14
+Stable tag: 0.15
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CZERCBG5SUGQW
@@ -121,11 +121,13 @@ The new feature may be added directly to the Theater plugin or as an extension s
 
 = 0.15 =
 
-Release Date: February 26th, 2016
+Release Date: March 22nd, 2016
+
+This release focusses on a more streamlined experience when managing your events. Let me know what you think and if you are missing anything in the [forum](https://wordpress.org/support/plugin/theatre).
 
 * Enhancements
     * Renamed 'productions' to 'events'.
-    * Stripped all unnecessary elements off the events admin screen.
+    * Simplified the events admin screen.
     
 = 0.14 =
 
@@ -203,6 +205,9 @@ Release Date: May 30th, 2015
 
 
 == Upgrade Notice ==
+
+= 0.15 =
+This release focusses on a more streamlined experience when managing your events.
 
 = 0.14.7 = 
 Adds context information to listings, useful for styling and context-aware hooks.
