@@ -20,18 +20,18 @@ Theater comes with several shortcodes and widgets to show off your events. See t
 
 __Available extensions__
 
-* [Event Duplicator](http://theater.slimndap.com/downloads/event-duplicator-for-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – This __free__ extension adds a new action to the event editor that instantly duplicates the event. Very helpful if your need to enter a lot of events at once.
-* [Events Slider](http://theater.slimndap.com/downloads/events-slider-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – Show your events in a touch enabled and responsive slider.
-* [Timetable](http://theater.slimndap.com/downloads/timetable-for-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – Show your event showtimes in a clear table layout. Perfect for cinemas and festivals.
-* [Kijkwijzer](http://theater.slimndap.com/downloads/kijkwijzer-for-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – Add Kijkwijzer icons to your events.
-* [MPAA](http://theater.slimndap.com/downloads/mpaa-for-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – Add Motion Picture Association of America (MPAA) film rating labels to your movies.
-* [BBFC](http://theater.slimndap.com/downloads/bbfc-for-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – Add British Board of Film Classification (BBFC) icons to your movies.
+* [Event Duplicator](https://wp.theater/downloads/event-duplicator-for-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – This __free__ extension adds a new action to the event editor that instantly duplicates the event. Very helpful if your need to enter a lot of events at once.
+* [Events Slider](https://wp.theater/downloads/events-slider-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – Show your events in a touch enabled and responsive slider.
+* [Timetable](https://wp.theater/downloads/timetable-for-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – Show your event showtimes in a clear table layout. Perfect for cinemas and festivals.
+* [Kijkwijzer](https://wp.theater/downloads/kijkwijzer-for-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – Add Kijkwijzer icons to your events.
+* [MPAA](https://wp.theater/downloads/mpaa-for-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – Add Motion Picture Association of America (MPAA) film rating labels to your movies.
+* [BBFC](https://wp.theater/downloads/bbfc-for-theater/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) – Add British Board of Film Classification (BBFC) icons to your movies.
 * [Ticketmatic](http://slimndap.com/product/ticketmatic-for-wordpress/)
-* [ActiveTickets](http://theater.slimndap.com/downloads/activetickets-for-wordpress/utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) - Automatically import your ActiveTickets events and sell them through your website.
-* [Veezi](http://theater.slimndap.com/downloads/veezi-for-wordpress/utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) - Automatically import your Veezi films and sell them on your website.
+* [ActiveTickets](https://wp.theater/downloads/activetickets-for-wordpress/utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) - Automatically import your ActiveTickets events and sell them through your website.
+* [Veezi](https://wp.theater/downloads/veezi-for-wordpress/utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) - Automatically import your Veezi films and sell them on your website.
 
 > <strong>Newsletter</strong><br>
-> This plugin is in active development and updated frequently. Please [sign-up for the newsletter](http://theater.slimndap.com/newsletter?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) to stay informed about upcoming features and successful showcases.
+> This plugin is in active development and updated frequently. Please [sign-up for the newsletter](https://wp.theater/newsletter?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) to stay informed about upcoming features and successful showcases.
 
 __Missing features?__
 
@@ -156,7 +156,7 @@ Release Date: September 3rd, 2015
     * Made it possible to alter the behaviour of the tickets lightbox with a filter.
     * You can now browse extensions inside the WordPress admin.
 
-See the [release post](http://theater.slimndap.com/theater-for-wordpress-0-13-released/?utm_source=wordpress.org&utm_medium=web&utm_content=changelog&utm_campaign=readme.txt) for examples.
+See the [release post](https://wp.theater/theater-for-wordpress-0-13-released/?utm_source=wordpress.org&utm_medium=web&utm_content=changelog&utm_campaign=readme.txt) for examples.
 
 * Bugfixes
 	* Fixed a problem in production listings with events that start before 1-1-1970.
