@@ -206,6 +206,9 @@ Release Date: May 30th, 2015
 
 == Upgrade Notice ==
 
+= 0.15.1 =
+Fixes a problem with the 'date' filter in template placeholders.
+
 = 0.15 =
 This release focusses on a more streamlined experience when managing your events.
 
