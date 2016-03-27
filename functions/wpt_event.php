@@ -1263,6 +1263,9 @@ class WPT_Event {
 	 * Gets the HTML for the event startdate.
 	 *
 	 * @since	0.12
+	 * @sine	0.15.1	Fix: No longer compensates for the timezone when applying the 'date'-filter.
+	 *					This is already handled by WPT_Template_Placeholder_Filter::callback_date() and
+	 *					resulted in double compensations.
 	 * @param 	array 	$filters	The template filters to apply.
 	 * @return 	sring				The HTML for the event startdate.
 	 */
@@ -1274,7 +1277,7 @@ class WPT_Event {
 		$startdate_html = $this->startdate();
 		foreach ( $filters as $filter ) {
 			if ( 'date' == $filter->name ) {
-				$startdate_html = $filter->apply_to( $this->datetime() + get_option( 'gmt_offset' ) * 3600, $this );
+				$startdate_html = $filter->apply_to( $this->datetime(), $this );
 			} else {
 				$startdate_html = $filter->apply_to( $startdate_html, $this );
 			}
