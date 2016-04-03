@@ -129,6 +129,10 @@ This release focusses on a more streamlined experience when managing your events
     * Renamed 'productions' to 'events'.
     * Simplified the events admin screen.
     
+* Bugfix
+    * The translation setting for the header above events on the productions page was also being used in other places (eg. the admin menu) (0.15.2). Thank you [Bob Morris](https://wordpress.org/support/profile/bob-morris)!
+
+    
 = 0.14 =
 
 Release Date: February 2nd, 2016
@@ -205,6 +209,7 @@ Release Date: May 30th, 2015
 
 
 == Upgrade Notice ==
+Adds context information to fields in listings, useful for styling and context-aware hooks.
 
 = 0.15.1 =
 Fixes a problem with the 'date' filter in template placeholders.
