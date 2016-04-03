@@ -604,12 +604,13 @@ class WPT_Production {
 	 * @since 	0.4
 	 * @since 	0.10.8	Added a filter to the default template.
 	 * @since	0.14.7	Added the $args parameter.
+	 * @since	0.15.2	Removed the $args parameter.
 	 *
 	 * @param	string	$template	The template for the production HTML.
 	 * @param 	array	$args		The listing args (if the production is part of a listing).
 	 * @return 	string				The HTML for a production.
 	 */
-	function html( $template = '', $args = array() ) {
+	function html( $template = '' ) {
 		global $wp_theatre;
 
 		if ( is_array( $template ) ) {
@@ -635,7 +636,7 @@ class WPT_Production {
 		 * @param	array				$args		The listing args (if the production is part of a listing).
 		 * @param	WPT_Production		$production	The production.
 		 */
-		$html = apply_filters( 'wpt/production/html',$html, $template, $args, $this );
+		$html = apply_filters( 'wpt/production/html',$html, $template, $this );
 
 		/**
 		 * @deprecated	0.14.7

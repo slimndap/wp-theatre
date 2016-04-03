@@ -211,6 +211,7 @@ if ( empty( $_REQUEST['s'] ) ) {
 	 * other data-manipulation required prior to rendering.
 	 *
 	 * @since	0.15
+	 * @since	0.15.2	Added a context for the productions.
 	 * @return 	void
 	 */
 	function prepare_items() {
@@ -223,9 +224,10 @@ if ( empty( $_REQUEST['s'] ) ) {
 		$sortable = $this->get_sortable_columns();
 		$this->_column_headers = array( $columns, $hidden, $sortable );
 
-	    $production_args = array();
-
-	    $production_args['status'] = 'any';
+	    $production_args = array(
+		    'context' => 'productions_list_table',
+		    'status' => 'any',
+	    );
 
 	    if ( ! empty( $_REQUEST['post_status'] ) ) {
 		    $production_args['status'] = array( $_REQUEST['post_status'] );

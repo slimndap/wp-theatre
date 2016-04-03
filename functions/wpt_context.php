@@ -5,6 +5,16 @@
  * @since	0.14.7
  */
 class WPT_Context {
+	
+	/**
+	 * The value of the current context.
+	 * 
+	 * @since	0.15.2
+	 * @var		string
+	 * @access 	private
+	 */
+	private $context = '';
+	
 	function __construct() {
 
 		add_filter( 'wpt/listing/classes', array( $this, 'add_context_to_listing_classes' ), 10, 2 );
@@ -13,8 +23,11 @@ class WPT_Context {
 		add_filter( 'shortcode_atts_wpt_production_events', array( $this, 'add_context_to_production_events_shortcode' ), 10, 3 );
 		add_filter( 'shortcode_atts_wpt_productions', array( $this, 'add_context_to_listing_shortcode' ), 10, 3 );
 
-		add_filter( 'wpt/event/html', array( $this, 'add_event_html_context_filter' ), 10, 4 );
-		add_filter( 'wpt/production/html', array( $this, 'add_production_html_context_filter' ), 10, 4 );
+		add_filter( 'wpt/event/html', array( $this, 'add_event_html_context_filter' ), 10, 3 );
+		add_filter( 'wpt/production/html', array( $this, 'add_production_html_context_filter' ), 10, 3 );
+		
+		add_action( 'wpt/listing/html/before', array($this, 'set_context'));
+		add_action( 'wpt/listing/html/after', array($this, 'reset_context'));
 
 	}
 
@@ -80,18 +93,17 @@ class WPT_Context {
 	 * @param	WPT_Event			$event		The event.
 	 * @return	string							The filtered HTML of the event.
 	 */
-	function add_event_html_context_filter( $html, $template, $args, $event ) {
-		$context = empty( $args['context'] ) ? 'default' : $args['context'];
-
+	function add_event_html_context_filter( $html, $template, $event ) {	
 		/**
 		 * Filter the HTML of an event, based on its context.
 		 *
 		 * @since	0.14.7
-		 * @param	string		$html	The HTML of an event.
-		 * @param	WPT_Event	$event	The event.
-		 * @param	array		$args	The listing args (if the event is part of a listing).
+		 * @since	0.15.2				Removed the $args param.
+		 * @param	string				$html		The HTML of an event.
+		 * @param	WPT_Event_Template	$template	The event template.
+		 * @param	WPT_Event			$event		The event.
 		 */
-		$html = apply_filters( 'wpt/event/html/context='.$context, $html, $template, $args, $event );
+		$html = apply_filters( 'wpt/event/html/context='.$this->get_context(), $html, $template, $event );
 		return $html;
 	}
 
@@ -104,18 +116,64 @@ class WPT_Context {
 	 * @param	array			$args		The listing args (if the production is part of a listing).
 	 * @return	string						The filtered HTML of the production.
 	 */
-	function add_production_html_context_filter( $html, $template, $args, $production ) {
-		$context = empty( $args['context'] ) ? 'default' : $args['context'];
-
+	function add_production_html_context_filter( $html, $template, $production ) {
 		/**
 		 * Filter the HTML of a production, based on its context.
 		 *
 		 * @since	0.14.7
-		 * @param	string			$html		The HTML of an production.
-		 * @param	WPT_Production	$production	The production.
-		 * @param	array			$args		The listing args (if the production is part of a listing).
+		 * @since	0.15.2				Removed the $args param.
+		 *								Added the $template param.
+		 * @param	string				$html		The HTML of an production.
+		 * @param	WPT_Event_Template	$template	The event template.
+		 * @param	WPT_Production		$production	The production.
 		 */
-		$html = apply_filters( 'wpt/production/html/context='.$context, $html, $production, $args );
+		$html = apply_filters( 'wpt/production/html/context='.$this->get_context(), $html, $template, $production );
 		return $html;
+	}
+	
+	/**
+	 * Gets the current context.
+	 * 
+	 * @since	0.15.2
+	 * @return	string	The current context.
+	 */
+	public function get_context() {
+		$context = $this->context;
+		if (empty($this->context)) {
+			$context = 'default';
+		}
+		return $context;
+	}
+	
+	/**
+	 * Resets the current context to its default value.
+	 * 
+	 * @since	0.15.2
+	 * @return	string	The current context.
+	 */
+	function reset_context() {
+		$this->context = '';
+		return $this->get_context();
+	}
+	
+	/**
+	 * Sets the current context.
+	 * 
+	 * @since	0.15.2
+	 * @param	string|array	$context	The context value of an array of listing args.
+	 * @return	string						The current context.
+	 */
+	function set_context( $context ) {
+
+		if (is_array($context)) {
+			$context = empty($context['context']) ? false : $context['context'];
+		}
+		
+		if (!empty($context)) {
+			$this->context = $context;		
+		}
+
+		return $this->get_context();
+		
 	}
 }

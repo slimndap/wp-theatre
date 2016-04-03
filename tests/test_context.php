@@ -264,4 +264,17 @@
 		$this->assertNotContains($expected, $actual);
 	}
 	
+	function test_production_title_filter_for_custom_context() {
+		$set_custom_production_title = create_function(
+			'$title, $production',
+			'global $wp_theatre; if (\'custom\'==$wp_theatre->context->get_context()) { $title = \'Custom title\'; } return $title;'
+		);
+		add_filter('wpt_production_title', $set_custom_production_title, 10, 2);
+		
+		$actual = do_shortcode('[wpt_productions context="custom"]');
+		$expected = 'Custom title';
+		
+		$this->assertContains($expected, $actual);
+	}
+	
 }

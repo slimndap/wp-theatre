@@ -227,7 +227,9 @@ class WPT_Listing {
 	/**
 	 * Gets a list in HTML.
 	 *
-	 * @since 0.10
+	 * @since 	0.10
+	 * @since	0.15.2	Added actions directly before and after the HTML is generated.
+	 *					Used by WPT_Context() to give set the context for a listing.
 	 *
 	 * @see WPT_Listing::get_html_pagination()
 	 * @see WPT_Listing::get_html_for_page()
@@ -247,19 +249,41 @@ class WPT_Listing {
 	 * 		@type string	$template	Template to use for the individual list items.
 	 *									Default <NULL>.
 	 * }
-		 * @return string HTML.
+	 * @return string HTML.
 	 */
 	protected function get_html( $args = array() ) {
-		$html = '';
+
+		ob_start();
+	
+		/*
+		 * Runs before the listing HTML is generated.
+		 *
+		 * @since	0.15.2
+		 * @param	array	$args	The listing arguments.
+		 */
+		do_action('wpt/listing/html/before', $args);
 
 		$html_page_navigation = $this->get_html_page_navigation( $args );
 		$html_for_page = $this->get_html_for_page( $args );
 
 		if ( ! empty( $html_page_navigation ) || ! empty( $html_for_page ) ) {
-			$html = '<div class="'.implode( ' ',$this->get_classes_for_html( $args ) ).'">'.$html_page_navigation.$html_for_page.'</div>';
+			?><div class="<?php echo implode( ' ',$this->get_classes_for_html( $args ) ); ?>"><?php
+				echo $html_page_navigation.$html_for_page; 
+			?></div><?php
 		}
 
-		return apply_filters( 'wpt_listing_html', $html, $args );
+		/*
+		 * Runs after the listing HTML is generated.
+		 *
+		 * @since	0.15.2
+		 * @param	array	$args	The listing arguments.
+		 */
+		do_action('wpt/listing/html/after', $args);
+		
+		$html = ob_get_clean();
+		$html = apply_filters( 'wpt_listing_html', $html, $args );
+
+		return $html;
 	}
 
 	/**

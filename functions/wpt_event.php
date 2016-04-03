@@ -1114,12 +1114,13 @@ class WPT_Event {
 	 * @since 	0.4
 	 * @since 	0.10.8	Added a filter to the default template.
 	 * @since	0.14.7	Added the $args parameter.
+	 * @since	0.15.2	Removed the $args parameter.
 	 *
 	 * @param	string	$template	The template for the event HTML.
 	 * @param 	array	$args		The listing args (if the event is part of a listing).
 	 * @return 	string				The HTML for an event.
 	 */
-	function html( $template = '', $args = array() ) {
+	function html( $template = '' ) {
 		if ( is_array( $template ) ) {
 			$defaults = array(
 				'template' => '',
@@ -1155,7 +1156,7 @@ class WPT_Event {
 		 * @param	array				$args		The listing args (if the event is part of a listing).
 		 * @param	WPT_Event			$event		The event.
 		 */
-		$html = apply_filters( 'wpt/event/html',$html, $template, $args, $this );
+		$html = apply_filters( 'wpt/event/html',$html, $template, $this );
 
 		/**
 		 * @deprecated	0.14.7
