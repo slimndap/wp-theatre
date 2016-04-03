@@ -325,6 +325,18 @@
 			}
 		}
 		
+		/**
+		 * Applies translation from the Theater Settings page.
+		 * 
+		 * @since	0.?
+		 * @since	0.15.2	Removed the translation for 'Events'.
+		 *					This is now handled directly by WPT_Listing_Page::wpt_production_page_events_content().
+		 *
+		 * @param 	string	$translated_text
+		 * @param	string 	$text
+		 * @param	string	$domain
+		 * @return	string
+		 */
 		function gettext($translated_text, $text, $domain) {
 			global $wp_theatre;
 			if ($domain=='theatre') {
@@ -332,11 +344,6 @@
 					case 'Tickets' :
 						if (!empty($wp_theatre->wpt_language_options['language_tickets'])) {
 							$translated_text = $wp_theatre->wpt_language_options['language_tickets'];
-						}
-						break;
-					case 'Events' :
-						if (!empty($wp_theatre->wpt_language_options['language_events'])) {
-							$translated_text = $wp_theatre->wpt_language_options['language_events'];
 						}
 						break;
 					case 'categories' :				

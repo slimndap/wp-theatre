@@ -612,6 +612,25 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		
 	}
 	
+	function test_events_on_production_page_with_translated_header() {
+		global $wp_theatre;
+		update_option('wpt_listing_page', array('listing_page_position_on_production_page' => 'below'));
+		
+		update_option('wpt_language', array('language_events' => 'Shows'));
+		$wp_theatre->wpt_language_options = get_option('wpt_language');
+		
+
+		$this->go_to(
+			get_permalink($this->production_with_upcoming_event)
+		);
+		
+		$html = get_echo( 'the_content' );
+		
+		$this->assertEquals(1, substr_count($html, '<h3>Shows</h3>'), $html);
+		
+		
+	}
+	
 	function test_filter_pagination_urls_on_listing_page() {
 		$this->options['listing_page_type'] = WPT_Event::post_type_name;
 		$this->options['listing_page_nav'] = 'paginated';

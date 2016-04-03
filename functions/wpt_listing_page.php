@@ -807,13 +807,17 @@
 		}
 
 	 	/**
-	 	 * Gets an event listing for use on a production page.
+	 	 * Gets the HTML for an event listing for use on a production page.
 	 	 * 
-	 	 * @since 0.9.5
-	 	 * @access private
-	 	 * @return string
+	 	 * @since 	0.9.5
+	 	 * @since	0.15.2	Added support for the header translation that you can set
+	 	 *					in the Theater settings.
+	 	 *
+	 	 * @access 	private
+	 	 * @return 	string	The HTML for an event listing for use on a production page.
 	 	 */
 	 	private function wpt_production_page_events_content() {
+		 	global $wp_theatre;
 		 	
 			$production = new WPT_Production();			
 
@@ -824,7 +828,24 @@
 			$events_html = do_shortcode('[wpt_production_events]'.$template.'[/wpt_production_events]');
 
 			if (!empty($events_html)) {
-				$events_header_html = apply_filters('wpt_production_page_events_header','<h3>'.__('Events','theatre').'</h3>');
+				
+				$events_header = __('Events','theatre');
+				
+				if (!empty($wp_theatre->wpt_language_options['language_events'])) {
+					$events_header = $wp_theatre->wpt_language_options['language_events'];
+				}
+				
+				$events_header_html = '<h3>'.esc_html($events_header).'</h3>';
+				
+				/**
+				 * Filter the HTML of the header for an event listing on a production page.
+				 * 
+				 * @since	0.9.5
+				 * @param	string	$events_header_html		The HTML of the header for an event 
+				 *											listing on a production page.
+				 */
+				$events_header_html = apply_filters('wpt_production_page_events_header',$events_header_html);
+				
 				$events_html = $events_header_html.$events_html;
 			}
 			
