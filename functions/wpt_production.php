@@ -401,15 +401,18 @@ class WPT_Production {
 	 * Gets the HTML of the prices for the production.
 	 *
 	 * @since	0.15.3
-	 * @return	array	The HTML of the prices for the production.
+	 * @param   array	$filters	The template filters to apply.
+	 * @return	array				The HTML of the prices for the production.
 	 */
-	function prices_html() {
+	function prices_html( $filters = array() ) {
 		$html = '';
 
 		$prices_summary_html = $this->prices_summary_html();
 
 		if ( ! empty( $prices_summary_html ) ) {
-			$html = '<div class="'.self::post_type_name.'_prices">'.$prices_summary_html.'</div>';
+			ob_start();
+			?><div class="<?php echo self::post_type_name; ?>_prices"><?php echo $this->apply_template_filters( $prices_summary_html, $filters ); ?></div><?php
+			$html = ob_get_clean();
 		}
 
 		/**
