@@ -426,10 +426,6 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertEquals(1, substr_count(do_shortcode('[wpt_events]'), 'wp_theatre_event_tickets_status_other'));		
 	}
 	
-	function test_wpt_event_tickets_prices() {
-		$this->assertEquals(1, substr_count(do_shortcode('[wpt_events]'), 'wp_theatre_event_prices'));		
-	}
-	
 	function test_wpt_event_tickets_status_filter() {
 		global $wp_theatre;
 		
@@ -445,22 +441,6 @@ class WPT_Test extends WP_UnitTestCase {
 		);
 		$html = $event->tickets($args);
 		$this->assertContains('new status', $event->tickets($args));
-	}
-	
-	function test_wpt_event_tickets_prices_filter() {
-		global $wp_theatre;
-		
-		$func = create_function(
-			'$html, $event',
-			'return "tickets prices";'
-		);
-		add_filter( 'wpt_event_tickets_prices_html', $func, 10 , 2 );
-		
-		$event = new WPT_Event($this->upcoming_event_with_prices);
-		$args = array(
-			'html' => true,
-		);
-		$this->assertContains('tickets prices', $event->tickets($args));
 	}
 	
 	
@@ -527,15 +507,7 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertEquals(1, substr_count($html, 'wp_theatre_integrationtype_iframe'));			
 		$this->assertNotContains('http://slimndap.com', $html);
 	}
-	
-	function test_wpt_event_tickets_prices_summary() {
-		$event = new WPT_Event($this->upcoming_event_with_prices);
-		$args = array(
-			'summary'=>true
-		);
-		$this->assertContains('8.50', $event->prices($args));
-	}
-	
+		
 	function test_wpt_event_tickets_for_past_events_are_hiddedn() {
 
 		$event_args = array(
@@ -569,18 +541,6 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertNotContains('wp_theatre_event_prices',$html);
 		$this->assertNotContains('wp_theatre_event_tickets_status',$html);
 		
-	}
-	
-	/**
-	 * Test if named prices are sanitized.
-	 */
-	function test_wpt_event_tickets_prices_named() {
-		add_post_meta($this->upcoming_event_with_prices, '_wpt_event_tickets_price', '1123|named_price');
-		
-		$event = new WPT_Event($this->upcoming_event_with_prices);
-		$prices = $event->prices();
-		$this->assertNotContains("1123|named_price",implode('',$prices));		
-
 	}
 	
 	function test_wpt_events_content() {
