@@ -3,6 +3,7 @@ class WPT_Production {
 
 	const post_type_name = 'wp_theatre_prod';
 
+	// @codingStandardsIgnoreStart
 	function __construct( $ID = false ) {
 		if ( $ID instanceof WP_Post ) {
 			// $ID is a WP_Post object
@@ -19,11 +20,12 @@ class WPT_Production {
 
 		$this->ID = $ID;
 	}
+	// @codingStandardsIgnoreEnd
 
 	function post_type() {
 		return get_post_type_object( self::post_type_name );
 	}
-	
+
 	protected function apply_template_filters( $value, $filters ) {
 		foreach ( $filters as $filter ) {
 			$value = $filter->apply_to( $value, $this );
@@ -372,17 +374,17 @@ class WPT_Production {
 	 * @return	array	The prices for the production.
 	 */
 	function prices() {
-		
+
 		$prices = array();
-		
-		foreach($this->events() as $event) {
-			foreach($event->prices() as $price) {
+
+		foreach ( $this->events() as $event ) {
+			foreach ( $event->prices() as $price ) {
 				$prices[] = $price;
-			}		
+			}
 		}
-		$prices = array_unique($prices);
-		sort($prices);
-		
+		$prices = array_unique( $prices );
+		sort( $prices );
+
 		/**
 		 * Filter the prices of the production.
 		 *
@@ -390,11 +392,11 @@ class WPT_Production {
 		 * @param 	array	 		$prices		The current prices.
 		 * @param 	WPT_Production	$production	The production.
 		 */
-		$prices = apply_filters( 'wpt/production/prices', $prices, $this);
-		
-		return $prices;		
+		$prices = apply_filters( 'wpt/production/prices', $prices, $this );
+
+		return $prices;
 	}
-	
+
 	/**
 	 * Gets the HTML of the prices for the production.
 	 *
@@ -419,7 +421,7 @@ class WPT_Production {
 		 */
 		$html = apply_filters( 'wpt/production/prices/html', $html, $this );
 
-		return $html;	
+		return $html;
 	}
 
 	/**
@@ -687,8 +689,8 @@ class WPT_Production {
 
 		if ( ! isset( $this->{$field} ) ) {
 			$this->{$field} = apply_filters(
-				'wpt_production_'.$field, 
-				get_post_meta($this->ID, $field, true),
+				'wpt_production_'.$field,
+				get_post_meta( $this->ID, $field, true ),
 				$field,
 				$this
 			);
