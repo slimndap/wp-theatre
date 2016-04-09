@@ -23,7 +23,7 @@ class WPT_Production {
 	function post_type() {
 		return get_post_type_object( self::post_type_name );
 	}
-
+	
 	protected function apply_template_filters( $value, $filters ) {
 		foreach ( $filters as $filter ) {
 			$value = $filter->apply_to( $value, $this );
@@ -363,6 +363,125 @@ class WPT_Production {
 		} else {
 			return $this->permalink;
 		}
+	}
+
+	/**
+	 * Gets the prices for the production.
+	 *
+	 * @since	0.15.3
+	 * @return	array	The prices for the production.
+	 */
+	function prices() {
+		
+		$prices = array();
+		
+		foreach($this->events() as $event) {
+			foreach($event->prices() as $price) {
+				$prices[] = $price;
+			}		
+		}
+		$prices = array_unique($prices);
+		sort($prices);
+		
+		/**
+		 * Filter the prices of the production.
+		 *
+		 * @since	0.15.3
+		 * @param 	array	 		$prices		The current prices.
+		 * @param 	WPT_Production	$production	The production.
+		 */
+		$prices = apply_filters( 'wpt/production/prices', $prices, $this);
+		
+		return $prices;		
+	}
+	
+	/**
+	 * Gets the HTML of the prices for the production.
+	 *
+	 * @since	0.15.3
+	 * @return	array	The HTML of the prices for the production.
+	 */
+	function prices_html() {
+		$html = '';
+
+		$prices_summary_html = $this->prices_summary_html();
+
+		if ( ! empty( $prices_summary_html ) ) {
+			$html = '<div class="'.self::post_type_name.'_prices">'.$prices_summary_html.'</div>';
+		}
+
+		/**
+		 * Filter the HTML of the prices for the production.
+		 *
+		 * @since	0.15.3
+		 * @param 	string	 		$html		The current html.
+		 * @param 	WPT_Production	$production	The production.
+		 */
+		$html = apply_filters( 'wpt/production/prices/html', $html, $this );
+
+		return $html;	
+	}
+
+	/**
+	 * Gets a summary of the prices for the production.
+	 *
+	 * @since 	0.15.3
+	 * @see 	WPT_Production::prices()
+	 * @return 	string 	A summary of the prices for the production.
+	 */
+	public function prices_summary() {
+
+		global $wp_theatre;
+
+		$prices = $this->prices();
+
+		$prices_summary = '';
+
+		if ( count( $prices ) ) {
+			if ( count( $prices ) > 1 ) {
+				$prices_summary .= __( 'from','theatre' ).' ';
+			}
+			if ( ! empty( $wp_theatre->wpt_tickets_options['currencysymbol'] ) ) {
+				$prices_summary .= $wp_theatre->wpt_tickets_options['currencysymbol'].' ';
+			}
+			$prices_summary .= number_format_i18n( (float) min( $prices ), 2 );
+		}
+
+		/**
+		 * Filter the summary of the prices for the production.
+		 *
+		 * @since	0.15.3
+		 * @param 	string	 		$prices_summary	The current summary.
+		 * @param 	WPT_Production	$production		The production.
+		 */
+		$prices_summary = apply_filters( 'wpt/production/prices/summary',$prices_summary, $this );
+
+		return $prices_summary;
+	}
+
+	/**
+	 * Gets the HTML for the summary of the prices for the production.
+	 *
+	 * @since 	0.15.3
+	 * @see		WPT_Production::prices_summary()
+	 * @return 	string	The HTML for the summary of the prices for the production.
+	 */
+	public function prices_summary_html() {
+
+		$html = $this->prices_summary();
+		$html = esc_html( $html );
+		$html = str_replace( ' ', '&nbsp;', $html );
+
+		/**
+		 * Filter the HTML for the summary of the prices for the production.
+		 *
+		 * @since	0.15.3
+		 * @param 	string	 		$html		The current html.
+		 * @param 	WPT_Production	$production	The production.
+		 */
+		$html = apply_filters( 'wpt/production/prices/summary/html', $html, $this );
+
+		return $html;
 	}
 
 	/**

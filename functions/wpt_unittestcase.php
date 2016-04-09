@@ -23,6 +23,20 @@ class WPT_UnitTestCase extends WP_UnitTestCase {
 		$wp_rewrite->flush_rules();
 	}
 
+	function create_event() {
+		$args = array(
+			'post_type' => WPT_Event::post_type_name,			
+		);
+		
+		return $this->factory->post->create( $args );
+	}
+	
+	function create_upcoming_event() {
+		$event_id = $this->create_event();
+		add_post_meta( $event_id, 'event_date', date( 'Y-m-d H:i:s', time() + DAY_IN_SECONDS ) );
+		return $event_id;		
+	}
+
 	function setup_test_data() {
 		global $wp_rewrite;
 		global $wp_theatre;

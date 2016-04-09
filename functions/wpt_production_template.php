@@ -60,6 +60,9 @@ class WPT_Production_Template extends WPT_Template {
 				}
 				$value = $this->object->thumbnail_html($size, $filters);
 				break;
+			case 'prices' :
+				$value = $this->object->prices_html();
+				break;
 			case 'title':
 			case 'dates':
 			case 'cities':
