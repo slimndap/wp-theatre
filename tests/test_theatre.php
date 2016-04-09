@@ -129,9 +129,6 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertCount(7, $this->wp_theatre->events->get());		
 	}
 
-	function test_seasons_are_loaded() {
-		$this->assertCount(2, $this->wp_theatre->seasons());
-	}
 
 
 
@@ -185,30 +182,6 @@ class WPT_Test extends WP_UnitTestCase {
 		
 	}
 	
-	function test_event_inherits_season_from_production() {
-		$season_args = array(
-			'post_type'=>WPT_Season::post_type_name
-		);
-		$season = $this->factory->post->create($season_args);
-
-		$production_args = array(
-			'post_type'=>WPT_Production::post_type_name
-		);
-		$production = $this->factory->post->create($production_args);
-		add_post_meta($production, WPT_Season::post_type_name, $season);
-		
-		$event_args = array(
-			'post_type'=>WPT_Event::post_type_name
-		);
-		$event = $this->factory->post->create($event_args);
-		add_post_meta($event, WPT_Production::post_type_name, $production);
-		add_post_meta($event, 'event_date', date('Y-m-d H:i:s', strtotime('tomorrow')));
-		
-		$html = do_shortcode('[wpt_events season='.$season.']');
-
-		$this->assertEquals(1, substr_count($html, '"wp_theatre_event"'), $html);
-		
-	}
 	
 	// Test shortcodes
 	
@@ -275,10 +248,6 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertEquals(3, substr_count(do_shortcode('[wpt_events start="'.date('Y-m-d',time() + (2 * DAY_IN_SECONDS)).'"]'), '"wp_theatre_event"'));
 		$this->assertEquals(3, substr_count(do_shortcode('[wpt_events end="now"]'), '"wp_theatre_event"'));
 		$this->assertEquals(4, substr_count(do_shortcode('[wpt_events start="today" end="+2 weeks"]'), '"wp_theatre_event"'));
-	}
-	
-	function test_shortcode_wpt_events_filter_season() {
-		$this->assertEquals(2, substr_count(do_shortcode('[wpt_events season="'.$this->season2.'"]'), '"wp_theatre_event"'));
 	}
 	
 	function test_shortcode_wpt_events_filter_category() {
@@ -348,14 +317,6 @@ class WPT_Test extends WP_UnitTestCase {
 		$output = do_shortcode('[wpt_events limit=1 order=desc]');
 		$this->assertContains($link,$output);
 
-	}
-	
-	function test_shortcode_wpt_season_production() {
-		$season = get_post($this->season1);
-	}
-	
-	function test_shortcode_wpt_season_events() {
-		$season = get_post($this->season2);
 	}
 	
 	function test_shortcode_wpt_production_events() {

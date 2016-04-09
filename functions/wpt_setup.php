@@ -229,10 +229,11 @@
 						'name' => __( 'Seasons','theatre'),
 						'singular_name' => __( 'Season','theatre')
 					),
-				'public' => true,
-				'has_archive' => true,
-				'supports' => array('title','editor'),
-				'show_in_menu'  => 'theater-events',
+					'public' => true,
+					'has_archive' => true,
+					'supports' => array('title','editor'),
+					'show_in_menu'  => 'theater-events',
+					'exclude_from_search' => true,
 				)
 			);
 
