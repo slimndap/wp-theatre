@@ -169,64 +169,119 @@ class WPT_Production {
 	}
 
 	/**
-	 * Production dates.
+	 * Gets the upcoming production dates.
 	 *
-	 * Returns a summary of the dates of the production events as plain text or as an HTML element.
-	 *
-	 * @since 0.4
-	 *
-	 * @param array $args {
-	 *     @type bool $html Return HTML? Default <false>.
-	 * }
-	 * @return string URL or HTML.
+	 * @since	0.4
+	 * @since	0.15.3	Moved HTML output to seperate method.
+	 *					@see WPT_Production::dates_html();
+	 *					Now returns an array instead of a summary (string).
+	 * @return	array	The upcoming production dates.
 	 */
-	function dates( $args = array() ) {
+	function dates( $deprecated = array() ) {
+
+		if ( ! empty( $deprecated['html'] ) ) {
+			$defaults = array(
+				'filters' => array(),
+			);
+			$deprecated = wp_parse_args( $deprecated, $defaults );
+			return $this->dates_html( $deprecated['filters'] );
+		}
+
+		$dates = array();
+
+		foreach ( $this->events( array( 'start' => 'now' ) ) as $event ) {
+			$dates[] = $event->startdate();
+		}
+
+		$dates = array_unique( $dates );
+
+		/**
+		 * Filter the upcoming production dates.
+		 * @since	0.15.3
+		 * @param	array			$dates		The upcoming production dates.
+		 * @param	WPT_Production	$production	The production.
+		 */
+		$dates = apply_filters( 'wpt/production/dates', $dates, $this );
+
+		/**
+		 * @deprecated	0.15.3
+		 */
+		$dates = apply_filters( 'wpt_production_dates', $dates, $this );
+
+		return $dates;
+	}
+
+	/**
+	 * Gets the HTML for the upcoming production dates.
+	 *
+	 * @since	0.15.3
+	 * @param	array	$filters	The template filters to apply.
+	 * @return	string				The HTML for the upcoming production dates.
+	 */
+	function dates_html( $filters = array() ) {
+
+		ob_start();
+
+		?><div class="<?php echo self::post_type_name; ?>_dates"><?php echo $this->apply_template_filters( $this->dates_summary(), $filters ); ?></div><?php
+
+		$html = ob_get_clean();
+
+		/**
+		 * Filter the HTML for the upcoming production dates.
+		 * @since	0.15.3
+		 * @param	string			$html		The HTML for the upcoming production dates.
+		 * @param	WPT_Production	$production	The production.
+		 */
+		$html = apply_filters( 'wpt/production/dates/html', $html, $this );
+
+		/**
+		 * @deprecated	0.15.3
+		 */
+		$html = apply_filters( 'wpt_production_dates_html', $html, $this );
+
+		return $html;
+	}
+
+	/**
+	 * Gets the summary for the upcoming production dates.
+	 *
+	 * @since	0.15.3
+	 * @return	string	The summary for the upcoming production dates.
+	 */
+	function dates_summary() {
 		global $wp_theatre;
-		$defaults = array(
-			'html' => false,
-			'filters' => array(),
+
+		$dates = $this->dates();
+
+		if ( empty( $dates ) ) {
+			return '';
+		}
+
+		$old_events_args = array(
+			'end' => 'now',
+			'production' => $this->ID,
 		);
+		$old_events = $wp_theatre->events->get( $old_events_args );
 
-		$args = wp_parse_args( $args, $defaults );
-		if ( ! isset( $this->dates ) ) {
-			$dates = '';
-			$dates_short = '';
-			$first_datetimestamp = $last_datetimestamp = '';
-
-			$upcoming = $this->upcoming();
-
-			if ( is_array( $upcoming ) && (count( $upcoming ) > 0) ) {
-				$events = $this->events();
-				$first = $events[0];
-				$next = $upcoming[0];
-				$last = $events[ count( $events ) -1 ];
-
-				if ( $next->startdate() == $last->startdate() ) {
-					// one or more events on the same day
-					$dates .= $next->startdate();
-				} else {
-					if ( time() < $first->datetime() ) {
-						// serie starts in the future
-						$dates .= $first->startdate().' '.__( 'to','theatre' ).' '.$last->startdate();
-					} else {
-						// serie is already running
-						$dates .= __( 'until','theatre' ).' '.$last->startdate();
-					}
-				}
+		if ( empty( $old_events ) ) {
+			if ( 1 == count( $dates ) ) {
+				$dates_summary = $dates[0];
+			} else {
+				$dates_summary = $dates[0].' '.__( 'to', 'theatre' ).' '.$dates[ count( $dates ) -1 ];
 			}
-			$this->dates = $dates;
-			$this->dates = apply_filters( 'wpt_production_dates',$dates, $this );
+		} else {
+			$dates_summary = __( 'until','theatre' ).' '.$dates[ count( $dates ) -1 ];
 		}
 
-		if ( $args['html'] ) {
-			$html = '';
-			$html .= '<div class="'.self::post_type_name.'_dates">';
-			$html .= $this->apply_template_filters( $this->dates(), $args['filters'] );
-			$html .= '</div>';
-			return apply_filters( 'wpt_production_dates_html', $html, $this );
-		} else {
-			return $this->dates;
-		}
+		/**
+		 * Filter the summary for the upcoming production dates.
+		 * @since	0.15.3
+		 * @param	string			$dates_summary	The summary for the upcoming production dates.
+		 * @param	WPT_Production	$production		The production.
+		 */
+		$dates_summary = apply_filters( 'wpt/production/dates/summary', $dates_summary, $this );
+
+		return $dates_summary;
 	}
 
 	function events( $filters = array() ) {
@@ -532,7 +587,7 @@ class WPT_Production {
 		if ( ! isset( $this->summary ) ) {
 			$this->summary = '';
 			if ( $this->dates() != '' ) {
-				$short = $this->dates();
+				$short = $this->dates_summary();
 				if ( $this->cities() != '' ) {
 					$short .= ' '.__( 'in','theatre' ).' '.$this->cities();
 				}
