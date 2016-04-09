@@ -267,10 +267,12 @@ class WPT_Production {
 			if ( 1 == count( $dates ) ) {
 				$dates_summary = $dates[0];
 			} else {
-				$dates_summary = $dates[0].' '.__( 'to', 'theatre' ).' '.$dates[ count( $dates ) -1 ];
+				/* translators: a date range, eg. April 10, 2016 to April 12, 2016 */
+				$dates_summary = sprintf( _x( '%s to %s', 'production dates', 'theatre' ), $dates[0], $dates[ count( $dates ) -1 ] );
 			}
 		} else {
-			$dates_summary = __( 'until','theatre' ).' '.$dates[ count( $dates ) -1 ];
+			/* translators: enddate of a running event, eg. until April 12, 2016 */
+			$dates_summary = sprintf( _x( 'until %s', 'production dates', 'theatre' ), $dates[0] );
 		}
 
 		/**
