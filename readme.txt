@@ -128,10 +128,11 @@ This release focusses on a more streamlined experience when managing your events
 * Enhancements
     * Renamed 'productions' to 'events'.
     * Simplified the events admin screen.
+    * Added a new `{{prices}}` placeholder for productions (0.15.3).
     
 * Bugfix
     * The translation setting for the header above events on the productions page was also being used in other places (eg. the admin menu) (0.15.2). Thank you [Bob Morris](https://wordpress.org/support/profile/bob-morris)!
-
+	* Seasons are now hidden from search results (0.15.3).
     
 = 0.14 =
 
@@ -209,6 +210,10 @@ Release Date: May 30th, 2015
 
 
 == Upgrade Notice ==
+= 0.15.3 =
+Added a new `{{prices}}` placeholder for productions.
+
+= 0.15.2 =
 Adds context information to fields in listings, useful for styling and context-aware hooks.
 
 = 0.15.1 =
