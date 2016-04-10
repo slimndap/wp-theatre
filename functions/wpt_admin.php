@@ -424,6 +424,13 @@ class WPT_Admin {
 		return $new_columns;
 	}
 
+	/**
+	 * Outputs the HTML for the thumbnails and dates columns in the productions list table.
+	 * 
+	 * @since	0.?
+	 * @param 	string	$column_name	The name of the column.
+	 * @param 	string	$post_id		The ID of the current production.
+	 */
 	function manage_wp_theatre_prod_posts_custom_column($column_name, $post_id) {
 		$production = new WPT_Production($post_id);
 		switch($column_name) {
@@ -431,7 +438,7 @@ class WPT_Admin {
 				echo $production->thumbnail_html();
 				break;
 			case 'dates':
-				echo $production->dates().'<br />';
+				echo $production->dates_html().'<br />';
 				echo $production->cities();
 				break;
 		}
