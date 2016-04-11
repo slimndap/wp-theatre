@@ -44,6 +44,7 @@ class WP_Theatre {
 		$this->setup = new WPT_Setup();
 		$this->admin = new WPT_Admin();
 		$this->order = new WPT_Order();
+		$this->status = new WPT_Status();
 		$this->feeds = new WPT_Feeds();
 		$this->transient = new WPT_Transient();
 		$this->listing_page = new WPT_Listing_Page();
@@ -62,7 +63,6 @@ class WP_Theatre {
 		$this->productions_admin = new WPT_Productions_Admin();
 
 		$this->cart = new WPT_Cart();
-		$this->bulk_editor = new WPT_Bulk_Editor();
 		$this->extensions_updater= new WPT_Extensions_Updater();
 		$this->extensions_promo= new WPT_Extensions_Promo();
 		if (is_admin()) {
@@ -129,6 +129,7 @@ class WP_Theatre {
 		require_once(dirname(__FILE__) . '/functions/wpt_widget.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_admin.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_order.php');
+		require_once(dirname(__FILE__) . '/functions/wpt_status.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_feeds.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_transient.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_listing_page.php');	
@@ -136,7 +137,6 @@ class WP_Theatre {
 		require_once(dirname(__FILE__) . '/functions/wpt_context.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_filter.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_cart.php');	
-		require_once(dirname(__FILE__) . '/functions/wpt_bulk_editor.php');	
 
 		require_once(dirname(__FILE__) . '/functions/extensions/wpt_extensions_updater.php');	
 		require_once(dirname(__FILE__) . '/functions/extensions/wpt_extensions_promo.php');	

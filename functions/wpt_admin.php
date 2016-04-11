@@ -347,43 +347,6 @@ class WPT_Admin {
 			update_post_meta( $post_id, WPT_Season::post_type_name, $season );
 		}
 
-		/*
-		 *	 Update connected Events
-		 */
-		// unhook to avoid loops
-		remove_action( 'save_post', array( $this, 'save_production' ) );
-		remove_action( 'save_post', array( $wp_theatre->event_editor, 'save_event' ) );
-
-		$production_post = get_post($post_id);
-
-		$args = array(
-			'status' => array( 'any', 'auto-draft' ),
-			'production' => $post_id,
-		);
-		$events = $wp_theatre->events->get( $args );
-
-		foreach($events as $event) {
-			// Keep trashed events in the trash.
-			if ('trash' == get_post_status($event->ID)) {
-				continue;
-			}
-
-			$event_post = array(
-				'ID'=>$event->ID,
-				'post_status'=>get_post_status($post_id),
-				'edit_date'=>true,
-				'post_date'=>$production_post->post_date,
-				'post_date_gmt'=>get_gmt_from_date($production_post->post_date),
-			);
-
-			wp_update_post($event_post);
-
-		}
-
-		// rehook
-		add_action( 'save_post', array( $this, 'save_production' ) );
-		add_action( 'save_post', array( $wp_theatre->event_editor, 'save_event' ) );
-
 		/**
 		 * Fires after a production is saved through the admin screen.
 		 *

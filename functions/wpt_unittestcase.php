@@ -23,18 +23,24 @@ class WPT_UnitTestCase extends WP_UnitTestCase {
 		$wp_rewrite->flush_rules();
 	}
 
+	function assume_role( $role = 'author' ) {
+		$user = new WP_User( $this->factory->user->create( array( 'role' => $role ) ) );
+		wp_set_current_user( $user->ID );
+		return $user;
+	}
+
 	function create_event() {
 		$args = array(
-			'post_type' => WPT_Event::post_type_name,			
+			'post_type' => WPT_Event::post_type_name,
 		);
-		
+
 		return $this->factory->post->create( $args );
 	}
-	
+
 	function create_upcoming_event() {
 		$event_id = $this->create_event();
 		add_post_meta( $event_id, 'event_date', date( 'Y-m-d H:i:s', time() + DAY_IN_SECONDS ) );
-		return $event_id;		
+		return $event_id;
 	}
 
 	function setup_test_data() {

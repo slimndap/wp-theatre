@@ -10,7 +10,7 @@ class WPT_Productions_Admin {
 
 		// Priority 6 places the submenu item at the top of the theater menu.
 		add_action( 'admin_menu', array( $this, 'add_submenu' ), 6 );
-		
+
 		add_filter( 'wpt_production_title_html', array( $this, 'add_production_title_edit_link' ), 10, 2 );
 		add_filter( 'wpt/production/thumbnail/html', array( $this, 'add_production_thumbnail_placeholder' ), 10, 4 );
 	}
@@ -111,7 +111,7 @@ class WPT_Productions_Admin {
 	public function page_html() {
 
 		$list_table = new WPT_Productions_List_Table();
-		$list_table->process_bulk_actions();
+		$this->process_bulk_actions();
 
 		ob_start();
 
@@ -136,6 +136,61 @@ class WPT_Productions_Admin {
 		</div><?php
 
 		ob_end_flush();
+	}
+
+	/**
+	 * Processes bulk actions.
+	 *
+	 * @since	0.15
+	 */
+	function process_bulk_actions() {
+		//Bail if no productions are selected.
+		if ( empty( $_POST['production'] ) || ! is_array( $_POST['production'] ) ) {
+			return;
+		}
+
+		// Bail if nonce is missing.
+		if ( ! isset( $_POST['_wpnonce'] ) || empty( $_POST['_wpnonce'] ) ) {
+	        return;
+	    }
+
+		// Bail if nonce is invalid.
+		if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'bulk-productions' ) ) {
+			return;
+		}
+
+		// Start processing...
+		foreach ( $_POST['production'] as $production_id ) {
+			switch ( $_POST['action'] ) {
+				case 'publish':
+					wp_publish_post( $production_id );
+	                break;
+
+	            case 'draft':
+	            	$production_post = array(
+		            	'ID' => $production_id,
+		            	'post_status' => 'draft',
+	            	);
+	            	wp_update_post( $production_post );
+	                break;
+
+	            case 'trash':
+		            wp_trash_post( $production_id );
+	                break;
+
+	            case 'restore':
+		            wp_untrash_post( $production_id );
+	                break;
+
+	            case 'delete':
+		            wp_delete_post( $production_id );
+	                break;
+
+	            default:
+	                return;
+	                break;
+			}
+		}
 	}
 
 	/**

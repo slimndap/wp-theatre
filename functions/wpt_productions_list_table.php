@@ -22,7 +22,7 @@ class WPT_Productions_List_Table extends WP_List_Table {
 				'plural'   => 'productions',
 				'ajax'     => false,
 			)
-		);		
+		);
 	}
 
 	/**
@@ -41,7 +41,7 @@ class WPT_Productions_List_Table extends WP_List_Table {
 
 	/**
 	 * Gets the HTML for the checkbox in the bulk actions column.
-	 * 
+	 *
 	 * @since	0.15
 	 * @param 	WPT_Production	$production	The Production.
 	 * @return 	string						The HTML for the checkbox.
@@ -174,8 +174,8 @@ if ( empty( $_REQUEST['post_status'] ) ) {
 if ( ! empty( $_REQUEST['post_status'] ) && $key == $_REQUEST['post_status'] ) {
 	?> class="current"<?php
 }
-				?>><?php 
-					echo $val; 
+				?>><?php
+					echo $val;
 					?><span class="count"> (<?php echo $num_posts->{$key};?>)</span>
 				</a><?php
 			    $views[ $key ] = ob_get_clean();
@@ -264,64 +264,6 @@ if ( empty( $_REQUEST['s'] ) ) {
 			)
 		);
 
-	}
-
-	/**
-	 * Processes bulk actions.
-	 *
-	 * @since	0.15
-	 */
-	function process_bulk_actions() {
-
-		//Bail if no productions are selected.
-		if ( empty( $_REQUEST['production'] ) || ! is_array( $_REQUEST['production'] ) ) {
-			return;
-		}
-
-		// Bail if nonce is missing.
-		if ( ! isset( $_REQUEST['_wpnonce'] ) || empty( $_REQUEST['_wpnonce'] ) ) {
-	        return;
-	    }
-
-		// Bail if nonce is invalid.
-		if ( ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'bulk-' . $this->_args['plural'] ) ) {
-			return;
-		}
-
-		// Start processing...
-		if ( $action = $this->current_action() ) {
-	        foreach ( $_POST['production'] as $production_id ) {
-				switch ( $action ) {
-					case 'publish':
-						wp_publish_post( $production_id );
-		                break;
-
-		            case 'draft':
-		            	$production_post = array(
-			            	'ID' => $production_id,
-			            	'post_status' => 'draft',
-		            	);
-		            	wp_update_post( $production_post );
-		                break;
-
-		            case 'trash':
-			            wp_trash_post( $production_id );
-		                break;
-
-		            case 'restore':
-			            wp_untrash_post( $production_id );
-		                break;
-
-		            case 'delete':
-			            wp_delete_post( $production_id );
-		                break;
-
-		            default:
-		                return;
-		                break;
-				}
-	        }
-		}
 	}
 
 	/**
