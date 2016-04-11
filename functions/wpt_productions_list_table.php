@@ -153,12 +153,11 @@ class WPT_Productions_List_Table extends WP_List_Table {
 
 	    $views = array();
 
+		$view_url = add_query_arg( 'post_status', '' );
+		$view_url = remove_query_arg( 'paged', $view_url );
+
 		ob_start();
-		?><a href="<?php echo add_query_arg( 'post_status', '' );?>" <?php
-if ( empty( $_REQUEST['post_status'] ) ) {
-	?> class="current"<?php
-}
-		?>><?php _e( 'All' ); ?></a><?php
+		?><a href="<?php echo $view_url;?>" <?php if ( empty( $_REQUEST['post_status'] ) ) { ?> class="current"<?php } ?>><?php _e( 'All' ); ?></a><?php
 	    $views['all'] = ob_get_clean();
 
 		$views_available = array(
@@ -169,14 +168,13 @@ if ( empty( $_REQUEST['post_status'] ) ) {
 
 	    foreach ( $views_available as $key => $val ) {
 		    if ( ! empty( $num_posts->{$key} ) ) {
+
+				$view_url = add_query_arg( 'post_status', $key );
+				$view_url = remove_query_arg( 'paged', $view_url );
+
 				ob_start();
-				?><a href="<?php echo add_query_arg( 'post_status', $key );?>" <?php
-if ( ! empty( $_REQUEST['post_status'] ) && $key == $_REQUEST['post_status'] ) {
-	?> class="current"<?php
-}
-				?>><?php
-					echo $val;
-					?><span class="count"> (<?php echo $num_posts->{$key};?>)</span>
+				?><a href="<?php echo $view_url;?>" <?php if ( ! empty( $_REQUEST['post_status'] ) && $key == $_REQUEST['post_status'] ) { ?> class="current"<?php } ?>><?php	echo $val;
+						?><span class="count"> (<?php echo $num_posts->{$key};?>)</span>
 				</a><?php
 			    $views[ $key ] = ob_get_clean();
 		    }

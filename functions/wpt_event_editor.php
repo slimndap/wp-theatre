@@ -902,7 +902,7 @@ class WPT_Event_Editor {
 			return $production_id;
 		}
 
-		// Unhook to avoid loops
+		// Unhook to avoid loops.
 		remove_action( 'save_post', array( $this, 'save_event' ) );
 
 		$production_post = get_post( $production_id );
@@ -924,7 +924,7 @@ class WPT_Event_Editor {
 			}
 		}
 
-		// Rehook
+		// Rehook.
 		add_action( 'save_post', array( $this, 'save_event' ) );
 
 		return $production_id;
