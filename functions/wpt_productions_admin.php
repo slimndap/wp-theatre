@@ -111,6 +111,7 @@ class WPT_Productions_Admin {
 	public function page_html() {
 
 		$list_table = new WPT_Productions_List_Table();
+
 		$this->process_bulk_actions( $list_table->current_action() );
 		$this->empty_trash();
 
@@ -202,11 +203,11 @@ class WPT_Productions_Admin {
 	 *
 	 * @since	0.15.4
 	 */
-	private function empty_trash( ) {
+	function empty_trash() {
 		global $wp_theatre;
 
 		// Bail if this is not a delete all request.
-		if (!isset( $_POST['delete_all'])) {
+		if ( ! isset( $_POST['delete_all'] ) ) {
 			return;
 		}
 
@@ -224,7 +225,7 @@ class WPT_Productions_Admin {
 		$productions_args = array(
 			'status' => 'trash',
 		);
-		foreach($wp_theatre->productions->get($productions_args) as $production) {
+		foreach ( $wp_theatre->productions->get( $productions_args ) as $production ) {
 			wp_delete_post( $production->ID );
 		}
 	}

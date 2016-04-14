@@ -90,10 +90,11 @@ class WPT_Productions_List_Table extends WP_List_Table {
 
 	/**
 	 * Outputs extra controls to be displayed between bulk actions and pagination.
-	 * 
+	 *
 	 * @since	0.15.4
+	 * @param 	string	$which	 Location of table nav ('top' or 'bottom').
 	 */
-	function extra_tablenav() {
+	function extra_tablenav( $which ) {
 		if ( isset( $_REQUEST['post_status'] ) && $_REQUEST['post_status'] === 'trash' ) {
 			submit_button( __( 'Empty Trash' ), 'apply', 'delete_all', false );
 		}

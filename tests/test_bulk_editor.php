@@ -18,11 +18,10 @@ class WPT_Bulk_Edit extends WPT_UnitTestCase {
 
 		$_POST = array(
 			'production' => array( $this->production_with_upcoming_event, $this->production_with_upcoming_events ),
-			'action' => 'draft',
 			'_wpnonce' => wp_create_nonce( 'bulk-productions' ),
 		);
 
-		$wp_theatre->productions_admin->process_bulk_actions();
+		$wp_theatre->productions_admin->process_bulk_actions( 'draft' );
 
 		$actual = array(
 			get_post_status( $this->production_with_upcoming_event ),
@@ -46,11 +45,10 @@ class WPT_Bulk_Edit extends WPT_UnitTestCase {
 
 		$_POST = array(
 			'production' => array( $this->production_with_upcoming_event, $this->production_with_upcoming_events ),
-			'action' => 'draft',
 			'_wpnonce' => wp_create_nonce( 'bulk-productions' ),
 		);
 
-		$wp_theatre->productions_admin->process_bulk_actions();
+		$wp_theatre->productions_admin->process_bulk_actions( 'draft' );
 
 		$actual = $wp_theatre->events->get(
 			array(
@@ -62,6 +60,29 @@ class WPT_Bulk_Edit extends WPT_UnitTestCase {
 		$expected = 3;
 
 		$this->assertCount( $expected, $actual );
+	}
+
+	function test_productions_trash_is_emptied() {
+		global $wp_theatre;
+
+		$this->setup_test_data();
+
+		wp_trash_post( $this->production_with_upcoming_event );
+
+		// Check if production is still there.
+		$actual = get_post( $this->production_with_upcoming_event );
+		$this->assertNotNull( $actual );
+
+		$_POST = array(
+			'_wpnonce' => wp_create_nonce( 'bulk-productions' ),
+			'delete_all' => 1234,
+		);
+
+		$wp_theatre->productions_admin->empty_trash();
+
+		// Check if production is gone.
+		$actual = get_post( $this->production_with_upcoming_event );
+		$this->assertNull( $actual );
 	}
 }
 
