@@ -210,6 +210,9 @@ Release Date: May 30th, 2015
 
 
 == Upgrade Notice ==
+= 0.15.4 =
+Small bugfixes and improvements to the events admin screen.
+
 = 0.15.3 =
 Added a new `{{prices}}` placeholder for productions.
 

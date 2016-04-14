@@ -111,7 +111,8 @@ class WPT_Productions_Admin {
 	public function page_html() {
 
 		$list_table = new WPT_Productions_List_Table();
-		$this->process_bulk_actions();
+		$this->process_bulk_actions( $list_table->current_action() );
+		$this->empty_trash();
 
 		ob_start();
 
@@ -142,8 +143,12 @@ class WPT_Productions_Admin {
 	 * Processes bulk actions.
 	 *
 	 * @since	0.15
+	 * @since	0.15.4	Added the $action param.
+	 *					@see WP_List_Table::current_action()
+	 * @param	string	$action	The requested bulk action.
 	 */
-	function process_bulk_actions() {
+	function process_bulk_actions( $action ) {
+
 		//Bail if no productions are selected.
 		if ( empty( $_POST['production'] ) || ! is_array( $_POST['production'] ) ) {
 			return;
@@ -161,7 +166,7 @@ class WPT_Productions_Admin {
 
 		// Start processing...
 		foreach ( $_POST['production'] as $production_id ) {
-			switch ( $_POST['action'] ) {
+			switch ( $action ) {
 				case 'publish':
 					wp_publish_post( $production_id );
 	                break;
@@ -185,11 +190,42 @@ class WPT_Productions_Admin {
 	            case 'delete':
 		            wp_delete_post( $production_id );
 	                break;
-
 	            default:
 	                return;
 	                break;
 			}
+		}
+	}
+
+	/**
+	 * Empties the trash.
+	 *
+	 * @since	0.15.4
+	 */
+	private function empty_trash( ) {
+		global $wp_theatre;
+
+		// Bail if this is not a delete all request.
+		if (!isset( $_POST['delete_all'])) {
+			return;
+		}
+
+		// Bail if nonce is missing.
+		if ( ! isset( $_POST['_wpnonce'] ) || empty( $_POST['_wpnonce'] ) ) {
+	        return;
+	    }
+
+		// Bail if nonce is invalid.
+		if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'bulk-productions' ) ) {
+			return;
+		}
+
+		// Start processing...
+		$productions_args = array(
+			'status' => 'trash',
+		);
+		foreach($wp_theatre->productions->get($productions_args) as $production) {
+			wp_delete_post( $production->ID );
 		}
 	}
 
