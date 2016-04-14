@@ -88,6 +88,16 @@ class WPT_Productions_List_Table extends WP_List_Table {
 		);
 	}
 
+	/**
+	 * Outputs extra controls to be displayed between bulk actions and pagination.
+	 * 
+	 * @since	0.15.4
+	 */
+	function extra_tablenav() {
+		if ( isset( $_REQUEST['post_status'] ) && $_REQUEST['post_status'] === 'trash' ) {
+			submit_button( __( 'Empty Trash' ), 'apply', 'delete_all', false );
+		}
+	}
 
 	/**
 	 * Gets the bulk actions for the productions.
@@ -146,6 +156,7 @@ class WPT_Productions_List_Table extends WP_List_Table {
 	 * Gets the views for the list table.
 	 *
 	 * @since	0.15
+	 * @since	0.15.4	Removed the 'paged' query var when switching views.
 	 * @return	array	The views.
 	 */
 	function get_views() {
