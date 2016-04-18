@@ -63,6 +63,7 @@ class WP_Theatre {
 		$this->productions_admin = new WPT_Productions_Admin();
 
 		$this->cart = new WPT_Cart();
+		$this->tags = new WPT_Tags();
 		$this->extensions_updater= new WPT_Extensions_Updater();
 		$this->extensions_promo= new WPT_Extensions_Promo();
 		if (is_admin()) {
@@ -137,6 +138,7 @@ class WP_Theatre {
 		require_once(dirname(__FILE__) . '/functions/wpt_context.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_filter.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_cart.php');	
+		require_once(dirname(__FILE__) . '/functions/wpt_tags.php');	
 
 		require_once(dirname(__FILE__) . '/functions/extensions/wpt_extensions_updater.php');	
 		require_once(dirname(__FILE__) . '/functions/extensions/wpt_extensions_promo.php');	

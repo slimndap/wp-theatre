@@ -712,6 +712,7 @@ class WPT_Events extends WPT_Listing {
 			'category__and' => false,
 			'category__in' => false,
 			'category__not_in' => false,
+			'tag' => false,
 			'end' => false,
 			'limit' => false,
 			'order' => 'asc',
@@ -844,6 +845,10 @@ class WPT_Events extends WPT_Listing {
 
 		if ( $filters['category__not_in'] ) {
 			$args['category__not_in'] = $filters['category__not_in'];
+		}
+
+		if ( $filters['tag'] ) {
+			$args['tag'] = $filters['tag'];
 		}
 
 		if ( $filters['limit'] ) {

@@ -816,6 +816,7 @@ class WPT_Productions extends WPT_Listing {
 			'category__and' => false,
 			'category__in' => false,
 			'category__not_in' => false,
+			'tag' => false,
 			'season' => false,
 			'ignore_sticky_posts' => false,
 			'status' => array('publish'),
@@ -864,6 +865,10 @@ class WPT_Productions extends WPT_Listing {
 
 		if ( $filters['category__not_in'] ) {
 			$args['category__not_in'] = $filters['category__not_in'];
+		}
+
+		if ($filters['tag']) {
+			$args['tag'] = $filters['tag'];
 		}
 
 		if ( $filters['limit'] ) {
@@ -949,6 +954,7 @@ class WPT_Productions extends WPT_Listing {
 			empty( $args['category_name'] ) &&
 			empty( $args['category__and'] ) &&
 			empty( $args['category__in'] ) &&
+			empty( $args['tag'] ) &&
 			! $filters['post__in'] &&
 			! $filters['season'] &&
 			$args['posts_per_page'] < 0
