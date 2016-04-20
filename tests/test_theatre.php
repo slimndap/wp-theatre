@@ -583,6 +583,7 @@ class WPT_Test extends WP_UnitTestCase {
 			'category__and' => false,
 			'category__in' => false,
 			'category__not_in' => false,
+			'tag' => false,
 			'day' => false,
 			'end' => false,
 			'groupby' => false,

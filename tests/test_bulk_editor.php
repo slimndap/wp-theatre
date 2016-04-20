@@ -7,6 +7,62 @@
 class WPT_Bulk_Edit extends WPT_UnitTestCase {
 
 	/**
+	 * Tests if productions are published with bulk updates.
+	 *
+	 * @since 0.15.5
+	 */
+	function test_productions_are_published() {
+		global $wp_theatre;
+
+		$production_id = $this->factory->post->create( array(
+			'post_type' => WPT_Production::post_type_name,
+			'post_status' => 'draft',
+			'post_title' => 'A draft production',	
+		) );
+
+		$_POST = array(
+			'production' => array( $production_id ),
+			'_wpnonce' => wp_create_nonce( 'bulk-productions' ),
+		);
+
+		$wp_theatre->productions_admin->process_bulk_actions( 'publish' );
+
+		$actual = array(
+			get_post_status( $production_id ),
+		);
+		$expected = array( 'publish' );
+		$this->assertEquals( $expected, $actual );
+	}
+
+	/**
+	 * Tests if productions are published with bulk updates.
+	 *
+	 * @since 0.15.5
+	 */
+	function test_productions_are_published_with_post_name() {
+		global $wp_theatre;
+
+		$production_id = $this->factory->post->create( array(
+			'post_type' => WPT_Production::post_type_name,
+			'post_status' => 'draft',
+			'post_title' => 'A draft production',	
+		) );
+
+		$_POST = array(
+			'production' => array( $production_id ),
+			'_wpnonce' => wp_create_nonce( 'bulk-productions' ),
+		);
+
+		$wp_theatre->productions_admin->process_bulk_actions( 'publish' );
+
+		$production = get_post($production_id);
+
+		$actual = $production->post_name;
+		$expected = 'a-draft-production';
+		$this->assertEquals( $expected, $actual );
+	}
+
+	/**
 	 * Tests if productions are saved as draft with bulk updates.
 	 *
 	 * @since 0.15.4

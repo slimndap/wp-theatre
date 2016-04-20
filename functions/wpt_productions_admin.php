@@ -146,6 +146,8 @@ class WPT_Productions_Admin {
 	 * @since	0.15
 	 * @since	0.15.4	Added the $action param.
 	 *					@see WP_List_Table::current_action()
+	 * @since	0.15.5	Publish now uses wp_update_post() instead of wp_publish_post().
+	 *					Fixes #197.
 	 * @param	string	$action	The requested bulk action.
 	 */
 	function process_bulk_actions( $action ) {
@@ -169,7 +171,11 @@ class WPT_Productions_Admin {
 		foreach ( $_POST['production'] as $production_id ) {
 			switch ( $action ) {
 				case 'publish':
-					wp_publish_post( $production_id );
+	            	$production_post = array(
+		            	'ID' => $production_id,
+		            	'post_status' => 'publish',
+	            	);
+	            	wp_update_post( $production_post );
 	                break;
 
 	            case 'draft':

@@ -302,6 +302,7 @@
 			'category__and' => false,
 			'category__in' => false,
 			'category__not_in' => false,
+			'tag' => false,
 			'start' => false,
 			'end' => false,
 			'groupby' => false,
