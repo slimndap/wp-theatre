@@ -129,10 +129,12 @@ This release focusses on a more streamlined experience when managing your events
     * Renamed 'productions' to 'events'.
     * Simplified the events admin screen.
     * Added a new `{{prices}}` placeholder for productions (0.15.3).
+    * Events can now be filtered by tags (0.15.5).
     
 * Bugfix
     * The translation setting for the header above events on the productions page was also being used in other places (eg. the admin menu) (0.15.2). Thank you [Bob Morris](https://wordpress.org/support/profile/bob-morris)!
 	* Seasons are now hidden from search results (0.15.3).
+	* The post slug was not working for events when using bulk edit in the events admin screen (0.15.5).
     
 = 0.14 =
 
@@ -210,6 +212,9 @@ Release Date: May 30th, 2015
 
 
 == Upgrade Notice ==
+= 0.15.5 =
+Adds support for a 'tag' filter in event lists. Fixes a problem when bulk publishing events.
+
 = 0.15.4 =
 Small bugfixes and improvements to the events admin screen.
 
