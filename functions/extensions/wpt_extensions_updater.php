@@ -31,6 +31,7 @@ class WPT_Extensions_Updater {
 	 * Triggered by the 'Activate License' button on the settings page.
 	 *
 	 * @since 	0.12.3
+	 * @since	0.15.6	Updated the updater URL to the wp.theater domain.
 	 * @return 	void
 	 */
 	function activate_licenses() {
@@ -49,7 +50,7 @@ class WPT_Extensions_Updater {
 					'url'       => home_url()
 				);
 
-				$response = wp_remote_post( 'http://theater.slimndap.com', array( 'timeout' => 15, 'sslverify' => false, 'body' => $api_params ) );
+				$response = wp_remote_post( 'https://wp.theater', array( 'timeout' => 15, 'sslverify' => false, 'body' => $api_params ) );
 
 				if ( is_wp_error( $response ) ) {
 					return false; }
@@ -122,13 +123,14 @@ class WPT_Extensions_Updater {
 	 * The EDD Plugin Updater periodically checks for valid license keys and available updates.
 	 *
 	 * @since	0.12.3
+	 * @since	0.15.6	Updated the updater URL to the wp.theater domain.
 	 * @return 	void
 	 */
 	public function create_plugin_updaters() {
 		foreach ( $this->get_extensions() as $extension ) {
 			$license_key = trim( get_option( $extension['slug'].'_license_key' ) );
 
-			$edd_updater = new EDD_SL_Plugin_Updater( 'http://theater.slimndap.com', $extension['plugin_file'], array(
+			$edd_updater = new EDD_SL_Plugin_Updater( 'https://wp.theater', $extension['plugin_file'], array(
 					'version' 	=> $extension['version'], 	// current version number
 					'license' 	=> $license_key, 			// license key (used get_option above to retrieve from DB)
 					'item_name' => $extension['name'], 	// name of this plugin
@@ -144,6 +146,7 @@ class WPT_Extensions_Updater {
 	 * Triggered by the 'Deactivate License' button on the settings page.
 	 *
 	 * @since 	0.12.3
+	 * @since	0.15.6	Updated the updater URL to the wp.theater domain.
 	 * @return 	void
 	 */
 	function deactivate_licenses() {
@@ -163,7 +166,7 @@ class WPT_Extensions_Updater {
 					'url'       => home_url()
 				);
 
-				$response = wp_remote_post( 'http://theater.slimndap.com', array( 'timeout' => 15, 'sslverify' => false, 'body' => $api_params ) );
+				$response = wp_remote_post( 'https://wp.theater', array( 'timeout' => 15, 'sslverify' => false, 'body' => $api_params ) );
 
 				if ( is_wp_error( $response ) ) {
 					return false; }

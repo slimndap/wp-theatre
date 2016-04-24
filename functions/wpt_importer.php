@@ -83,11 +83,12 @@
 		 * It can also hold buttons with action that are specific to this importer.
 		 *
 		 * @since	0.14.5
+		 * @since	0.15.6	Changed 'production' to 'event' in the metabox message.
 		 * @param 	WP_Post	$post	The current post (production).
 		 */
 		function production_metabox($post) {
 			ob_start();
-			?><p><?php printf(__('This production is imported from %s.', 'theatre'), $this->name); ?></p><?php
+			?><p><?php printf(__('This event is imported from %s.', 'theatre'), $this->name); ?></p><?php
 			
 			$message = ob_get_clean();
 			
