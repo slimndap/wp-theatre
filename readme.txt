@@ -136,6 +136,7 @@ This release focusses on a more streamlined experience when managing your events
 	* Seasons are now hidden from search results (0.15.3).
 	* The post slug was not working for events when using bulk edit in the events admin screen (0.15.5).
 	* Updates for extension plugins were not working anymore (0.15.6).
+	* Event where not always showing the correct end date.
     
 = 0.14 =
 
@@ -213,6 +214,9 @@ Release Date: May 30th, 2015
 
 
 == Upgrade Notice ==
+= 0.15.7 =
+Fixes two issues with displaying event dates.
+
 = 0.15.6 =
 Fixes a problem with updates for Theater for WordPress extension plugins.
 
