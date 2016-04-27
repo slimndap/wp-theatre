@@ -249,6 +249,9 @@ class WPT_Production {
 	 * Gets the summary for the upcoming production dates.
 	 *
 	 * @since	0.15.3
+	 * @since	0.15.7	Fix: A production with both historic and multiple upcoming events 
+	 *					showed the first upcoming event as the enddate.
+	 *					Fixes #200.
 	 * @return	string	The summary for the upcoming production dates.
 	 */
 	function dates_summary() {
@@ -275,7 +278,7 @@ class WPT_Production {
 			}
 		} else {
 			/* translators: enddate of a running event, eg. until April 12, 2016 */
-			$dates_summary = sprintf( _x( 'until %s', 'production dates', 'theatre' ), $dates[0] );
+			$dates_summary = sprintf( _x( 'until %s', 'production dates', 'theatre' ), $dates[count( $dates ) -1] );
 		}
 
 		/**

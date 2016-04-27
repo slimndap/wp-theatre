@@ -146,15 +146,54 @@ class WPT_Test_Dates extends WPT_UnitTestCase {
 	/**
 	 * Tests the HTML of dates of productions with both upcoming and historic events.
 	 * @since	0.15.3
+	 * @since	0.15.7	Added more upcoming events to the production.
+	 *					Confirms #200.	
 	 */
 	function test_wpt_production_dates_html_with_running_events() {
-		$this->setup_test_data();
+		$production_id = $this->factory->post->create(
+			array(
+				'post_type' => WPT_Production::post_type_name,
+				'post_title' => 'Bassie en Adriaan',
+			)	
+		);
+		
+		$event_id = $this->factory->post->create(
+			array(
+				'post_type' => WPT_Event::post_type_name,
+			)	
+		);
+		add_post_meta( $event_id, WPT_Production::post_type_name, $production_id );
+		add_post_meta( $event_id, 'event_date', date( 'Y-m-d', time() + (-2 * DAY_IN_SECONDS) ).' 14:00:00' );
+		
+		$event_id = $this->factory->post->create(
+			array(
+				'post_type' => WPT_Event::post_type_name,
+			)	
+		);
+		add_post_meta( $event_id, WPT_Production::post_type_name, $production_id );
+		add_post_meta( $event_id, 'event_date', date( 'Y-m-d', time() + (-2 * DAY_IN_SECONDS) ).' 16:00:00' );
+		
+		$event_id = $this->factory->post->create(
+			array(
+				'post_type' => WPT_Event::post_type_name,
+			)	
+		);
+		add_post_meta( $event_id, WPT_Production::post_type_name, $production_id );
+		add_post_meta( $event_id, 'event_date', date( 'Y-m-d', time() + (2 * DAY_IN_SECONDS) ).' 14:00:00' );
+		
+		$event_id = $this->factory->post->create(
+			array(
+				'post_type' => WPT_Event::post_type_name,
+			)	
+		);
+		add_post_meta( $event_id, WPT_Production::post_type_name, $production_id );
+		add_post_meta( $event_id, 'event_date', date( 'Y-m-d', time() + (3 * DAY_IN_SECONDS) ).' 16:00:00' );
 
-		$production = new WPT_Production( $this->production_with_upcoming_and_historic_events );
+		$production = new WPT_Production( $production_id );
 		$date_format = get_option( 'date_format' );
 
 		$actual = $production->dates_html();
-		$expected = 'until '.date( $date_format, time() + WEEK_IN_SECONDS );
+		$expected = 'until '.date( $date_format, time() + (3 * DAY_IN_SECONDS) );
 
 		$this->assertContains( $expected, $actual );
 	}
@@ -214,4 +253,6 @@ class WPT_Test_Dates extends WPT_UnitTestCase {
 
 		$this->assertContains( $expected, $actual );
 	}
+	
+
 }
