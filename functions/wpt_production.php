@@ -175,6 +175,8 @@ class WPT_Production {
 	 * @since	0.15.3	Moved HTML output to seperate method.
 	 *					@see WPT_Production::dates_html();
 	 *					Now returns an array instead of a summary (string).
+	 * @since	0.15.7	Make sure that the keys are reset of the returned array.
+	 *					Fixes #199.
 	 * @return	array	The upcoming production dates.
 	 */
 	function dates( $deprecated = array() ) {
@@ -193,7 +195,8 @@ class WPT_Production {
 			$dates[] = $event->startdate();
 		}
 
-		$dates = array_unique( $dates );
+		// Remove duplicate dates _without_ preserving keys.
+		$dates = array_values(array_unique( $dates ));
 
 		/**
 		 * Filter the upcoming production dates.

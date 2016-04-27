@@ -158,4 +158,60 @@ class WPT_Test_Dates extends WPT_UnitTestCase {
 
 		$this->assertContains( $expected, $actual );
 	}
+
+	/**
+	 * Tests the HTML of dates of productions with multiple events on the same day.
+	 * Confirms #199.
+	 * 
+	 * @since	0.15.7
+	 */
+	function test_wpt_production_dates_html_with_multiple_events_on_same_day() {
+
+		$production_id = $this->factory->post->create(
+			array(
+				'post_type' => WPT_Production::post_type_name,
+				'post_title' => 'Bassie en Adriaan',
+			)	
+		);
+		
+		$event_id = $this->factory->post->create(
+			array(
+				'post_type' => WPT_Event::post_type_name,
+			)	
+		);
+		add_post_meta( $event_id, WPT_Production::post_type_name, $production_id );
+		add_post_meta( $event_id, 'event_date', date( 'Y-m-d', time() + (2 * DAY_IN_SECONDS) ).' 14:00:00' );
+		
+		$event_id = $this->factory->post->create(
+			array(
+				'post_type' => WPT_Event::post_type_name,
+			)	
+		);
+		add_post_meta( $event_id, WPT_Production::post_type_name, $production_id );
+		add_post_meta( $event_id, 'event_date', date( 'Y-m-d', time() + (2 * DAY_IN_SECONDS) ).' 16:00:00' );
+		
+		$event_id = $this->factory->post->create(
+			array(
+				'post_type' => WPT_Event::post_type_name,
+			)	
+		);
+		add_post_meta( $event_id, WPT_Production::post_type_name, $production_id );
+		add_post_meta( $event_id, 'event_date', date( 'Y-m-d', time() + (3 * DAY_IN_SECONDS) ).' 14:00:00' );
+		
+		$event_id = $this->factory->post->create(
+			array(
+				'post_type' => WPT_Event::post_type_name,
+			)	
+		);
+		add_post_meta( $event_id, WPT_Production::post_type_name, $production_id );
+		add_post_meta( $event_id, 'event_date', date( 'Y-m-d', time() + (3 * DAY_IN_SECONDS) ).' 16:00:00' );
+		
+		$production = new WPT_Production( $production_id );
+		$date_format = get_option( 'date_format' );
+
+		$actual = $production->dates_html();
+		$expected = date( $date_format, time() + (2 * DAY_IN_SECONDS) ).' to '.date( $date_format, time() + (3 * DAY_IN_SECONDS) );
+
+		$this->assertContains( $expected, $actual );
+	}
 }
