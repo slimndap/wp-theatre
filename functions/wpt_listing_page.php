@@ -886,6 +886,14 @@
 			);
 		}
 		
+		/**
+		 * Outputs the widget HTML.
+		 * 
+		 * @since	0.8
+		 * @since	0.15.8	Fixed a typo in the closing <ul>.
+		 * @param 	mixed 	$args
+		 * @param 	mixed 	$instance
+		 */
 		public function widget($args,$instance) {
 			global $wp_theatre;
 			
@@ -913,7 +921,7 @@
 					$html.='</a>';
 					$html.= '</li>';
 				}
-				$html = '<ul class="wpt_categories">'.$html.'</li>';
+				$html = '<ul class="wpt_categories">'.$html.'</ul>';
 
 				$wp_theatre->transient->set('cat', array(), $html);
 			}
