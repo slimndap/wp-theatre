@@ -114,8 +114,9 @@
 		 * By defining this globally it is no longer necessary to manually sanitize data when
 		 * saving it to the database (eg. in the admin or during the import).
 		 *
-		 * @since 0.11
-		 * @return void
+		 * @since 	0.11
+		 * @since	0.15.8	Changed Tickets URL sanitiziation to esc_url_raw().
+		 *					sanitize_event_date() was breaking valid urls.
 		 */
 		public function register_event_meta() {
 			register_meta(
@@ -146,7 +147,7 @@
 			register_meta(
 				'post',
 				'tickets_url',
-				'sanitize_text_field'
+				'esc_url_raw'
 			);
 			register_meta(
 				'post',
