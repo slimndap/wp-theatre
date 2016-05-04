@@ -214,6 +214,9 @@ Release Date: May 30th, 2015
 
 
 == Upgrade Notice ==
+= 0.15.8 =
+Fixes in the HTML output of the Calendar widget and improves the sanitization of ticket urls.
+
 = 0.15.7 =
 Fixes two issues with displaying event dates.
 
