@@ -1,11 +1,11 @@
 [![Build Status](https://travis-ci.org/slimndap/wp-theatre.svg?branch=master)](https://travis-ci.org/slimndap/wp-theatre)
 
-#Theater for Wordpress
+#Theater for WordPress
 
 
 ## Events vs. productions
 
-Theater for Wordpress uses _productions_ to group your _events_. Each production can have one or more events.
+Theater for WordPress uses _productions_ to group your _events_. Each production can have one or more events.
 
 So if you run a theatre then 'The Sound Of Music' is a _production_ and the show this weekend is an _event_.
 
