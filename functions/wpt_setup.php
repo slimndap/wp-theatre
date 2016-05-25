@@ -174,59 +174,76 @@
 		 *					Archive is disabled.
 		 * @since	0.15	Renamed post type title from 'Production' to 'Event'.
 		 * @since	0.15.6	Fixed the text-domain used in the 'Production' post type.
+		 * @since	0.15.9	Added a filter to the post type args.
 		 *
 		 * @see		WPT_Production_Permalink::get_permalink()	The production permalink.
 		 *				
 		 * @return void
 		 */
 		public function register_post_types() {
+			
 			global $wp_theatre;
 
-			register_post_type( WPT_Production::post_type_name,
-				array(
-					'labels' => array(
-						'name' => __( 'Events','theatre'),
-						'singular_name' => __( 'Event','theatre'),
-						'add_new' =>  _x('Add New', 'production','theatre'),
-						'new_item' => __('New event','theatre'),
-						'add_new_item' => __('Add new event','theatre'),
-						'edit_item' => __('Edit event','theatre')
+			$post_type_args = array(
+				'labels' => array(
+					'name' => __( 'Events','theatre'),
+					'singular_name' => __( 'Event','theatre'),
+					'add_new' =>  _x('Add New', 'production','theatre'),
+					'new_item' => __('New event','theatre'),
+					'add_new_item' => __('Add new event','theatre'),
+					'edit_item' => __('Edit event','theatre')
+				),
+				'public' => true,
+				'has_archive' => false,
+				'show_in_menu'  => false,
+				'show_in_admin_bar' => true,
+					'supports' => array('title', 'editor', 'excerpt', 'thumbnail','comments'),
+					'taxonomies' => array('category','post_tag'),
+					'rewrite' => array( 
+						'slug' => $wp_theatre->production_permalink->get_base(), 
+						'with_front' => false, 
+						'feeds' => true 
 					),
-					'public' => true,
-					'has_archive' => false,
-					'show_in_menu'  => false,
-					'show_in_admin_bar' => true,
-		  			'supports' => array('title', 'editor', 'excerpt', 'thumbnail','comments'),
-		  			'taxonomies' => array('category','post_tag'),
-		  			'rewrite' => array( 
-		  				'slug' => $wp_theatre->production_permalink->get_base(), 
-		  				'with_front' => false, 
-		  				'feeds' => true 
-		  			),
-				)
 			);
+
+			/**
+			 * Filter the post type args for productions.
+			 * 
+			 * @since	0.15.9
+			 * @param	$post_type_args	The post type args.
+			 */
+			$post_type_args = apply_filters('wpt/setup/post_type/args/?post_type='.WPT_Production::post_type_name, $post_type_args);
+
+			register_post_type( WPT_Production::post_type_name, $post_type_args );
 			
-			register_post_type( WPT_Event::post_type_name,
-				array(
-					'labels' => array(
-						'name' => __( 'Events','theatre'),
-						'singular_name' => __( 'Event','theatre'),
-						'new_item' => __('New event','theatre'),
-						'add_new_item' => __('Add new event','theatre'),
-						'edit_item' => __('Edit event','theatre')
-	
-					),
-					'public' => true,
-					'has_archive' => true,
-					'show_in_menu'  => false,
-					'supports' => array(''),
-		  			'taxonomies' => array('category','post_tag'),
-					'show_in_nav_menus'=> false,
-				)
+			$post_type_args = array(
+				'labels' => array(
+					'name' => __( 'Events','theatre'),
+					'singular_name' => __( 'Event','theatre'),
+					'new_item' => __('New event','theatre'),
+					'add_new_item' => __('Add new event','theatre'),
+					'edit_item' => __('Edit event','theatre')
+
+				),
+				'public' => true,
+				'has_archive' => true,
+				'show_in_menu'  => false,
+				'supports' => array(''),
+	  			'taxonomies' => array('category','post_tag'),
+				'show_in_nav_menus'=> false,
 			);
+
+			/**
+			 * Filter the post type args for events.
+			 * 
+			 * @since	0.15.9
+			 * @param	$post_type_args	The post type args.
+			 */
+			$post_type_args = apply_filters('wpt/setup/post_type/args/?post_type='.WPT_Event::post_type_name, $post_type_args);
+
+			register_post_type( WPT_Event::post_type_name, $post_type_args );
 			
-			register_post_type( 'wp_theatre_season',
-				array(
+			$post_type_args = array(
 					'labels' => array(
 						'name' => __( 'Seasons','theatre'),
 						'singular_name' => __( 'Season','theatre')
@@ -236,8 +253,17 @@
 					'supports' => array('title','editor'),
 					'show_in_menu'  => 'theater-events',
 					'exclude_from_search' => true,
-				)
 			);
+
+			/**
+			 * Filter the post type args for seasons.
+			 * 
+			 * @since	0.15.9
+			 * @param	$post_type_args	The post type args.
+			 */
+			$post_type_args = apply_filters('wpt/setup/post_type/args/?post_type=wp_theatre_season', $post_type_args);
+
+			register_post_type( 'wp_theatre_season', $post_type_args );
 
 		}	
 		
