@@ -221,9 +221,14 @@ class WPT_Productions_Admin {
 			}
 		}
 		
-		// Redirect back to admin screen.
-		wp_redirect($sendback);
-		exit;
+		/* 
+		 * Redirect back to admin screen.
+		 * Don't redirect if headers are already sent (eg. in unit tests).
+		 */
+		if (! headers_sent() ) {
+			wp_redirect($sendback_url);
+			exit;
+		}
 		
 	}
 
