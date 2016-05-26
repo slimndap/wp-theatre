@@ -48,7 +48,7 @@ class WPT_Extensions_Promo {
 				'utm_source'   => 'plugins-page',
 				'utm_medium'   => 'plugin-row',
 				'utm_campaign' => 'admin',
-			), 'http://theater.slimndap.com/extensions/'
+			), 'https://wp.theater/extensions/'
 		);
 
 		$links[] = '<a href="' . esc_url( $extensions_link ) . '">' . esc_html__( 'Extensions', 'theatre' ) . '</a>';
@@ -74,7 +74,7 @@ class WPT_Extensions_Promo {
 			$args = array(
 				'timeout' => 30,	
 			);
-			$response = wp_remote_get( 'http://theater.slimndap.com/wp-json/theater/v1/extensions', $args );
+			$response = wp_remote_get( 'https://wp.theater/wp-json/theater/v1/extensions', $args );
 			set_transient( 'wpt_extensions_promo_feed', $response, DAY_IN_SECONDS );
 		}
 
@@ -154,7 +154,7 @@ class WPT_Extensions_Promo {
 					'utm_source'   => 'plugin-extensions-page',
 					'utm_medium'   => 'browse-button',
 					'utm_campaign' => 'admin',
-				), 'http://theater.slimndap.com/extensions/'
+				), 'https://wp.theater/extensions/'
 			);
 			$html .= '<p><a href="'.$extensions_link.'" class="button-primary">'.__( 'Browse all extensions','theatre' ).'</a></p>';
 		}
