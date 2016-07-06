@@ -23,9 +23,9 @@
 			$feed = get_post_type_archive_feed_link(WPT_Production::post_type_name);
 			$html = array();
 			
-			$html[] = '<link rel="alternate" type="application/rss+xml" title="'.__('New productions','wp_theatre').'" href="'.$feed.'" />';
-			$html[] = '<link rel="alternate" type="application/rss+xml" title="'.__('Upcoming productions','wp_theatre').'" href="'.site_url('/upcoming_productions').'" />';
-			$html[] = '<link rel="alternate" type="application/rss+xml" title="'.__('Upcoming events','wp_theatre').'" href="'.site_url('/upcoming_events').'" />';
+			$html[] = '<link rel="alternate" type="application/rss+xml" title="'.__('New productions','theatre').'" href="'.$feed.'" />';
+			$html[] = '<link rel="alternate" type="application/rss+xml" title="'.__('Upcoming productions','theatre').'" href="'.site_url('/upcoming_productions').'" />';
+			$html[] = '<link rel="alternate" type="application/rss+xml" title="'.__('Upcoming events','theatre').'" href="'.site_url('/upcoming_events').'" />';
 			echo implode("\n",$html)."\n";
 		}
 		
@@ -62,7 +62,7 @@
 			$feed.=	'<rss version="2.0"	xmlns:content="http://purl.org/rss/1.0/modules/content/">';
 
 			$feed.= '<channel>';
-			$feed.= '<title>'.get_bloginfo_rss('name').' '.__('Upcoming productions','wp_theatre').'</title>';
+			$feed.= '<title>'.get_bloginfo_rss('name').' '.__('Upcoming productions','theatre').'</title>';
 			$feed.= '<link>'.get_bloginfo_rss('url').'</link>';
 			$feed.= '<description>'.get_bloginfo_rss("description").'</description>';
 
@@ -108,7 +108,7 @@
 			$feed.=	'<rss version="2.0"	xmlns:content="http://purl.org/rss/1.0/modules/content/">';
 
 			$feed.= '<channel>';
-			$feed.= '<title>'.get_bloginfo_rss('name').' '.__('Upcoming events','wp_theatre').'</title>';
+			$feed.= '<title>'.get_bloginfo_rss('name').' '.__('Upcoming events','theatre').'</title>';
 			$feed.= '<link>'.get_bloginfo_rss('url').'</link>';
 			$feed.= '<description>'.get_bloginfo_rss("description").'</description>';
 

@@ -25,6 +25,63 @@
 			add_action('untrash_post',array( $this,'untrash_post'));
 			
 			add_filter( 'cron_schedules', array($this,'cron_schedules'));
+
+			add_filter( 'query_vars', array($this,'add_tickets_url_iframe_query_vars'));	 
+			add_action('init', array($this, 'add_tickets_url_iframe_rewrites'));
+		}
+	
+		/**
+		 * Adds event tickets URL iframe rewrites.
+		 * 
+		 * Rewrite pretty iframed ticket screens URLs from:
+		 *
+		 * http://example.com/tickets/my-event/123
+		 *
+		 * to:
+		 *
+		 * http://example.com/?pagename=tickets&wpt_event_tickets=123
+		 *
+		 * @see		WPT_Setup::add_tickets_url_iframe_query_vars()
+		 * @since	0.12
+		 * @return	void
+		 */
+		public function add_tickets_url_iframe_rewrites() {
+			global $wp_theatre;
+			
+			if (empty($wp_theatre->wpt_tickets_options['iframepage'])) {
+				return;
+			}
+			
+			$iframe_page = get_post($wp_theatre->wpt_tickets_options['iframepage']);
+			
+			if (is_null($iframe_page)) {
+				return;
+			}
+			
+			add_rewrite_tag('%wpt_event_tickets%', '.*');
+
+			add_rewrite_rule(
+				$iframe_page->post_name.'/([a-z0-9-]+)/([0-9]+)$', 
+				'index.php?pagename='.$iframe_page->post_name.'&wpt_event_tickets=$matches[2]',
+				'top'
+			);
+			
+		}
+		
+		/**
+		 * Adds 'wpt_event_tickets' to the query vars.
+		 *
+		 * Makes it possible to access iframed ticket screens like:
+		 * http://example.com/?pagename=tickets&wpt_event_tickets=123
+		 *
+		 * @see WPT_Setup::add_tickets_url_iframe_rewrites()
+		 * @access public
+		 * @param mixed $query_vars
+		 * @return void
+		 */
+		public function add_tickets_url_iframe_query_vars($query_vars) {
+			$query_vars[] = 'wpt_event_tickets';
+			return $query_vars;
 		}
 	
 		/**
@@ -38,7 +95,7 @@
 	
 			$plugin_links = array(
 				'<a href="' . admin_url( 'admin.php?page=wpt_admin' ) . '">' . __( 'Settings') . '</a>',
-				'<a href="https://github.com/slimndap/wp-theatre/wiki">' . __( 'Docs', 'wp_theatre' ) . '</a>',
+				'<a href="https://github.com/slimndap/wp-theatre/wiki">' . __( 'Docs', 'theatre' ) . '</a>',
 			);
 	
 			return array_merge( $plugin_links, $links );
@@ -57,8 +114,9 @@
 		 * By defining this globally it is no longer necessary to manually sanitize data when
 		 * saving it to the database (eg. in the admin or during the import).
 		 *
-		 * @since 0.11
-		 * @return void
+		 * @since 	0.11
+		 * @since	0.15.8	Changed Tickets URL sanitiziation to esc_url_raw().
+		 *					sanitize_event_date() was breaking valid urls.
 		 */
 		public function register_event_meta() {
 			register_meta(
@@ -89,7 +147,7 @@
 			register_meta(
 				'post',
 				'tickets_url',
-				'sanitize_text_field'
+				'esc_url_raw'
 			);
 			register_meta(
 				'post',
@@ -108,62 +166,104 @@
 			);
 		}
 	
+		/**
+		 * Registers the custom post types for productions, events and seasons.
+		 * 
+		 * @since 	?.?
+		 * @since 	0.12	Slug is dynamic.
+		 *					Archive is disabled.
+		 * @since	0.15	Renamed post type title from 'Production' to 'Event'.
+		 * @since	0.15.6	Fixed the text-domain used in the 'Production' post type.
+		 * @since	0.15.9	Added a filter to the post type args.
+		 *
+		 * @see		WPT_Production_Permalink::get_permalink()	The production permalink.
+		 *				
+		 * @return void
+		 */
 		public function register_post_types() {
+			
+			global $wp_theatre;
 
-			$permalinks        = get_option( 'wpt_permalinks' );
-			$production_permalink = empty( $permalinks['production_base'] ) ? _x( 'production', 'slug', 'wp_theatre' ) : $permalinks['production_base'];
-			
-			register_post_type( WPT_Production::post_type_name,
-				array(
-					'labels' => array(
-						'name' => __( 'Productions','wp_theatre'),
-						'singular_name' => __( 'Production','wp_theatre'),
-						'add_new' =>  _x('Add New', 'production','wp_theatre'),
-						'new_item' => __('New production','wp_theatre'),
-						'add_new_item' => __('Add new').' '.__('production','wp_theatre'),
-						'edit_item' => __('Edit production','wp_theatre')
+			$post_type_args = array(
+				'labels' => array(
+					'name' => __( 'Events','theatre'),
+					'singular_name' => __( 'Event','theatre'),
+					'add_new' =>  _x('Add New', 'production','theatre'),
+					'new_item' => __('New event','theatre'),
+					'add_new_item' => __('Add new event','theatre'),
+					'edit_item' => __('Edit event','theatre')
+				),
+				'public' => true,
+				'has_archive' => false,
+				'show_in_menu'  => false,
+				'show_in_admin_bar' => true,
+					'supports' => array('title', 'editor', 'excerpt', 'thumbnail','comments'),
+					'taxonomies' => array('category','post_tag'),
+					'rewrite' => array( 
+						'slug' => $wp_theatre->production_permalink->get_base(), 
+						'with_front' => false, 
+						'feeds' => true 
 					),
-					'public' => true,
-					'has_archive' => true,
-					'show_in_menu'  => 'theatre',
-					'show_in_admin_bar' => true,
-		  			'supports' => array('title', 'editor', 'excerpt', 'thumbnail','comments'),
-		  			'taxonomies' => array('category','post_tag'),
-		  			'rewrite' => $production_permalink ? array( 'slug' => untrailingslashit( $production_permalink ), 'with_front' => false, 'feeds' => true ) : false,
-				)
 			);
+
+			/**
+			 * Filter the post type args for productions.
+			 * 
+			 * @since	0.15.9
+			 * @param	$post_type_args	The post type args.
+			 */
+			$post_type_args = apply_filters('wpt/setup/post_type/args/?post_type='.WPT_Production::post_type_name, $post_type_args);
+
+			register_post_type( WPT_Production::post_type_name, $post_type_args );
 			
-			register_post_type( WPT_Event::post_type_name,
-				array(
-					'labels' => array(
-						'name' => __( 'Events','wp_theatre'),
-						'singular_name' => __( 'Event','wp_theatre'),
-						'new_item' => __('New event','wp_theatre'),
-						'add_new_item' => __('Add new event','wp_theatre'),
-						'edit_item' => __('Edit event','wp_theatre')
-	
-					),
-					'public' => true,
-					'has_archive' => true,
-					'show_in_menu'  => false,
-					'supports' => array(''),
-		  			'taxonomies' => array('category','post_tag'),
-					'show_in_nav_menus'=> false
-				)
-			);
-			
-			register_post_type( 'wp_theatre_season',
-				array(
-					'labels' => array(
-						'name' => __( 'Seasons','wp_theatre'),
-						'singular_name' => __( 'Season','wp_theatre')
-					),
+			$post_type_args = array(
+				'labels' => array(
+					'name' => __( 'Events','theatre'),
+					'singular_name' => __( 'Event','theatre'),
+					'new_item' => __('New event','theatre'),
+					'add_new_item' => __('Add new event','theatre'),
+					'edit_item' => __('Edit event','theatre')
+
+				),
 				'public' => true,
 				'has_archive' => true,
-				'supports' => array('title','editor'),
-				'show_in_menu'  => 'theatre',
-				)
+				'show_in_menu'  => false,
+				'supports' => array(''),
+	  			'taxonomies' => array('category','post_tag'),
+				'show_in_nav_menus'=> false,
 			);
+
+			/**
+			 * Filter the post type args for events.
+			 * 
+			 * @since	0.15.9
+			 * @param	$post_type_args	The post type args.
+			 */
+			$post_type_args = apply_filters('wpt/setup/post_type/args/?post_type='.WPT_Event::post_type_name, $post_type_args);
+
+			register_post_type( WPT_Event::post_type_name, $post_type_args );
+			
+			$post_type_args = array(
+					'labels' => array(
+						'name' => __( 'Seasons','theatre'),
+						'singular_name' => __( 'Season','theatre')
+					),
+					'public' => true,
+					'has_archive' => true,
+					'supports' => array('title','editor'),
+					'show_in_menu'  => 'theater-events',
+					'exclude_from_search' => true,
+			);
+
+			/**
+			 * Filter the post type args for seasons.
+			 * 
+			 * @since	0.15.9
+			 * @param	$post_type_args	The post type args.
+			 */
+			$post_type_args = apply_filters('wpt/setup/post_type/args/?post_type=wp_theatre_season', $post_type_args);
+
+			register_post_type( 'wp_theatre_season', $post_type_args );
 
 		}	
 		
@@ -220,7 +320,7 @@
 			// Adds once weekly to the existing schedules.
 			$schedules['wpt_schedule'] = array(
 				'interval' => 5*60,
-				'display' => __( 'Every 5 minutes', 'wp_theatre' )
+				'display' => __( 'Every 5 minutes', 'theatre' )
 			);
 			return $schedules;
 		}
@@ -231,15 +331,15 @@
 		 * Whenever a production is deleted (not just trashed), make sure that all connected events are deleted as well.
 		 * Events that al already in the trash are left alone.
 		 *
-		 * @since 0.7
- 		 *
+		 * @since 	0.7
+		 * @since	0.12	Added support for events with an 'auto-draft' post_status.
 		 */
 		function before_delete_post($post_id) {
 			$post = get_post($post_id);
 			if (!empty($post) && $post->post_type==WPT_Production::post_type_name) {
 				$args = array (
 					'post_type' => WPT_Event::post_type_name,
-					'post_status' => array('any'),
+					'post_status' => array('any', 'auto-draft'),
 					'meta_query' => array(
 						array(
 							'key' => WPT_Production::post_type_name,
@@ -254,18 +354,25 @@
 			}
 		}
 		
+		/**
+		 * Applies translation from the Theater Settings page.
+		 * 
+		 * @since	0.?
+		 * @since	0.15.2	Removed the translation for 'Events'.
+		 *					This is now handled directly by WPT_Listing_Page::wpt_production_page_events_content().
+		 *
+		 * @param 	string	$translated_text
+		 * @param	string 	$text
+		 * @param	string	$domain
+		 * @return	string
+		 */
 		function gettext($translated_text, $text, $domain) {
 			global $wp_theatre;
-			if ($domain=='wp_theatre') {
+			if ($domain=='theatre') {
 				switch ( $text ) {
 					case 'Tickets' :
 						if (!empty($wp_theatre->wpt_language_options['language_tickets'])) {
 							$translated_text = $wp_theatre->wpt_language_options['language_tickets'];
-						}
-						break;
-					case 'Events' :
-						if (!empty($wp_theatre->wpt_language_options['language_events'])) {
-							$translated_text = $wp_theatre->wpt_language_options['language_events'];
 						}
 						break;
 					case 'categories' :				
@@ -280,7 +387,7 @@
 		}
 		
 		function plugins_loaded(){
-			load_plugin_textdomain('wp_theatre', false, dirname( plugin_basename( __FILE__ ) ) . '/../lang/' );
+			load_plugin_textdomain('theatre', false, dirname( plugin_basename( __FILE__ ) ) . '/../lang/' );
 		}
 		
 		/*
@@ -421,37 +528,6 @@
 		}
 	}
 	
-	add_action( 'wp_ajax_save_bulk_edit_'.WPT_Production::post_type_name, 'wp_ajax_save_bulk_edit_production' );
-	function wp_ajax_save_bulk_edit_production() {
-		$wpt_admin = new WPT_Admin();
-	
-		// TODO perform nonce checking
-		remove_action( 'save_post', array( $this, 'save_post' ) );
-	
-		$post_ids = ( ! empty( $_POST[ 'post_ids' ] ) ) ? $_POST[ 'post_ids' ] : array();
-		if ( ! empty( $post_ids ) && is_array( $post_ids ) ) {
-			if ($_POST['post_status']!=-1) {
-				// Status of production is updated			
-				foreach( $post_ids as $post_id ) {
-					// Update status of connected Events
-					$events = $wpt_admin->get_events($post_id);
-					foreach($events as $event) {
-						
-						$post = array(
-							'ID'=>$event->ID,
-							'post_status'=>$_POST[ 'post_status' ]
-						);
-						wp_update_post($post);
-					}
-				}
-			}
-		}
-	
-		add_action( 'save_post', array( $this, 'save_post' ) );
-	
-		die();					
-	}
-
 
 
 ?>

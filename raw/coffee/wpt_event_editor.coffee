@@ -1,8 +1,10 @@
 class wpt_event_editor
 	constructor: ->
 		@init_datetime_inputs()
-		@init_delete_links()
 		@init_create()
+		
+		@init_actions_callbacks = [@init_delete_links]
+		@init_actions()
 		
 	init_datetime_inputs : ->
 	
@@ -13,6 +15,7 @@ class wpt_event_editor
 			defaultDate: wpt_event_editor_defaults.event_date
 			format : wpt_event_editor_defaults.datetime_format
 			step: 15
+			lang: wpt_event_editor_defaults.language
 			onChangeDateTime: (event_date, input) =>
 				if event_date?
 					enddate = new Date @enddate.val()	
@@ -24,7 +27,7 @@ class wpt_event_editor
 			format : wpt_event_editor_defaults.datetime_format
 			step: 15
 		
-	init_delete_links : ->
+	init_delete_links : =>
 		jQuery('.wpt_event_editor_listing_action_delete').unbind('click').click (e) =>
 			if confirm wpt_event_editor_defaults.confirm_delete_message
 				data =
@@ -32,8 +35,12 @@ class wpt_event_editor
 					'event_id': jQuery(e.currentTarget).parents('tr').data 'event_id'
 					'nonce': wpt_event_editor_security.nonce
 				jQuery('.wpt_event_editor_listing').load ajaxurl, data, =>
-					@init_delete_links()
+					@init_actions()
 			false
+
+	init_actions : =>
+		for callback in @init_actions_callbacks
+			callback()
 
 	init_create : ->
 		@create = jQuery '.wpt_event_editor_create'
@@ -74,6 +81,5 @@ class wpt_event_editor
 		container.load ajaxurl, data, =>
 			@init_datetime_inputs()
 		
-
 jQuery ->
-	new wpt_event_editor
+	wpt_event_editor_defaults.editor = new wpt_event_editor()

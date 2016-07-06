@@ -33,12 +33,13 @@ class WPT_Event_Editor {
 	/**
 	 * Adds the event editor meta box to the production admin page.
 	 *
-	 * @since 0.11
+	 * @since 	0.11
+	 * @since	0.15	Renamed metabox title from 'Events' to 'Dates'.
 	 */
 	public function add_events_meta_box() {
 		add_meta_box(
 			'wpt_event_editor',
-			__( 'Events', 'wp_theatre' ),
+			__( 'Dates', 'theatre' ),
 			array( $this, 'events_meta_box' ),
 			WPT_Production::post_type_name,
 			'normal',
@@ -52,6 +53,7 @@ class WPT_Event_Editor {
 	 * @since 0.11
 	 */
 	public function enqueue_scripts() {
+
 		wp_localize_script( 'wp_theatre_admin', 'wpt_event_editor_defaults', $this->get_defaults() );
 
 		wp_localize_script(
@@ -61,12 +63,15 @@ class WPT_Event_Editor {
 				'nonce' => wp_create_nonce( 'wpt_event_editor_ajax_nonce' ),
 			)
 		);
+
 	}
 
 	/**
 	 * Creates a new event for a production submitted through AJAX.
 	 *
-	 * @since 0.11.5
+	 * @since	0.11.5
+	 * @since 	0.12	Event now inherits post_status from production.
+	 *					Fixes #141.
 	 */
 	public function create_event_over_ajax() {
 
@@ -78,7 +83,7 @@ class WPT_Event_Editor {
 
 			$post = array(
 				'post_type' => WPT_Event::post_type_name,
-				'post_status' => 'publish',
+				'post_status' => get_post_status( $post_data['post_ID'] ),
 			);
 
 			if ( $event_id = wp_insert_post( $post ) ) {
@@ -140,9 +145,14 @@ class WPT_Event_Editor {
 	 *
 	 * You can use the 'wpt/event_editor/defaults'-filter to alter the settings.
 	 *
-	 * @since 0.11
-	 * @access private
-	 * @return array {
+	 * @since	0.11
+	 * @since 	0.12	Added 'language' to defaults.
+	 *					Fixes #135.
+	 * @since	0.12.4	Added 'editor' to defaults so it can be used a a global instance for
+	 *					the event editor object. This way the event editor can be referenced
+	 *					from different javascript files (eg. in extensions).
+	 * @access 	private
+	 * @return 	array {
 	 * 		int		$duration			Default duration of an event.
 	 *									This is used to automatically set the end time of an event when
 	 *									you create a new event.
@@ -156,13 +166,17 @@ class WPT_Event_Editor {
 	 */
 	private function get_defaults() {
 
+		$language_parts = explode( '-', get_bloginfo( 'language' ) );
+
 		$defaults = array(
 			'duration' => 2 * HOUR_IN_SECONDS,
 			'datetime_format' => 'Y-m-d H:i',
 			'event_date' => date( 'Y-m-d H:i', strtotime( 'Today 8 PM' ) ),
-			'tickets_button' => __( 'Tickets', 'wp_theatre' ),
+			'tickets_button' => __( 'Tickets', 'theatre' ),
 			'tickets_status' => WPT_Event::tickets_status_onsale,
-			'confirm_delete_message' => __( 'Are you sure that you want to delete this event?', 'wp_theatre' ),
+			'confirm_delete_message' => __( 'Are you sure that you want to delete this event?', 'theatre' ),
+			'language' => $language_parts[0],
+			'editor' => false,
 		);
 
 		/**
@@ -179,17 +193,42 @@ class WPT_Event_Editor {
 	}
 
 	/**
+	 * Gets the value for a field from the database.
+	 *
+	 * @since	0.12.4
+	 * @param 	array	$field		The field.
+	 * @param 	int 	$event_id	The event.
+	 * @return 	mixed				The value for the field.
+	 */
+	public function get_value($field, $event_id) {
+		if ( ! empty( $field['get']['callback'] ) ) {
+			$value = call_user_func_array( $field['get']['callback'], array( $field, $event_id ) );
+		} else {
+			$value = get_post_meta( $event_id, $field['id'], true );
+		}
+		return $value;
+	}
+
+	/**
 	 * Gets the event editor fields for an event.
 	 *
-	 * @since 0.11
-	 * @access public
-	 * @see WPT_Event_Editor::get_defaults()
-	 * @param int $event_id (default: false)
-	 * @return array {
+	 * @since 	0.11
+	 * @since	0.12.4	Added the 'get' handler.
+	 *
+	 * @see 	WPT_Event_Editor::get_defaults()
+	 * @param 	int 	$event_id (default: false)
+	 *
+	 * @return 	array {
 	 * 		array $field {
 	 *			string	$id		Unique identifier for this field.
 	 *							Should be equal to the meta key for this field.
 	 *			string 	$title	Title of this field, visible to the user.
+	 *			array	$get {
+	 *				Optional. Get handler for this field.
+	 *
+	 *				callback	$callback		Optional. Function that gets the database value of the field.
+	 *											Default array( $this, 'get_value' ).
+	 *			}
 	 *			array	$edit {
 	 *				Optional. Form input of this field.
 	 *
@@ -201,13 +240,15 @@ class WPT_Event_Editor {
 	 *											Default <false>.
 	 *				callback	$callback		Optional. Function that returns the HTML for the input.
 	 *											Default array( $this, 'get_control' ).
+	 *				callback	$callback		Optional. Function that return the HTML for the input.
+	 *											Default array( $this, 'get_control_html' ).
 	 *			}
 	 *			array	$save {
 	 *				Optional. Save handler for this field.
 	 *
 	 *				callback	$callback		Optional. Function that saves the $_POST value of the field when you
 	 *											submit the event editor form.
-	 *											Default array( $this, 'get_field' ).
+	 *											Default array( $this, 'save_value' ).
 	 *			}
 	 *	 	}
 	 * }
@@ -218,33 +259,33 @@ class WPT_Event_Editor {
 		$fields = array(
 			array(
 				'id' => 'event_date',
-				'title' => __( 'Start time', 'wp_theatre' ),
+				'title' => __( 'Start time', 'theatre' ),
 			),
 			array(
 				'id' => 'enddate',
-				'title' => __( 'End time', 'wp_theatre' ),
+				'title' => __( 'End time', 'theatre' ),
 				'save' => array(
 					'callback' => array( $this, 'save_enddate' ),
 				),
 			),
 			array(
 				'id' => 'venue',
-				'title' => __( 'Venue', 'wp_theatre' ),
+				'title' => __( 'Venue', 'theatre' ),
 			),
 			array(
 				'id' => 'city',
-				'title' => __( 'City', 'wp_theatre' ),
+				'title' => __( 'City', 'theatre' ),
 			),
 			array(
 				'id' => 'remark',
-				'title' => __( 'Remark', 'wp_theatre' ),
+				'title' => __( 'Remark', 'theatre' ),
 				'edit' => array(
-					'placeholder' => __( 'e.g. Premiere or Try-out', 'wp_theatre' ),
+					'placeholder' => __( 'e.g. Premiere or Try-out', 'theatre' ),
 				),
 			),
 			array(
 				'id' => 'tickets_status',
-				'title' => __( 'Tickets status', 'wp_theatre' ),
+				'title' => __( 'Tickets status', 'theatre' ),
 				'edit' => array(
 					'callback' => array( $this, 'get_control_tickets_status_html' ),
 				),
@@ -254,24 +295,27 @@ class WPT_Event_Editor {
 			),
 			array(
 				'id' => 'tickets_url',
-				'title' => __( 'Tickets URL', 'wp_theatre' ),
+				'title' => __( 'Tickets URL', 'theatre' ),
 				'edit' => array(
 					'placeholder' => 'http://',
 				),
 			),
 			array(
 				'id' => 'tickets_button',
-				'title' => __( 'Text for tickets link', 'wp_theatre' ),
+				'title' => __( 'Text for tickets link', 'theatre' ),
 				'edit' => array(
-					'description' => sprintf( __( 'Leave blank for \'%s\'', 'wp_theatre' ), $defaults['tickets_button'] ),
+					'description' => sprintf( __( 'Leave blank for \'%s\'', 'theatre' ), $defaults['tickets_button'] ),
 				),
 			),
 			array(
 				'id' => '_wpt_event_tickets_price',
-				'title' => __( 'Prices', 'wp_theatre' ),
+				'title' => __( 'Prices', 'theatre' ),
+				'get' => array(
+					'callback' => array( $this, 'get_prices' ),
+				),
 				'edit' => array(
 					'callback' => array( $this, 'get_control_prices_html' ),
-					'description' => __( 'Place extra prices on a new line.', 'wp_theatre' ),
+					'description' => __( 'Place extra prices on a new line.', 'theatre' ),
 				),
 				'save' => array(
 					'callback' => array( $this, 'save_prices' ),
@@ -409,8 +453,7 @@ class WPT_Event_Editor {
 			}
 
 			if ( is_numeric( $event_id ) ) {
-				$value = get_post_meta( $event_id, $field['id'], true );
-
+				$value = $this->get_value( $field, $event_id );
 				$html .= ' value="'.esc_attr( $value ).'"';
 			}
 
@@ -501,7 +544,7 @@ class WPT_Event_Editor {
 		$html .= '>';
 
 		if ( is_numeric( $event_id ) ) {
-			$values = get_post_meta( $event_id, $field['id'], false );
+			$values = $this->get_value( $field, $event_id );
 			$html .= implode( "\n", $values );
 		}
 
@@ -538,15 +581,15 @@ class WPT_Event_Editor {
 		$html = '';
 
 		$tickets_status_options = array(
-			WPT_Event::tickets_status_onsale => __( 'On sale', 'wp_theatre' ),
-			WPT_Event::tickets_status_soldout => __( 'Sold Out', 'wp_theatre' ),
-			WPT_Event::tickets_status_cancelled => __( 'Cancelled', 'wp_theatre' ),
-			WPT_Event::tickets_status_hidden => __( 'Hidden', 'wp_theatre' ),
+			WPT_Event::tickets_status_onsale => __( 'On sale', 'theatre' ),
+			WPT_Event::tickets_status_soldout => __( 'Sold Out', 'theatre' ),
+			WPT_Event::tickets_status_cancelled => __( 'Cancelled', 'theatre' ),
+			WPT_Event::tickets_status_hidden => __( 'Hidden', 'theatre' ),
 		);
 		$tickets_status_options = apply_filters( 'wpt_event_editor_tickets_status_options', $tickets_status_options );
 
 		if ( is_numeric( $event_id ) ) {
-			$value = get_post_meta( $event_id, $field['id'], true );
+			$value = $this->get_value( $field, $event_id );
 		}
 
 		if ( empty( $value ) ) {
@@ -573,7 +616,7 @@ class WPT_Event_Editor {
 			false
 		);
 		$html .= '/>';
-		$html .= '<span>'.__( 'Other', 'wp_theatre' ).': </span>';
+		$html .= '<span>'.__( 'Other', 'theatre' ).': </span>';
 		$html .= '</label>';
 		$html .= '<input type="text" name="wpt_event_editor_'.$field['id'].'_other"';
 		if ( ! in_array( $value, array_keys( $tickets_status_options ) ) ) {
@@ -603,6 +646,7 @@ class WPT_Event_Editor {
 	 *					@see https://github.com/slimndap/wp-theatre/issues/127
 	 * @since	0.11.5	Added a container div around the list HTML.
 	 *					Added a filter to the list HTML.
+	 * @since 	0.12	Added support for events with an 'auto-draft' post_status.
 	 * @param 	int 	$production_id	The production.
 	 * @return 	string	The HTML.
 	 */
@@ -613,7 +657,7 @@ class WPT_Event_Editor {
 		$html = '';
 
 		$args = array(
-			'status' => array( 'any' ),
+			'status' => array( 'any', 'auto-draft' ),
 			'production' => $production_id,
 		);
 		$events = $wp_theatre->events->get( $args );
@@ -659,6 +703,8 @@ class WPT_Event_Editor {
 	 * Gets the HTML for a single event in a listing.
 	 *
 	 * @since 	0.11
+	 * @since	0.15	Replaced 'venue + city' with 'location'.
+	 *
 	 * @access 	private
 	 * @param 	WPT_Event 	$event	The event.
 	 * @return 	string				The HTML.
@@ -672,18 +718,17 @@ class WPT_Event_Editor {
 		);
 
 		$html .= '<td>';
-		$html .= $event->date( $args );
-		$html .= $event->time( $args );
+		$html .= $event->startdate_html();
+		$html .= $event->starttime_html();
 		$html .= '</td>';
 
 		$html .= '<td>';
-		$html .= $event->venue( $args );
-		$html .= $event->city( $args );
+		$html .= $event->location( $args );
 		$html .= $event->remark( $args );
 		$html .= '</td>';
 
 		$html .= '<td>';
-		$html .= $event->tickets( $args );
+		$html .= $event->tickets_html();
 		$html .= '</td>';
 
 		/**
@@ -710,7 +755,7 @@ class WPT_Event_Editor {
 
 		$html = '';
 
-		$html .= '<table class="wpt_event_editor_form">';
+		$html .= '<table class="wpt_meta_box_form wpt_event_editor_form">';
 
 		foreach ( $this->get_fields( $event_id ) as $field ) {
 			$html .= '<tr>';
@@ -771,9 +816,25 @@ class WPT_Event_Editor {
 	}
 
 	/**
+	 * Gets the prices of an event.
+	 *
+	 * @since	0.12.4
+	 * @param 	array	$field		The field.
+	 * @param	int	 	$event_id	The event.
+	 * @return 	array				The prices.
+	 */
+	public function get_prices($field, $event_id) {
+		$values = get_post_meta( $event_id, $field['id'], false );
+		return $values;
+	}
+
+	/**
 	 * Gets the HTML to create a new event for a production.
 	 *
 	 * @since	0.11.5
+	 * @since	0.15	Renamed add new label from 'Add a new event' to 'Add a new date'.
+	 * 					Renamed save label from 'Save event' to 'Save date'.
+	 *
 	 * @param 	int 	$production_id	The production.
 	 * @return 	string					The HTML.
 	 */
@@ -783,14 +844,14 @@ class WPT_Event_Editor {
 		$html .= '<div class="wpt_event_editor_create_form">'.$this->get_form_html( $production_id ).'</div>';
 
 		$html_actions = '<div class="wpt_event_editor_create_actions wpt_event_editor_create_actions_closed">';
-		$html_actions .= '<a href="#" class="button wpt_event_editor_create_open">'.__( 'Add a new event','wp_theatre' ).'</a>';
+		$html_actions .= '<a href="#" class="button wpt_event_editor_create_open">'.__( 'Add a new date','theatre' ).'</a>';
 		$html_actions .= '</div>';
 
 		$html .= $html_actions;
 
 		$html_actions = '<div class="wpt_event_editor_create_actions wpt_event_editor_create_actions_open">';
-		$html_actions .= '<a href="#" class="button wpt_event_editor_create_save">'.__( 'Save event','wp_theatre' ).'</a>';
-		$html_actions .= '<a href="#" class="button wpt_event_editor_create_cancel">'.__( 'Cancel','wp_theatre' ).'</a>';
+		$html_actions .= '<a href="#" class="button wpt_event_editor_create_save">'.__( 'Save date','theatre' ).'</a>';
+		$html_actions .= '<a href="#" class="button wpt_event_editor_create_cancel">'.__( 'Cancel','theatre' ).'</a>';
 		$html_actions .= '</div>';
 
 		$html .= $html_actions;
@@ -844,7 +905,7 @@ class WPT_Event_Editor {
 			return $production_id;
 		}
 
-		// Unhook to avoid loops
+		// Unhook to avoid loops.
 		remove_action( 'save_post', array( $this, 'save_event' ) );
 
 		$production_post = get_post( $production_id );
@@ -866,7 +927,7 @@ class WPT_Event_Editor {
 			}
 		}
 
-		// Rehook
+		// Rehook.
 		add_action( 'save_post', array( $this, 'save_event' ) );
 
 		return $production_id;
@@ -883,7 +944,13 @@ class WPT_Event_Editor {
 	 * @since 	0.11.1	Leave disabled fields alone.
 	 * @since	0.11.5	Added the $data param, so the editor can also handle data that is not in $_POST.
 	 *					Eg. data submitted through AJAX.
+<<<<<<< HEAD
 	 * @see 	WPT_Event_Editor::save_value()	Save the field values to the database.
+=======
+	 * @since	0.12	Empty values are saved as well.
+	 * 					Fixes #138.
+	 *
+>>>>>>> master
 	 * @param 	array 	$field		The field.
 	 * @param 	int 	$event_id	The event.
 	 * @param	array	$data		The form data that was submitted by the user.
@@ -899,7 +966,7 @@ class WPT_Event_Editor {
 			call_user_func_array( $field['save']['callback'], array( $field, $event_id, $data ) );
 		} else {
 			$key = 'wpt_event_editor_'.$field['id'];
-			if ( ! empty($data[ $key ]) ) {
+			if ( isset($data[ $key ]) ) {
 				$value = $data[ $key ];
 				$this->save_value( $value, $field, $event_id );
 			}
@@ -959,14 +1026,14 @@ class WPT_Event_Editor {
 
 		$key = 'wpt_event_editor_'.$field['id'];
 
-		if ( empty($_POST[ $key ]) ) {
+		if ( empty($data[ $key ]) ) {
 			return;
 		}
 
-		$value = $_POST[ $key ];
+		$value = $data[ $key ];
 
-		if ( isset ( $_POST['wpt_event_editor_event_date'] ) ) {
-			$event_date = strtotime( $_POST['wpt_event_editor_event_date'] );
+		if ( isset ( $data['wpt_event_editor_event_date'] ) ) {
+			$event_date = strtotime( $data['wpt_event_editor_event_date'] );
 		} else {
 			$event_date = strtotime( get_post_meta( $event_id, 'event_date', true ) );
 		}
@@ -992,16 +1059,19 @@ class WPT_Event_Editor {
 	 * @return 	void
 	 */
 	public function save_prices($field, $event_id, $data) {
-
 		delete_post_meta( $event_id, $field['id'] );
 
 		$key = 'wpt_event_editor_'.$field['id'];
 
-		if ( empty($_POST[ $key ]) ) {
+		if ( empty($data[ $key ]) ) {
 			return;
 		}
 
-		$values = explode( "\r\n",$_POST[ $key ] );
+		$values = $data[ $key ];
+
+		if ( ! is_array( $values ) ) {
+			$values = explode( "\r\n", $values );
+		}
 
 		foreach ( $values as $value ) {
 			if ( '' != $value ) {
@@ -1017,6 +1087,9 @@ class WPT_Event_Editor {
 	 * @since	0.11
 	 * @since	0.11.5	Added the $data param, so the editor can also handle data that is not in $_POST.
 	 *					Eg. data submitted through AJAX.
+	 * @since	0.12.7	Tickets status wasn't being saved for new events created with the
+	 *					event editor on the production screen.
+	 * 					See: https://github.com/slimndap/wp-theatre/issues/166
 	 * @param 	array 	$field		The field.
 	 * @param 	int 	$event_id	The event.
 	 * @param	array	$data		The form data that was submitted by the user.
@@ -1026,11 +1099,11 @@ class WPT_Event_Editor {
 
 		$key = 'wpt_event_editor_'.$field['id'];
 
-		if ( empty($_POST[ $key ]) ) {
+		if ( empty($data[ $key ]) ) {
 			return;
 		}
 
-		$value = $_POST[ $key ];
+		$value = $data[ $key ];
 
 		if ( $value == WPT_Event::tickets_status_other ) {
 			$value = $data[ 'wpt_event_editor_'.$field['id'].'_other' ];

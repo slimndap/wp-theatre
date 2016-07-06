@@ -1,5 +1,4 @@
 <?php
-
 class WPT_Test_Event_Editor extends WP_UnitTestCase {
 
 	function setUp() {
@@ -62,7 +61,6 @@ class WPT_Test_Event_Editor extends WP_UnitTestCase {
 		$production_id = $this->create_production();
 		$this->create_event_for_production( $production_id );
 		$listing_html = $wp_theatre->event_editor->get_listing_html( $production_id );
-
 
 		do_action( 'add_meta_boxes_'.WPT_Production::post_type_name );
 
@@ -336,12 +334,14 @@ class WPT_Test_Event_Editor_Ajax extends WP_Ajax_UnitTestCase {
 
 		$_POST['nonce'] = wp_create_nonce( 'wpt_event_editor_ajax_nonce' );
 
-		$event_date = date( 'Y-m-d H:i', + WEEK_IN_SECONDS );
+		$event_date = date( 'Y-m-d H:i', time() + WEEK_IN_SECONDS );
+		$enddate = date( 'Y-m-d H:i', time() + WEEK_IN_SECONDS + HOUR_IN_SECONDS );
 		$venue = 'Paradiso';
 		$extra_value = 'coming soon!';
 		$post_data = array(
 			'wpt_event_editor_nonce' => wp_create_nonce( 'wpt_event_editor' ),
 			'wpt_event_editor_event_date' => $event_date,
+			'wpt_event_editor_enddate' => $enddate,
 			'wpt_event_editor_venue' => $venue,
 			'post_ID' => $production_id,
 			'wpt_event_editor_extra_field' => $extra_value,
@@ -360,9 +360,81 @@ class WPT_Test_Event_Editor_Ajax extends WP_Ajax_UnitTestCase {
 		$this->assertCount( 1, $events );
 
 		$this->assertEquals( $event_date, date( 'Y-m-d H:i', $events[0]->datetime() ) );
+		$this->assertEquals( $enddate, date( 'Y-m-d H:i', $events[0]->datetime( true ) ) );
 		$this->assertEquals( $venue, $events['0']->venue() );
 		$this->assertEquals( $extra_value, $events[0]->custom( 'extra_field' ) );
 
 	}
 
+	function test_event_value_can_be_emptied() {
+
+		// Create a production with an event.
+		$production_id = $this->create_production();
+		$event_id = $this->create_event_for_production( $production_id );
+
+		// Give the event a tickets_url.
+		$tickets_url = 'http://slimndap.com';
+		add_post_meta( $event_id, 'tickets_url', $tickets_url, true );
+
+		// Check if it's set properly.
+		$event_with_tickets_url = new WPT_Event( $event_id );
+		$this->assertEquals( $tickets_url, $event_with_tickets_url->tickets_url() );
+
+		// Assume admin.
+		$this->_setRole( 'administrator' );
+
+		// Create a fake post submission.
+		$_POST[ WPT_Event::post_type_name.'_nonce' ] = wp_create_nonce( WPT_Event::post_type_name );
+		$_POST['wpt_event_editor_tickets_url'] = '';
+		$_POST[ 'wpt_event_editor_'.WPT_Production::post_type_name ] = $production_id;
+
+		// Update the event
+		$event_args = array(
+			'ID' => $event_id,
+			'post_type' => WPT_Event::post_type_name,
+		);
+		wp_update_post( $event_args );
+
+		// Check if it's emptied.
+		$event = new WPT_Event( $event_id );
+		$this->assertEmpty( $event->tickets_url() );
+	}
+
+	/**
+	 * Tests if event for auto-saved productions also get the 'auto-draft' post_status.
+	 * See: https://github.com/slimndap/wp-theatre/issues/141
+	 */
+	function test_event_for_auto_saved_production_inherits_status() {
+		$production_id = $this->create_production();
+
+		$production_post = array(
+			'ID' => $production_id,
+			'post_status' => 'auto-draft',
+		);
+		
+		wp_update_post($production_post);
+
+		$this->_setRole( 'administrator' );
+
+		$_POST['nonce'] = wp_create_nonce( 'wpt_event_editor_ajax_nonce' );
+
+		$event_date = date( 'Y-m-d H:i', + WEEK_IN_SECONDS );
+		$post_data = array(
+			'wpt_event_editor_nonce' => wp_create_nonce( 'wpt_event_editor' ),
+			'wpt_event_editor_event_date' => $event_date,
+			'post_ID' => $production_id,
+		);
+		$_POST['post_data'] = http_build_query( $post_data );
+
+		try {
+			$this->_handleAjax( 'wpt_event_editor_create_event' );
+		} catch ( WPAjaxDieContinueException $e ) {
+			// We expected this, do nothing.
+		}
+
+		$production = new WPT_Production( $production_id );
+		$events = $production->events();
+		
+		$this->assertCount( 1, $events );
+	}
 }

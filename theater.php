@@ -2,12 +2,12 @@
 /*
 	
 	Plugin Name: Theater
-	Plugin URI: http://wordpress.org/plugins/theatre/
+	Plugin URI: http://theater.slimndap.com/
 	Description: Turn your Wordpress website into a theater website.
-	Author: Jeroen Schmit, Slim & Dapper
-	Version: 0.11.9
+	Author: Jeroen Schmit
+	Version: 0.15.8
 	Author URI: http://slimndap.com/
-	Text Domain: wp_theatre
+	Text Domain: theatre
 	Domain Path: /lang
 
 	This program is free software; you can redistribute it and/or modify
@@ -28,7 +28,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	
-$wpt_version = '0.11.9';
+$wpt_version = '0.15.8';
 
 class WP_Theatre {
 	function __construct() {
@@ -43,16 +43,29 @@ class WP_Theatre {
 		// Setup
 		$this->setup = new WPT_Setup();
 		$this->admin = new WPT_Admin();
-		$this->events = new WPT_Events();
-		$this->productions = new WPT_Productions();
 		$this->order = new WPT_Order();
+		$this->status = new WPT_Status();
 		$this->feeds = new WPT_Feeds();
 		$this->transient = new WPT_Transient();
 		$this->listing_page = new WPT_Listing_Page();
 		$this->calendar = new WPT_Calendar();
+		$this->context = new WPT_Context();
 		$this->filter = new WPT_Filter();
+
+		$this->event_admin = new WPT_Event_Admin();
 		$this->event_editor = new WPT_Event_Editor();
+
+		$this->events = new WPT_Events();
+
+		$this->production_permalink = new WPT_Production_Permalink();
+
+		$this->productions = new WPT_Productions();
+		$this->productions_admin = new WPT_Productions_Admin();
+
 		$this->cart = new WPT_Cart();
+		$this->tags = new WPT_Tags();
+		$this->extensions_updater= new WPT_Extensions_Updater();
+		$this->extensions_promo= new WPT_Extensions_Promo();
 		if (is_admin()) {
 		} else {
 			$this->frontend = new WPT_Frontend();
@@ -90,23 +103,49 @@ class WP_Theatre {
 	 */
 	function includes() {
 		require_once(dirname(__FILE__) . '/functions/wpt_listing.php');
+
+		require_once(dirname(__FILE__) . '/functions/template/wpt_template.php');	
+		require_once(dirname(__FILE__) . '/functions/template/wpt_template_placeholder.php');	
+		require_once(dirname(__FILE__) . '/functions/template/wpt_template_placeholder_filter.php');	
+
 		require_once(dirname(__FILE__) . '/functions/wpt_production.php');
+		require_once(dirname(__FILE__) . '/functions/wpt_production_permalink.php');	
+		require_once(dirname(__FILE__) . '/functions/wpt_production_template.php');	
+		require_once(dirname(__FILE__) . '/functions/wpt_production_widget.php');
+
 		require_once(dirname(__FILE__) . '/functions/wpt_productions.php');
+		require_once(dirname(__FILE__) . '/functions/wpt_productions_admin.php');	
+		require_once(dirname(__FILE__) . '/functions/wpt_productions_list_table.php');	
+
 		require_once(dirname(__FILE__) . '/functions/wpt_event.php');
+		require_once(dirname(__FILE__) . '/functions/wpt_event_admin.php');	
+		require_once(dirname(__FILE__) . '/functions/wpt_event_editor.php');	
+		require_once(dirname(__FILE__) . '/functions/wpt_event_template.php');	
+
 		require_once(dirname(__FILE__) . '/functions/wpt_events.php');
+		require_once(dirname(__FILE__) . '/functions/wpt_events_widget.php');
+
 		require_once(dirname(__FILE__) . '/functions/wpt_setup.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_season.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_widget.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_admin.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_order.php');
+		require_once(dirname(__FILE__) . '/functions/wpt_status.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_feeds.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_transient.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_listing_page.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_calendar.php');	
+		require_once(dirname(__FILE__) . '/functions/wpt_context.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_filter.php');	
-		require_once(dirname(__FILE__) . '/functions/wpt_event_editor.php');	
-		require_once(dirname(__FILE__) . '/functions/wpt_importer.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_cart.php');	
+		require_once(dirname(__FILE__) . '/functions/wpt_tags.php');	
+
+		require_once(dirname(__FILE__) . '/functions/extensions/wpt_extensions_updater.php');	
+		require_once(dirname(__FILE__) . '/functions/extensions/wpt_extensions_promo.php');	
+
+		require_once(dirname(__FILE__) . '/functions/wpt_importer.php');	
+
+
 		if (is_admin()) {
 		} else {
 			require_once(dirname(__FILE__) . '/functions/wpt_frontend.php');
@@ -209,10 +248,10 @@ class WP_Theatre {
  	
  	function deprecated_options() {
 	 	if (empty($this->wpt_style_options)) {
-		 	$this->wpt_style_options = get_option( 'wp_theatre' );
+		 	$this->wpt_style_options = get_option( 'theatre' );
 	 	}
 	 	if (empty($this->wpt_tickets_options)) {
-		 	$this->wpt_tickets_options = get_option( 'wp_theatre' );
+		 	$this->wpt_tickets_options = get_option( 'theatre' );
 	 	}
  	}
 }

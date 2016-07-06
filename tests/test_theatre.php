@@ -87,6 +87,12 @@ class WPT_Test extends WP_UnitTestCase {
 		
 	}
 
+	function tearDown() {
+		parent::tearDown();
+		 wp_set_current_user( 0 );
+	}
+
+
 	function dump_events() {
 		$args = array(
 			'post_type'=>WPT_Event::post_type_name,
@@ -123,22 +129,8 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertCount(7, $this->wp_theatre->events->get());		
 	}
 
-	function test_productions_are_loaded() {
-		$this->assertCount(5, $this->wp_theatre->productions->get());		
-	}
-	
-	function test_seasons_are_loaded() {
-		$this->assertCount(2, $this->wp_theatre->seasons());
-	}
 
 
-	function test_upcoming_productions() {
-		$args = array(
-			'upcoming' => TRUE
-		);
-		$this->assertCount(4, $this->wp_theatre->productions->get($args));		
-		
-	}
 
 	// Test sync between productions and connected events
 	function test_connected_events_are_trashed_when_production_is_trashed() {
@@ -190,104 +182,14 @@ class WPT_Test extends WP_UnitTestCase {
 		
 	}
 	
-	function test_event_inherits_season_from_production() {
-		$season_args = array(
-			'post_type'=>WPT_Season::post_type_name
-		);
-		$season = $this->factory->post->create($season_args);
-
-		$production_args = array(
-			'post_type'=>WPT_Production::post_type_name
-		);
-		$production = $this->factory->post->create($production_args);
-		add_post_meta($production, WPT_Season::post_type_name, $season);
-		
-		$event_args = array(
-			'post_type'=>WPT_Event::post_type_name
-		);
-		$event = $this->factory->post->create($event_args);
-		add_post_meta($event, WPT_Production::post_type_name, $production);
-		add_post_meta($event, 'event_date', date('Y-m-d H:i:s', strtotime('tomorrow')));
-		
-		$html = do_shortcode('[wpt_events season='.$season.']');
-
-		$this->assertEquals(1, substr_count($html, '"wp_theatre_event"'), $html);
-		
-	}
 	
 	// Test shortcodes
-	function test_shortcode_wpt_productions() {
-		$this->assertEquals(5, substr_count(do_shortcode('[wpt_productions]'), '"wp_theatre_prod"'));
-	}
-	
-	function test_shortcode_wpt_productions_default_template_filter() {
-		$func = create_function(
-			'$template',
-			'$template = "{{title}} test content";	return $template;'
-		);
-		
-		add_filter('wpt_production_template_default', $func);
-		
-		$this->assertContains('test content', do_shortcode('[wpt_productions]'));
-	}
-	
-	function test_shortcode_wpt_productions_filter_season() {
-		$this->assertEquals(1, substr_count(do_shortcode('[wpt_productions season="'.$this->season1.'"]'), '"wp_theatre_prod"'));
-	}
-
-	function test_shortcode_wpt_productions_filter_post() {
-		
-		// test with post__in
-		$this->assertEquals(1, substr_count(do_shortcode('[wpt_productions post__in="'.$this->production_with_upcoming_events.'"]'), '"wp_theatre_prod"'));
-
-		$this->assertEquals(2, substr_count(do_shortcode('[wpt_productions post__in="'.$this->production_with_upcoming_events.','.$this->production_with_upcoming_and_historic_events.'"]'), '"wp_theatre_prod"'));
-
-		// test with an excluded post__not_in
-		$this->assertEquals(4, substr_count(do_shortcode('[wpt_productions post__not_in="'.$this->production_with_upcoming_events.'"]'), '"wp_theatre_prod"'));
-		
-		$this->assertEquals(3, substr_count(do_shortcode('[wpt_productions post__not_in="'.$this->production_with_upcoming_events.','.$this->production_with_upcoming_and_historic_events.'"]'), '"wp_theatre_prod"'));
-	}
-	
-	function test_shortcode_wpt_productions_filter_category() {
-
-		// test with cat
-		$result = do_shortcode('[wpt_productions cat="'.$this->category_film.','.$this->category_muziek.'"]');
-		$this->assertEquals(2, substr_count($result, '"wp_theatre_prod"'), $result);
-
-		$result = do_shortcode('[wpt_productions cat="-'.$this->category_film.','.$this->category_muziek.'"]');
-		$this->assertEquals(1, substr_count($result, '"wp_theatre_prod"'), $result);
-		
-		// test with category_name
-		$result = do_shortcode('[wpt_productions category_name="muziek,film"]');
-		$this->assertEquals(2, substr_count($result, '"wp_theatre_prod"'), $result);
-		
-		// test with an excluded category__in
-		$this->assertEquals(1, substr_count(do_shortcode('[wpt_productions category__in="'.$this->category_film.'"]'), '"wp_theatre_prod"'));
-
-		// test with an excluded category__not_in
-		// should list all productions except 1.
-		$this->assertEquals(4, substr_count(do_shortcode('[wpt_productions category__not_in="'.$this->category_film.'"]'), '"wp_theatre_prod"'));
-
-		// test with an excluded category__and_in
-		$this->assertEquals(1, substr_count(do_shortcode('[wpt_productions category__and="'.$this->category_film.','.$this->category_muziek.'"]'), '"wp_theatre_prod"'));
-
-	}
-	
-	function test_shortcode_wpt_productions_filter_category_deprecated() {
-		// test with mixed category-slug and category-id
-		$this->assertEquals(2, substr_count(do_shortcode('[wpt_productions category="muziek,'.$this->category_film.'"]'), '"wp_theatre_prod"'));
-		
-		// test with an excluded category
-		$this->assertEquals(1, substr_count(do_shortcode('[wpt_productions category="muziek,-'.$this->category_film.'"]'), '"wp_theatre_prod"'));
-
-		
-	}
 	
 	function test_shortcode_wpt_event_tickets() {
 		$this->assertEquals(4, substr_count(do_shortcode('[wpt_events]'), '"wp_theatre_event"'));
 	}
 	
-	function test_shortcode_wpt_events_default_template_filter() {
+	function test_shortcode_wpt_event_default_template_filter() {
 		$func = create_function(
 			'$template',
 			'$template = "{{title}} test content";	return $template;'
@@ -296,6 +198,30 @@ class WPT_Test extends WP_UnitTestCase {
 		add_filter('wpt_event_template_default', $func);
 		
 		$this->assertContains('test content', do_shortcode('[wpt_events]'));
+	}
+	
+	function test_shortcode_wpt_events_default_template_filter() {
+		$func = create_function(
+			'$template',
+			'$template = "{{title}} test content";	return $template;'
+		);
+		
+		add_filter('wpt/events/event/template/default', $func);
+		
+		$this->assertContains('test content', do_shortcode('[wpt_events]'));
+	}
+	
+	function test_shortcode_wpt_events_event_html_filter() {
+		$func = create_function(
+			'$html, $event',
+			'$html = "<wrap>$html</wrap>";	return $html;'
+		);		
+		add_filter('wpt/events/event/html', $func, 10, 2);
+		
+		$expected = '<div class="wpt_listing wpt_context_default wpt_events"><wrap>';
+		$actual = do_shortcode('[wpt_events]');
+		
+		$this->assertContains($expected, $actual);
 	}
 	
 	function test_shortcode_wpt_events_magic_dates() {
@@ -322,10 +248,6 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertEquals(3, substr_count(do_shortcode('[wpt_events start="'.date('Y-m-d',time() + (2 * DAY_IN_SECONDS)).'"]'), '"wp_theatre_event"'));
 		$this->assertEquals(3, substr_count(do_shortcode('[wpt_events end="now"]'), '"wp_theatre_event"'));
 		$this->assertEquals(4, substr_count(do_shortcode('[wpt_events start="today" end="+2 weeks"]'), '"wp_theatre_event"'));
-	}
-	
-	function test_shortcode_wpt_events_filter_season() {
-		$this->assertEquals(2, substr_count(do_shortcode('[wpt_events season="'.$this->season2.'"]'), '"wp_theatre_event"'));
 	}
 	
 	function test_shortcode_wpt_events_filter_category() {
@@ -397,16 +319,14 @@ class WPT_Test extends WP_UnitTestCase {
 
 	}
 	
-	function test_shortcode_wpt_season_production() {
-		$season = get_post($this->season1);
-	}
-	
-	function test_shortcode_wpt_season_events() {
-		$season = get_post($this->season2);
-	}
-	
 	function test_shortcode_wpt_production_events() {
 		$this->assertEquals(2, substr_count(do_shortcode('[wpt_production_events production="'.$this->production_with_upcoming_events.'"]'), '"wp_theatre_event"'));		
+	}
+	
+	function test_shortcode_wpt_production_events_with_multiple_productions() {
+		$actual = substr_count(do_shortcode('[wpt_production_events production="'.$this->production_with_upcoming_events.', '.$this->production_with_upcoming_and_historic_events.'"]'), '"wp_theatre_event"');
+		$expected = 3;
+		$this->assertEquals($expected, $actual);		
 	}
 	
 	/**
@@ -469,38 +389,6 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertEquals(1, substr_count($html, '"wp_theatre_event"'));		
 	}
 
-	function test_shortcode_wpt_productions_with_custom_field() {
-		$director = 'Steven Spielberg';
-	
-		update_post_meta(
-			$this->production_with_upcoming_event, 
-			'director', 
-			$director
-		);
-		
-		$html = do_shortcode('[wpt_productions]{{title}}{{director}}[/wpt_productions]');
-
-		$this->assertContains($director,$html);
-
-		$this->assertEquals(5, substr_count($html, 'wp_theatre_prod_director'));		
-	}
-	
-	function test_shortcode_wpt_productions_with_custom_field_and_filter() {
-		$director = 'Steven Spielberg';
-	
-		update_post_meta(
-			$this->production_with_upcoming_event, 
-			'director', 
-			$director
-		);
-		
-		$html = do_shortcode('[wpt_productions]{{title}}{{director|permalink}}[/wpt_productions]');
-
-		$this->assertContains($director,$html);
-
-		$this->assertEquals(1, substr_count($html, 'wp_theatre_prod_director"><a'));		
-	}
-	
 	function test_shortcode_wpt_events_with_custom_field() {
 		$director = 'Steven Spielberg';
 	
@@ -538,10 +426,6 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertEquals(1, substr_count(do_shortcode('[wpt_events]'), 'wp_theatre_event_tickets_status_other'));		
 	}
 	
-	function test_wpt_event_tickets_prices() {
-		$this->assertEquals(1, substr_count(do_shortcode('[wpt_events]'), 'wp_theatre_event_prices'));		
-	}
-	
 	function test_wpt_event_tickets_status_filter() {
 		global $wp_theatre;
 		
@@ -557,22 +441,6 @@ class WPT_Test extends WP_UnitTestCase {
 		);
 		$html = $event->tickets($args);
 		$this->assertContains('new status', $event->tickets($args));
-	}
-	
-	function test_wpt_event_tickets_prices_filter() {
-		global $wp_theatre;
-		
-		$func = create_function(
-			'$html, $event',
-			'return "tickets prices";'
-		);
-		add_filter( 'wpt_event_tickets_prices_html', $func, 10 , 2 );
-		
-		$event = new WPT_Event($this->upcoming_event_with_prices);
-		$args = array(
-			'html' => true,
-		);
-		$this->assertContains('tickets prices', $event->tickets($args));
 	}
 	
 	
@@ -620,10 +488,15 @@ class WPT_Test extends WP_UnitTestCase {
 	function test_wpt_event_tickets_url_with_iframe() {
 		
 		global $wp_theatre;
+
+		// create a page for our listing
+		$args = array(
+			'post_type'=>'page'
+		);
 		
 		$wp_theatre->wpt_tickets_options = 	array(
 			'integrationtype' => 'iframe',
-			'iframepage' => '',
+			'iframepage' => $this->factory->post->create($args),
 			'currencysymbol' => '$',
 		);
 		
@@ -634,15 +507,7 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertEquals(1, substr_count($html, 'wp_theatre_integrationtype_iframe'));			
 		$this->assertNotContains('http://slimndap.com', $html);
 	}
-	
-	function test_wpt_event_tickets_prices_summary() {
-		$event = new WPT_Event($this->upcoming_event_with_prices);
-		$args = array(
-			'summary'=>true
-		);
-		$this->assertContains('8.50', $event->prices($args));
-	}
-	
+		
 	function test_wpt_event_tickets_for_past_events_are_hiddedn() {
 
 		$event_args = array(
@@ -668,24 +533,14 @@ class WPT_Test extends WP_UnitTestCase {
 		$event_id = $this->factory->post->create($event_args);
 		add_post_meta($event_id, WPT_Production::post_type_name, $this->production_with_historic_event);
 		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() - 2 * DAY_IN_SECONDS));
+		add_post_meta($event_id, 'tickets_url', 'http://slimndap.com');
 		add_post_meta($event_id, '_wpt_event_tickets_price', 12);
 		
 		$html = do_shortcode('[wpt_events end="now"]');
-		
-		$this->assertNotContains('wp_theatre_event_prices',$html);
-		
-	}
-	
-	/**
-	 * Test if named prices are sanitized.
-	 */
-	function test_wpt_event_tickets_prices_named() {
-		add_post_meta($this->upcoming_event_with_prices, '_wpt_event_tickets_price', '1123|named_price');
-		
-		$event = new WPT_Event($this->upcoming_event_with_prices);
-		$prices = $event->prices();
-		$this->assertNotContains("1123|named_price",implode('',$prices));		
 
+		$this->assertNotContains('wp_theatre_event_prices',$html);
+		$this->assertNotContains('wp_theatre_event_tickets_status',$html);
+		
 	}
 	
 	function test_wpt_events_content() {
@@ -697,16 +552,6 @@ class WPT_Test extends WP_UnitTestCase {
 
 		$this->assertEquals(4, substr_count(do_shortcode('[wpt_events]{{title}}{{content}}[/wpt_events]'), 'wp_theatre_prod_content'));	}
 	
-	function test_wpt_productions_content() {
-		$my_post = array(
-			'ID'           => $this->production_with_upcoming_events,
-			'post_content' => 'This is the updated content.'
-		);
-		wp_update_post( $my_post );
-
-		$this->assertEquals(5, substr_count(do_shortcode('[wpt_productions]{{title}}{{content}}[/wpt_productions]'), 'wp_theatre_prod_content'));
-	}
-	
 	function test_wpt_events_excerpt() {
 		$my_post = array(
 			'ID'           => $this->production_with_upcoming_events,
@@ -717,123 +562,10 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertEquals(4, substr_count(do_shortcode('[wpt_events]{{title}}{{excerpt}}[/wpt_events]'), 'wp_theatre_prod_excerpt'));
 	}
 	
-	function test_wpt_productions_excerpt() {
-		$my_post = array(
-			'ID'           => $this->production_with_upcoming_events,
-			'post_content' => 'This is the updated content.'
-		);
-		wp_update_post( $my_post );
-
-		$this->assertEquals(5, substr_count(do_shortcode('[wpt_productions]{{title}}{{excerpt}}[/wpt_productions]'), 'wp_theatre_prod_excerpt'));
-	}
-	
 	function test_wpt_events_categories() {
 		$this->assertEquals(5, substr_count(do_shortcode('[wpt_events]{{title}}{{categories}}[/wpt_events]'), '"wpt_production_category'));
 	}
 	
-	function test_wpt_productions_categories() {
-		$this->assertEquals(2, substr_count(do_shortcode('[wpt_productions]{{title}}{{categories}}[/wpt_productions]'), 'wpt_production_category_muziek'));
-	}
-	
-	// Test order
-	function test_order_productions() {
-		$actual = array();
-		$productions = $this->wp_theatre->productions->get();
-		foreach($productions as $production) {
-			$actual[] = $production->ID;
-		}
-		
-		$expected = array(
-			$this->production_with_historic_event, // no upcoming events, follows creation order.
-			$this->production_with_historic_event_sticky, // no upcoming events, follows creation order.
-			$this->production_with_upcoming_events, // tomorrow
-			$this->production_with_upcoming_event, // in 2 days
-			$this->production_with_upcoming_and_historic_events // next week
-		);	
-		
-		$this->assertEquals($expected,$actual);
-	}
-	 
-	function test_order_productions_desc() {
-		$actual = array();
-		$args = array(
-			'order' => 'desc'
-		);
-		$productions = $this->wp_theatre->productions->get($args);
-		foreach($productions as $production) {
-			$actual[] = $production->ID;
-		}
-
-		$expected = array(
-			$this->production_with_upcoming_and_historic_events, // next week
-			$this->production_with_upcoming_event, // in 2 days
-			$this->production_with_upcoming_events, // tomorrow
-			$this->production_with_historic_event, // no upcoming events, follows creation order.
-			$this->production_with_historic_event_sticky, // no upcoming events, follows creation order.
-		);
-		$this->assertEquals($expected,$actual);
-	}
-	 
-	// Test transients
-	function test_wpt_transient_productions() {
-		global $wp_query;
-		
-		do_shortcode('[wpt_productions]');
-		
-		$args = array(
-			'paginateby' => array(),
-			'post__in' => false,
-			'post__not_in' => false,
-			'upcoming' => false,
-			'season'=> false,
-			'category'=> false, // deprecated since v0.9.
-			'cat'=>false,
-			'category_name'=>false,
-			'category__and'=>false,
-			'category__in'=>false,
-			'category__not_in'=>false,
-			'groupby'=>false,
-			'limit'=>false,
-			'order'=>'asc',
-		);
-		$unique_args = array_merge(
-			array( 'atts' => $args ), 
-			array( 'wp_query' => $wp_query->query_vars )
-		);
-		
-		$this->assertEquals(5, substr_count($this->wp_theatre->transient->get('p',$unique_args), '"wp_theatre_prod"'));
-		
-		/* 
-		 * Test if transients are off for logged in users 
-		 */
-		 
-		$user = new WP_User( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
-		wp_set_current_user( $user->ID );		
-        $this->assertFalse($this->wp_theatre->transient->get('p',$args));		
-		wp_set_current_user(0);		
-	}
-	
-	/*
-	 * Tests if the transients don't mess up paginated views.
-	 * See: https://github.com/slimndap/wp-theatre/issues/88
-	 */
-	function test_wpt_transient_productions_with_pagination() {
-		global $wp_query;
-		
-		/*
-		 * Test if the film tab is active.
-		 */
-		$wp_query->query_vars['wpt_category'] = 'film';
-		$html = do_shortcode('[wpt_productions paginateby=category]');
-		$this->assertContains('category-film wpt_listing_filter_active',$html);
-
-		/*
-		 * Test if the muziek tab is active.
-		 */
-		$wp_query->query_vars['wpt_category'] = 'muziek';
-		$html = do_shortcode('[wpt_productions paginateby=category]');
-		$this->assertContains('category-muziek wpt_listing_filter_active',$html);
-	}
 	
 	function test_wpt_transient_events() {
 		global $wp_query;
@@ -845,24 +577,26 @@ class WPT_Test extends WP_UnitTestCase {
 		 * Set 'start' to 'now' (with quotes).
 		 */
 		$defaults = array(
-			'paginateby'=>array(),
+			'cat' => false,
+			'category' => false, // deprecated since v0.9.
+			'category_name' => false,
+			'category__and' => false,
+			'category__in' => false,
+			'category__not_in' => false,
+			'tag' => false,
+			'day' => false,
+			'end' => false,
+			'groupby' => false,
+			'limit' => false,
+			'month' => false,
+			'order' => 'asc',
+			'paginateby' => array(),
 			'post__in' => false,
 			'post__not_in' => false,
-			'category'=> false, // deprecated since v0.9.
-			'cat'=>false,
-			'category_name'=>false,
-			'category__and'=>false,
-			'category__in'=>false,
-			'category__not_in'=>false,
-			'day' => false,
-			'month' => false,
-			'year' => false,
-			'season'=> false,
+			'production' => false,
+			'season' => false,
 			'start' => 'now',
-			'end' => false,
-			'groupby'=>false,
-			'limit'=>false,
-			'order'=>'asc',
+			'year' => false,
 		);
 		
 		$unique_args = array_merge(
@@ -940,48 +674,6 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertEquals(4, substr_count($this->wp_theatre->feeds->get_upcoming_events(), '<item'));		
 	}
 	
-	// Sticky posts
-	
-	function test_ignore_sticky_posts() {
-		$args = array(
-			'upcoming' => TRUE,
-			'ignore_sticky_posts' => TRUE
-		);
-		$this->assertCount(3, $this->wp_theatre->productions->get($args));		
-		
-	}
-	
-	function test_sticky_productions_with_post__not_in() {
-
-		/*
-		 * Exclude a regular production.
-		 * Expect all productions (5), except $this->production_with_upcoming_event.
-		 */
-		$html = do_shortcode('[wpt_productions post__not_in="'.$this->production_with_upcoming_event.'"]');
-		$this->assertEquals(4, substr_count($html, '"wp_theatre_prod"'));
-
-		/*
-		 * Exclude a sticky production.
-		 * Expect all productions (5), except $this->production_with_historic_event_sticky.
-		 */
-		$html = do_shortcode('[wpt_productions post__not_in="'.$this->production_with_historic_event_sticky.'"]');
-		$this->assertEquals(4, substr_count($html, '"wp_theatre_prod"'));
-	}
-		
-	function test_sticky_productions_with_category__not_in() {
-
-
-		// Give one of the sticky productions a category as well.
-		wp_set_post_categories($this->production_with_historic_event_sticky, array($this->category_film));
-
-		/*
-		 * Expect all productions (5), except productions in the film category (2).
-		 */
-		$html = do_shortcode('[wpt_productions category__not_in="'.$this->category_film.'"]');
-		$this->assertEquals(3, substr_count($html, '"wp_theatre_prod"'));
-
-		
-	}
 		
 	function test_wpt_events_groupby_day() {
 				
@@ -1024,6 +716,7 @@ class WPT_Test extends WP_UnitTestCase {
 		
 	}
 
+
 	function test_wpt_events_groupby_category() {
 				
 		$html = do_shortcode('[wpt_events groupby="category"]');
@@ -1035,43 +728,6 @@ class WPT_Test extends WP_UnitTestCase {
 		
 		//should show the 2 events for film and 3 events for muziek.
 		$this->assertEquals(5, substr_count($html, '"wp_theatre_event"'));
-		
-	}
-	function test_wpt_productions_groupby_category() {
-				
-		$html = do_shortcode('[wpt_productions groupby="category"]');
-		
-		// should contain 'wpt_listing_group day'.
-		$this->assertEquals(2, substr_count($html, '<h3 class="wpt_listing_group category">'));
-		$this->assertEquals(1, substr_count($html, '<h3 class="wpt_listing_group category">muziek'));
-		$this->assertEquals(1, substr_count($html, '<h3 class="wpt_listing_group category">film'));
-		
-		//should show the 2 events for film and 3 events for muziek.
-		$this->assertEquals(3, substr_count($html, '"wp_theatre_prod"'));
-		
-	}
-	
-	function test_wpt_productions_groupby_season() {
-	
-		$html = do_shortcode('[wpt_productions groupby="season"]');
-		
-		$this->assertEquals(2, substr_count($html, '<h3 class="wpt_listing_group season">'));
-		
-	}
-	
-	
-	function test_wpt_productions_load_args_filter() {
-		global $wp_theatre;
-		
-		$func = create_function(
-			'$args',
-			'$args["category_name"] = "muziek";	return $args;'
-		);
-		
-		add_filter('wpt_productions_load_args', $func);
-		
-		// Should return 2 productions in the muziek category.
-		$this->assertCount(2, $this->wp_theatre->productions->get());		
 		
 	}
 	
@@ -1107,15 +763,7 @@ class WPT_Test extends WP_UnitTestCase {
 		
 	}
 	
-	function test_wpt_productions_unique_args() {
-		global $wp_query;
-		$wp_query->query_vars['post__in'] = array(123);
-		
-		$html_with_one_production = do_shortcode('[wpt_productions post__in="'.$this->production_with_upcoming_event.'"]');
-		$html_with_two_productions = do_shortcode('[wpt_productions post__in="'.$this->production_with_upcoming_event.','.$this->production_with_upcoming_events.'"]');
-		$this->assertNotEquals($html_with_one_production, $html_with_two_productions);
-	}
-	
+
 	function test_wpt_listing_filter_pagination_option_name_filter() {
 		$func = create_function(
 			'$name, $field',
@@ -1188,46 +836,6 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertContains('filtered_html', $html);
 	}
 	
-	/**
-	 * Tests if the events are hidden from listings if you set the post_date of 
-	 * a production to a date in the future.
-	 * See: https://github.com/slimndap/wp-theatre/issues/109
-	 */
-	function test_scheduled_productions_dont_show_in_listings() {
-		
-		global $current_screen, $wp_theatre;
-		
-		// Switch to an admin screen so is_admin() is true.
-		$screen = WP_Screen::get( 'admin_init' );
-        $current_screen = $screen;
-        
-        // Assume the role of admin.
-		$user = new WP_User( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
-		wp_set_current_user( $user->ID );		
-
-		// Fake a production admin screen submit.
-		$nonce = wp_create_nonce(WPT_Production::post_type_name);
-		$_POST[WPT_Production::post_type_name.'_nonce'] = $nonce;
-		$_POST[WPT_Season::post_type_name] = '';
-
-		$post_date = date('Y-m-d H:i:s',strtotime('next year'));
-		$post = array(
-			'ID' => $this->production_with_upcoming_event,
-			'post_date' => $post_date,
-			'post_date_gmt'=>get_gmt_from_date($post_date)
-		);
-		
-		wp_update_post($post);
-		
-		$events = $wp_theatre->events->get(
-			array(
-				'start' => 'now',
-			)
-		);
-		
-		$this->assertCount(3,$events);
-		
-	}
 	
 	/**
 	 * Tests if a trashed event is not accidentally untrashed when you update a production.
@@ -1268,7 +876,7 @@ class WPT_Test extends WP_UnitTestCase {
 	}
 	
 	/**
-	 * Test is relative date filters use the right time offset.
+	 * Test if relative date filters use the right time offset.
 	 *
 	 * Tricky situation: displaying all events that start today.
 	 * Solution: use 'Yesterday 23:59' for the 'start' argument.
@@ -1295,6 +903,191 @@ class WPT_Test extends WP_UnitTestCase {
 		 * event today 23:59
 		 * event tomorrow 00:00
 		 */
+		
+	}
+	
+	function test_event_starttime() {
+		$html = do_shortcode('[wpt_events]{{starttime}}[/wpt_events]');
+		
+		$expected = date_i18n( 
+						get_option( 'time_format' ),
+						strtotime( 
+							get_post_meta(
+								$this->upcoming_event_with_prices, 
+								'event_date', 
+								true
+							)
+						)
+		);
+		
+		$this->assertContains($expected, $html);
+	}
+		
+	
+	function test_event_endtime() {
+
+		$enddate = date('Y-m-d H:i:s', time() + (3 * DAY_IN_SECONDS) );
+		add_post_meta($this->upcoming_event_with_prices, 'enddate', $enddate);
+		
+		$html = do_shortcode('[wpt_events]{{endtime}}[/wpt_events]');
+		$event = new WPT_Event($this->upcoming_event_with_prices);
+		$expected = date_i18n( get_option( 'time_format' ),	strtotime( $enddate) );
+		
+		$this->assertContains($expected, $html);				
+	}
+	
+	/**
+	 * Test if {{endtime}} doesn't output anything when no end time is set.
+	 * See: https://github.com/slimndap/wp-theatre/issues/165
+	 */
+	function test_event_endtime_when_empty() {
+		$html = do_shortcode('[wpt_events]{{endtime}}[/wpt_events]');
+
+		$expected = '<div class="'.WPT_Event::post_type_name.'_time '.WPT_Event::post_type_name.'_endtime"></div>';
+		$this->assertContains($expected, $html);						
+	}
+	
+	/**
+	 * Test if {{enddate}} doesn't output anything when no end time is set.
+	 * See: https://github.com/slimndap/wp-theatre/issues/165
+	 */
+	function test_event_enddate_when_empty() {
+		$html = do_shortcode('[wpt_events]{{enddate}}[/wpt_events]');
+
+		$expected = '<div class="'.WPT_Event::post_type_name.'_date '.WPT_Event::post_type_name.'_enddate"></div>';
+		$this->assertContains($expected, $html);						
+	}
+	
+	/**
+	 * Tests if deprecated WPT_Event::date() and WPT_Event::time() still work.
+	 * Not running now, because I need to figure out how to suppress the deprecated notices.
+	 * See: https://unit-tests.trac.wordpress.org/ticket/142
+	 */
+	function test_deprecated_event_date_and_time() {
+		return;
+		
+		$event = new WPT_Event($this->upcoming_event_with_prices);
+
+		$this->assertEquals($event->date(), $event->startdate());		
+		$this->assertEquals($event->date(array('html'=>'true')), $event->startdate_html());		
+		$this->assertEquals($event->time(), $event->starttime());		
+		$this->assertEquals($event->time(array('html'=>'true')), $event->starttime_html());		
+
+		$this->assertEquals($event->date(array('start'=>false)), $event->enddate());		
+		$this->assertEquals($event->date(array('html'=>'true', 'start'=>false)), $event->enddate_html());		
+		$this->assertEquals($event->time(array('start'=>false)), $event->endtime());		
+		$this->assertEquals($event->time(array('html'=>'true', 'start'=>false)), $event->endtime_html());		
+	}
+	
+	function test_tickets_button_disappears_at_right_time() {
+		$default_timezone_offset = date('Z');
+		$wordpress_timezone_offset = $default_timezone_offset + 1;
+		
+		// Set the timezone for Wordpress to 1 hour later.
+		update_option('gmt_offset', $wordpress_timezone_offset );
+		
+		$production_args = array(
+			'post_type'=>WPT_Production::post_type_name
+		);	
+		$production_in_5_mins = $this->factory->post->create($production_args);
+
+		$event_args = array(
+			'post_type'=>WPT_Event::post_type_name
+		);
+		$in_5_mins_date = strtotime('+ 5 minutes', time() + HOUR_IN_SECONDS * $wordpress_timezone_offset);
+
+		$event_in_5_mins = $this->factory->post->create($event_args);
+		add_post_meta($event_in_5_mins, WPT_Production::post_type_name, $production_in_5_mins);
+		add_post_meta($event_in_5_mins, 'event_date', date('Y-m-d H:i:s', $in_5_mins_date));
+		
+		$tickets_url = 'http://theater.slimndap.com';
+		add_post_meta($event_in_5_mins, 'tickets_url', $tickets_url);
+		
+		$event = new WPT_Event($event_in_5_mins);
+
+		$tickets = $event->tickets();
+		$expected = 1;
+		$returned = substr_count($tickets, $tickets_url);
+		$this->assertEquals($expected, $returned);
+
+		$tickets_html = $event->tickets_html();
+		$expected = 1;
+		$returned = substr_count($tickets_html, $tickets_url);
+		$this->assertEquals($expected, $returned);
+		
+	}
+	
+	function test_event_permalink_filter() {
+		global $wp_theatre;
+		
+		$func = create_function(
+			'$permalink, $event',
+			'return "http://slimndap.com";'
+		);
+		add_filter( 'wpt/event/permalink', $func, 10 , 2 );
+
+		$event = new WPT_Event($this->upcoming_event_with_prices);
+
+		$expected = 'http://slimndap.com';
+		$actual = $event->permalink();
+		$this->assertEquals( $expected, $actual);
+		
+	}
+	
+	function test_event_permalink_html_filter() {
+		global $wp_theatre;
+		
+		$func = create_function(
+			'$html, $event',
+			'return "<div>http://slimndap.com</div>";'
+		);
+		add_filter( 'wpt/event/permalink/html', $func, 10 , 2 );
+
+		$event = new WPT_Event($this->upcoming_event_with_prices);
+
+		$expected = '<div>http://slimndap.com</div>';
+		$actual = $event->permalink( array( 'html' => true ) );
+		$this->assertEquals( $expected, $actual);
+		
+	}
+	
+	function test_if_events_dont_disappear_too_early() {
+		global $wp_theatre;
+		
+		$default_timezone_offset = date('Z');
+		$wordpress_timezone_offset = $default_timezone_offset + 1;
+		
+		// Set the timezone for Wordpress to 1 hour later.
+		update_option('gmt_offset', $wordpress_timezone_offset );
+		
+		// Prepare an event that starts in 50 minutes.
+		$production_args = array(
+			'post_type'=>WPT_Production::post_type_name,
+			'post_title' => 'Production in 50 minutes',
+		);	
+		$production_in_50_mins = $this->factory->post->create($production_args);
+
+		$event_args = array(
+			'post_type'=>WPT_Event::post_type_name,
+			'post_title' => 'Event in 50 minutes',
+		);
+		$in_50_mins_date = strtotime('+ 50 minutes', time() + HOUR_IN_SECONDS * $wordpress_timezone_offset);
+
+		echo date('Y-m-d H:i:s', $in_50_mins_date);
+
+		$event_in_50_mins = $this->factory->post->create($event_args);
+		add_post_meta($event_in_50_mins, WPT_Production::post_type_name, $production_in_50_mins);
+		add_post_meta($event_in_50_mins, 'event_date', date('Y-m-d H:i:s', $in_50_mins_date));
+		
+		$event = new WPT_Event($event_in_50_mins);
+		
+		$args = array(
+			'start' => 'now',	
+		);
+		
+		$expected = 'Production in 50 minutes';
+		$actual = do_shortcode('[wpt_events]');
+		$this->assertContains( $expected, $actual);
 		
 	}
 	
