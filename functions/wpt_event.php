@@ -1,17 +1,25 @@
 <?php
 
-/** Usage:
+/** 
+ * The Event object class.
  *
- *  $event = new WPT_Event();
- *  $event = new WPT_Event($post_id);
- *  $event = new WPT_Event($post);
+ * Usage:
  *
- *	echo $event->html(); // output the details of an event as HTML
+ * <code>
+ * $event = new WPT_Event();
+ * $event = new WPT_Event($post_id);
+ * $event = new WPT_Event($post);
  *
- *	echo $event->prices( array('summary'=>true) ) // // a summary of all available ticketprices
- *	echo $event->datetime() // timestamp of the event
- *	echo $event->startdate() // localized and formatted date of the event
- *	echo $event->starttime() // localized and formatted time of the event
+ * echo $event->html(); // output the details of an event as HTML
+ *
+ * echo $event->prices( array('summary'=>true) ) // // a summary of all available ticketprices
+ * echo $event->datetime() // timestamp of the event
+ * echo $event->startdate() // localized and formatted date of the event
+ * echo $event->starttime() // localized and formatted time of the event
+ * </code>
+ *
+ * @package	Theater/Event
+ * @api
  *
  */
 

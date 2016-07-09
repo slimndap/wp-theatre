@@ -1,10 +1,11 @@
 <?php
-/*
+/**
  * Theater Production widget.
  * Display a single production in a widget.
  *
  * @since	0.8.2
  * @since	0.12.1	Added filters to the widget() method.
+ * @package	Theater/Widgets 
  */
 
 class WPT_Production_Widget extends WP_Widget {

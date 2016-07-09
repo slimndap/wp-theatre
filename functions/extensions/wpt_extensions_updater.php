@@ -7,6 +7,7 @@
  * User can enter and activate their license keys on the 'licenses' tab on the settings page.
  *
  * @since 	0.12.3
+ * @package	Theater/Extensions
  */
 class WPT_Extensions_Updater {
 

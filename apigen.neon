@@ -1,0 +1,46 @@
+source: ./
+
+destination: apidocs
+
+# list of scanned file extensions (e.g. php5, phpt...)
+extensions: [php]
+
+# directories and files matching this file mask will not be parsed
+exclude:
+    - tests/
+    - functions/extensions/EDD_SL_Plugin_Updater.php
+
+# character set of source files; if you use only one across your files, we recommend you name it
+charset: [UTF-8]
+
+# elements with this name prefix will be considered as the "main project" (the rest will be considered as libraries)
+main: WPT
+
+# title of generated documentation
+title: Theater for WordPress Code Reference
+
+# base url used for sitemap (useful for public doc)
+baseUrl: https://wp.theater/apidocs/
+
+# choose ApiGen template theme
+templateTheme: bootstrap
+
+# generate documentation for PHP internal classes
+php: false
+
+# generate highlighted source code for elements
+sourceCode: true
+
+# generate tree view of classes, interfaces, traits and exceptions
+tree: true
+
+# generate documentation for deprecated elements
+deprecated: false
+
+# generate list of tasks with @todo annotation
+todo: false
+
+# add link to ZIP archive of documentation
+download: false
+
+googleAnalytics: UA-35564515-3

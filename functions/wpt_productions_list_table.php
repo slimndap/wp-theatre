@@ -8,10 +8,13 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
  * List Table for the Productions Admin Page (default view).
  *
  * @since	0.15
- * @extends	WP_List_Table
+ *
  * @see		WPT_Productions_Admin
  * @see		https://codex.wordpress.org/Class_Reference/WP_List_Table
  * @see		https://pippinsplugins.com/creating-wp-list-tables-by-hand/
+ *
+ * @package	Theater/Productions
+ * @group	Admin
  */
 class WPT_Productions_List_Table extends WP_List_Table {
 

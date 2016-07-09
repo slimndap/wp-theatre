@@ -24,7 +24,7 @@ class WPT_Test_Production_Permalink extends WP_UnitTestCase {
 		$wp_rewrite->flush_rules();		
 
 		global $wp_theatre;
-		$wp_theatre->setup->register_post_types();
+		Theater_Setup_Post_Types::register_post_types();
 	}
 	
 	function create_production() {

@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * Manages listings.
  *
  * Extend this class to compile lists or fully formatted HTML listings.
@@ -7,9 +7,11 @@
  *
  * @since 0.8
  * @since 0.10	Major rewrite, while maintaining backwards compatibility.
+ *
+ * @package	Theater/Abstracts
  */
 
-class WPT_Listing {
+abstract class WPT_Listing {
 
 	/**
 	 * Default arguments for all HTML methods.

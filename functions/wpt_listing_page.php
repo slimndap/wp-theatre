@@ -869,14 +869,14 @@
 	 	
  	}
 
-	/*
+	/**
 	 * The Theater Categories widget.
 	 *
 	 * Display a list of all categories with upcoming events.
 	 *
-	 * @since 0.8
+	 * @since 	0.8
+	 * @package	Theater/Widgets
 	 */
-
 	class WPT_Categories_Widget extends WP_Widget {
 		function __construct() {
 			parent::__construct(

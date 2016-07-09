@@ -9,9 +9,10 @@
  *
  * This class is the parent class of WPT_Production_Template and WPT_Event_Template.
  *
- * @since 0.12.1
+ * @since 	0.12.1
+ * @package	Theater/Template
  */
-class WPT_Template {
+abstract class WPT_Template {
 
 	/**
 	 * The template.

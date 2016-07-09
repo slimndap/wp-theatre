@@ -1,4 +1,9 @@
 <?php
+/**
+ * WPT_Production class.
+ *
+ * @package	Theater/Production
+ */
 class WPT_Production {
 
 	const post_type_name = 'wp_theatre_prod';

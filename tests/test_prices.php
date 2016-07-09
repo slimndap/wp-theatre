@@ -105,11 +105,14 @@ class WPT_Test_Pricess extends WPT_UnitTestCase {
 	 */
 	function test_wpt_event_tickets_prices_named() {
 		$this->setup_test_data();
-		add_post_meta( $this->upcoming_event_with_prices, '_wpt_event_tickets_price', '1123|named_price' );
+		add_post_meta( $this->upcoming_event_with_prices, '_wpt_event_tickets_price', '1123kkk|     named_price' );
+		
+		$prices = get_post_meta($this->upcoming_event_with_prices, '_wpt_event_tickets_price');
 
-		$event = new WPT_Event( $this->upcoming_event_with_prices );
-		$prices = $event->prices();
-		$this->assertNotContains( '1123|named_price',implode( '',$prices ) );
+		$actual = implode( '',$prices );
+		$expected = '1123|named_price';
+		
+		$this->assertContains( $expected,$actual );
 
 	}
 }

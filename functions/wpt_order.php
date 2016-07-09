@@ -2,19 +2,20 @@
 	/**
 	 * Handle all ordering of events and productions.
 	 *
-	 * WPT_Order adds a _wpt_order custom field to all posts (of any post_type) and uses this to chronologically 
+	 * WPT_Order adds a `_wpt_order` custom field to all posts (of any post_type) and uses this to chronologically 
 	 * order WP_Query listings that hold productions or events.
 	 *
 	 * For productions the _wpt_order value is based on the event_date of the first upcoming event.
 	 * For events the _wpt_order value is based on the event_date.
 	 * The _wpt_order value is based on the post_date for all other post_types.
 	 *
-	 * @since 0.6.2
+	 * @since 	0.6.2
+	 * @package	Theater
 	 *
 	 */
 	 
  	class WPT_Order {
-	
+
 		function __construct() {
 			$this->meta_key = '_wpt_order';
 		

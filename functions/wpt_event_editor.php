@@ -5,7 +5,7 @@
  * Adds an event editor to the production admin page.
  *
  * @since 0.11
- * @package WPT/Event Editor
+ * @package Theater/Event
  *
  */
 class WPT_Event_Editor {

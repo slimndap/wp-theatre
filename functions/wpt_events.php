@@ -1,12 +1,13 @@
 <?php
 
-/*
+/**
  * Manages event listings.
  *
  * Uses this class to compile lists of events or fully formatted HTML listings of events.
  *
- * @since 0.5
- * @since 0.10	Complete rewrite, while maintaining backwards compatibility.
+ * @since 	0.5
+ * @since 	0.10	Complete rewrite, while maintaining backwards compatibility.
+ * @package Theater/Events
  */
 
 class WPT_Events extends WPT_Listing {
@@ -700,7 +701,15 @@ class WPT_Events extends WPT_Listing {
 	 *					Fixes #168.
 	 * @since	0.15	Added support for 's' (keyword search).
 	 *
-		 * @return array Events.
+	 * @uses	WPT_Order::meta_key to get the key to filter when the 'start' or 'end' filter is used.
+	 * @uses	WPT_Production::post_type_name to get the productions post type if the 'production' or 
+	 *			's' (keyword search) filter is used.
+	 * @uses	WPT_Season::post_type_name to get the seasons post type if the 'season' filter is used.
+	 * @uses	WPT_Productions::get() to find productions if the 's' (keyword search) filter is used.
+	 * @uses	WPT_Event to create a new event object for each event in the list.
+	 *
+	 * @param	array	$filters
+	 * @return 	array 	Events.
 	 */
 
 	public function get( $filters = array() ) {

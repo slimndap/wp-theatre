@@ -1,11 +1,12 @@
 <?php
-/*
+/**
  * Manages production listings.
  *
  * Uses this class to compile lists of productions or fully formatted HTML listings of productions.
  *
- * @since 0.5
- * @since 0.10	Complete rewrite, while maintaining backwards compatibility.
+ * @since 	0.5
+ * @since 	0.10	Complete rewrite, while maintaining backwards compatibility.
+ * @package	Theater/Productions
  */
 
 class WPT_Productions extends WPT_Listing {
@@ -573,7 +574,7 @@ class WPT_Productions extends WPT_Listing {
 	 * 		@type string	$template	Template to use for the individual productions.
 	 *									Default <NULL>.
 	 * }
-		 * @return string HTML.
+	 * @return 	string 	A fully formatted listing of productions in HTML.
 	 */
 	public function get_html( $args = array() ) {
 
@@ -798,7 +799,7 @@ class WPT_Productions extends WPT_Listing {
 	 * 		category__not_in. 		See WP_Query.
 	 * 		ignore_sticky_posts. 	See WP_Query.
 	 * }
-	 * @return array 	An array of WPT_Production objects.
+	 * @return WPT_Production[] 	An array of WPT_Production objects.
 	 */
 	public function get( $filters = array() ) {
 		global $wp_theatre;

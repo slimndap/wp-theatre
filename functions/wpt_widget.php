@@ -1,12 +1,14 @@
 <?php
 	
-	/*
+	/**
 	 * Theater Production Events widget.
+	 *
 	 * Display all events for the current production.
 	 * The widget is only visible on a production detail page: is_singular(WPT_Production::post_type_name)
+	 *
 	 * @since 0.8.3
+	 * @package	Theater/Widgets
 	 */
-
 	class WPT_Production_Events_Widget extends WP_Widget {
 		function __construct() {
 			parent::__construct(
@@ -72,6 +74,12 @@
 	}
 
 
+	/**
+	 * WPT_Productions_Widget class.
+	 * 
+	 * @extends 	WP_Widget
+	 * @package		Theater/Widgets
+	 */
 	class WPT_Productions_Widget extends WP_Widget {
 		function __construct() {
 			parent::__construct(
@@ -136,6 +144,12 @@
 		}
 	}
 	
+	/**
+	 * WPT_Cart_Widget class.
+	 * 
+	 * @extends 	WP_Widget
+	 * @package		Theater/Widgets
+	 */
 	class WPT_Cart_Widget extends WP_Widget {
 		function __construct() {
 			parent::__construct(

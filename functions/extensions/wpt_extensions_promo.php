@@ -3,6 +3,7 @@
 /**
  * Extensions Promo class.
  * Adds links to the extensions to the WordPress admin.
+ * @package	Theater/Extensions
  */
 class WPT_Extensions_Promo {
 
