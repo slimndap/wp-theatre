@@ -8,7 +8,7 @@
 class Theater_Setup_Post_Types {
 
 	static function init() {
-		add_action( 'init', 'Theater_Setup_Post_Types::register_post_types' );
+		add_action( 'init', array( __CLASS__, 'register_post_types' ) );
 	}
 
 	/**
@@ -46,8 +46,6 @@ class Theater_Setup_Post_Types {
 	 */
 	protected static function register_post_type_event() {
 
-		global $wp_theatre;
-
 		$post_type_args = array(
 			'labels' => array(
 				'name' => __( 'Events','theatre' ),
@@ -65,7 +63,7 @@ class Theater_Setup_Post_Types {
 			'supports' => array( 'title', 'editor', 'excerpt', 'thumbnail','comments' ),
 			'taxonomies' => array( 'category','post_tag' ),
 			'rewrite' => array(
-				'slug' => $wp_theatre->production_permalink->get_base(),
+				'slug' => Theater()->production_permalink->get_base(),
 				'with_front' => false,
 				'feeds' => true,
 			),

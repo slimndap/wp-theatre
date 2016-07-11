@@ -19,7 +19,6 @@
 		}
 	
 		public function widget( $args, $instance ) {
-			global $wp_theatre;
 			global $post;
 			
 			if (is_singular(WPT_Production::post_type_name)) {
@@ -37,9 +36,9 @@
 	
 				$filters['production'] = $post->ID;
 				
-				if ( ! ( $html = $wp_theatre->transient->get('e', array_merge($filters)) ) ) {
-					$html = $wp_theatre->events->get_html($filters);
-					$wp_theatre->transient->set('e', array_merge($filters), $html);
+				if ( ! ( $html = Theater()->transient->get('e', array_merge($filters)) ) ) {
+					$html = Theater()->events->get_html($filters);
+					Theater()->transient->set('e', array_merge($filters), $html);
 				}
 	
 				echo $html;
@@ -90,8 +89,6 @@
 		}
 	
 		public function widget( $args, $instance ) {
-			global $wp_theatre;
-
 			echo $args['before_widget'];
 
 			if ( ! empty( $instance['title'] ) ) {			
@@ -110,7 +107,7 @@
 
 			$transient_key = 'wpt_prods_'.md5(serialize($filters));
 			if ( ! ( $html = get_transient($transient_key) ) ) {
-				$html = $wp_theatre->productions->html($filters);
+				$html = Theater()->productions->html($filters);
 				set_transient($transient_key, $html, 4 * MINUTE_IN_SECONDS );
 			}
 			echo $html;
@@ -160,8 +157,7 @@
 		}
 	
 		public function widget( $args, $instance ) {
-			global $wp_theatre;			
-			if (!$wp_theatre->cart->is_empty()) {
+			if (!Theater()->cart->is_empty()) {
 
 				echo $args['before_widget'];
 
@@ -170,7 +166,7 @@
 					echo $args['before_title'] . $title . $args['after_title'];
 				}
 				
-				echo $wp_theatre->cart->render();
+				echo Theater()->cart->render();
 				echo $args['after_widget'];
 			}
 

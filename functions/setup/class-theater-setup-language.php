@@ -7,7 +7,7 @@
  * @since	0.16
  */
 class Theater_Setup_Language {
-	
+
 	/**
 	 * Adds the action hooks that handle the translations.
 	 *
@@ -17,11 +17,11 @@ class Theater_Setup_Language {
 	 */
 	static function init() {
 
-		add_action( 'plugins_loaded', 'Theater_Setup_Language::load_textdomain' );
-		add_filter( 'gettext', 'Theater_Setup_Language::apply_translations_from_settings', 20, 3 );
-		
+		add_action( 'plugins_loaded', array( __CLASS__, 'load_textdomain' ) );
+		add_filter( 'gettext', array( __CLASS__, 'apply_translations_from_settings' ), 20, 3 );
+
 	}
-	
+
 	/**
 	 * Applies translation from the Theater Settings page.
 	 *
@@ -35,17 +35,16 @@ class Theater_Setup_Language {
 	 * @return	string
 	 */
 	static function apply_translations_from_settings( $translated_text, $text, $domain ) {
-		global $wp_theatre;
 		if ( $domain == 'theatre' ) {
 			switch ( $text ) {
 				case 'Tickets' :
-					if ( ! empty( $wp_theatre->wpt_language_options['language_tickets'] ) ) {
-						$translated_text = $wp_theatre->wpt_language_options['language_tickets'];
+					if ( ! empty( Theater()->wpt_language_options['language_tickets'] ) ) {
+						$translated_text = Theater()->wpt_language_options['language_tickets'];
 					}
 					break;
 				case 'categories' :
-					if ( ! empty( $wp_theatre->wpt_language_options['language_categories'] ) ) {
-						$translated_text = strtolower( $wp_theatre->wpt_language_options['language_categories'] );
+					if ( ! empty( Theater()->wpt_language_options['language_categories'] ) ) {
+						$translated_text = strtolower( Theater()->wpt_language_options['language_categories'] );
 					}
 					break;
 			}
@@ -55,13 +54,12 @@ class Theater_Setup_Language {
 
 	/**
 	 * Loads the plugin's translated strings.
-	 * 
+	 *
 	 * @static
 	 * @since	0.?
 	 * @return 	void
 	 */
 	static function load_textdomain() {
-		load_plugin_textdomain( 'theatre', false, dirname( plugin_basename( __FILE__ ) ) . '/../lang/' );
+		load_plugin_textdomain( 'theatre', false, dirname( THEATER_PLUGIN_BASENAME ) . '/lang/' );
 	}
-
 }

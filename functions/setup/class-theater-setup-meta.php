@@ -15,7 +15,7 @@ class Theater_Setup_Meta {
 	 * @return void
 	 */
 	static function init() {
-		add_action( 'init', 'Theater_Setup_Meta::register_date_meta' );
+		add_action( 'init', array( __CLASS__, 'register_date_meta' ) );
 	}
 
 	/**

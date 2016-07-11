@@ -41,7 +41,7 @@ class WPT_Extensions_Promo {
 	 */
 	function add_plugin_row_meta($links, $file) {
 
-		if ( 'theatre/theater.php' != $file ) {
+		if ( THEATER_PLUGIN_BASENAME != $file ) {
 			return $links; }
 
 		$extensions_link = add_query_arg(

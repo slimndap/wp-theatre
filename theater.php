@@ -90,17 +90,44 @@ $wpt_version = '0.15.8';
 class WP_Theatre {
 
 	/**
+	 * The single instance of the class.
+	 *
+	 * @var Theater for WordPress
+	 * @since 0.16
+	 */
+	protected static $_instance = null;
+
+	/**
 	 * setup
 	 *
 	 * @var	WPT_Setup
 	 */
 	var $setup;
 
+	/**
+	 * Main Theater for WordPress Instance.
+	 *
+	 * Ensures only one instance of Theater for WordPress is loaded or can be loaded.
+	 *
+	 * @since 0.16
+	 * @static
+	 * @see 	Theater()
+	 * @return 	WP_Theatre	Main instance.
+	 */
+	static function instance() {
+		if ( is_null( self::$_instance ) ) {
+			self::$_instance = new self();
+		}
+		return self::$_instance;		
+	}
+
 	function __construct() {
 
 		// Set version
 		global $wpt_version;
 		$this->wpt_version = $wpt_version;
+
+		$this->define_constants();
 
 		// Includes
 		$this->includes();
@@ -109,6 +136,8 @@ class WP_Theatre {
 		Theater_Setup::init();
 
 		$this->admin = new WPT_Admin();
+		Theater_Admin_Plugins::init();
+		
 		$this->order = new WPT_Order();
 		$this->status = new WPT_Status();
 		$this->feeds = new WPT_Feeds();
@@ -147,9 +176,6 @@ class WP_Theatre {
 		$this->wpt_tickets_options = get_option( 'wpt_tickets' );
 		$this->deprecated_options();
 
-		// Hooks
-		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this->setup, 'plugin_action_links' ) );
-
 		// Plugin (de)activation hooks
 		register_activation_hook( __FILE__, array($this, 'activate' ));
 		register_deactivation_hook( __FILE__, array($this, 'deactivate' ));
@@ -162,6 +188,15 @@ class WP_Theatre {
 
 		// Hook wpt_loaded action.
 		add_action ('plugins_loaded', array($this,'wpt_loaded') );
+	}
+
+	protected function define_constants() {
+		if ( ! defined( 'THEATER_PLUGIN_BASENAME' ) ) {
+			define( 'THEATER_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );		
+		}
+		if ( ! defined( 'THEATER_VERSION' ) ) {
+			define( 'THEATER_VERSION', $this->wpt_version );	
+		}
 	}
 
 	/**
@@ -202,6 +237,8 @@ class WP_Theatre {
 		require_once(dirname(__FILE__) . '/functions/widgets/class-theater-widgets.php');
 
 		require_once(dirname(__FILE__) . '/functions/wpt_admin.php');
+		require_once(dirname(__FILE__) . '/functions/admin/class-theater-admin-plugins.php');
+
 		require_once(dirname(__FILE__) . '/functions/wpt_order.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_status.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_feeds.php');
@@ -330,11 +367,21 @@ class WP_Theatre {
 }
 
 /**
- * Init WP_Theatre class
+ * Main instance of Theater for WordPress.
  *
- * @var	WP_Theatre
+ * Returns the main instance of Theater for WordPress to prevent the need to use globals.
+ *
+ * @since  0.19
+ * @return WP_Theatre
  */
-$wp_theatre = new WP_Theatre();
+ function Theater() {
+	return WP_Theatre::instance();
+}
+
+/**
+ * @var	WP_Theatre	
+ */
+$wp_theatre = Theater();
 
 
 ?>

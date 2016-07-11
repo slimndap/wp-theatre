@@ -16,10 +16,6 @@ class Theater_Setup {
 
 		add_action( 'init', 'Theater_Setup::wpt_rewrite_rules' );
 
-
-
-
-
 		add_filter( 'cron_schedules', 'Theater_Setup::cron_schedules' );
 
 		add_filter( 'query_vars', 'Theater_Setup::add_tickets_url_iframe_query_vars' );
@@ -122,23 +118,6 @@ class Theater_Setup {
 	}
 
 	/**
-	 * action_links function.
-	 *
-	 * @access public
-	 * @param mixed $links
-	 * @return void
-	 */
-	public function plugin_action_links( $links ) {
-
-		$plugin_links = array(
-			'<a href="' . admin_url( 'admin.php?page=wpt_admin' ) . '">' . __( 'Settings' ) . '</a>',
-			'<a href="https://github.com/slimndap/wp-theatre/wiki">' . __( 'Docs', 'theatre' ) . '</a>',
-		);
-
-		return array_merge( $plugin_links, $links );
-	}
-
-	/**
 	 * Why is this here?.
 	 */
 	static function wpt_rewrite_rules() {
@@ -156,14 +135,6 @@ class Theater_Setup {
 		);
 		return $schedules;
 	}
-
-
-
-
-	static function widgets_init() {
-	}
-
-
 }
 
 

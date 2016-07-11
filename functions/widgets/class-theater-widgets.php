@@ -15,7 +15,7 @@ class Theater_Widgets {
 	 * @return void
 	 */
 	static function init() {
-		add_action( 'widgets_init', 'Theater_Widgets::init_widgets' );				
+		add_action( 'widgets_init', array( __CLASS__, 'init_widgets' ));				
 	}
 	
 	/**

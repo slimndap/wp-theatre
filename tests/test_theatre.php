@@ -632,8 +632,8 @@ class WPT_Test extends WP_UnitTestCase {
 	function test_wpt_transient_reset() {
 		/*
 		 * This test will always fail if the transients are not stored in the DB (eg. memcached).
+		 * Maybe this helps: https://docs.woothemes.com/wc-apidocs/class-WC_Post_Data.html#_set_object_terms
 		 * Skip for now.
-		 *
 		 */
 		
 		return;
