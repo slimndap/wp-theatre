@@ -1,7 +1,7 @@
 <?php
 /*
 	Plugin Name: Theater
-	Plugin URI: http://theater.slimndap.com/
+	Plugin URI: https://wp.theater
 	Description: Turn your Wordpress website into a theater website.
 	Author: Jeroen Schmit
 	Version: 0.15.8
@@ -33,21 +33,21 @@ $wpt_version = '0.15.8';
 /**
  * Main Theater for WordPress class.
  *
- * ## Events vs. productions
- * Theater for WordPress uses productions to group your events. Each production can have one or more events.
+ * ## Events and dates
+ * Every event can have one or more dates.
  *
- * So if you run a theatre then 'The Sound Of Music' is a production and the show this weekend is an event.
+ * So if you run a theatre then 'The Sound Of Music' is an event and the show this weekend is a date.
  *
  * ## Getting started
  *
  * Retrieve a list of upcoming events:
  * <code>
- * $events = $wp_theatre->events->get();
+ * $events = Theater_Dates::get();
  * </code>
  *
  * Output a list of upcoming events:
  * <code>
- * echo $wp_theatre->events->get_html();
+ * echo Theater_Dates::get_html();
  * </code>
  *
  * Retrieve a list of all productions:
@@ -98,13 +98,6 @@ class WP_Theatre {
 	protected static $_instance = null;
 
 	/**
-	 * setup
-	 *
-	 * @var	WPT_Setup
-	 */
-	var $setup;
-
-	/**
 	 * Main Theater for WordPress Instance.
 	 *
 	 * Ensures only one instance of Theater for WordPress is loaded or can be loaded.
@@ -150,10 +143,11 @@ class WP_Theatre {
 		$this->event_admin = new WPT_Event_Admin();
 		$this->event_editor = new WPT_Event_Editor();
 
-		$this->events = new WPT_Events();
+		$this->events = new Theater_Dates;
+		Theater_Dates::init();
 
 		$this->production_permalink = new WPT_Production_Permalink();
-		Theater_Event_dates::init();
+		Theater_Event_Dates::init();
 
 		Theater_Widgets::init();
 
@@ -207,6 +201,7 @@ class WP_Theatre {
 	 */
 	function includes() {
 		require_once(dirname(__FILE__) . '/functions/wpt_listing.php');
+		require_once(dirname(__FILE__) . '/functions/abstract/class-theater-lists.php');
 
 		require_once(dirname(__FILE__) . '/functions/template/wpt_template.php');
 		require_once(dirname(__FILE__) . '/functions/template/wpt_template_placeholder.php');
@@ -227,7 +222,7 @@ class WP_Theatre {
 		require_once(dirname(__FILE__) . '/functions/wpt_event_editor.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_event_template.php');
 
-		require_once(dirname(__FILE__) . '/functions/wpt_events.php');
+		require_once(dirname(__FILE__) . '/functions/dates/class-theater-dates.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_events_widget.php');
 
 		require_once(dirname(__FILE__) . '/functions/setup/class-theater-setup.php');
