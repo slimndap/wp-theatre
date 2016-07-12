@@ -143,7 +143,6 @@ class WP_Theatre {
 		$this->event_admin = new WPT_Event_Admin();
 		$this->event_editor = new WPT_Event_Editor();
 
-		$this->events = new Theater_Dates;
 		Theater_Dates::init();
 
 		$this->production_permalink = new WPT_Production_Permalink();
@@ -162,6 +161,8 @@ class WP_Theatre {
 		} else {
 			$this->frontend = new WPT_Frontend();
 		}
+		
+		$this->deprecated_properties();
 
 		// Options
 		$this->wpt_language_options = get_option( 'wpt_language' );
@@ -344,20 +345,24 @@ class WP_Theatre {
 	function render_productions($args=array()) {
 		return $this->productions->html_listing();
 	}
-
- 	/*
- 	 * For backward compatibility purposes
- 	 * Use old theatre options for style options and tickets options.
- 	 * As of v0.8 style options and tickets options are stored seperately.
- 	 */
-
- 	function deprecated_options() {
-	 	if (empty($this->wpt_style_options)) {
-		 	$this->wpt_style_options = get_option( 'theatre' );
-	 	}
-	 	if (empty($this->wpt_tickets_options)) {
-		 	$this->wpt_tickets_options = get_option( 'theatre' );
-	 	}
+	
+	/*
+	 * For backward compatibility purposes
+	 * Use old theatre options for style options and tickets options.
+	 * As of v0.8 style options and tickets options are stored seperately.
+	 */
+	
+	function deprecated_options() {
+		if (empty($this->wpt_style_options)) {
+			$this->wpt_style_options = get_option( 'theatre' );
+		}
+		if (empty($this->wpt_tickets_options)) {
+			$this->wpt_tickets_options = get_option( 'theatre' );
+		}
+	}
+	
+	protected function deprecated_properties() {
+		$this->events = new Theater_Dates; 	
  	}
 }
 
@@ -369,7 +374,7 @@ class WP_Theatre {
  * @since  0.19
  * @return WP_Theatre
  */
- function Theater() {
+function Theater() {
 	return WP_Theatre::instance();
 }
 
