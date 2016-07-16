@@ -1,6 +1,14 @@
 <?php
 
+/**
+ * Abstract Theater_Lists class.
+ * 
+ * @abstract
+ * @package	Theater/Abstracts
+ */
 abstract class Theater_Lists {
+	
+	protected static $default_args = array();
 	
 	/**
 	 * Default arguments for all HTML methods.
@@ -15,6 +23,12 @@ abstract class Theater_Lists {
 		'paginateby' => array(),
 		'template' => null,
 	);
+	
+	abstract function __construct($default_args);
+	
+	abstract function __invoke();
+	
+	abstract function __toString();
 
 	static function init() {
 		add_filter( 'query_vars', array( __CLASS__, 'add_query_vars' ) );		

@@ -40,16 +40,28 @@ $wpt_version = '0.15.8';
  *
  * ## Getting started
  *
- * Retrieve a list of upcoming events:
+ * ### Dates
  * <code>
- * $events = Theater_Dates::get();
+ * // Retrieve a list of upcoming dates:
+ * $dates = new Theater_Dates;
+ * $list = $dates();
  * </code>
  *
- * Output a list of upcoming events:
  * <code>
- * echo Theater_Dates::get_html();
+ * // Output a list of upcoming dates:
+ * $dates = new Theater_Dates;
+ * echo $dates;
  * </code>
  *
+ * Retrieve a list of upcoming dates for a single event:
+ * <code>
+ * $dates = new Theater_Dates( array( 'event' => 123 ) );
+ * $list = $dates();
+ * </code>
+ *
+ * See [Theater_Dates()](class-Theater_Dates.html) for more examples.
+ *
+ * ### Events
  * Retrieve a list of all productions:
  * <code>
  * $productions = $wp_theatre->productions->get();
