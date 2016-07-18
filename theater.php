@@ -230,7 +230,9 @@ class WP_Theatre {
 		require_once(dirname(__FILE__) . '/functions/wpt_productions_admin.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_productions_list_table.php');
 
-		require_once(dirname(__FILE__) . '/functions/wpt_event.php');
+		require_once(dirname(__FILE__) . '/functions/date/class-theater-date.php');
+		require_once(dirname(__FILE__) . '/functions/date/class-theater-date-field.php');
+		require_once(dirname(__FILE__) . '/functions/deprecated/class-wpt-event.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_event_admin.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_event_editor.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_event_template.php');

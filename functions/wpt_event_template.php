@@ -50,10 +50,10 @@ class WPT_Event_Template extends WPT_Template {
 
 		switch ( $field ) {
 			case 'datetime':
-			case 'duration':
+			//case 'duration':
 			case 'venue':
-			case 'location':
-			case 'remark':
+			//case 'location':
+			//case 'remark':
 			case 'title':
 				$value = $this->object->{$field}($value_args);
 				break;
@@ -73,23 +73,23 @@ class WPT_Event_Template extends WPT_Template {
 					$value = $production->{$field}($value_args);
 				}
 				break;
-			case 'startdate':
+			//case 'startdate':
 			case 'date':
 				$value = $this->object->startdate_html( $filters );
 				break;
-			case 'starttime':
+			//case 'starttime':
 			case 'time':
 				$value = $this->object->starttime_html( $filters );
 				break;
-			case 'enddate':
-			case 'endtime':
+			//case 'enddate':
+			//case 'endtime':
 			case 'prices':
 			case 'tickets':
 			case 'tickets_url':
 				$value = $this->object->{$field.'_html'}($filters);
 				break;
 			default:
-				$value = $this->object->custom( $field,$value_args );
+				$value = $this->object->{$field}($value_args);
 		}
 
 		/**

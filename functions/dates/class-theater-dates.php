@@ -119,7 +119,7 @@ class Theater_Dates extends Theater_Lists {
 	 * @uses 	Theater_Dates::get() to return an array of event dates.
 	 *
 	 * @since	0.16
-	 * @return 	WPT_Event[]	An array of dates.
+	 * @return 	Theater_Date[]	An array of dates.
 	 */
 	function __invoke() {
 		return self::get();
@@ -161,7 +161,7 @@ class Theater_Dates extends Theater_Lists {
 	}
 
 	/**
-	 * Retrieves a list of event dates.
+	 * Gets a list of event dates.
 	 *
 	 * ## Usage
 	 * <code>
@@ -202,39 +202,43 @@ class Theater_Dates extends Theater_Lists {
 	 *
 	 * @uses	Theater_Dates::$default_args
 	 * @uses	WPT_Order::meta_key to get the key to filter when the 'start' or 'end' filter is used.
-	 * @uses	WPT_Event::post_type_name to get the event date post type.
+	 * @uses	Theater_Date::post_type_name to get the event date post type.
 	 * @uses	WPT_Production::post_type_name to get the events post type if the 'event' or 
 	 *			's' (keyword search) filter is used.
 	 * @uses	WPT_Season::post_type_name to get the seasons post type if the 'season' filter is used.
 	 * @uses	WPT_Productions::get() to find productions if the 's' (keyword search) filter is used.
-	 * @uses	WPT_Event to create a new event object for each event in the list.
+	 * @uses	Theater_Date to create a new event object for each event in the list.
 	 *
 	 * @param 	array[string] 	$filters 	An array of filter arguments. Optional.
 	 *
 	 * Possible argument values:
-	 * | argument | type | description |
-	 * | --- | --- | --- |
-	 * | `cat` | int&#124;string | Category ID or comma-separated list of IDs. |
-	 * | `category_name` | string | Category slug. |
-	 * | `category__and` | string | An array of category IDs (AND in). |
-	 * | `category__in` | int[] | An array of category IDs (OR in, no children). |
-	 * | `category__not_in` | string | An array of category IDs (NOT in). |
-	 * | `tag` | string | Tag slug. Comma-separated (either), Plus-separated (all) |
-	 * | `end` | string | A date/time string. Only show event dates that start before this date. |
-	 * | | | Valid formats are explained in [Date and Time Formats](http://php.net/manual/en/datetime.formats.php). |
-	 * | `event` | int|array | Event ID of an array of event IDs. Only show dates of one or more events. |
-	 * | `limit` | int | Number of dates to return. Use `-1` to show all event dates. |
-	 * | `order` | string | The order in which to return the event dates. Either `ASC` or `DESC`. |
-	 * | `post__in` | array | Array of event date IDs. |
-	 * | `post__not_in` | array | Array of event date IDs. |
-	 * | `season` | int | Season ID. Only show event dates for this season |
-	 * | `s` | string | Search keyword(s). Prepending a term with a hyphen will |
-	 * | | | exclude events matching that term. Eg, 'pillow -sofa' will |
-	 * | | | return events containing 'pillow' but not 'sofa'. |
-	 * | `start` | string | A date/time string. Only show event dates that start after this date. |
-	 * | | | Valid formats are explained in [Date and Time Formats](http://php.net/manual/en/datetime.formats.php). |
-	 * | `status` | array | Array of post statusses. Only show event dates of events with these statuses. |  
-	 * @return 	WPT_Event[] 	An array of events.
+	 * | argument           | type            | description                                                               |
+	 * | ------------------ | --------------- | ------------------------------------------------------------------------- |
+	 * | `cat`              | int&#124;string | Category ID or comma-separated list of IDs.                               |
+	 * | `category_name`    | string          | Category slug.                                                            |
+	 * | `category__and`    | string          | An array of category IDs (AND in).                                        |
+	 * | `category__in`     | int[]           | An array of category IDs (OR in, no children).                            |
+	 * | `category__not_in` | int[]           | An array of category IDs (NOT in).                                        |
+	 * | `tag`              | string          | Tag slug. Comma-separated (either), Plus-separated (all).                 |
+	 * | `end`              | string          | A date/time string. Only show event dates that start before this date.    |
+	 * |                    |                 | Valid formats are explained in                                            |
+	 * |                    |                 | [Date and Time Formats](http://php.net/manual/en/datetime.formats.php).   |
+	 * | `event`            | int&#124;array  | Event ID of an array of event IDs. Only show dates of one or more events. |
+	 * | `limit`            | int             | Number of dates to return. Use `-1` to show all event dates.              |
+	 * | `order`            | string          | The order in which to return the event dates. Either `ASC` or `DESC`.     |
+	 * | `post__in`         | int[]           | Array of event date IDs.                                                  |
+	 * | `post__not_in`     | int[]           | Array of event date IDs.                                                  |
+	 * | `season`           | int             | Season ID. Only show event dates for this season                          |
+	 * | `s`                | string          | Search keyword(s). Prepending a term with a hyphen will                   |
+	 * |                    |                 | exclude events matching that term. Eg, 'pillow -sofa' will                |
+	 * |                    |                 | return events containing 'pillow' but not 'sofa'.                         |
+	 * | `start`            | string          | A date/time string. Only show event dates that start after this date.     |
+	 * |                    |                 | Valid formats are explained in                                            |
+	 * |                    |                 | [Date and Time Formats](http://php.net/manual/en/datetime.formats.php).   |
+	 * | `status`           | array           | Array of post statusses. Only show event dates of events with these       |
+	 * |                    |                 | statuses.                                                                 |  
+	 *
+	 * @return 	Theater_Date[] 	An array of events.
 	 */
 	static function get( $filters = array() ) {
 		global $wp_theatre;
@@ -250,7 +254,7 @@ class Theater_Dates extends Theater_Lists {
 		$filters = wp_parse_args( $filters, $defaults );
 
 		$args = array(
-			'post_type' => WPT_Event::post_type_name,
+			'post_type' => Theater_Date::post_type_name,
 			'post_status' => $filters['status'],
 			'meta_query' => array(),
 			'order' => $filters['order'],
@@ -391,7 +395,7 @@ class Theater_Dates extends Theater_Lists {
 
 		$posts = array();
 
-		/*
+		/**
 		 * Don't try to retrieve event dates if the 's' argument (keyword search) is used, 
 		 * but no events match the search.
 		 */
@@ -404,7 +408,7 @@ class Theater_Dates extends Theater_Lists {
 
 		$dates = array();
 		for ( $i = 0;$i < count( $posts );$i++ ) {
-			$date = new WPT_Event( $posts[ $i ] );
+			$date = new Theater_Date( $posts[ $i ] );
 			$dates[] = $date;
 		}
 
@@ -555,20 +559,20 @@ class Theater_Dates extends Theater_Lists {
 	 *
 	 * @uses Theater_List::get_html() to generate the HTML for an event dates list.
 	 *
-	 * @param array $args {
-	 * 		An array of arguments. Optional.
+	 * @param array[string] $args 	An array of arguments. Optional.
 	 *
-	 *		These can be any of the arguments used in the $filters of WPT_Events::get(), plus:
+	 * The possible argument are identical to `Theater_Dates::get()`, plus the following formatting arguments:
 	 *
-	 *		@type array		$paginateby	Fields to paginate the listing by.
-	 *									@see WPT_Events::get_html_pagination() for possible values.
-	 *									Default <[]>.
-	 *		@type string    $groupby    Field to group the listing by.
-	 *									@see WPT_Events::get_html_grouped() for possible values.
-	 *									Default <false>.
-	 * 		@type string	$template	Template to use for the individual events.
-	 *									Default <NULL>.
-	 * }
+	 *
+	 * Possible argument values:
+	 * | argument           | type            | description                                                               |
+	 * | ------------------ | --------------- | ------------------------------------------------------------------------- |
+	 * | `paginateby`       | string[]        | Array of field names to paginate the list by.                             |
+	 * |                    |                 | Possible values: `day`, `month`, `year` and `category`.                   |
+	 * | `groupby`          | string          | Field name to group the list by.                                          |
+	 * |                    |                 | Possible values: `day`, `month`, `year` and `category`.                   |
+	 * | `template`         | string          | Template to use for the individual event dates.                           |
+	 *
 	 * @return 	string 	A fully formatted list of event dates in HTML.
 	 */
 	static function get_html( $args = array() ) {
@@ -576,12 +580,17 @@ class Theater_Dates extends Theater_Lists {
 		$html = parent::get_html( $args );
 
 		/**
-		 * Filter the formatted listing of event dates in HTML.
+		 * Filter the formatted listof event dates in HTML.
 		 *
 		 * @since 0.10
 		 *
 		 * @param 	string $html 	The HTML.
 		 * @param 	array $args 	The $args that are being used for the listing.
+		 */
+		$html = apply_filters( 'theater/dates/html', $html, $args );
+		
+		/**
+		 * @deprecated 0.16
 		 */
 		$html = apply_filters( 'wpt_events_html', $html, $args );
 
@@ -594,7 +603,7 @@ class Theater_Dates extends Theater_Lists {
 	 * @since 0.10
 	 * @since 0.10.2	Category now uses slug instead of term_id.
 	 *
-	 * @uses 	WPT_Events::get_html_grouped();
+	 * @uses 	Theater_Dates::get_html_grouped();
 	 *
 	 * @access 	protected
 	 * @param 	string $category_slug		Slug of the category.
@@ -614,7 +623,7 @@ class Theater_Dates extends Theater_Lists {
 	 *
 	 * @since 0.10
 	 *
-	 * @uses	WPT_Events::get_html_grouped();
+	 * @uses	Theater_Dates::get_html_grouped();
 	 *
 	 * @access 	protected
 	 * @param 	string $day		The day in `YYYY-MM-DD` format.
@@ -775,6 +784,11 @@ class Theater_Dates extends Theater_Lists {
 		 * @param	string	$html_group	The HTML for this page.
 		 * @param	array	$args		The arguments for the HTML for a page in this event dates list.
 		 */
+		$html = apply_filters( 'theater/dates/html/page', $html, $args );
+
+		/**
+		 * @deprecated 0.16
+		 */
 		$html = apply_filters( 'wpt/events/html/page', $html, $args );
 
 		return $html;
@@ -796,7 +810,7 @@ class Theater_Dates extends Theater_Lists {
 	 * @uses Theater_Dates::get_html_for_category()
 	 * @uses Theater_Dates::get()
 	 * @uses Theater_Dates::preload_dates_with_events()
-	 * @uses WPT_Event::html()
+	 * @uses Theater_Date::html()
 	 *
 	 * @access 	protected
 	 * @param 	array $args 	See Theater_Dates::get_html() for possible values.
@@ -820,10 +834,21 @@ class Theater_Dates extends Theater_Lists {
 				$days = self::get_days( $args );
 				foreach ( $days as $day => $name ) {
 					if ( $day_html = self::get_html_for_day( $day, $args ) ) {
-						$html .= '<h3 class="wpt_listing_group day">';
-						$html .= apply_filters( 'wpt_listing_group_day',date_i18n( 'l d F',strtotime( $day ) ),$day );
-						$html .= '</h3>';
-						$html .= $day_html;
+						
+						$day_header = date_i18n( 'l d F',strtotime( $day ) );
+						$day_header = apply_filters( 'theater/dates/group/day', $day_header, $day );
+
+						/**
+						 * @deprecated 0.16
+						 */
+						$day_header = apply_filters( 'wpt_listing_group_day', $day_header, $day );
+						
+						ob_start();
+						?><h3 class="wpt_listing_group day"><?php echo $day_header; ?></h3><?php
+						echo $day_html;
+							
+						$html .= ob_get_clean();
+						
 					}
 				}
 				break;
@@ -831,10 +856,20 @@ class Theater_Dates extends Theater_Lists {
 				$months = self::get_months( $args );
 				foreach ( $months as $month => $name ) {
 					if ( $month_html = self::get_html_for_month( $month, $args ) ) {
-						$html .= '<h3 class="wpt_listing_group month">';
-						$html .= apply_filters( 'wpt_listing_group_month',date_i18n( 'F',strtotime( $month ) ),$month );
-						$html .= '</h3>';
-						$html .= $month_html;
+						
+						$month_header = date_i18n( 'F',strtotime( $month ) );
+						$month_header = apply_filters( 'theater/dates/group/month',$month_header,$month );
+
+						/**
+						 * @deprecated 0.16
+						 */
+						$month_header = apply_filters( 'wpt_listing_group_month',$month_header,$month );
+						
+						ob_start();
+						?><h3 class="wpt_listing_group month"><?php echo $month_header; ?></h3><?php
+						echo $month_html;
+						
+						$html .= ob_get_clean();
 					}
 				}
 				break;
@@ -842,10 +877,21 @@ class Theater_Dates extends Theater_Lists {
 				$years = self::get_years( $args );
 				foreach ( $years as $year => $name ) {
 					if ( $year_html = self::get_html_for_year( $year, $args ) ) {
-						$html .= '<h3 class="wpt_listing_group year">';
-						$html .= apply_filters( 'wpt_listing_group_year',date_i18n( 'Y',strtotime( $year.'-01-01' ) ),$year );
-						$html .= '</h3>';
-						$html .= $year_html;
+						
+						$year_header = date_i18n( 'Y',strtotime( $year.'-01-01' ) );
+						
+						$year_header = apply_filters( 'theater/dates/group/year',$year_header,$year );
+
+						/**
+						 * @deprecated 0.16
+						 */
+						$year_header = apply_filters( 'wpt_listing_group_year',$year_header,$year );
+
+						ob_start();
+						?><h3 class="wpt_listing_group year"><?php echo $year_header; ?></h3><?php
+						echo $year_html;
+						
+						$html .= ob_get_clean();
 					}
 				}
 				break;
@@ -853,10 +899,21 @@ class Theater_Dates extends Theater_Lists {
 				$categories = self::get_categories( $args );
 				foreach ( $categories as $cat_id => $name ) {
 					if ( $cat_html = self::get_html_for_category( $cat_id, $args ) ) {
-						$html .= '<h3 class="wpt_listing_group category">';
-						$html .= apply_filters( 'wpt_listing_group_category',$name,$cat_id );
-						$html .= '</h3>';
-						$html .= $cat_html;
+						
+						$cat_header = $name;
+						$cat_header = apply_filters( 'theater/dates/group/category',$cat_header,$cat_id );
+
+						/**
+						 * @deprecated 0.16
+						 */
+						$cat_header = apply_filters( 'wpt_listing_group_category',$cat_header,$cat_id );
+						
+						ob_start();
+						?><h3 class="wpt_listing_group category"><?php echo $cat_header; ?></h3><?php
+						echo $cat_html;
+							
+						$html .= ob_get_clean();
+
 					}
 				}
 				break;
@@ -864,25 +921,31 @@ class Theater_Dates extends Theater_Lists {
 				$events = self::get( $args );
 				$events = self::preload_dates_with_events( $events );
 				$html_group = '';
+
+				/*
+				 * Use the general default template for events.
+				 * @see WPT_Event_Template::get_default();
+				 */
+				$template = false;
+
+				/**
+				 * Filter the default template for event dates in lists.
+				 *
+				 * @since	0.14.6
+				 * @param	string	$template	The default template.
+				 */
+				$template = apply_filters( 'theater/dates/template/default', $template );
+
+				/**
+				 * @deprecated 0.16
+				 */
+				$template = apply_filters( 'wpt/events/event/template/default', $template );
+
+				if ( ! empty( $args['template'] ) ) {
+					$template = $args['template'];
+				}
+
 				foreach ( $events as $event ) {
-
-					/*
-					 * Use the general default template for events.
-					 * @see WPT_Event_Template::get_default();
-					 */
-					$template = false;
-
-					/**
-					 * Filter the default template for event dates in lists.
-					 *
-					 * @since	0.14.6
-					 * @param	string	$template	The default template.
-					 */
-					$template = apply_filters( 'wpt/events/event/template/default', $template );
-
-					if ( ! empty( $args['template'] ) ) {
-						$template = $args['template'];
-					}
 
 					$html_event = $event->html( $template, $args );
 
@@ -891,8 +954,13 @@ class Theater_Dates extends Theater_Lists {
 					 *
 					 * @since	0.14.6
 					 *
-					 * @param	string		$html_event	The event HTML.
-					 * @param	WPT_Event	$event		The event.
+					 * @param	string			$html_event	The event HTML.
+					 * @param	Theater_Date	$event		The event.
+					 */
+					$html_event = apply_filters( 'theater/dates/date/html', $html_event, $event );
+
+					/**
+					 * @deprecated 0.16
 					 */
 					$html_event = apply_filters( 'wpt/events/event/html', $html_event, $event );
 
@@ -900,17 +968,116 @@ class Theater_Dates extends Theater_Lists {
 				}
 
 				/**
-				 * Filter the HTML for a group in a listing.
+				 * Filter the HTML for a group in a list.
 				 *
 				 * @since	0.12.2
 				 * @param	string	$html_group	The HTML for this group.
 				 * @param	array	$args		The arguments for the HTML of this listing.
+				 */
+				$html_group = apply_filters( 'theater/dates/group/html', $html_group, $args );
+
+				/**
+				 * @deprecated 0.16
 				 */
 				$html_group = apply_filters( 'wpt/events/html/grouped/group', $html_group, $args );
 
 				$html .= $html_group;
 		}
 		return $html;
+	}
+
+	/**
+	 * Gets the page navigation for an event dates list in HTML.
+	 *
+	 * @since 	0.10
+	 * @since	0.13.4	Show the pagination filters in the same order as the
+	 *					the 'paginateby' argument.
+	 *
+	 * @access 	protected
+	 * @uses	Theater_Dates::get_pagination_filters()
+	 * @uses	Theater_List::filter_pagination()
+	 * @param 	array $args     The arguments being used for the event listing.
+	 *							See Theater_Dates::get_html() for possible values.
+	 * @return 	string			The HTML for the page navigation.
+	 */
+	protected static function get_html_page_navigation( $args = array() ) {
+		global $wp_query;
+
+		$html = '';
+
+		$paginateby = empty( $args['paginateby'] ) ? array() : $args['paginateby'];
+
+		$filters = self::get_pagination_filters();
+
+		foreach ( $filters as $filter_name => $filter_options ) {
+			if ( ! empty( $wp_query->query_vars[ $filter_options['query_arg'] ] ) ) {
+				$paginateby[] = $filter_name;
+			}
+		}
+
+		$paginateby = array_unique( $paginateby );
+
+		foreach ( $paginateby as $paginateby_filter ) {
+			$options = call_user_func_array(
+				$filters[ $paginateby_filter ]['callback'],
+				array( $args )
+			);
+			$html .= self::filter_pagination(
+				$paginateby_filter,
+				$options,
+				$args
+			);
+		}
+
+		/**
+		 * Filter the HTML of the page navigation for an event dates list.
+		 *
+		 * @since	0.13.3
+		 * @param 	string 	$html	The HTML of the page navigation for an event listing.
+		 * @param 	array 	$args	The arguments being used for the event listing.
+		 */
+		$html = apply_filters( 'theater/dates/navigation/html', $html, $args );
+
+		/**
+		 * @deprecated 0.16
+		 */
+		$html = apply_filters( 'wpt/events/html/page/navigation', $html, $args );
+
+		return $html;
+	}
+
+	/**
+	 * Gets all months that have events.
+	 *
+	 * @since 0.5
+	 * @since 0.10				No longer limits the output to months with upcoming events.
+	 *							See: https://github.com/slimndap/wp-theatre/issues/75
+	 * 							Renamed method from `months()` to `get_months()`.
+	 * @since 0.10.1			Removed custom sorting. Rely on the sorting order of the events instead.
+	 * @since 0.10.6            Added custom sorting again.
+	 *							Can't rely on sorting order of events, because historic events have no
+	 *							`_wpt_order` set.
+	 *
+	 * @uses	Theater_Dates::get() to get a list of all event dates for a list.
+	 * @uses	Theater_Date::datetime()
+	 *
+	 * @param 	array $filters	See Theater_Dates::get() for possible values.
+	 * @return 	array 			Months.
+	 */
+	static function get_months( $filters = array() ) {
+		$events = self::get( $filters );
+		$months = array();
+		foreach ( $events as $event ) {
+			$months[ date( 'Y-m',$event->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ] = date_i18n( 'M Y',$event->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+		}
+
+		if ( ! empty( $filters['order'] ) && 'desc' == $filters['order'] ) {
+			krsort( $months );
+		} else {
+			ksort( $months );
+		}
+
+		return $months;
 	}
 
 	/**
@@ -954,103 +1121,14 @@ class Theater_Dates extends Theater_Lists {
 		 * @since 	0.13.4
 		 * @param	array	$filters	The current pagination filters for an event listing..
 		 */
+		$filters = apply_filters( 'theater/dates/pagination/filters', $filters );
+
+		/**
+		 * @deprecated 0.16
+		 */
 		$filters = apply_filters( 'wpt/events/pagination/filters', $filters );
 
 		return $filters;
-	}
-
-	/**
-	 * Gets the page navigation for an event listing in HTML.
-	 *
-	 * @see WPT_Listing::filter_pagination()
-	 * @see WPT_Events::get_days()
-	 * @see WPT_Events::get_months()
-	 * @see WPT_Events::get_categories()
-	 *
-	 * @since 	0.10
-	 * @since	0.13.4	Show the pagination filters in the same order as the
-	 *					the 'paginateby' argument.
-	 *
-	 * @access 	protected
-	 * @uses	Theater_Dates::get_pagination_filters()
-	 * @uses	Theater_List::filter_pagination()
-	 * @param 	array $args     The arguments being used for the event listing.
-	 *							See WPT_Events::get_html() for possible values.
-	 * @return 	string			The HTML for the page navigation.
-	 */
-	protected static function get_html_page_navigation( $args = array() ) {
-		global $wp_query;
-
-		$html = '';
-
-		$paginateby = empty( $args['paginateby'] ) ? array() : $args['paginateby'];
-
-		$filters = self::get_pagination_filters();
-
-		foreach ( $filters as $filter_name => $filter_options ) {
-			if ( ! empty( $wp_query->query_vars[ $filter_options['query_arg'] ] ) ) {
-				$paginateby[] = $filter_name;
-			}
-		}
-
-		$paginateby = array_unique( $paginateby );
-
-		foreach ( $paginateby as $paginateby_filter ) {
-			$options = call_user_func_array(
-				$filters[ $paginateby_filter ]['callback'],
-				array( $args )
-			);
-			$html .= self::filter_pagination(
-				$paginateby_filter,
-				$options,
-				$args
-			);
-		}
-
-		/**
-		 * Filter the HTML of the page navigation for an event listing.
-		 *
-		 * @since	0.13.3
-		 * @param 	string 	$html	The HTML of the page navigation for an event listing.
-		 * @param 	array 	$args	The arguments being used for the event listing.
-		 */
-		$html = apply_filters( 'wpt/events/html/page/navigation', $html, $args );
-
-		return $html;
-	}
-
-	/**
-	 * Gets all months that have events.
-	 *
-	 * @since 0.5
-	 * @since 0.10				No longer limits the output to months with upcoming events.
-	 *							See: https://github.com/slimndap/wp-theatre/issues/75
-	 * 							Renamed method from `months()` to `get_months()`.
-	 * @since 0.10.1			Removed custom sorting. Rely on the sorting order of the events instead.
-	 * @since 0.10.6            Added custom sorting again.
-	 *							Can't rely on sorting order of events, because historic events have no
-	 *							`_wpt_order` set.
-	 *
-	 * @uses	Theater_Dates::get() to get a list of all event dates for a list.
-	 * @uses	WPT_Event::datetime()
-	 *
-	 * @param 	array $filters	See WPT_Events::get() for possible values.
-	 * @return 	array 			Months.
-	 */
-	static function get_months( $filters = array() ) {
-		$events = self::get( $filters );
-		$months = array();
-		foreach ( $events as $event ) {
-			$months[ date( 'Y-m',$event->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ] = date_i18n( 'M Y',$event->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
-		}
-
-		if ( ! empty( $filters['order'] ) && 'desc' == $filters['order'] ) {
-			krsort( $months );
-		} else {
-			ksort( $months );
-		}
-
-		return $months;
 	}
 
 	/**
@@ -1063,7 +1141,7 @@ class Theater_Dates extends Theater_Lists {
 	 *							`_wpt_order` set.
 	 *
 	 * @uses	Theater_Dates::get() to get a list of all event dates for a list.
-	 * @uses	WPT_Event::datetime()
+	 * @uses	Theater_Date::datetime()
 	 *
 	 * @param 	array $filters	See Theater_Dates::get() for possible values.
 	 * @return 	array 			Years.
@@ -1093,11 +1171,11 @@ class Theater_Dates extends Theater_Lists {
 	 * @since 	0.10.14
 	 * @access 	private
 	 * @uses	WPT_Production::post_type_name
-	 * @uses	WPT_Event::$ID
-	 * @uses	WPT_Event::$production
+	 * @uses	Theater_Date::$ID
+	 * @uses	Theater_Date::$production
 	 * @uses	WPT_Production
-	 * @param 	WPT_Event[]	$events	An array of WPT_Event objects.
-	 * @return 	WPT_Event[]			An array of WPT_Event objects, with the event preloaded.
+	 * @param 	Theater_Date[]	$events	An array of Theater_Date objects.
+	 * @return 	Theater_Date[]			An array of Theater_Date objects, with the event preloaded.
 	 */
 	protected static function preload_dates_with_events( $dates ) {
 
@@ -1155,13 +1233,13 @@ class Theater_Dates extends Theater_Lists {
 	 *
 	 * @since 		0.8
 	 * @deprecated	0.16
-	 * @return		WPT_Event|bool	The last event date or <false> if no event date is found.
+	 * @return		Theater_Date|bool	The last event date or <false> if no event date is found.
 	 */
 	static function last() {
 		_deprecated_function( 'Theater_Dates::months()', '0.16', 'Theater_Dates( array(\'limit\' => 0, \'order\' => \'DESC\') )' );
 
 		$args = array(
-			'post_type' => WPT_Event::post_type_name,
+			'post_type' => Theater_Date::post_type_name,
 			'post_status' => 'publish',
 			'order' => 'desc',
 			'posts_per_page' => 1,
@@ -1172,7 +1250,7 @@ class Theater_Dates extends Theater_Lists {
 		if ( empty( $events ) ) {
 			return false;
 		} else {
-			return new WPT_Event( $events[0] );
+			return new Theater_Date( $events[0] );
 		}
 	}
 

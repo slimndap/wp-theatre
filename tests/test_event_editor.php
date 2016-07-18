@@ -121,7 +121,7 @@ class WPT_Test_Event_Editor extends WP_UnitTestCase {
 		$events = $production->events();
 
 		$this->assertEquals( $event_date, date( 'Y-m-d H:i', $events[0]->datetime() ) );
-		$this->assertEquals( $extra_value, $events[0]->custom( 'extra_field' ) );
+		$this->assertEquals( $extra_value, $events[0]->extra_field() );
 
 	}
 
@@ -362,7 +362,7 @@ class WPT_Test_Event_Editor_Ajax extends WP_Ajax_UnitTestCase {
 		$this->assertEquals( $event_date, date( 'Y-m-d H:i', $events[0]->datetime() ) );
 		$this->assertEquals( $enddate, date( 'Y-m-d H:i', $events[0]->datetime( true ) ) );
 		$this->assertEquals( $venue, $events['0']->venue() );
-		$this->assertEquals( $extra_value, $events[0]->custom( 'extra_field' ) );
+		$this->assertEquals( $extra_value, $events[0]->extra_field() );
 
 	}
 

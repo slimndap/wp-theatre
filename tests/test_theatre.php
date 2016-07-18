@@ -423,7 +423,11 @@ class WPT_Test extends WP_UnitTestCase {
 	}
 	
 	function test_wpt_event_tickets_status_other() {
-		$this->assertEquals(1, substr_count(do_shortcode('[wpt_events]'), 'wp_theatre_event_tickets_status_other'));		
+		$html = do_shortcode('[wpt_events production="'.$this->production_with_upcoming_events.'"]');
+		
+		$actual = substr_count($html, 'wp_theatre_event_tickets_status_other');
+		$expected = 1;
+		$this->assertEquals($expected, $actual, $html);
 	}
 	
 	function test_wpt_event_tickets_status_filter() {
@@ -1091,4 +1095,43 @@ class WPT_Test extends WP_UnitTestCase {
 		
 	}
 	
+	function test_date_title() {
+		$date = new Theater_Date($this->upcoming_event_with_prices);
+		$actual = $date->html();
+		$expected = get_the_title($this->production_with_upcoming_event);
+		$this->assertContains($expected, $actual);		
+	}
+	
+	function test_date_title_html() {
+		$date = new Theater_Date($this->upcoming_event_with_prices);
+		$title = get_the_title($this->production_with_upcoming_event);
+		$permalink = get_permalink($this->production_with_upcoming_event);
+		
+		$actual = $date->html();
+		$expected = '<div class="wp_theatre_event_title"><a href="'.$permalink.'">'.$title.'</a></div>';
+		$this->assertContains($expected, $actual);		
+	}
+	
+	function test_date_duration() {
+
+		$date = new WPT_Event($this->upcoming_event_with_prices);
+
+		$datetime = $date->datetime();
+		
+		$enddate = date('Y-m-d H:i:s', $datetime + 2 * HOUR_IN_SECONDS );
+		add_post_meta($this->upcoming_event_with_prices, 'enddate', $enddate);
+
+		$actual = $date->duration();
+		$expected = '120 minutes';
+		
+		$this->assertEquals($expected, $actual);				
+	}
+
+	function test_date_city() {
+		$actual = Theater_Dates::get_html();
+		$expected = '<div class="wp_theatre_event_city">Den Haag</div>';
+		$this->assertContains($expected, $actual);
+		
+	}
+
 }
