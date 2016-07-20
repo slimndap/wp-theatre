@@ -425,7 +425,7 @@ class Theater_Date {
 
 		$prices_summary = '';
 
-		if ( count( $prices ) ) {
+		if ( !empty( $prices ) ) {
 			if ( count( $prices ) > 1 ) {
 				$prices_summary .= __( 'from','theatre' ).' ';
 			}
