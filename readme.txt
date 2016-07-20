@@ -11,12 +11,15 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 A free plugin to publish your events on a WordPress website. Perfect for theaters, clubs, cinemas and festivals.
 
 == Description ==
-A WordPress plugin to manage events with all necessary shortcodes and widgets for your theater.
 
-
-__Shortcodes__
-
-Theater comes with several shortcodes and widgets to show off your events. See the [documentation](https://github.com/slimndap/wp-theatre/wiki/Shortcodes) for an overview.
+__Features__
+- Show events, concerts, movies or matches on your WordPress website.
+- Manage your events and dates in the WordPress admin.
+- Create custom lists with events with shortcodes or widgets. See the [documentation](https://github.com/slimndap/wp-theatre/wiki/Shortcodes) for an overview.
+- Integrate with existing ticketing solutions.
+- Work with any theme.
+- Add functionality with many [extensions](https://wp.theater/extensions/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description).
+- Loaded with filters, made with developers in mind.
 
 __Available extensions__
 

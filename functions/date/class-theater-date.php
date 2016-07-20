@@ -29,6 +29,8 @@
 
 class Theater_Date {
 
+	const name = 'date';
+	
 	const post_type_name = 'wp_theatre_event';
 
 	const tickets_status_onsale = '_onsale';
@@ -36,6 +38,8 @@ class Theater_Date {
 	const tickets_status_cancelled = '_cancelled';
 	const tickets_status_soldout = '_soldout';
 	const tickets_status_other = '_other';
+	
+	protected $fields = array();
 	
 	function __construct( $ID = false ) {
 		
@@ -87,85 +91,7 @@ class Theater_Date {
 	}
 	
 	function get_fields() {
-		
-		$fields = array(
-			array(
-				'id' => 'duration',
-				'callbacks' => array(
-					'get' => array($this, 'get_duration'),
-				),
-			),	
-			array(
-				'id' => 'enddate',
-				'callbacks' => array(
-					'get' => array($this, 'get_enddate'),
-					'get_html' => array($this, 'get_enddate_html')
-				),
-			),	
-			array(
-				'id' => 'enddatetime',
-				'callbacks' => array(
-					'get' => array($this, 'get_enddatetime'),
-					'get_html' => array($this, 'get_enddatetime_html')
-				),
-			),	
-			array(
-				'id' => 'endtime',
-				'callbacks' => array(
-					'get' => array($this, 'get_endtime'),
-					'get_html' => array($this, 'get_endtime_html')
-				),
-			),	
-			array(
-				'id' => 'location',
-				'callbacks' => array(
-					'get' => array($this, 'get_location'),
-					'get_html' => array($this, 'get_location_html')
-				),
-			),
-			array(
-				'id' => 'permalink',
-				'callbacks' => array(
-					'get' => array($this, 'get_permalink'),
-					'get_html' => array($this, 'get_permalink_html')
-				),
-			),	
-			array(
-				'id' => 'startdate',
-				'callbacks' => array(
-					'get' => array($this, 'get_startdate'),
-					'get_html' => array($this, 'get_startdate_html')
-				),
-			),	
-			array(
-				'id' => 'startdatetime',
-				'callbacks' => array(
-					'get' => array($this, 'get_startdatetime'),
-					'get_html' => array($this, 'get_startdatetime_html')
-				),
-			),	
-			array(
-				'id' => 'starttime',
-				'callbacks' => array(
-					'get' => array($this, 'get_starttime'),
-					'get_html' => array($this, 'get_starttime_html')
-				),
-			),	
-			array(
-				'id' => 'tickets_status',
-				'callbacks' => array(
-					'get' => array($this, 'get_tickets_status'),
-					'get_html' => array($this, 'get_tickets_status_html')
-				),
-			),	
-			array(
-				'id' => 'title',
-				'callbacks' => array(
-					'get' => array($this, 'get_title'),
-				),
-			),	
-		);
-		
+		$fields = apply_filters('theater/date/fields', $this->fields, $this);
 		return $fields;
 		
 	}
@@ -181,99 +107,6 @@ class Theater_Date {
 			$value = $filter->apply_to( $value, $this );
 		}
 		return $value;
-	}
-
-	/**
-	 * @deprecated	0.16
-	 */
-	function custom( $name, $args = array(), $fallback_to_production = true ) {
-
-		_deprecated_function( 'Theater_Date::custom()', '0.16', 'Theater_Date::get_field()' );
-
-		$defaults = array(
-			'html' => false,
-			'filters' => array(),
-		);
-		$args = wp_parse_args( $args, $defaults );
-		if ( $args['html'] ) {
-			return $this->get_field_html($name, $args['filters']);
-		} else {
-			return $this->get_field($name, $args['filters']);
-		}
-
-	}
-
-	/**
-	 * @deprecated	0.16
-	 */
-	function datetime( $enddate = false ) {
-
-		if ( ! empty( $enddate['html'] ) ) {
-			$filters = array();
-			if ( ! empty( $enddate['filters'] ) ) {
-				$filters = $enddate['filters'];
-			}
-			return $this->datetime_html( $filters );
-		}
-
-		if ( ! empty( $enddate['start'] ) ) {
-			$enddate = false;
-		}
-
-		if ( false === $enddate ) {
-			$date = $this->startdatetime();
-		} else {
-			$date = $this->enddatetime();
-		}
-
-		if ( empty( $date ) ) {
-			return false;
-		}
-
-		$datetime = $date;
-
-		/**
-		 * Filter the event datetime.
-		 *
-		 * @since	0.12.7
-		 * @param	datetime	$datetime	The event timestamp.
-		 * @param	WPT_Event	$event		The event.
-		 */
-		$datetime = apply_filters( 'wpt/event/datetime', $datetime, $this );
-		$datetime = apply_filters( 'wpt_event_datetime', $datetime, $this );
-
-		return $datetime;
-	}
-
-	/**
-	 * @deprecated	0.16
-	 */
-	function datetime_html( $filters = array() ) {
-		$html = '<div class="'.self::post_type_name.'_datetime">';
-
-		$datetime_html = $this->startdate.$this->starttime;
-		foreach ( $filters as $filter ) {
-			if ( 'date' == $filter->name ) {
-				$datetime_html = $filter->apply_to( $this->startdatetime(), $this );
-			} else {
-				$datetime_html = $filter->apply_to( $datetime_html, $this );
-			}
-		}
-		$html .= $datetime_html;
-
-		$html .= '</div>';
-
-		/**
-		 * Filter the HTML for the event timestamp.
-		 *
-		 * @since 	0.12.7
-		 * @param	string		$html		The HTML for the event timestamp.
-		 * @param	array       $filters    The template filters to apply.
-		 * @param	WPT_Event	$event		The event.
-		 */
-		$html = apply_filters( 'wpt/event/datetime/html', $html, $filters, $this );
-
-		return $html;
 	}
 
 	function get_duration() {
@@ -430,6 +263,28 @@ class Theater_Date {
 
 		return $html;
 	}
+	
+	function get_event() {
+		
+		$event_id = get_post_meta( $this->ID, WPT_Production::post_type_name, true );
+
+		// Bail if no production ID is set.
+		if (empty($event_id)) {
+			return false;
+		}
+
+		/*
+		 * Bail if production doesn't exist.
+		 * See: https://tommcfarlin.com/wordpress-post-exists-by-id/
+		 */
+		if (FALSE === get_post_status( $event_id )) {
+			return false;
+		}
+		
+		$event = new WPT_Production( $event_id );
+		return $event;
+		
+	}
 
 	/**
 	 * Get the event permalink.
@@ -447,7 +302,7 @@ class Theater_Date {
 			return $this->permalink_html( $deprecated );
 		}
 
-		$permalink = $this->production()->permalink( $deprecated );
+		$permalink = $this->event()->permalink( $deprecated );
 
 		/**
 		 * Filter the event permalink.
@@ -470,7 +325,7 @@ class Theater_Date {
 	 */
 	function permalink_html( $args = array() ) {
 		$args['html'] = true;
-		$html = $this->production()->permalink( $args );
+		$html = $this->event()->permalink( $args );
 
 		/**
 		 * Filter the HTML for the event permalink.
@@ -492,21 +347,15 @@ class Theater_Date {
 	 *
 	 * @return 	array 	The event prices.
 	 */
-	function prices( $deprecated = array() ) {
+	function get_prices() {
 
-		if ( ! empty( $deprecated['html'] ) ) {
-			return $this->prices_html();
-		}
+		$prices= array();
 
-		if ( ! empty( $deprecated['summary'] ) ) {
-			return $this->prices_summary();
-		}
+		$prices_named = get_post_meta( $this->ID,'_wpt_event_tickets_price' );
 
-		$prices = get_post_meta( $this->ID,'_wpt_event_tickets_price' );
-
-		for ( $p = 0;$p < count( $prices );$p++ ) {
-			$price_parts = explode( '|',$prices[ $p ] );
-			$prices[ $p ] = (float) $price_parts[0];
+		foreach ($prices_named as $price_named) {
+			$price_parts = explode( '|',$price_named );
+			$prices[] = (float) $price_parts[0];		
 		}
 
 		/**
@@ -583,7 +432,8 @@ class Theater_Date {
 			if ( ! empty( $wp_theatre->wpt_tickets_options['currencysymbol'] ) ) {
 				$prices_summary .= $wp_theatre->wpt_tickets_options['currencysymbol'].' ';
 			}
-			$prices_summary .= number_format_i18n( (float) min( $prices ), 2 );
+
+			$prices_summary .= number_format_i18n( (float) min( (array) $prices ), 2 );
 		}
 
 		/**
@@ -635,24 +485,8 @@ class Theater_Date {
 	 * @return 	WPT_Production 	The production.
 	 *							Returns <false> if no production is set.
 	 */
-	function production() {
-		$production_id = get_post_meta( $this->ID,WPT_Production::post_type_name, true );
-
-		// Bail if no production ID is set.
-		if (empty($production_id)) {
-			return false;
-		}
-
-		/*
-		 * Bail if production doesn't exist.
-		 * See: https://tommcfarlin.com/wordpress-post-exists-by-id/
-		 */
-		if (FALSE === get_post_status( $production_id )) {
-			return false;
-		}
-		
-		$production = new WPT_Production( $production_id );
-		return $production;
+	function production() {		
+		return $this->event();
 	}
 
 	/**
@@ -1027,6 +861,10 @@ class Theater_Date {
 		}
 		return $this->post;
 	}
+	
+	public function get_post_type() {
+		return self::post_type_name;
+	}
 
 	/**
 	 * HTML version of the event.
@@ -1085,6 +923,10 @@ class Theater_Date {
 		$html = ob_get_clean();
 		
 		return $html;
+	}
+
+	function get_name() {
+		return self::name;
 	}
 
 	function get_title() {
@@ -1180,9 +1022,9 @@ class Theater_Date {
 	function get_enddatetime_html( $filters = array() ) {
 		
 		ob_start();
-		?><div class="<?php echo Theater_Date::post_type_name; ?>_startdatetime"><?php
+		?><div class="<?php echo Theater_Date::post_type_name; ?>_datetime <?php echo Theater_Date::post_type_name; ?>_startdatetime"><?php
 			
-			$value = $this->enddate().' '.$this->endtime();		
+			$value = $this->enddate.$this->endtime;		
 			foreach ( $filters as $filter ) {
 				if ( 'date' == $filter->name ) {
 					$value = $filter->apply_to( $this->enddatetime(), $this );
@@ -1273,9 +1115,9 @@ class Theater_Date {
 	function get_startdatetime_html( $filters = array() ) {
 		
 		ob_start();
-		?><div class="<?php echo Theater_Date::post_type_name; ?>_startdatetime"><?php
+		?><div class="<?php echo Theater_Date::post_type_name; ?>_datetime <?php echo Theater_Date::post_type_name; ?>_startdatetime"><?php
 			
-			$value = $this->startdate().' '.$this->starttime();		
+			$value = $this->startdate.$this->starttime;		
 			foreach ( $filters as $filter ) {
 				if ( 'date' == $filter->name ) {
 					$value = $filter->apply_to( $this->startdatetime(), $this );
@@ -1372,66 +1214,50 @@ class Theater_Date {
 		}
 		return $this->summary;
 	}
-
 	/**
-	 * @deprecated 0.12
-	 * @see WPT_Event::startdate()
-	 * @see WPT_Event::enddate()
+	 * @deprecated	0.16
 	 */
-	function date( $deprecated = array() ) {
-		if ( empty( $deprecated['html'] ) ) {
-			if ( isset( $deprecated['start'] ) && false === $deprecated['start'] ) {
-				_deprecated_function( 'WPT_Event::date()', '0.12', 'WPT_Event::enddate()' );
-				return $this->enddate( $deprecated );
-			} else {
-				_deprecated_function( 'WPT_Event::date()', '0.12', 'WPT_Event::startdate()' );
-				return $this->startdate( $deprecated );
-			}
-		} else {
-			$filters = array();
-			if ( ! empty( $deprecated['filters'] ) ) {
-				$filters = $deprecated['filters'];
-			}
+	function datetime( $enddate = false ) {
 
-			if ( isset( $deprecated['start'] ) && false === $deprecated['start'] ) {
-				_deprecated_function( 'WPT_Event::date_html()', '0.12', 'WPT_Event::enddate_html()' );
-				return $this->enddate_html( $filters );
-			} else {
-				_deprecated_function( 'WPT_Event::date_html()', '0.12', 'WPT_Event::startdate_html()' );
-				return $this->startdate_html( $filters );
-			}
+		if ( true === $enddate ) {			
+			$value = $this->enddatetime(); 
+		} else {
+			$value = $this->startdatetime( $enddate );
 		}
+
+		/**
+		 * Filter the event datetime.
+		 *
+		 * @since	0.12.7
+		 * @param	datetime	$datetime	The event timestamp.
+		 * @param	WPT_Event	$event		The event.
+		 */
+		$value = apply_filters( 'wpt/event/datetime', $value, $this );
+		$value = apply_filters( 'wpt_event_datetime', $value, $this );
+
+		return $value;
 	}
 
 	/**
-	 * @deprecated 0.12
-	 * @see WPT_Event::starttime()
-	 * @see WPT_Event::endtime()
+	 * @deprecated	0.16
 	 */
-	function time( $deprecated = array() ) {
-		if ( empty( $deprecated['html'] ) ) {
-			if ( isset( $deprecated['start'] ) && false === $deprecated['start'] ) {
-				_deprecated_function( 'WPT_Event::time()', '0.12', 'WPT_Event::endtime()' );
-				return $this->endtime( $deprecated );
-			} else {
-				_deprecated_function( 'WPT_Event::time()', '0.12', 'WPT_Event::starttime()' );
-				return $this->starttime( $deprecated );
-			}
-		} else {
-			$filters = array();
-			if ( ! empty( $deprecated['filters'] ) ) {
-				$filters = $deprecated['filters'];
-			}
+	function datetime_html( $filters = array() ) {
+		$html = $this-get_field_html('startdatetime', $filters);
 
-			if ( isset( $deprecated['start'] ) && false === $deprecated['start'] ) {
-				_deprecated_function( 'WPT_Event::time()', '0.12', 'WPT_Event::endtime_html()' );
-				return $this->endtime_html( $filters );
-			} else {
-				_deprecated_function( 'WPT_Event::time()', '0.12', 'WPT_Event::starttime_html()' );
-				return $this->starttime_html( $filters );
-			}
-		}
+		/**
+		 * Filter the HTML for the event timestamp.
+		 *
+		 * @since 	0.12.7
+		 * @param	string		$html		The HTML for the event timestamp.
+		 * @param	array       $filters    The template filters to apply.
+		 * @param	WPT_Event	$event		The event.
+		 */
+		$html = apply_filters( 'wpt/event/datetime/html', $html, $filters, $this );
+
+		return $html;
 	}
+
+
 }
 
 ?>

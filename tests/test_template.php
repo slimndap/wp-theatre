@@ -50,7 +50,7 @@ class WPT_Test_Template extends WP_UnitTestCase {
 		$event = new WPT_Event($event_id);
 		$template = new WPT_Event_Template($event);
 		
-		$expected = ' <div class="wp_theatre_event_title"><a href="'.$event->permalink().'">'.$event->production()->title().'</a></div> <div class="wp_theatre_event_remark"></div> <div class="wp_theatre_event_datetime"><div class="wp_theatre_event_date wp_theatre_event_startdate">'.$event->startdate().'</div><div class="wp_theatre_event_time wp_theatre_event_starttime">'.$event->starttime().'</div></div> <div class="wp_theatre_event_location"><div class="wp_theatre_event_venue"></div><div class="wp_theatre_event_city"></div></div> <div class="wp_theatre_event_tickets"></div>';
+		$expected = ' <div class="wp_theatre_event_title"><a href="'.$event->permalink().'">'.$event->production()->title().'</a></div> <div class="wp_theatre_event_remark"></div> <div class="wp_theatre_event_datetime wp_theatre_event_startdatetime"><div class="wp_theatre_event_date wp_theatre_event_startdate">'.$event->startdate().'</div><div class="wp_theatre_event_time wp_theatre_event_starttime">'.$event->starttime().'</div></div> <div class="wp_theatre_event_location"><div class="wp_theatre_event_venue"></div><div class="wp_theatre_event_city"></div></div> <div class="wp_theatre_event_tickets"></div>';
 		$actual = $template->get_merged();
 		
 		$this->assertEquals($expected, $actual);		
@@ -237,7 +237,7 @@ class WPT_Test_Template extends WP_UnitTestCase {
 		$event = new WPT_Event($event_id);
 		$template = new WPT_Event_Template($event, '{{datetime|date(\''.$date_format.'\')}}');
 		
-		$expected = '<div class="wp_theatre_event_datetime">'.date($date_format,$startdate).'</div>';
+		$expected = '<div class="wp_theatre_event_datetime wp_theatre_event_startdatetime">'.date($date_format,$startdate).'</div>';
 		$actual = $template->get_merged();
 		
 		$this->assertEquals($expected, $actual);			
