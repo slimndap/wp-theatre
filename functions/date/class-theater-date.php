@@ -27,10 +27,9 @@
  *
  */
 
-class Theater_Date {
+class Theater_Date extends Theater_Item {
 
-	const name = 'date';
-	
+	const name = 'date';	
 	const post_type_name = 'wp_theatre_event';
 
 	const tickets_status_onsale = '_onsale';
@@ -39,76 +38,34 @@ class Theater_Date {
 	const tickets_status_soldout = '_soldout';
 	const tickets_status_other = '_other';
 	
-	protected $fields = array();
-	
-	function __construct( $ID = false ) {
-		
-		if ( $ID instanceof WP_Post ) {
-			$this->post = $ID;
-			$ID = $ID->ID;
-		}
-
-		$this->ID = $ID;
-		
-	}
-
-	function __get( $name ) {
-		$value = $this->get_field_html($name);
-		return $value;	
-	}
-	
-	function __call( $name, $args ) {
-
-		if ( !empty ($args[0]['html']) ) {		
-			if (!empty($args[0]['filters'])) {
-				return $this->get_field_html( $name, $args[0]['filters'] );
-			}
-			return $this->get_field_html( $name );
-		}
-		
-		$name_parts = explode('_', $name);
-		if ('html' == $name_parts[count($name_parts) - 1]) {
-			array_pop($name_parts);
-			$name = implode('_', $name_parts);
-			if (!empty($args[0])) {
-				return $this->get_field_html( $name, $args[0] );
-			}
-			return $this->get_field_html( $name );
-		}
-		
-		
-		return $this->get_field( $name );
-	}
-	
-	function get_field( $name, $filters = array() ) {
-		$field = new Theater_Date_Field($name, $filters, $this);
+	/**
+	 * Gets the value for an event date field.
+	 * 
+	 * @since	0.16
+	 * @uses	Theater_Date_Field() to retrieve the value for an event date field.
+	 * @param 	string 	$name		The field name.
+	 * @param 	array 	$filters 	(default: array())
+	 * @return	mixed
+	 */
+	function get_field( $name ) {
+		$field = new Theater_Date_Field($name, NULL, $this);
 		return $field();		
 	}
-	
+
+	/**
+	 * Gets the HTML output for an event date field.
+	 * 
+	 * @since	0.16
+	 * @uses	Theater_Date_Field() to retrieve the HTML output for an event date field.
+	 * @param 	string 	$name		The field name.
+	 * @param 	array 	$filters 	(default: array())
+	 * @return	string				The HTML output for a field.
+	 */
 	function get_field_html( $name, $filters = array() ) {
 		$field = new Theater_Date_Field($name, $filters, $this);
-		return $field;	
+		return (string) $field;	
 	}
 	
-	function get_fields() {
-		$fields = apply_filters('theater/date/fields', $this->fields, $this);
-		return $fields;
-		
-	}
-
-	function post_class() {
-		$classes = array();
-		$classes[] = self::post_type_name;
-		return implode( ' ',$classes );
-	}
-
-	protected function apply_template_filters( $value, $filters ) {
-		foreach ( $filters as $filter ) {
-			$value = $filter->apply_to( $value, $this );
-		}
-		return $value;
-	}
-
 	function get_duration() {
 		
 		$startdate = $this->datetime();
@@ -148,11 +105,6 @@ class Theater_Date {
 				$datetime + get_option( 'gmt_offset' ) * 3600
 			);
 		}
-
-		/**
-		 * @deprecated	0.16
-		 */
-		$enddate = apply_filters( 'wpt/event/enddate', $enddate, $this );
 		return $enddate;
 	}
 
@@ -188,12 +140,6 @@ class Theater_Date {
 
 		$html = ob_get_clean();
 
-
-		/**
-		 * @deprecated	0.16
-		 */
-		$html = apply_filters( 'wpt/event/enddate/html', $html, $filters, $this );
-
 		return $html;
 	}
 
@@ -214,14 +160,9 @@ class Theater_Date {
 				get_option( 'time_format' ),
 				$datetime + get_option( 'gmt_offset' ) * 3600
 			);
-		}
-		
-		/**
-		 * @deprecated	0.16
-		 */
-		$endtime = apply_filters( 'wpt/event/endtime', $endtime, $this );
-		
+		}		
 		return $endtime;
+		
 	}
 
 	/**
@@ -255,11 +196,6 @@ class Theater_Date {
 		?></div><?php
 
 		$html = ob_get_clean();
-
-		/**
-		 * @deprecated	0.16
-		 */
-		$html = apply_filters( 'wpt/event/endtime/html', $html, $filters, $this );
 
 		return $html;
 	}
@@ -324,6 +260,7 @@ class Theater_Date {
 	 * @return 	string	The HTML for the event permalink.
 	 */
 	function permalink_html( $args = array() ) {
+		
 		$args['html'] = true;
 		$html = $this->event()->permalink( $args );
 
@@ -358,20 +295,6 @@ class Theater_Date {
 			$prices[] = (float) $price_parts[0];		
 		}
 
-		/**
-		 * Filter the event prices.
-		 *
-		 * @since	0.10.14
-		 * @param 	array 		$prices	The current prices.
-		 * @param 	WPT_Event	$event	The event.
-		 */
-		$prices = apply_filters( 'wpt/event/prices',$prices, $this );
-
-		/**
-		 * @deprecated	0.10.14
-		 */
-		$prices = apply_filters( 'wpt_event_prices',$prices, $this );
-
 		return $prices;
 	}
 
@@ -382,29 +305,15 @@ class Theater_Date {
 	 * @see		WPT_Event::prices_summary_html()
 	 * @return 	string	The HTML.
 	 */
-	public function prices_html() {
+	public function get_prices_html() {
 
 		$html = '';
 
-		$prices_summary_html = $this->prices_summary_html();
+		$prices_summary_html = $this->prices_summary;
 
-		if ( ! empty( $prices_summary_html ) ) {
+		if ( ! empty( (string) $prices_summary_html ) ) {
 			$html = '<div class="'.self::post_type_name.'_prices">'.$prices_summary_html.'</div>';
 		}
-
-		/**
-		 * Filter the HTML for the event prices.
-		 *
-		 * @since	0.10.14
-		 * @param 	string	 	$html	The current html.
-		 * @param 	WPT_Event	$event	The event.
-		 */
-		$html = apply_filters( 'wpt/event/prices/html', $html, $this );
-
-		/**
-		 * @deprecated	0.10.14
-		 */
-		$html = apply_filters( 'wpt_event_prices_html', $html, $this );
 
 		return $html;
 
@@ -417,7 +326,7 @@ class Theater_Date {
 	 * @see 	WPT_Event::prices()
 	 * @return 	array 	A summary of event prices.
 	 */
-	public function prices_summary() {
+	public function get_prices_summary() {
 
 		global $wp_theatre;
 
@@ -436,16 +345,8 @@ class Theater_Date {
 			$prices_summary .= number_format_i18n( (float) min( (array) $prices ), 2 );
 		}
 
-		/**
-		 * Filter the summary of event prices.
-		 *
-		 * @since	0.10.14
-		 * @param 	string	 	$prices_summary	The current summary.
-		 * @param 	WPT_Event	$event			The event.
-		 */
-		$prices_summary = apply_filters( 'wpt/event/prices/summary',$prices_summary, $this );
-
 		return $prices_summary;
+		
 	}
 
 	/**
@@ -455,20 +356,11 @@ class Theater_Date {
 	 * @see		WPT_Event::prices_summary()
 	 * @return 	string	The HTML.
 	 */
-	public function prices_summary_html() {
+	public function get_prices_summary_html() {
 
 		$html = $this->prices_summary();
 		$html = esc_html( $html );
 		$html = str_replace( ' ', '&nbsp;', $html );
-
-		/**
-		 * Filter the HTML for the summary of event prices.
-		 *
-		 * @since	0.10.14
-		 * @param 	string	 	$html	The current html.
-		 * @param 	WPT_Event	$event	The event.
-		 */
-		$html = apply_filters( 'wpt/event/prices/summary/html', $html, $this );
 
 		return $html;
 	}
@@ -503,34 +395,15 @@ class Theater_Date {
 	 *
 	 * @return 	string	The tickets URL or ''.
 	 */
-	function tickets( $deprecated = array() ) {
-
-		if ( ! empty( $deprecated['html'] ) ) {
-			return $this->tickets_html();
-		}
-
+	function get_tickets() {
 		$tickets = '';
 
 		if (
 			self::tickets_status_onsale == $this->tickets_status() &&
-			$this->datetime() > current_time( 'timestamp', true )
+			$this->startdatetime() > current_time( 'timestamp', true )
 		) {
 			$tickets = $this->tickets_url();
 		}
-
-		/**
-		 * Filter the valid event tickets link.
-		 *
-		 * @since	0.10.14
-		 * @param 	array 		$prices	The current valid event tickets link.
-		 * @param 	WPT_Event	$event	The event.
-		 */
-		$tickets = apply_filters( 'wpt/event/tickets',$tickets,$this );
-
-		/**
-		 * @deprecated	0.10.14
-		 */
-		$tickets = apply_filters( 'wpt_event_tickets',$tickets,$this );
 
 		return $tickets;
 	}
@@ -541,23 +414,14 @@ class Theater_Date {
 	 * @since	0.10.14
 	 * @return 	string	The text for the event tickets link.
 	 */
-	public function tickets_button() {
+	function get_tickets_button() {
 		$tickets_button = get_post_meta( $this->ID,'tickets_button',true );
 
 		if ( empty( $tickets_button ) ) {
 			$tickets_button = __( 'Tickets', 'theatre' );
 		}
 
-		/**
-		 * Filter the text for the event tickets link.
-		 *
-		 * @since	0.10.14
-		 * @param 	string 		$tickets_button	The current text for the event tickets link.
-		 * @param 	WPT_Event	$event			The event.
-		 */
-		$tickets_button = apply_filters( 'wpt/event/tickets/button', $tickets_button, $this );
-
-		return ($tickets_button);
+		return $tickets_button;
 	}
 
 	/**
@@ -571,7 +435,7 @@ class Theater_Date {
 	 *
 	 * @return 	string	The HTML for a valid event tickets link.
 	 */
-	public function tickets_html() {
+	public function get_tickets_html() {
 		$html = '';
 
 		$tickets_status = $this->tickets_status();
@@ -580,9 +444,9 @@ class Theater_Date {
 		if ( self::tickets_status_onsale == $this->tickets_status() ) {
 
 			if ( $this->datetime() > current_time( 'timestamp', true ) ) {
-				$html .= $this->tickets_url_html();
+				$html .= $this->tickets_url;
 
-				$prices_html = $this->prices_html();
+				$prices_html = $this->prices;
 				$prices_html = apply_filters( 'wpt_event_tickets_prices_html', $prices_html, $this );
 				$html .= $prices_html;
 			}
@@ -590,20 +454,6 @@ class Theater_Date {
 			$html .= $this->tickets_status;
 		}
 		$html .= '</div>'; // .tickets
-
-		/**
-		 * Filter the HTML for the valid event tickets link.
-		 *
-		 * @since	0.10.14
-		 * @param 	string 		$html	The current HTML.
-		 * @param 	WPT_Event	$event	The event.
-		 */
-		$html = apply_filters( 'wpt/event/tickets/html', $html, $this );
-
-		/**
-		 * @deprecated	0.10.14
-		 */
-		$html = apply_filters( 'wpt_event_tickets_html', $html, $this );
 
 		return $html;
 	}
@@ -619,13 +469,9 @@ class Theater_Date {
 	 * @return 	string 	The event tickets URL.
 	 */
 
-	function tickets_url( $deprecated = array() ) {
+	function get_tickets_url() {
 
 		global $wp_theatre;
-
-		if ( ! empty( $deprecated['html'] ) ) {
-			return $this->tickets_url_html();
-		}
 
 		$tickets_url = get_post_meta( $this->ID,'tickets_url',true );
 	
@@ -637,21 +483,6 @@ class Theater_Date {
 		) {
 			$tickets_url = $tickets_url_iframe;
 		}
-
-		/**
-		 * Filter the event tickets URL.
-		 *
-		 * @since 0.10.14
-		 *
-		 * @param	string 		$status	 The current value of the event tickets URL.
-		 * @param	WPT_Event	$this	 The event object.
-		 */
-		$tickets_url = apply_filters( 'wpt/event/tickets/url',$tickets_url,$this );
-
-		/**
-		 * @deprecated	0.10.14
-		 */
-		$tickets_url = apply_filters( 'wpt_event_tickets_url',$tickets_url,$this );
 
 		return $tickets_url;
 	}
@@ -703,7 +534,7 @@ class Theater_Date {
 	 * @since 0.10.14
 	 * @return string	The HTML for the event tickets URL.
 	 */
-	public function tickets_url_html() {
+	public function get_tickets_url_html() {
 		global $wp_theatre;
 
 		$html = '';
@@ -746,20 +577,6 @@ class Theater_Date {
 
 		}
 
-		/**
-		 * Filter the HTML for the event tickets URL.
-		 *
-		 * @since	0.10.14
-		 * @param 	string 		$html	The current URL.
-		 * @param 	WPT_Event	$event	The event.
-		 */
-		$html = apply_filters( 'wpt/event/tickets/url/html', $html, $this );
-
-		/**
-		 * @deprecated	0.10.14
-		 */
-		$html = apply_filters( 'wpt_event_tickets_url_html', $html, $this );
-
 		return $html;
 	}
 
@@ -775,19 +592,12 @@ class Theater_Date {
 	 * @param 	array	$args		The listing args (if the event is part of a listing).
 	 * @return 	string				The HTML for an event.
 	 */
-	function html( $template = '' ) {
-		if ( is_array( $template ) ) {
-			$defaults = array(
-				'template' => '',
-			);
-			$args = wp_parse_args( $template, $defaults );
-			$template = $args['template'];
-		}
+	function get_html() {
 
 		$classes = array();
 		$classes[] = self::post_type_name;
 
-		$template = new WPT_Event_Template( $this, $template );
+		$template = new WPT_Event_Template( $this, $this->template );
 		$html = $template->get_merged();
 
 		// Tickets
@@ -862,22 +672,6 @@ class Theater_Date {
 		return $this->post;
 	}
 	
-	public function get_post_type() {
-		return self::post_type_name;
-	}
-
-	/**
-	 * HTML version of the event.
-	 *
-	 * @deprecated 0.4 Use $event->html() instead.
-	 * @see $event->html()
-	 *
-	 * @return string HTML.
-	 */
-	function compile() {
-		return $this->html();
-	}
-
 	/**
 	 * Event production.
 	 *
@@ -913,8 +707,7 @@ class Theater_Date {
 	}
 
 	function get_location_html( $filters = array() ) {
-		$value = $this->location;
-		
+
 		ob_start();
 		?><div class="<?php echo Theater_Date::post_type_name; ?>_location"><?php 
 			echo $this->get_field_html('venue', $filters);
@@ -925,17 +718,14 @@ class Theater_Date {
 		return $html;
 	}
 
-	function get_name() {
-		return self::name;
-	}
-
 	function get_title() {
 		
-		if (!($event = $this->production()) ) {
+		if (!($event = $this->event()) ) {
 			return '';	
 		}
 		
 		return $event->title();		
+		
 	}
 	
 	function get_tickets_status() {
@@ -945,16 +735,6 @@ class Theater_Date {
 		if ( empty( $value ) ) {
 			$value = self::tickets_status_onsale;
 		}
-
-		/**
-		 * @deprecated	0.16
-		 */
-		$value = apply_filters( 'wpt/event/tickets/status', $value, $this );
-
-		/**
-		 * @deprecated	0.10.14
-		 */
-		$value = apply_filters( 'wpt_event_tickets_status', $value, $this );
 
 		return $value;
 		
@@ -987,24 +767,7 @@ class Theater_Date {
 			$html .= '<span class="'.self::post_type_name.'_tickets_status '.self::post_type_name.'_tickets_status'.$tickets_status.'">'.$label.'</span>';
 		}
 
-		/**
-		 * @deprecated	0.16
-		 */
-		$html = apply_filters( 'wpt/event/tickets/status/html', $html, $this );
-
 		return $html;
-	}
-
-	/**
-	 * Echoes an HTML version of the event.
-	 *
-	 * @deprecated 0.4 Use echo $event->html() instead.
-	 * @see $event->html()
-	 *
-	 * @return void.
-	 */
-	function render() {
-		echo $this->html();
 	}
 
 	function get_enddatetime() {
@@ -1053,11 +816,6 @@ class Theater_Date {
 			$this->startdatetime() + get_option( 'gmt_offset' ) * 3600
 		);
 
-		/**
-		 * @deprecated	0.16
-		 */
-		$startdate = apply_filters( 'wpt/event/startdate', $startdate, $this );
-
 		return $startdate;
 	}
 
@@ -1091,11 +849,6 @@ class Theater_Date {
 		?></div><?php
 
 		$html = ob_get_clean();
-
-		/**
-		 * @deprecated	0.16
-		 */
-		$html = apply_filters( 'wpt/event/startdate/html', $html, $filters, $this );
 
 		return $html;
 	}
@@ -1147,11 +900,6 @@ class Theater_Date {
 			$this->get_startdatetime() + get_option( 'gmt_offset' ) * 3600
 		);
 		
-		/**
-		 * @deprecated	0.16
-		 */
-		$starttime = apply_filters( 'wpt/event/starttime', $starttime, $this );
-		
 		return $starttime;
 	}
 
@@ -1183,11 +931,6 @@ class Theater_Date {
 
 		$html = ob_get_clean();
 		
-		/**
-		 * @deprecated	0.16
-		 */
-		$html = apply_filters( 'wpt/event/starttime/html', $html, $filters, $this );
-
 		return $html;
 	}
 
@@ -1214,6 +957,7 @@ class Theater_Date {
 		}
 		return $this->summary;
 	}
+	
 	/**
 	 * @deprecated	0.16
 	 */
@@ -1242,7 +986,7 @@ class Theater_Date {
 	 * @deprecated	0.16
 	 */
 	function datetime_html( $filters = array() ) {
-		$html = $this-get_field_html('startdatetime', $filters);
+		$html = $this->get_field_html('startdatetime', $filters);
 
 		/**
 		 * Filter the HTML for the event timestamp.

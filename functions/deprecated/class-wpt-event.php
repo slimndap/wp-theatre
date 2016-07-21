@@ -118,22 +118,76 @@ class WPT_Event extends Theater_Date {
 }
 	
 
+function deprecated_wpt_event_field_html_filter( $html, $field, $date) {
+	switch($field) {
+		case 'endtime' :
+		case 'startdate' :
+		case 'starttime' :
+		case 'prices' :
+		case 'tickets' :
+			$html = apply_filters( 'wpt/event/'.$field.'/html', $html, $field, $date );
+			break;
+		case 'tickets_url' :
+			$html = apply_filters( 'wpt/event/tickets/url/html', $html, $field, $date );
+			break;
+		case 'tickets_status' :
+			$html = apply_filters( 'wpt/event/tickets/status/html', $html, $field, $date );
+			break;
+	}
 
-function deprecated_wpt_event_field_filter( $value, $field, $date) {
+	$html = apply_filters( 'wpt_event_'.$field.'_html', $html, $field, $date );
+	return $html;
+}
+add_filter('theater/date/field/html', 'deprecated_wpt_event_field_html_filter', 10, 3);
+
+/**
+ * Handles deprecated date field filters.
+ * @deprecated	0.16
+ */
+function deprecated_wpt_event_field_filters($value, $field, $date) {
 	
+	switch($field) {
+		case 'enddate' :
+		case 'endtime' :
+		case 'startdate' :
+		case 'starttime' :
+		case 'prices' :
+		case 'tickets' :
+			$value = apply_filters( 'wpt/event/'.$field, $value, $date );
+			break;
+		case 'prices_summary' :
+			$value = apply_filters( 'wpt/event/prices/summary', $value, $date );
+			break;
+		case 'tickets_button' :
+			$value = apply_filters( 'wpt/event/tickets/button', $value, $date );
+			break;
+		case 'tickets_url' :
+			$value = apply_filters( 'wpt/event/tickets/url', $value, $date );
+			break;
+		case 'tickets_status' :
+			$value = apply_filters( 'wpt/event/tickets/status', $value, $date );
+			break;
+	}
+
 	$value = apply_filters( 'wpt_event_'.$field, $value, $field, $date );
 	
 	return $value;
-	
 }
-add_filter('theater/date/field', 'deprecated_wpt_event_field_filter', 10, 3);
+add_filter('theater/date/field', 'deprecated_wpt_event_field_filters', 10 , 3);
 
-function deprecated_wpt_event_field_html_filter( $html, $field, $date) {
-	
-	$value = apply_filters( 'wpt_event_'.$field.'_html', $html, $field, $date );
-	
-	return $value;
-	
+/**
+ * Handle deprecated field HTML filters.
+ */
+
+function deprecated_wpt_event_enddate_html_filter($html, $filters, $event) {
+	$html = apply_filters( 'wpt/event/enddate/html', $html, $filters, $event );
+	return $html;
 }
-add_filter('theater/date/field/html', 'deprecated_wpt_event_field_html_filter', 10, 3);
+add_filter('theater/date/field/enddate/html', 'deprecated_wpt_event_enddate_html_filter', 10 , 3);
+
+function deprecated_wpt_event_endtime_html_filter($html, $filters, $event) {
+	$html = apply_filters( 'wpt/event/endtime/html', $html, $filters, $event );
+	return $html;
+}
+add_filter('theater/date/field/endtime/html', 'deprecated_wpt_event_endtime_html_filter', 10 , 3);
 

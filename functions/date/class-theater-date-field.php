@@ -10,9 +10,7 @@ class Theater_Date_Field extends Theater_Field {
 	
 	function get() {
 		
-		if ( $callback = $this->get_callback('get') ) {
-			$value = call_user_func( $callback );
-		} else if (method_exists($this->item, 'get_'.$this->name)) {
+		if (method_exists($this->item, 'get_'.$this->name)) {
 			$value = $this->item->{'get_'.$this->name}();			
 		} else {
 			$value = get_post_meta($this->item->ID, $this->name, true);

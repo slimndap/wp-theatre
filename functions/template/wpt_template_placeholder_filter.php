@@ -130,18 +130,18 @@ class WPT_Template_Placeholder_Filter {
 				'html' => true,
 				'text' => $content,
 			);
-			if ( method_exists( $object, 'tickets_url' ) ) {
+			//if ( method_exists( $object, 'tickets_url' ) ) {
 				$tickets_url_content = $object->tickets_url( $tickets_url_args );
 				if ( ! empty($tickets_url_content) ) {
 					$content = $tickets_url_content;
 				}
-			}
+			//}
 		}
 		return $content;
 	}
 
 	/**
-	 * Runs the 'permlaink' filter.
+	 * Runs the 'permalink' filter.
 	 *
 	 * Surrounds a string with an '<a>' element that links to the production detail page.
 	 *

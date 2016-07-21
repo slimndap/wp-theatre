@@ -214,8 +214,9 @@ class WP_Theatre {
 	 */
 	function includes() {
 		require_once(dirname(__FILE__) . '/functions/wpt_listing.php');
-		require_once(dirname(__FILE__) . '/functions/abstract/class-theater-lists.php');
+		require_once(dirname(__FILE__) . '/functions/abstract/class-theater-item.php');
 		require_once(dirname(__FILE__) . '/functions/abstract/class-theater-field.php');
+		require_once(dirname(__FILE__) . '/functions/abstract/class-theater-lists.php');
 
 		require_once(dirname(__FILE__) . '/functions/template/wpt_template.php');
 		require_once(dirname(__FILE__) . '/functions/template/wpt_template_placeholder.php');

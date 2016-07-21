@@ -34,9 +34,7 @@ abstract class Theater_Field {
 	}
 
 	function get() {
-		if ( $callback = $this->get_callback('get') ) {
-			$value = call_user_func( $callback );
-		} else if (method_exists($this->item, 'get_'.$this->name)) {
+		if (method_exists($this->item, 'get_'.$this->name)) {
 			$value = $this->item->{'get_'.$this->name}();			
 		} else {
 			$value = get_post_meta($this->item->ID, $this->name, true);
@@ -48,7 +46,7 @@ abstract class Theater_Field {
 		);
 		
 		$value = apply_filters( 
-			'theater/'.$this->item->get_name().'/field/'.$this->name, 
+			'theater/'.$this->item->get_name().'/field?name='.$this->name, 
 			$value, $this->item 
 		);
 
@@ -57,7 +55,7 @@ abstract class Theater_Field {
 	
 	protected function get_callback( $action ) {
 		
-		foreach( $this->item->get_fields() as $field) {
+		foreach( $this->item->get_additional_fields() as $field) {
 
 			if ( $field['id'] != $this->name ) {
 				continue;
@@ -73,9 +71,7 @@ abstract class Theater_Field {
 	}
 	
 	function get_html() {
-		if ( $callback = $this->get_callback('get_html') ) {
-			$html = call_user_func( $callback, $this->filters );
-		} else if (method_exists($this->item, 'get_'.$this->name.'_html')) {
+		if (method_exists($this->item, 'get_'.$this->name.'_html')) {
 			$html = $this->item->{'get_'.$this->name.'_html'}( $this->filters );			
 		} else {
 			$value = $this->get();
@@ -89,12 +85,12 @@ abstract class Theater_Field {
 		
 		$html = apply_filters( 
 			'theater/'.$this->item->get_name().'/field/html', 
-			$html, $this->name, $this->item 
+			$html, $this->name, $this->filters, $this->item 
 		);
 		
 		$html = apply_filters( 
-			'theater/'.$this->item->get_name().'/field/'.$this->name.'/html', 
-			$html, $this->item 
+			'theater/'.$this->item->get_name().'/field/html?name='.$this->name, 
+			$html, $this->filters, $this->item 
 		);
 		
 		return $html;
