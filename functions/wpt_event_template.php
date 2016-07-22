@@ -10,6 +10,7 @@ class WPT_Event_Template extends WPT_Template {
 	 * @return 	string		The default template.
 	 */
 	protected function get_default() {
+
 		$default = '{{thumbnail|permalink}} {{title|permalink}} {{remark}} {{datetime}} {{location}} {{tickets}}';
 		
 		/**

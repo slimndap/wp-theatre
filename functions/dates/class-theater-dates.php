@@ -83,6 +83,7 @@ class Theater_Dates extends Theater_Lists {
 		's' => false,
 		'start' => false,
 		'status' => array( 'publish' ),
+		'template' => '',
 		'upcoming' => false,
 	);
 
@@ -207,7 +208,7 @@ class Theater_Dates extends Theater_Lists {
 	 *			's' (keyword search) filter is used.
 	 * @uses	WPT_Season::post_type_name to get the seasons post type if the 'season' filter is used.
 	 * @uses	WPT_Productions::get() to find productions if the 's' (keyword search) filter is used.
-	 * @uses	Theater_Date to create a new event object for each event in the list.
+	 * @uses	Theater_Date to create a new event date object for each event in the list.
 	 *
 	 * @param 	array[string] 	$filters 	An array of filter arguments. Optional.
 	 *
@@ -406,9 +407,32 @@ class Theater_Dates extends Theater_Lists {
 			$posts = get_posts( $args );
 		}
 
+		/*
+		 * Use the general default template for events.
+		 * @see WPT_Event_Template::get_default();
+		 */
+		$template = false;
+
+		/**
+		 * Filter the default template for event dates in lists.
+		 *
+		 * @since	0.14.6
+		 * @param	string	$template	The default template.
+		 */
+		$template = apply_filters( 'theater/dates/template/default', $template );
+
+		/**
+		 * @deprecated 0.16
+		 */
+		$template = apply_filters( 'wpt/events/event/template/default', $template );
+
+		if ( ! empty( $filters['template'] ) ) {
+			$template = $filters['template'];
+		}
+
 		$dates = array();
 		for ( $i = 0;$i < count( $posts );$i++ ) {
-			$date = new Theater_Date( $posts[ $i ] );
+			$date = new Theater_Date( $posts[ $i ], $template );
 			$dates[] = $date;
 		}
 
@@ -810,7 +834,7 @@ class Theater_Dates extends Theater_Lists {
 	 * @uses Theater_Dates::get_html_for_category()
 	 * @uses Theater_Dates::get()
 	 * @uses Theater_Dates::preload_dates_with_events()
-	 * @uses Theater_Date::html()
+	 * @uses Theater_Date::get_html() to get the HTML output of an event date.
 	 *
 	 * @access 	protected
 	 * @param 	array $args 	See Theater_Dates::get_html() for possible values.
@@ -922,32 +946,9 @@ class Theater_Dates extends Theater_Lists {
 				$events = self::preload_dates_with_events( $events );
 				$html_group = '';
 
-				/*
-				 * Use the general default template for events.
-				 * @see WPT_Event_Template::get_default();
-				 */
-				$template = false;
-
-				/**
-				 * Filter the default template for event dates in lists.
-				 *
-				 * @since	0.14.6
-				 * @param	string	$template	The default template.
-				 */
-				$template = apply_filters( 'theater/dates/template/default', $template );
-
-				/**
-				 * @deprecated 0.16
-				 */
-				$template = apply_filters( 'wpt/events/event/template/default', $template );
-
-				if ( ! empty( $args['template'] ) ) {
-					$template = $args['template'];
-				}
-
 				foreach ( $events as $event ) {
 
-					$html_event = $event->html( $template, $args );
+					$html_event = $event->get_html();
 
 					/**
 					 * Filters the event HTML in lists.
@@ -1204,7 +1205,7 @@ class Theater_Dates extends Theater_Lists {
 		for ( $i = 0; $i < count( $dates );$i++ ) {
 			$event_id = get_post_meta( $dates[ $i ]->ID, WPT_Production::post_type_name, true );
 			if ( in_array( $event_id, array_keys( $events_with_keys ) ) ) {
-				$dates[ $i ]->production = new WPT_Production( $events_with_keys[ $event_id ] );
+				$dates[ $i ]->event = new WPT_Production( $events_with_keys[ $event_id ] );
 			}
 		}
 		return $dates;

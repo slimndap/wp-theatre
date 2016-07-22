@@ -16,7 +16,7 @@ class Theater_Date_Field extends Theater_Field {
 			$value = get_post_meta($this->item->ID, $this->name, true);
 		}
 		
-        if ( empty($value) && $event = $this->item->production() ) {
+        if ( empty($value) && $event = $this->item->get_event() ) {
             $value = $event->custom( $this->name );
         }
 
