@@ -74,6 +74,33 @@ class Theater_Date extends Theater_Item {
 		return $field->get_html();	
 	}
 	
+	function get_fields() {
+		
+		$fields = array(
+			'duration',
+			'enddate',
+			'enddatetime',
+			'endtime',
+			'event',
+			'location',
+			'prices',
+			'prices_summary',
+			'startdate',
+			'startdatetime',
+			'starttime',
+			'tickets',
+			'tickets_button',
+			'tickets_html',
+			'tickets_status',
+			'tickets_url',
+			'title',
+			'venue',
+			'city',			
+		);
+		
+		return $fields;
+	}
+	
 	/**
 	 * Gets the duration of an event date.
 	 * 
@@ -247,7 +274,7 @@ class Theater_Date extends Theater_Item {
 			return false;
 		}
 		
-		$event = new WPT_Production( $event_id );
+		$event = new Theater_Event( $event_id );
 		return $event;
 		
 	}
@@ -314,7 +341,7 @@ class Theater_Date extends Theater_Item {
 	 * @return 	array 	The event prices.
 	 */
 	function get_prices() {
-
+		
 		$prices= array();
 
 		$prices_named = get_post_meta( $this->ID,'_wpt_event_tickets_price' );
@@ -323,7 +350,7 @@ class Theater_Date extends Theater_Item {
 			$price_parts = explode( '|',$price_named );
 			$prices[] = (float) $price_parts[0];		
 		}
-
+		
 		return $prices;
 	}
 

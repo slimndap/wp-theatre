@@ -71,10 +71,11 @@ abstract class Theater_Field {
 	}
 	
 	function get_html() {
+		
 		if (method_exists($this->item, 'get_'.$this->name.'_html')) {
 			$html = $this->item->{'get_'.$this->name.'_html'}( $this->filters );			
 		} else {
-			$value = $this->get();
+			$value = (string) $this->get();
 			
 			ob_start();
 			?><div class="<?php echo $this->item->get_post_type(); ?>_<?php echo $this->name; ?>"><?php 

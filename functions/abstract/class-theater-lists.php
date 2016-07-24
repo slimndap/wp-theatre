@@ -8,7 +8,7 @@
  */
 abstract class Theater_Lists {
 	
-	protected static $default_args = array();
+	protected $default_args = array();
 	
 	/**
 	 * Default arguments for all HTML methods.
@@ -18,7 +18,7 @@ abstract class Theater_Lists {
 	 * @var 	array
 	 * @access 	protected
 	 */
-	protected static $default_args_for_html = array(
+	protected $default_args_for_html = array(
 		'groupby' => false,
 		'paginateby' => array(),
 		'template' => null,
@@ -65,10 +65,10 @@ abstract class Theater_Lists {
 	 * @access protected
 	 */
 
-	protected static function filter_pagination( $field, $options, $args = array() ) {
+	protected function filter_pagination( $field, $options, $args = array() ) {
 		global $wp_query;
 
-		$args = wp_parse_args( $args, static::$default_args_for_html );
+		$args = wp_parse_args( $args, $this->default_args_for_html );
 
 		$html = '';
 
@@ -208,7 +208,7 @@ abstract class Theater_Lists {
 	 * @param 	array 	$args 	The listing args.
 	 * @return	array			The classes of a listing.
 	 */
-	protected static function get_classes_for_html( $args = array() ) {
+	protected function get_classes_for_html( $args = array() ) {
 
 		$classes = array( 'wpt_listing' );
 
@@ -256,7 +256,7 @@ abstract class Theater_Lists {
 	 * }
 	 * @return string HTML.
 	 */
-	protected static function get_html( $args = array() ) {
+	protected function get_html( $args = array() ) {
 
 		ob_start();
 	
@@ -268,11 +268,11 @@ abstract class Theater_Lists {
 		 */
 		do_action('wpt/listing/html/before', $args);
 
-		$html_page_navigation = static::get_html_page_navigation( $args );
-		$html_for_page = static::get_html_for_page( $args );
+		$html_page_navigation = $this->get_html_page_navigation( $args );
+		$html_for_page = $this->get_html_for_page( $args );
 
 		if ( ! empty( $html_page_navigation ) || ! empty( $html_for_page ) ) {
-			?><div class="<?php echo implode( ' ',static::get_classes_for_html( $args ) ); ?>"><?php
+			?><div class="<?php echo implode( ' ',$this->get_classes_for_html( $args ) ); ?>"><?php
 				echo $html_page_navigation.$html_for_page; 
 			?></div><?php
 		}
@@ -297,7 +297,7 @@ abstract class Theater_Lists {
 	 * @since	0.13.4
 	 * @return 	array	The pagination filters for a listing.
 	 */
-	protected static function get_pagination_filters() {
+	protected function get_pagination_filters() {
 
 		/**
 		 * Filter the pagination filters for a listing.
@@ -325,7 +325,7 @@ abstract class Theater_Lists {
 	 *							See WPT_Listing::get_html() for possible values.
 	 * @return 	string			The HTML for the page navigation.
 	 */
-	protected static function get_html_page_navigation( $args = array() ) {
+	protected function get_html_page_navigation( $args = array() ) {
 		
 	}
 
@@ -340,7 +340,7 @@ abstract class Theater_Lists {
 	 * @param 	array $args 	See WPT_Listing::get_html() for possible values.
 	 * @return 	string			The HTML.
 	 */
-	protected static function get_html_for_page( $args = array() ) {
+	protected function get_html_for_page( $args = array() ) {
 		
 	}
 
@@ -351,7 +351,7 @@ abstract class Theater_Lists {
 	 *
 	 * @return array An array of WPT_Event objects.
 	 */
-	static function get($filters = array()) {
+	function get($filters = array()) {
 		
 	}
 }

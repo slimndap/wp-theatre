@@ -93,6 +93,7 @@
 				case WPT_Production::post_type_name:
 					$production = new WPT_Production($post->ID);
 					$events = $production->upcoming();
+					
 					if (!empty($events[0])) {
 						$wpt_order = strtotime(
 							get_post_meta(

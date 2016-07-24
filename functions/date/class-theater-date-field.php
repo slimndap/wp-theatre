@@ -9,16 +9,11 @@
 class Theater_Date_Field extends Theater_Field {
 	
 	function get() {
-		
 		if (method_exists($this->item, 'get_'.$this->name)) {
-			$value = $this->item->{'get_'.$this->name}();			
+			$value = $this->item->{'get_'.$this->name}();	
 		} else {
 			$value = get_post_meta($this->item->ID, $this->name, true);
 		}
-		
-        if ( empty($value) && $event = $this->item->get_event() ) {
-            $value = $event->custom( $this->name );
-        }
 
 		$value = apply_filters( 
 			'theater/'.$this->item->get_name().'/field', 
@@ -33,5 +28,4 @@ class Theater_Date_Field extends Theater_Field {
 		return $value;
 
 	}
-		
 }

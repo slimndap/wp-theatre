@@ -40,29 +40,8 @@ $wpt_version = '0.15.8';
  *
  * ## Getting started
  *
- * ### Dates
- * <code>
- * // Retrieve a list of upcoming dates:
- * $dates = new Theater_Dates;
- * $list = $dates();
- * </code>
- *
- * <code>
- * // Output a list of upcoming dates:
- * $dates = new Theater_Dates;
- * echo $dates;
- * </code>
- *
- * Retrieve a list of upcoming dates for a single event:
- * <code>
- * $dates = new Theater_Dates( array( 'event' => 123 ) );
- * $list = $dates();
- * </code>
- *
- * See [Theater_Dates()](class-Theater_Dates.html) for more examples.
- *
  * ### Events
- * Retrieve a list of all productions:
+ * Retrieve a list of all events:
  * <code>
  * $productions = $wp_theatre->productions->get();
  * </code>
@@ -77,6 +56,27 @@ $wpt_version = '0.15.8';
  * $args = array( 'start' => 'now' );
  * echo $wp_theatre->productions->get_html( $args );
  * </code>
+ *
+ * ### Event dates
+ * <code>
+ * // Retrieve a list of upcoming dates:
+ * $dates = new Theater_Dates;
+ * $list = $dates();
+ * </code>
+ *
+ * <code>
+ * // Output a list of upcoming dates:
+ * $dates = new Theater_Dates;
+ * echo $dates;
+ * </code>
+ *
+ * <code>
+ * //Retrieve a list of upcoming dates for a single event:
+ * $dates = new Theater_Dates( array( 'event' => 123 ) );
+ * $list = $dates();
+ * </code>
+ *
+ * See [Theater_Dates()](class-Theater_Dates.html) for more examples.
  *
  * ## Extending Theater for WordPress
  * You can safely add extra functionality by using the `wpt_loaded` action hook:
@@ -222,7 +222,9 @@ class WP_Theatre {
 		require_once(dirname(__FILE__) . '/functions/template/wpt_template_placeholder.php');
 		require_once(dirname(__FILE__) . '/functions/template/wpt_template_placeholder_filter.php');
 
-		require_once(dirname(__FILE__) . '/functions/wpt_production.php');
+		require_once(dirname(__FILE__) . '/functions/event/class-theater-event.php');
+		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-field.php');
+		require_once(dirname(__FILE__) . '/functions/deprecated/class-wpt-production.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_production_permalink.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_production_template.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_production_widget.php');

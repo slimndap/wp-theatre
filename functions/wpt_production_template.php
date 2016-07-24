@@ -63,17 +63,19 @@ class WPT_Production_Template extends WPT_Template {
 			case 'prices' :
 				$value = $this->object->prices_html();
 				break;
+			case 'dates':
+				$value = $this->object->get_field_html('startdates', $filters);
 			case 'title':
 			case 'dates':
 			case 'cities':
 			case 'content':
-			case 'excerpt':
 			case 'summary':
 			case 'categories':
 				$value = $this->object->{$field}($value_args);
 				break;
 			default:
-				$value = $this->object->custom( $field,$value_args );
+				$value = $this->object->get_field_html( $field, $filters );
+//				$value = $this->object->custom( $field,$value_args );
 		}
 
 		/**

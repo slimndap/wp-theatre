@@ -65,8 +65,8 @@ class WPT_Event_Template extends WPT_Template {
 			case 'categories':
 			case 'content':
 			case 'excerpt':
-				if ($production = $this->object->production()) {
-					$value = $production->{$field}($value_args);
+				if ($production = $this->object->get_event()) {
+					$value = $production->get_field_html($field, $filters);
 				}
 				break;
 			case 'date':

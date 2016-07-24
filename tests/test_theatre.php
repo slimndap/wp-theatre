@@ -1128,7 +1128,8 @@ class WPT_Test extends WP_UnitTestCase {
 	}
 
 	function test_date_city() {
-		$actual = Theater_Dates::get_html();
+		$dates = new Theater_Dates();
+		$actual = $dates->get_html();
 		$expected = '<div class="wp_theatre_event_city">Den Haag</div>';
 		$this->assertContains($expected, $actual);
 		

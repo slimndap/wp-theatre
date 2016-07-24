@@ -23,6 +23,8 @@ class Theater_Event_Dates {
 		add_action( 'before_delete_post',array( __CLASS__, 'delete_dates' ) );
 		add_action( 'wp_trash_post',array( __CLASS__, 'trash_dates' ) );
 		add_action( 'untrash_post',array( __CLASS__, 'untrash_dates' ) );
+		
+		add_filter( 'theater/date/field', array(__CLASS__, 'get_production_field_values'), 10, 3);
 
 	}
 
@@ -58,6 +60,27 @@ class Theater_Event_Dates {
 				wp_delete_post( $event->ID );
 			}
 		}
+	}
+
+	static function get_production_field_values( $value, $field, $date) {
+		
+		if (!empty($value)) {
+			return $value;
+		}
+		
+		if ( $date->has_field($field) ) {
+			return $value;			
+		}
+		
+		if ('prices'==$field) {
+		echo $field;exit;
+			
+		}
+		
+		if ( $event = $date->get_event() ) {
+			$value = $event->get_field($field);       
+		}
+		return $value;
 	}
 
 	/**

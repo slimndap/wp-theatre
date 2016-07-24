@@ -31,7 +31,7 @@ class WPT_Event extends Theater_Date {
 	 *							Returns <false> if no production is set.
 	 */
 	function production() {
-		$production = parent::production();	
+		$production = $this->get_event();	
 		return new WPT_Production( $production->ID, $this->PostClass );
 	}
 

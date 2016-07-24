@@ -145,6 +145,8 @@ abstract class Theater_Item {
 	 */
 	abstract function get_field_html( $name, $filters = array() );
 	
+	abstract function get_fields();
+	
 	/**
 	 * Gets the HTML output of this item.
 	 * 
@@ -174,6 +176,11 @@ abstract class Theater_Item {
 	 */
 	function get_post_type() {
 		return static::post_type_name;
+	}
+	
+	function has_field( $name ) {
+		$has_field = in_array( $name, $this->get_fields() );
+		return $has_field;
 	}
 
 	/**

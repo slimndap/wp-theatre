@@ -2,67 +2,81 @@
 /**
  * WPT_Production class.
  *
- * @package	Theater/Production
+ * @package	Theater/Event
  */
-class WPT_Production {
+class Theater_Event extends Theater_Item {
 
+	const name = 'event';	
 	const post_type_name = 'wp_theatre_prod';
 
-	// @codingStandardsIgnoreStart
-	function __construct( $ID = false ) {
-		if ( $ID instanceof WP_Post ) {
-			// $ID is a WP_Post object
-			$this->post = $ID;
-			$ID = $ID->ID;
-		}
-
-		if ( ! $ID ) {
-			$post = get_post();
-			if ( $post ) {
-				$ID = $post->ID;
-			}
-		}
-
-		$this->ID = $ID;
-	}
-	// @codingStandardsIgnoreEnd
-
-	function post_type() {
-		return get_post_type_object( self::post_type_name );
+	/**
+	 * Gets the value for an event field.
+	 * 
+	 * @since	0.16
+	 * @uses	Theater_Event_Field::get() to retrieve the value for an event field.
+	 * @param 	string 	$name		The field name.
+	 * @return	mixed
+	 */
+	function get_field( $name ) {
+		$field = new Theater_Event_Field($name, NULL, $this);
+		return $field->get();		
 	}
 
-	protected function apply_template_filters( $value, $filters ) {
-		foreach ( $filters as $filter ) {
-			$value = $filter->apply_to( $value, $this );
-		}
-		return $value;
+	/**
+	 * Gets the HTML output for an event field.
+	 * 
+	 * @since	0.16
+	 * @uses	Theater_Event_Field()::get_html() to retrieve the HTML output for an event field.
+	 * @param 	string 								$name		The field name.
+	 * @param 	WPT_Template_Placeholder_Filter[] 	$filters 	An array of filters to apply to the value if the field.
+	 * @return	string											The HTML output for a field.
+	 */
+	function get_field_html( $name, $filters = array() ) {
+		$field = new Theater_Event_Field($name, $filters, $this);
+		return $field->get_html();	
 	}
-
-	function categories( $args = array() ) {
-		$defaults = array(
-			'html' => false,
+	
+	function get_fields() {
+		
+		$fields = array(
+			'categories',
+			'cities',
+			'content',
+			'dates',
+			'event_dates',
+			'dates_summary',
+			'excerpt',
+			'prices',
 		);
+		
+		return $fields;
+	}
 
-		$args = wp_parse_args( $args, $defaults );
-
-		if ( ! isset( $this->categories ) ) {
-			$this->categories = apply_filters( 'wpt_production_categories',wp_get_post_categories( $this->ID ),$this );
+	function get_categories() {
+		$categories = wp_get_post_categories( $this->ID );
+		return $categories;
+	}
+	
+	function get_categories_html() {
+		
+		$categories = $this->get_field('categories');
+		
+		if (empty($categories)) {
+			return '';
 		}
-
-		if ( $args['html'] ) {
-			if ( ! empty( $this->categories ) ) {
-				$html = '';
-				$html .= '<ul class="wpt_production_categories">';
-				foreach ( $this->categories as $category_id ) {
-					$category = get_category( $category_id );
-					$html .= '<li class="wpt_production_category wpt_production_category_'.$category->slug.'">'.$category->name.'</li>';
-				}
-				$html .= '</ul>';
-				return apply_filters( 'wpt_production_categories_html', $html, $this );
+		
+		ob_start();
+		?><ul class="wpt_production_categories"><?php
+			foreach ( $categories as $category_id ) {
+				$category = get_category( $category_id );
+				?><li class="wpt_production_category wpt_production_category_<?php echo $category->slug; ?>"><?php
+					echo $category->name;
+				?></li><?php
 			}
-		} else {
-			return $this->categories;
-		}
+		?></ul><?php
+		$html = ob_get_clean();
+
+		return $html;
 	}
 
 	/**
@@ -77,100 +91,74 @@ class WPT_Production {
 	 * }
 	 * @return string URL or HTML.
 	 */
-	function cities( $args = array() ) {
-		global $wp_theatre;
+	function get_cities() {
+		
+		$cities = array();
 
-		$defaults = array(
-			'html' => false,
-			'filters' => array(),
-		);
-
-		$args = wp_parse_args( $args, $defaults );
-
-		if ( ! isset( $this->cities ) ) {
-			$cities = array();
-
-			$events = $this->upcoming();
-			if ( is_array( $events ) && (count( $events ) > 0) ) {
-				foreach ( $events as $event ) {
-					$city = trim( ucwords( get_post_meta( $event->ID,'city',true ) ) );
-					if ( ! empty( $city ) && ! in_array( $city, $cities ) ) {
-						$cities[] = $city;
-					}
-				}
+		$events = $this->upcoming();
+		
+		$dates = new Theater_Dates( array( 'start' => 'now' ) );
+		
+		foreach($dates->get() as $date) {
+			$city = $date->get_field('city');
+			$city = trim( ucwords( $city ) );
+			if (!empty($city)) {
+				$cities[] = $city;
 			}
-
-			$cities_text = '';
-
-			switch ( count( array_slice( $cities,0,3 ) ) ) {
-				case 1:
-					$cities_text .= $cities[0];
-					break;
-				case 2:
-					$cities_text .= $cities[0].' '.__( 'and','theatre' ).' '.$cities[1];
-					break;
-				case 3:
-					$cities_text .= $cities[0].', '.$cities[1].' '.__( 'and','theatre' ).' '.$cities[2];
-					break;
-			}
-
-			if ( count( $cities ) > 3 ) {
-				$cities_text = __( 'ao','theatre' ).' '.$cities_text;
-			}
-			$this->cities = apply_filters( 'wpt_production_cities',$cities_text, $this );
 		}
-		if ( $args['html'] ) {
-			$html = '';
-			$html .= '<div class="'.self::post_type_name.'_cities">';
-			$html .= $this->apply_template_filters( $this->cities(), $args['filters'] );
-			$html .= '</div>';
-			return apply_filters( 'wpt_production_cities_html', $html, $this );
-		} else {
-			return $this->cities;
+		
+		$cities = array_unique( array_values($cities) );
+
+		$cities_text = '';
+
+		switch ( count( array_slice( $cities,0,3 ) ) ) {
+			case 1:
+				$cities_text .= $cities[0];
+				break;
+			case 2:
+				$cities_text .= $cities[0].' '.__( 'and','theatre' ).' '.$cities[1];
+				break;
+			case 3:
+				$cities_text .= $cities[0].', '.$cities[1].' '.__( 'and','theatre' ).' '.$cities[2];
+				break;
 		}
+
+		if ( count( $cities ) > 3 ) {
+			$cities_text = __( 'ao','theatre' ).' '.$cities_text;
+		}
+		
+		return $cities_text;
 	}
+	
+	function get_content() {
+		
+		$content = $this->post()->post_content;
+		return $content;
 
-	function content( $args = array() ) {
+	}
+	
+	function get_content_html() {
 		global $wp_theatre;
-		$defaults = array(
-			'html' => false,
-		);
+		/*
+		 * Temporarily unhook other Theater filters that hook into `the_content`
+		 * to avoid loops.
+		 */
 
-		$args = wp_parse_args( $args, $defaults );
+		remove_filter( 'the_content', array( $wp_theatre->frontend, 'the_content' ) );
+		remove_filter( 'the_content', array( $wp_theatre->listing_page, 'the_content' ) );
+		
+		ob_start();
+		?><div class="<?php echo $this->get_post_type(); ?>_content"><?php
+		echo apply_filters( 'the_content',$this->get_field('content'));
+		?></div><?php
+			
+		$html = ob_get_clean();
 
-		if ( ! isset( $this->content ) ) {
-			$content = $this->post()->post_content;
-			$this->content = apply_filters( 'wpt_production_content',$content, $this );
-
-		}
-
-		if ( $args['html'] ) {
-
-			/*
-			 * Temporarily unhook other Theater filters that hook into `the_content`
-			 * to avoid loops.
-			 */
-
-			remove_filter( 'the_content', array( $wp_theatre->frontend, 'the_content' ) );
-			remove_filter( 'the_content', array( $wp_theatre->listing_page, 'the_content' ) );
-
-			$html = '';
-			$html .= '<div class="'.self::post_type_name.'_content">';
-			$html .= apply_filters( 'the_content',$this->content );
-			$html .= '</div>';
-
-			/*
-			 * Re-hook other Theater filters that hook into `the_content`.
-			 */
-
-			add_filter( 'the_content', array( $wp_theatre->frontend, 'the_content' ) );
-			add_filter( 'the_content', array( $wp_theatre->listing_page, 'the_content' ) );
-
-			return apply_filters( 'wpt_production_content_html', $html, $this );
-		} else {
-			return $this->content;
-		}
-
+		add_filter( 'the_content', array( $wp_theatre->frontend, 'the_content' ) );
+		add_filter( 'the_content', array( $wp_theatre->listing_page, 'the_content' ) );
+		
+		return $html;
+		
 	}
 
 	/**
@@ -184,20 +172,12 @@ class WPT_Production {
 	 *					Fixes #199.
 	 * @return	array	The upcoming production dates.
 	 */
-	function dates( $deprecated = array() ) {
-
-		if ( ! empty( $deprecated['html'] ) ) {
-			$defaults = array(
-				'filters' => array(),
-			);
-			$deprecated = wp_parse_args( $deprecated, $defaults );
-			return $this->dates_html( $deprecated['filters'] );
-		}
+	function get_dates() {
 
 		$dates = array();
 
 		foreach ( $this->events( array( 'start' => 'now' ) ) as $event ) {
-			$dates[] = $event->startdate();
+			$dates[] = $event->get_field('startdate');
 		}
 
 		// Remove duplicate dates _without_ preserving keys.
@@ -211,11 +191,6 @@ class WPT_Production {
 		 */
 		$dates = apply_filters( 'wpt/production/dates', $dates, $this );
 
-		/**
-		 * @deprecated	0.15.3
-		 */
-		$dates = apply_filters( 'wpt_production_dates', $dates, $this );
-
 		return $dates;
 	}
 
@@ -226,11 +201,11 @@ class WPT_Production {
 	 * @param	array	$filters	The template filters to apply.
 	 * @return	string				The HTML for the upcoming production dates.
 	 */
-	function dates_html( $filters = array() ) {
+	function get_dates_html( $filters = array() ) {
 
 		ob_start();
 
-		?><div class="<?php echo self::post_type_name; ?>_dates"><?php echo $this->apply_template_filters( $this->dates_summary(), $filters ); ?></div><?php
+		?><div class="<?php echo $this->get_post_type(); ?>_dates"><?php echo $this->apply_template_filters( $this->get_field('dates_summary'), $filters ); ?></div><?php
 
 		$html = ob_get_clean();
 
@@ -241,11 +216,6 @@ class WPT_Production {
 		 * @param	WPT_Production	$production	The production.
 		 */
 		$html = apply_filters( 'wpt/production/dates/html', $html, $this );
-
-		/**
-		 * @deprecated	0.15.3
-		 */
-		$html = apply_filters( 'wpt_production_dates_html', $html, $this );
 
 		return $html;
 	}
@@ -259,8 +229,7 @@ class WPT_Production {
 	 *					Fixes #200.
 	 * @return	string	The summary for the upcoming production dates.
 	 */
-	function dates_summary() {
-		global $wp_theatre;
+	function get_dates_summary() {
 
 		$dates = $this->dates();
 
@@ -268,11 +237,12 @@ class WPT_Production {
 			return '';
 		}
 
-		$old_events_args = array(
+		$old_dates_args = array(
 			'end' => 'now',
 			'production' => $this->ID,
 		);
-		$old_events = $wp_theatre->events->get( $old_events_args );
+		$old_events_obj = new Theater_Dates($old_dates_args);
+		$old_events = $old_events_obj->get();
 
 		if ( empty( $old_events ) ) {
 			if ( 1 == count( $dates ) ) {
@@ -297,15 +267,17 @@ class WPT_Production {
 		return $dates_summary;
 	}
 
-	function events( $filters = array() ) {
-		global $wp_theatre;
+	function get_event_dates( $filters = array() ) {
 
 		$defaults = array(
-			'production' => $this->ID,
+			'event' => $this->ID,
 			'status' => $this->post()->post_status,
 		);
 
 		$filters = wp_parse_args( $filters, $defaults );
+		
+		$dates = new Theater_Dates($filters);
+		return $dates->get();
 
 		if ( ! isset( $this->events ) ) {
 			$this->events = $wp_theatre->events->get( $filters );
@@ -330,43 +302,30 @@ class WPT_Production {
 		global $wp_theatre;
 
 		$defaults = array(
-			'html' => false,
 			'words' => 15,
 			'filters' => array(),
 		);
 
 		$args = wp_parse_args( $args, $defaults );
 
-		if ( ! isset( $this->excerpt ) ) {
-			$excerpt = $this->post()->post_excerpt;
-			if ( empty( $excerpt ) ) {
-				 $excerpt = wp_trim_words( strip_shortcodes( $this->post()->post_content ), $args['words'] );
-			}
-			$this->excerpt = apply_filters( 'wpt_production_excerpt',$excerpt, $this );
-
+		$excerpt = $this->post()->post_excerpt;
+		if ( empty( $excerpt ) ) {
+			 $excerpt = wp_trim_words( strip_shortcodes( $this->post()->post_content ), $args['words'] );
 		}
+		$excerpt = apply_filters( 'wpt_production_excerpt',$excerpt, $this );
 
-		if ( $args['html'] ) {
-			$html = '';
-			$html .= '<p class="'.self::post_type_name.'_excerpt">';
-			$html .= $this->apply_template_filters( $this->excerpt(), $args['filters'] );
-			$html .= '</p>';
-			return apply_filters( 'wpt_production_excerpt_html', $html, $this );
-		} else {
-			return $this->excerpt;
-		}
+		return $excerpt;
 	}
-
-	function past() {
-		global $wp_theatre;
-		if ( ! isset( $this->past ) ) {
-			$filters = array(
-				'production' => $this->ID,
-				'past' => true,
-			);
-			$this->past = $wp_theatre->events->get( $filters );
-		}
-		return $this->past;
+	
+	function get_excerpt_html( $filters = array() ) {
+		$value = $this->excerpt();
+		ob_start();
+		?><p class="<?php echo $this->get_post_type(); ?>_excerpt"><?php
+			echo $this->apply_template_filters( $this->excerpt(), $filters );
+		?></p><?php
+		$html= ob_get_clean();
+		
+		return $html;
 	}
 
 	/**
@@ -441,12 +400,13 @@ class WPT_Production {
 	 * @since	0.15.3
 	 * @return	array	The prices for the production.
 	 */
-	function prices() {
+	function get_prices() {
 
 		$prices = array();
 
-		foreach ( $this->events() as $event ) {
-			foreach ( $event->prices() as $price ) {
+		foreach ( $this->event_dates() as $date ) {
+			$date_prices = $date->get_field('prices');
+			foreach ( $date_prices as $price ) {
 				$prices[] = $price;
 			}
 		}
@@ -472,14 +432,14 @@ class WPT_Production {
 	 * @param   array	$filters	The template filters to apply.
 	 * @return	array				The HTML of the prices for the production.
 	 */
-	function prices_html( $filters = array() ) {
+	function get_prices_html( $filters = array() ) {
 		$html = '';
 
-		$prices_summary_html = $this->prices_summary_html();
+		$prices_summary_html = $this->get_field_html('prices_summary');
 
 		if ( ! empty( $prices_summary_html ) ) {
 			ob_start();
-			?><div class="<?php echo self::post_type_name; ?>_prices"><?php echo $this->apply_template_filters( $prices_summary_html, $filters ); ?></div><?php
+			?><div class="<?php echo $this->get_post_type(); ?>_prices"><?php echo $this->apply_template_filters( $prices_summary_html, $filters ); ?></div><?php
 			$html = ob_get_clean();
 		}
 
@@ -502,11 +462,11 @@ class WPT_Production {
 	 * @see 	WPT_Production::prices()
 	 * @return 	string 	A summary of the prices for the production.
 	 */
-	public function prices_summary() {
+	function get_prices_summary() {
 
 		global $wp_theatre;
 
-		$prices = $this->prices();
+		$prices = $this->get_field('prices');
 
 		$prices_summary = '';
 
@@ -539,9 +499,9 @@ class WPT_Production {
 	 * @see		WPT_Production::prices_summary()
 	 * @return 	string	The HTML for the summary of the prices for the production.
 	 */
-	public function prices_summary_html() {
+	public function get_prices_summary_html() {
 
-		$html = $this->prices_summary();
+		$html = $this->get_field('prices_summary');
 		$html = esc_html( $html );
 		$html = str_replace( ' ', '&nbsp;', $html );
 
@@ -590,39 +550,25 @@ class WPT_Production {
 	 * }
 	 * @return string URL or HTML.
 	 */
-	function summary( $args = array() ) {
-		global $wp_theatre;
+	function get_summary() {
 
-		$defaults = array(
-			'html' => false,
-			'filters' => array(),
-		);
+		$summary = '';
+		
+		$dates = $this->get_field('dates');
 
-		$args = wp_parse_args( $args, $defaults );
-
-		if ( ! isset( $this->summary ) ) {
-			$this->summary = '';
-			if ( $this->dates() != '' ) {
-				$short = $this->dates_summary();
-				if ( $this->cities() != '' ) {
-					$short .= ' '.__( 'in','theatre' ).' '.$this->cities();
-				}
-				$short .= '. ';
-				$this->summary .= ucfirst( $short );
+		if (!empty($dates))	{
+			$short = $this->get_field('dates_summary');
+			
+			$cities = $this->get_field('cities');
+			if ( !empty($cities) ) {
+				$short .= ' '.sprintf(__( 'in %s ','theatre' ), $cities);
 			}
-			$this->summary .= $this->excerpt();
+			$short .= '. ';
+			$summary .= ucfirst( $short );
 		}
+		$summary .= $this->get_field('excerpt');
 
-		if ( $args['html'] ) {
-			$html = '';
-			$html .= '<p class="'.self::post_type_name.'_summary">';
-			$html .= $this->apply_template_filters( $this->summary(), $args['filters'] );
-			$html .= '</p>';
-
-			return apply_filters( 'wpt_production_summary_html', $html, $this );
-		} else {
-			return $this->summary;
-		}
+		return $summary;
 	}
 
 	/**
@@ -802,21 +748,11 @@ class WPT_Production {
 	 * @param 	array	$args		The listing args (if the production is part of a listing).
 	 * @return 	string				The HTML for a production.
 	 */
-	function html( $template = '' ) {
-		global $wp_theatre;
-
-		if ( is_array( $template ) ) {
-			$defaults = array(
-				'template' => '',
-			);
-			$args = wp_parse_args( $template, $defaults );
-			$template = $args['template'];
-		}
-
+	function get_html( $template = '' ) {
 		$classes = array();
-		$classes[] = self::post_type_name;
+		$classes[] = $this->get_post_type();
 
-		$template = new WPT_Production_Template( $this, $template );
+		$template = new WPT_Production_Template( $this, $this->template );
 		$html = $template->get_merged();
 
 		/**
@@ -879,9 +815,22 @@ class WPT_Production {
 		return $this->html();
 	}
 
-	function get_events() {
-		return $this->events();
+	function events( $filters = array() ) {
+		return $this->get_event_dates( $filters );
 	}
+
+	function past() {
+		global $wp_theatre;
+		if ( ! isset( $this->past ) ) {
+			$filters = array(
+				'production' => $this->ID,
+				'past' => true,
+			);
+			$this->past = $wp_theatre->events->get( $filters );
+		}
+		return $this->past;
+	}
+
 }
 
 ?>

@@ -64,7 +64,7 @@ class Theater_Dates extends Theater_Lists {
 	 * @access 	protected
 	 * @static
 	 */
-	protected static $default_args = array(
+	protected $default_args = array(
 		'cat' => false,
 		'category_name' => false,
 		'category__and' => false,
@@ -102,9 +102,8 @@ class Theater_Dates extends Theater_Lists {
 	 * @uses	Theater_Dates::$default_args to merge the built-in filter argument defaults with custom filter argument defaults.
 	 */
 	function __construct ( $default_args = array() ) {
-		
 		if (!empty( $default_args )) {
-			self::$default_args = wp_parse_args($default_args, self::$default_args);
+			$this->default_args = wp_parse_args($default_args, $this->default_args);
 		}
 		
 	}
@@ -123,7 +122,7 @@ class Theater_Dates extends Theater_Lists {
 	 * @return 	Theater_Date[]	An array of dates.
 	 */
 	function __invoke() {
-		return self::get();
+		return (array) $this->get();
 	}
 	
 	/**
@@ -140,7 +139,7 @@ class Theater_Dates extends Theater_Lists {
 	 * @return 	string	Formatted HTML list of dates.
 	 */
 	function __toString() {
-		return self::get_html();
+		return $this->get_html();
 	}
 
 	/**
@@ -241,7 +240,7 @@ class Theater_Dates extends Theater_Lists {
 	 *
 	 * @return 	Theater_Date[] 	An array of events.
 	 */
-	static function get( $filters = array() ) {
+	function get( $filters = array() ) {
 		global $wp_theatre;
 
 		/**
@@ -250,7 +249,7 @@ class Theater_Dates extends Theater_Lists {
 		 * @since 	0.11.9
 		 * @param 	array 	$defaults	The current defaults.
 		 */
-		$defaults = apply_filters( 'wpt/events/get/defaults', self::$default_args );
+		$defaults = apply_filters( 'wpt/events/get/defaults', $this->default_args );
 
 		$filters = wp_parse_args( $filters, $defaults );
 
@@ -452,9 +451,9 @@ class Theater_Dates extends Theater_Lists {
 	 * @param 	array 				$filters	See Theater_Dates::get() for possible values.
 	 * @return 	array[string]string				An array of category slug => name pairs.
 	 */
-	static function get_categories( $filters = array() ) {
+	function get_categories( $filters = array() ) {
 		$filters['category'] = false;
-		$dates = self::get( $filters );
+		$dates = $this->get( $filters );
 		$date_ids = wp_list_pluck( $dates, 'ID' );
 		$terms = wp_get_object_terms( $date_ids, 'category' );
 		$categories = array();
@@ -479,7 +478,7 @@ class Theater_Dates extends Theater_Lists {
 	 * @param 	array $args 	See `Theater_Dates::get_html()` for possible values. Default: array().
 	 * @return 	array 			The CSS classes.
 	 */
-	protected static function get_classes_for_html( $args = array() ) {
+	protected function get_classes_for_html( $args = array() ) {
 
 		$classes = parent::get_classes_for_html( $args );
 
@@ -521,8 +520,8 @@ class Theater_Dates extends Theater_Lists {
 	 * @param 	array $filters	See `Theater_Dates::get()` for possible values.
 	 * @return 	array 			Days.
 	 */
-	static function get_days( $filters = array() ) {
-		$dates = self::get( $filters );
+	function get_days( $filters = array() ) {
+		$dates = $this->get( $filters );
 		$days = array();
 		foreach ( $dates as $date ) {
 			$days[ date( 'Y-m-d',$date->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ] = date_i18n( 'D j M',$date->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
@@ -599,7 +598,7 @@ class Theater_Dates extends Theater_Lists {
 	 *
 	 * @return 	string 	A fully formatted list of event dates in HTML.
 	 */
-	static function get_html( $args = array() ) {
+	function get_html( $args = array() ) {
 
 		$html = parent::get_html( $args );
 
@@ -634,12 +633,12 @@ class Theater_Dates extends Theater_Lists {
 	 * @param 	array $args 				See Theater_Dates::get_html() for possible values.
 	 * @return 	string						The HTML.
 	 */
-	protected static function get_html_for_category( $category_slug, $args = array() ) {
+	protected function get_html_for_category( $category_slug, $args = array() ) {
 		if ( $category = get_category_by_slug( $category_slug ) ) {
 				$args['cat'] = $category->term_id;
 		}
 
-		return self::get_html_grouped( $args );
+		return $this->get_html_grouped( $args );
 	}
 
 	/**
@@ -654,7 +653,7 @@ class Theater_Dates extends Theater_Lists {
 	 * @param 	array $args 	See Theater_Dates::get_html() for possible values.
 	 * @return 	string			The HTML.
 	 */
-	protected static function get_html_for_day( $day, $args = array() ) {
+	protected function get_html_for_day( $day, $args = array() ) {
 
 		/*
 		 * Set the `start`-filter to today.
@@ -678,7 +677,7 @@ class Theater_Dates extends Theater_Lists {
 			$args['end'] = $day.' +1 day';
 		}
 
-		return self::get_html_grouped( $args );
+		return $this->get_html_grouped( $args );
 	}
 
 	/**
@@ -693,7 +692,7 @@ class Theater_Dates extends Theater_Lists {
 	 * @param 	array $args 	See Theater_Dates::get_html() for possible values.
 	 * @return 	string			The HTML.
 	 */
-	protected static function get_html_for_month( $month, $args = array() ) {
+	protected function get_html_for_month( $month, $args = array() ) {
 
 		/*
 		 * Set the `start`-filter to the first day of the month.
@@ -717,7 +716,7 @@ class Theater_Dates extends Theater_Lists {
 			$args['end'] = $month.' +1 month';
 		}
 
-		return self::get_html_grouped( $args );
+		return $this->get_html_grouped( $args );
 	}
 
 	/**
@@ -732,7 +731,7 @@ class Theater_Dates extends Theater_Lists {
 	 * @param 	array $args 	See Theater_Dates::get_html() for possible values.
 	 * @return 	string			The HTML.
 	 */
-	protected static function get_html_for_year( $year, $args = array() ) {
+	protected function get_html_for_year( $year, $args = array() ) {
 
 		/*
 		 * Set the `start`-filter to the first day of the year.
@@ -756,7 +755,7 @@ class Theater_Dates extends Theater_Lists {
 			$args['end'] = $year.'-01-01 +1 year';
 		}
 
-		return self::get_html_grouped( $args );
+		return $this->get_html_grouped( $args );
 	}
 
 	/**
@@ -774,7 +773,7 @@ class Theater_Dates extends Theater_Lists {
 	 * @param 	array $args 	See Theater_Dates::get_html() for possible values.
 	 * @return 	string			The HTML.
 	 */
-	protected static function get_html_for_page( $args = array() ) {
+	protected function get_html_for_page( $args = array() ) {
 		global $wp_query;
 
 		$html = '';
@@ -786,19 +785,19 @@ class Theater_Dates extends Theater_Lists {
 		 */
 
 		if ( ! empty( $wp_query->query_vars['wpt_year'] ) ) {
-			$html = self::get_html_for_year( $wp_query->query_vars['wpt_year'], $args );
+			$html = $this->get_html_for_year( $wp_query->query_vars['wpt_year'], $args );
 		} elseif ( ! empty( $wp_query->query_vars['wpt_month'] ) ) {
-			$html = self::get_html_for_month( $wp_query->query_vars['wpt_month'], $args );
+			$html = $this->get_html_for_month( $wp_query->query_vars['wpt_month'], $args );
 		} elseif ( ! empty( $wp_query->query_vars['wpt_day'] ) ) {
-			$html = self::get_html_for_day( $wp_query->query_vars['wpt_day'], $args );
+			$html = $this->get_html_for_day( $wp_query->query_vars['wpt_day'], $args );
 		} elseif ( ! empty( $wp_query->query_vars['wpt_category'] ) ) {
-			$html = self::get_html_for_category( $wp_query->query_vars['wpt_category'], $args );
+			$html = $this->get_html_for_category( $wp_query->query_vars['wpt_category'], $args );
 		} else {
 			/*
 			 * The user didn't select a page.
 			 * Show the full listing.
 			 */
-			$html = self::get_html_grouped( $args );
+			$html = $this->get_html_grouped( $args );
 		}
 
 		/**
@@ -840,9 +839,9 @@ class Theater_Dates extends Theater_Lists {
 	 * @param 	array $args 	See Theater_Dates::get_html() for possible values.
 	 * @return 	string			The HTML.
 	 */
-	protected static function get_html_grouped( $args = array() ) {
+	protected function get_html_grouped( $args = array() ) {
 
-		$args = wp_parse_args( $args, self::$default_args_for_html );
+		$args = wp_parse_args( $args, $this->default_args_for_html );
 
 		/*
 		 * Get the `groupby` setting and remove it from $args.
@@ -855,9 +854,9 @@ class Theater_Dates extends Theater_Lists {
 		$html = '';
 		switch ( $groupby ) {
 			case 'day':
-				$days = self::get_days( $args );
+				$days = $this->get_days( $args );
 				foreach ( $days as $day => $name ) {
-					if ( $day_html = self::get_html_for_day( $day, $args ) ) {
+					if ( $day_html = $this->get_html_for_day( $day, $args ) ) {
 						
 						$day_header = date_i18n( 'l d F',strtotime( $day ) );
 						$day_header = apply_filters( 'theater/dates/group/day', $day_header, $day );
@@ -877,9 +876,9 @@ class Theater_Dates extends Theater_Lists {
 				}
 				break;
 			case 'month':
-				$months = self::get_months( $args );
+				$months = $this->get_months( $args );
 				foreach ( $months as $month => $name ) {
-					if ( $month_html = self::get_html_for_month( $month, $args ) ) {
+					if ( $month_html = $this->get_html_for_month( $month, $args ) ) {
 						
 						$month_header = date_i18n( 'F',strtotime( $month ) );
 						$month_header = apply_filters( 'theater/dates/group/month',$month_header,$month );
@@ -898,9 +897,9 @@ class Theater_Dates extends Theater_Lists {
 				}
 				break;
 			case 'year':
-				$years = self::get_years( $args );
+				$years = $this->get_years( $args );
 				foreach ( $years as $year => $name ) {
-					if ( $year_html = self::get_html_for_year( $year, $args ) ) {
+					if ( $year_html = $this->get_html_for_year( $year, $args ) ) {
 						
 						$year_header = date_i18n( 'Y',strtotime( $year.'-01-01' ) );
 						
@@ -920,9 +919,9 @@ class Theater_Dates extends Theater_Lists {
 				}
 				break;
 			case 'category':
-				$categories = self::get_categories( $args );
+				$categories = $this->get_categories( $args );
 				foreach ( $categories as $cat_id => $name ) {
-					if ( $cat_html = self::get_html_for_category( $cat_id, $args ) ) {
+					if ( $cat_html = $this->get_html_for_category( $cat_id, $args ) ) {
 						
 						$cat_header = $name;
 						$cat_header = apply_filters( 'theater/dates/group/category',$cat_header,$cat_id );
@@ -942,8 +941,8 @@ class Theater_Dates extends Theater_Lists {
 				}
 				break;
 			default:
-				$events = self::get( $args );
-				$events = self::preload_dates_with_events( $events );
+				$events = $this->get( $args );
+				$events = $this->preload_dates_with_events( $events );
 				$html_group = '';
 
 				foreach ( $events as $event ) {
@@ -1001,14 +1000,14 @@ class Theater_Dates extends Theater_Lists {
 	 *							See Theater_Dates::get_html() for possible values.
 	 * @return 	string			The HTML for the page navigation.
 	 */
-	protected static function get_html_page_navigation( $args = array() ) {
+	protected function get_html_page_navigation( $args = array() ) {
 		global $wp_query;
 
 		$html = '';
 
 		$paginateby = empty( $args['paginateby'] ) ? array() : $args['paginateby'];
 
-		$filters = self::get_pagination_filters();
+		$filters = $this->get_pagination_filters();
 
 		foreach ( $filters as $filter_name => $filter_options ) {
 			if ( ! empty( $wp_query->query_vars[ $filter_options['query_arg'] ] ) ) {
@@ -1023,7 +1022,7 @@ class Theater_Dates extends Theater_Lists {
 				$filters[ $paginateby_filter ]['callback'],
 				array( $args )
 			);
-			$html .= self::filter_pagination(
+			$html .= $this->filter_pagination(
 				$paginateby_filter,
 				$options,
 				$args
@@ -1065,8 +1064,8 @@ class Theater_Dates extends Theater_Lists {
 	 * @param 	array $filters	See Theater_Dates::get() for possible values.
 	 * @return 	array 			Months.
 	 */
-	static function get_months( $filters = array() ) {
-		$events = self::get( $filters );
+	function get_months( $filters = array() ) {
+		$events = $this->get( $filters );
 		$months = array();
 		foreach ( $events as $event ) {
 			$months[ date( 'Y-m',$event->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ] = date_i18n( 'M Y',$event->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
@@ -1088,7 +1087,7 @@ class Theater_Dates extends Theater_Lists {
 	 * @uses	Theater_Dates::get_pagination_filters()
 	 * @return 	array	The pagination filters for an event listing.
 	 */
-	protected static function get_pagination_filters() {
+	protected function get_pagination_filters() {
 
 		$filters = parent::get_pagination_filters();
 
@@ -1147,8 +1146,8 @@ class Theater_Dates extends Theater_Lists {
 	 * @param 	array $filters	See Theater_Dates::get() for possible values.
 	 * @return 	array 			Years.
 	 */
-	static function get_years( $filters = array() ) {
-		$events = self::get( $filters );
+	function get_years( $filters = array() ) {
+		$events = $this->get( $filters );
 		$years = array();
 		foreach ( $events as $event ) {
 			$years[ date( 'Y',$event->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ] = date_i18n( 'Y',$event->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
@@ -1178,7 +1177,7 @@ class Theater_Dates extends Theater_Lists {
 	 * @param 	Theater_Date[]	$events	An array of Theater_Date objects.
 	 * @return 	Theater_Date[]			An array of Theater_Date objects, with the event preloaded.
 	 */
-	protected static function preload_dates_with_events( $dates ) {
+	protected function preload_dates_with_events( $dates ) {
 
 		$event_ids = array();
 
@@ -1215,7 +1214,7 @@ class Theater_Dates extends Theater_Lists {
 	 * @deprecated 0.10
 	 * @see Theater_Dates::get_categories()
 	 */
-	static function categories( $filters = array() ) {
+	function categories( $filters = array() ) {
 		_deprecated_function( 'Theater_Dates::categories()', '0.10', 'Theater_Dates::get_categories()' );
 		return selfget_categories( $filters );
 	}
@@ -1224,9 +1223,9 @@ class Theater_Dates extends Theater_Lists {
 	 * @deprecated 0.10
 	 * @see Theater_Dates::get_days()
 	 */
-	static function days( $filters = array() ) {
+	function days( $filters = array() ) {
 		_deprecated_function( 'Theater_Dates::days()', '0.10', 'Theater_Dates::get_days()' );
-		return self::get_days( $filters );
+		return $this->get_days( $filters );
 	}
 
 	/**
@@ -1236,7 +1235,7 @@ class Theater_Dates extends Theater_Lists {
 	 * @deprecated	0.16
 	 * @return		Theater_Date|bool	The last event date or <false> if no event date is found.
 	 */
-	static function last() {
+	function last() {
 		_deprecated_function( 'Theater_Dates::months()', '0.16', 'Theater_Dates( array(\'limit\' => 0, \'order\' => \'DESC\') )' );
 
 		$args = array(
@@ -1259,9 +1258,9 @@ class Theater_Dates extends Theater_Lists {
 	 * @deprecated 0.10
 	 * @see Theater_Dates::get_months()
 	 */
-	static function months( $filters = array() ) {
+	function months( $filters = array() ) {
 		_deprecated_function( 'Theater_Dates::months()', '0.10', 'Theater_Dates::get_months()' );
-		return self::get_months( $filters );
+		return $this->get_months( $filters );
 	}
 }
 ?>
