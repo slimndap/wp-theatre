@@ -253,13 +253,9 @@ abstract class Theater_Item {
 	/**
 	 * @deprecated	0.16
 	 */
-	private function get_post() {
+	protected function get_post() {
 		if ( ! isset( $this->post ) ) {
-			if ( $this->PostClass ) {
-				$this->post = new $this->PostClass( $this->ID );
-			} else {
-				$this->post = get_post( $this->ID );
-			}
+			$this->post = get_post( $this->ID );
 		}
 		return $this->post;
 	}
