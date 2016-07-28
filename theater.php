@@ -267,7 +267,7 @@ class Theater {
 		require_once(dirname(__FILE__) . '/functions/wpt_status.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_feeds.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_transient.php');
-		require_once(dirname(__FILE__) . '/functions/wpt_Listing_page.php');
+		require_once(dirname(__FILE__) . '/functions/wpt_listing_page.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_calendar.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_context.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_filter.php');
