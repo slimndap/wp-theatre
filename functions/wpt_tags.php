@@ -1,4 +1,8 @@
 <?php
+/**
+ * WPT_Tags class.
+ * @internal
+ */
 class WPT_Tags {
 	
 	function __construct() {

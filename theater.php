@@ -4,7 +4,7 @@
 	Plugin URI: https://wp.theater
 	Description: Turn your Wordpress website into a theater website.
 	Author: Jeroen Schmit
-	Version: 0.15.8
+	Version: 0.16
 	Author URI: http://slimndap.com/
 	Text Domain: theatre
 	Domain Path: /lang
@@ -33,73 +33,67 @@ $wpt_version = '0.15.8';
 /**
  * Main Theater for WordPress class.
  *
- * ## Events and dates
- * Every event can have one or more dates.
+ * With the Theater for WordPress plugin it is possible to manage _events_ with one of more _dates_.
  *
- * So if you run a theatre then 'The Sound Of Music' is an event and the show this weekend is a date.
+ * So if you run a theater then 'The Sound Of Music' is an event and the show this weekend is a date.
  *
  * ## Getting started
  *
  * ### Events
- * Retrieve a list of all events:
  * <code>
- * $productions = $wp_theatre->productions->get();
+ * // Retrieve a list of all events.
+ * $events = new Theater_Event_List;
+ * foreach ( $events() as $event ) {
+ *		// $event is a Theater_Event object.	 
+ *		echo $event->title();
+ * }
  * </code>
  *
- * Output a list of all productions:
  * <code>
- * echo $wp_theatre->productions->get_html();
+ * // Output a formatted list of all events.
+ * $events = new Theater_Event_List;
+ * echo $events;
  * </code>
  *
- * Output a list of all productions with upcoming events:
- * <code>
- * $args = array( 'start' => 'now' );
- * echo $wp_theatre->productions->get_html( $args );
- * </code>
+ * See [Theater_Event_List()](class-Theater_Event_List.html) for more examples.
  *
  * ### Event dates
  * <code>
- * // Retrieve a list of upcoming dates:
- * $dates = new Theater_Dates;
- * $list = $dates();
+ * // Retrieve a list of all event dates.
+ * $dates = new Theater_Event_Date_List;
+ * foreach ( $dates() as $date ) {
+ *		// $date is a Theater_Event_Date object.	 
+ *		echo $date->title();
+ * }
  * </code>
  *
  * <code>
- * // Output a list of upcoming dates:
- * $dates = new Theater_Dates;
+ * // Output a formatted list of all dates.
+ * $dates = new Theater_Event_Date_List;
  * echo $dates;
  * </code>
  *
- * <code>
- * //Retrieve a list of upcoming dates for a single event:
- * $dates = new Theater_Dates( array( 'event' => 123 ) );
- * $list = $dates();
- * </code>
- *
- * See [Theater_Dates()](class-Theater_Dates.html) for more examples.
+ * See [Theater_Event_Date_List()](class-Theater_Event_Date_List.html) for more examples.
  *
  * ## Extending Theater for WordPress
- * You can safely add extra functionality by using the `wpt_loaded` action hook:
+ * You can safely add extra functionality by using the `theater/loaded` action hook:
  * <code>
- * function wpt_example_loader() {
- *		global $wp_theatre;
- *
+ * function theater_example_loader() {
  *		// Add your custom code below...
- *
  * }
- * add_action( 'wpt_loaded', 'wpt_example_loader' );
+ * add_action( 'theater/loaded', 'theater_example_loader' );
  * </code>
  * See this [Example Extension](https://github.com/slimndap/wp-theatre-example-extension) for a full example.
  *
  * @package		Theater
- * @version		0.15.8
+ * @version		0.16
  * @author		Jeroen Schmit <jeroen@slimndap.com>
  * @copyright	2016 [Slim & Dapper](http://slimndap.com)
  * @license		https://opensource.org/licenses/GPL-3.0 GNU General Public License
  *
  * @example 	[Example of a WordPress for Theater extension](https://github.com/slimndap/wp-theatre-example-extension).
  */
-class WP_Theatre {
+class Theater {
 
 	/**
 	 * The single instance of the class.
@@ -109,15 +103,19 @@ class WP_Theatre {
 	 */
 	protected static $_instance = null;
 
+	function __construct() {
+		
+	}
+
 	/**
-	 * Main Theater for WordPress Instance.
+	 * Returns the main Theater for WordPress Instance.
 	 *
 	 * Ensures only one instance of Theater for WordPress is loaded or can be loaded.
 	 *
 	 * @since 0.16
 	 * @static
 	 * @see 	Theater()
-	 * @return 	WP_Theatre	Main instance.
+	 * @return 	Theater	Main instance.
 	 */
 	static function instance() {
 		if ( is_null( self::$_instance ) ) {
@@ -126,8 +124,14 @@ class WP_Theatre {
 		return self::$_instance;		
 	}
 
-	function __construct() {
-
+	/**
+	 * init function.
+	 * 
+	 * @since	0.16
+	 * @return 	void
+	 * @internal
+	 */
+	function init() {
 		// Set version
 		global $wpt_version;
 		$this->wpt_version = $wpt_version;
@@ -155,14 +159,11 @@ class WP_Theatre {
 		$this->event_admin = new WPT_Event_Admin();
 		$this->event_editor = new WPT_Event_Editor();
 
-		Theater_Dates::init();
-
 		$this->production_permalink = new WPT_Production_Permalink();
-		Theater_Event_Dates::init();
+		Theater_Event_Date_Link::init();
 
 		Theater_Widgets::init();
 
-		$this->productions = new WPT_Productions();
 		$this->productions_admin = new WPT_Productions_Admin();
 
 		$this->cart = new WPT_Cart();
@@ -178,7 +179,7 @@ class WP_Theatre {
 
 		// Options
 		$this->wpt_language_options = get_option( 'wpt_language' );
-		$this->wpt_listing_page_options = get_option( 'wpt_listing_page' );
+		$this->wpt_Listing_page_options = get_option( 'wpt_Listing_page' );
 		$this->wpt_style_options = get_option( 'wpt_style' );
 		$this->wpt_tickets_options = get_option( 'wpt_tickets' );
 		$this->deprecated_options();
@@ -194,9 +195,17 @@ class WP_Theatre {
 		}
 
 		// Hook wpt_loaded action.
-		add_action ('plugins_loaded', array($this,'wpt_loaded') );
+		add_action ('plugins_loaded', array($this,'do_theater_loaded_action') );
+		
 	}
 
+	/**
+	 * define_constants function.
+	 * 
+	 * @access protected
+	 * @return void
+	 * @internal
+	 */
 	protected function define_constants() {
 		if ( ! defined( 'THEATER_PLUGIN_BASENAME' ) ) {
 			define( 'THEATER_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );		
@@ -211,12 +220,11 @@ class WP_Theatre {
 	 *
 	 * @access public
 	 * @return void
+	 * @internal
 	 */
 	function includes() {
-		require_once(dirname(__FILE__) . '/functions/wpt_listing.php');
 		require_once(dirname(__FILE__) . '/functions/abstract/class-theater-item.php');
-		require_once(dirname(__FILE__) . '/functions/abstract/class-theater-field.php');
-		require_once(dirname(__FILE__) . '/functions/abstract/class-theater-lists.php');
+		require_once(dirname(__FILE__) . '/functions/abstract/class-theater-list.php');
 
 		require_once(dirname(__FILE__) . '/functions/template/wpt_template.php');
 		require_once(dirname(__FILE__) . '/functions/template/wpt_template_placeholder.php');
@@ -224,24 +232,26 @@ class WP_Theatre {
 
 		require_once(dirname(__FILE__) . '/functions/event/class-theater-event.php');
 		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-field.php');
-		require_once(dirname(__FILE__) . '/functions/deprecated/class-wpt-production.php');
+		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-date.php');
+		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-date-link.php');
+		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-list.php');
+		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-date-list.php');
+
+
 		require_once(dirname(__FILE__) . '/functions/wpt_production_permalink.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_production_template.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_production_widget.php');
-		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-dates.php');
 
-		require_once(dirname(__FILE__) . '/functions/wpt_productions.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_productions_admin.php');
-		require_once(dirname(__FILE__) . '/functions/wpt_productions_list_table.php');
+		require_once(dirname(__FILE__) . '/functions/wpt_productions_List_table.php');
 
-		require_once(dirname(__FILE__) . '/functions/date/class-theater-date.php');
-		require_once(dirname(__FILE__) . '/functions/date/class-theater-date-field.php');
+		require_once(dirname(__FILE__) . '/functions/deprecated/class-wp-theatre.php');
+		require_once(dirname(__FILE__) . '/functions/deprecated/class-wpt-production.php');
 		require_once(dirname(__FILE__) . '/functions/deprecated/class-wpt-event.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_event_admin.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_event_editor.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_event_template.php');
 
-		require_once(dirname(__FILE__) . '/functions/dates/class-theater-dates.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_events_widget.php');
 
 		require_once(dirname(__FILE__) . '/functions/setup/class-theater-setup.php');
@@ -257,7 +267,7 @@ class WP_Theatre {
 		require_once(dirname(__FILE__) . '/functions/wpt_status.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_feeds.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_transient.php');
-		require_once(dirname(__FILE__) . '/functions/wpt_listing_page.php');
+		require_once(dirname(__FILE__) . '/functions/wpt_Listing_page.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_calendar.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_context.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_filter.php');
@@ -279,10 +289,21 @@ class WP_Theatre {
 
 	}
 
+	/**
+	 * @deprecated	0.16
+	 * @internal
+	 */
 	public function seasons($PostClass = false) {
 		return $this->get_seasons($PostClass);
 	}
 
+	/**
+	 * activate function.
+	 * 
+	 * @access public
+	 * @internal
+	 * @return void
+	 */
 	function activate() {
 		wp_schedule_event( time(), 'wpt_schedule', 'wpt_cron');
 
@@ -293,12 +314,26 @@ class WP_Theatre {
 		flush_rewrite_rules();
 	}
 
+	/**
+	 * deactivate function.
+	 * 
+	 * @access public
+	 * @return void
+	 * @internal
+	 */
 	function deactivate() {
 		wp_clear_scheduled_hook('wpt_cron');
 		delete_post_meta_by_key($this->order->meta_key);
 		flush_rewrite_rules();
 	}
 
+	/**
+	 * update function.
+	 * 
+	 * @access public
+	 * @return void
+	 * @internal
+	 */
 	function update() {
 		$this->activate();
 	}
@@ -306,14 +341,23 @@ class WP_Theatre {
 
 
  	/**
- 	 * Fires the `wpt_loaded` action.
+ 	 * Fires the `theater/loaded` action.
  	 *
- 	 * Use this to safely load plugins that depend on Theater.
+ 	 * Use this action to safely load plugins that depend on Theater for WordPress.
  	 *
- 	 * @access public
- 	 * @return void
+ 	 * @since	0.x
+ 	 * @return 	void
  	 */
- 	function wpt_loaded() {
+ 	function do_theater_loaded_action() {
+ 		/**
+	 	 * Fires after Theater for WordPress is fully loaded.
+	 	 * @since	0.16
+	 	 */
+		do_action('theater/loaded');
+		
+		/**
+		 * @deprecated	0.16
+		 */
 		do_action('wpt_loaded');
 	}
 
@@ -339,29 +383,38 @@ class WP_Theatre {
 
 
 	/**
-	 * Deprecated functions.
-	 *
-	 * @deprecated 0.4.
+	 * @deprecated 0.4
 	 */
-
 	function compile_events($args=array()) {
 		return $this->events->html($args);
 	}
 
+	/**
+	 * @deprecated 0.4
+	 */
 	private function get_events($PostClass = false) {
 		return $this->events();
 	}
 
+	/**
+	 * @deprecated 0.4
+	 */
 	function render_events($args=array()) {
 		echo $this->compile_events($args);
 	}
 
+	/**
+	 * @deprecated 0.4
+	 */
 	private function get_productions($PostClass = false) {
 		return $this->productions();
 	}
 
+	/**
+	 * @deprecated 0.4
+	 */
 	function render_productions($args=array()) {
-		return $this->productions->html_listing();
+		return $this->productions->html_Listing();
 	}
 	
 	/*
@@ -370,6 +423,9 @@ class WP_Theatre {
 	 * As of v0.8 style options and tickets options are stored seperately.
 	 */
 	
+	/**
+	 * @deprecated 0.8
+	 */
 	function deprecated_options() {
 		if (empty($this->wpt_style_options)) {
 			$this->wpt_style_options = get_option( 'theatre' );
@@ -379,27 +435,25 @@ class WP_Theatre {
 		}
 	}
 	
+	/**
+	 * @deprecated 0.8
+	 */
 	protected function deprecated_properties() {
-		$this->events = new Theater_Dates; 	
+		$this->productions = new Theater_Event_List; 	
+		$this->events = new Theater_Event_Date_List; 	
  	}
 }
 
 /**
  * Main instance of Theater for WordPress.
  *
- * Returns the main instance of Theater for WordPress to prevent the need to use globals.
- *
- * @since  0.19
- * @return WP_Theatre
+ * @since  0.16
+ * @package	Theater
+ * @return WP_Theatre	The main instance of Theater for WordPress to prevent the need to use globals.
  */
 function Theater() {
-	return WP_Theatre::instance();
+	return Theater::instance();
 }
 
-/**
- * @var	WP_Theatre	
- */
-$wp_theatre = Theater();
-
-
+Theater()->init();
 ?>

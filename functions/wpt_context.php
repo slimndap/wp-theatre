@@ -3,6 +3,7 @@
 /**
  * Add context information to listings, productions and events.
  * @since	0.14.7
+ * @internal
  */
 class WPT_Context {
 	

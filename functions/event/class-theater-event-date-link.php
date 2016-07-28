@@ -3,9 +3,9 @@
  * Maintains the link between events and event dates.
  *
  * @since	0.16
- * @package	Theater/Event
+ * @package	Theater/Events
  */
-class Theater_Event_Dates {
+class Theater_Event_Date_Link {
 
 	/**
 	 * Adds the action hooks that maintain the link between events and event dates.
@@ -70,11 +70,6 @@ class Theater_Event_Dates {
 		
 		if ( $date->has_field($field) ) {
 			return $value;			
-		}
-		
-		if ('prices'==$field) {
-		echo $field;exit;
-			
 		}
 		
 		if ( $event = $date->get_event() ) {

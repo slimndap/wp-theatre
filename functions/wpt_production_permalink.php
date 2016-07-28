@@ -6,6 +6,7 @@
  * The permalink structure can be set on the Wordpress permalink settings page.
  *
  * @since 0.12
+ * @internal
  */
 class WPT_Production_Permalink {
 

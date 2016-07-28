@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * WPT_Event_Template class.
+ * 
+ * @extends WPT_Template
+ * @internal
+ */
 class WPT_Event_Template extends WPT_Template {
 
 	/**

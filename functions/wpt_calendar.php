@@ -3,6 +3,7 @@
 	/**
 	 * A calendar with upcoming events.
 	 * @since 0.8
+	 * @internal
 	 */
 	class WPT_Calendar {
 	
@@ -311,11 +312,11 @@
 		
 	}
 
-	/*
+	/**
 	 * Theater Calendar widget.
 	 * @since 0.8
+	 * @internal
 	 */
-
 	class WPT_Calendar_Widget extends WP_Widget {
 		function __construct() {
 			parent::__construct(

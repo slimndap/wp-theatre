@@ -7,6 +7,7 @@
  * Passes the object (a production or an event) to the filters.
  *
  * @since	0.12.1
+ * @internal
  */
 class WPT_Template_Placeholder {
 

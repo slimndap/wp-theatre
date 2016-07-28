@@ -8,6 +8,7 @@
 	 *
 	 * @since 0.8.3
 	 * @package	Theater/Widgets
+	 * @internal
 	 */
 	class WPT_Production_Events_Widget extends WP_Widget {
 		function __construct() {
@@ -78,6 +79,7 @@
 	 * 
 	 * @extends 	WP_Widget
 	 * @package		Theater/Widgets
+	 * @internal
 	 */
 	class WPT_Productions_Widget extends WP_Widget {
 		function __construct() {
@@ -146,6 +148,7 @@
 	 * 
 	 * @extends 	WP_Widget
 	 * @package		Theater/Widgets
+	 * @internal
 	 */
 	class WPT_Cart_Widget extends WP_Widget {
 		function __construct() {

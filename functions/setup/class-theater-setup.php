@@ -9,6 +9,7 @@
  *
  * @package	Theater/Setup
  * @since	0.?
+ * @internal
  */
 class Theater_Setup {
 
@@ -56,6 +57,9 @@ class Theater_Setup {
 
 		require_once( dirname( __FILE__ ) . '/class-theater-setup-meta.php' );
 		Theater_Setup_Meta::init();
+
+		require_once( dirname( __FILE__ ) . '/class-theater-setup-lists.php' );
+		Theater_Setup_Lists::init();
 
 	}
 

@@ -3,6 +3,7 @@
 /**
  * Manage the status of productions and events.
  * @since 0.15.4
+ * @internal
  */
 class WPT_Status {
 

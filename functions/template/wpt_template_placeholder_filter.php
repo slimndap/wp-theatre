@@ -6,6 +6,7 @@
  * Runs a template filter over a template placeholders field value.
  *
  * @since 	0.12.1
+ * @internal
  */
 class WPT_Template_Placeholder_Filter {
 

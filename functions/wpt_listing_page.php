@@ -1,10 +1,10 @@
 <?php
 
-/*
+/**
  * Manages events listings on the dedicated listing page and the production pages.
  * @since: 0.8 
+ * @internal
  */
-
  	class WPT_Listing_Page {
 	 	
 	 	function __construct() {	
@@ -876,6 +876,7 @@
 	 *
 	 * @since 	0.8
 	 * @package	Theater/Widgets
+	 * @internal
 	 */
 	class WPT_Categories_Widget extends WP_Widget {
 		function __construct() {

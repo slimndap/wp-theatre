@@ -52,10 +52,10 @@
  * @since 	0.5
  * @since 	0.10	Complete rewrite, while maintaining backwards compatibility.
  * @since	0.16	Another rewrite. 
- * @package Theater/Dates
+ * @package Theater/Events
  */
 
-class Theater_Dates extends Theater_Lists {
+class Theater_Event_Date_List extends Theater_List {
 
 	/**
 	 * The default filter arguments for event dates lists.
@@ -86,79 +86,6 @@ class Theater_Dates extends Theater_Lists {
 		'template' => '',
 		'upcoming' => false,
 	);
-
-	/**
-	 * Sets the default filter arguments for an event dates list.
-	 * 
-	 * Only happens if the optional `$default_args` parameter is set:
-	 * <code>
-	 * // Retrieve a list of upcoming dates.
-	 * $dates = new Theater_Dates( array( 'start' => 'now' ) );
-	 * </code>
-	 * 
-	 * @since	0.16
-	 * @param 	array[string]	$default_args 	Optional. Custom default filter arguments for this list.
-	 * @return 	void
-	 * @uses	Theater_Dates::$default_args to merge the built-in filter argument defaults with custom filter argument defaults.
-	 */
-	function __construct ( $default_args = array() ) {
-		if (!empty( $default_args )) {
-			$this->default_args = wp_parse_args($default_args, $this->default_args);
-		}
-		
-	}
-	
-	/**
-	 * Retrieves a list of event dates if the class is called as a function.
-	 *
-	 * <code>
-	 * $dates_obj = new Theater_Dates;
-	 * $dates = $dates_obj(); // $dates contains the output of Theater_Dates::get().
-	 * </code>
-	 * 
-	 * @uses 	Theater_Dates::get() to return an array of event dates.
-	 *
-	 * @since	0.16
-	 * @return 	Theater_Date[]	An array of dates.
-	 */
-	function __invoke() {
-		return (array) $this->get();
-	}
-	
-	/**
-	 * Gets a fully formatted list of event dates in HTML if this class is treated like a string.
-	 *
-	 * <code>
-	 * $dates = new Theater_Dates;
-	 * echo $dates;	// Outputs a formatted list.
-	 * </code>
-	 * 
-	 * @uses 	Theater_Dates::get_html() to return a formatted HTML list of dates.
-	 *
-	 * @since	0.16
-	 * @return 	string	Formatted HTML list of dates.
-	 */
-	function __toString() {
-		return $this->get_html();
-	}
-
-	/**
-	 * Adds the page selectors for seasons and categories to the public query vars.
-	 *
-	 * This is needed to make `$wp_query->query_vars['wpt_category']` work.
-	 *
-	 * @since 0.10
-	 *
-	 * @param 	array $vars	The current public query vars.
-	 * @return 	array		The new public query vars.
-	 */
-	static function add_query_vars( $vars ) {
-		$vars[] = 'wpt_day';
-		$vars[] = 'wpt_month';
-		$vars[] = 'wpt_year';
-		$vars[] = 'wpt_category';
-		return $vars;
-	}
 
 	/**
 	 * Gets a list of event dates.
@@ -254,7 +181,7 @@ class Theater_Dates extends Theater_Lists {
 		$filters = wp_parse_args( $filters, $defaults );
 
 		$args = array(
-			'post_type' => Theater_Date::post_type_name,
+			'post_type' => Theater_Event_Date::post_type_name,
 			'post_status' => $filters['status'],
 			'meta_query' => array(),
 			'order' => $filters['order'],
@@ -281,7 +208,7 @@ class Theater_Dates extends Theater_Lists {
 
 		if ( $filters['event'] ) {
 			$args['meta_query'][] = array(
-				'key' => WPT_Production::post_type_name,
+				'key' => Theater_Event::post_type_name,
 				'value' => (array) $filters['event'],
 				'compare' => 'IN',
 			);
@@ -431,7 +358,7 @@ class Theater_Dates extends Theater_Lists {
 
 		$dates = array();
 		for ( $i = 0;$i < count( $posts );$i++ ) {
-			$date = new Theater_Date( $posts[ $i ], $template );
+			$date = new Theater_Event_Date( $posts[ $i ], $template );
 			$dates[] = $date;
 		}
 

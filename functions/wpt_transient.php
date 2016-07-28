@@ -6,6 +6,7 @@
 	 * All Theatre transients are reset everytime a (custom) post or post_meta is saved.
 	 *
 	 * @since 0.7
+	 * @internal
 	 *
 	 */	
 	class WPT_Transient {

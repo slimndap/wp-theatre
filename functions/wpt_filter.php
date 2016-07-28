@@ -1,11 +1,11 @@
 <?php
-	/*
+	/**
 	 * Apply filters to production fields and event fields.
 	 * Usage: $wp_theatre->filter->apply( $content, $filters, $object)
 	 * Usage in templates: {{title|permalink}} or {{datetime|date('j M')}} or {{datetime|date('j M')|permalink}}
 	 * @since: 0.8.2
+	 * @internal
 	 */
-
 	class WPT_Filter {
 		
 		function __construct() {

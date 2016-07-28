@@ -8,13 +8,14 @@ extensions: [php]
 # directories and files matching this file mask will not be parsed
 exclude:
     - tests/
-    - functions/extensions/EDD_SL_Plugin_Updater.php
+    - functions/extensions/
+    - functions/deprecated/
 
 # character set of source files; if you use only one across your files, we recommend you name it
 charset: [UTF-8]
 
 # elements with this name prefix will be considered as the "main project" (the rest will be considered as libraries)
-main: WPT
+main: Theater
 
 # title of generated documentation
 title: Theater for WordPress Code Reference
@@ -32,7 +33,7 @@ php: false
 sourceCode: true
 
 # generate tree view of classes, interfaces, traits and exceptions
-tree: true
+tree: false
 
 # generate documentation for deprecated elements
 deprecated: false

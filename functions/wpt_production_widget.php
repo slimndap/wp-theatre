@@ -6,6 +6,7 @@
  * @since	0.8.2
  * @since	0.12.1	Added filters to the widget() method.
  * @package	Theater/Widgets 
+ * @internal
  */
 
 class WPT_Production_Widget extends WP_Widget {

@@ -5,6 +5,7 @@
  *
  * @since	0.12.1
  * @extends	WPT_Template
+ * @internal
  */
 class WPT_Production_Template extends WPT_Template {
 

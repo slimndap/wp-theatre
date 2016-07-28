@@ -4,6 +4,7 @@
  *
  * @since	0.16
  * @package	Theater/Setup
+ * @internal
  */
 class Theater_Setup_Meta {
 

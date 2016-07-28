@@ -4,6 +4,7 @@
  *
  * @package	Theater/Admin
  * @since	0.16
+ * @internal
  */
 class Theater_Admin_Plugins {
 

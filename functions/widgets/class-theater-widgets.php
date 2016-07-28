@@ -4,6 +4,7 @@
  *
  * @since	0.16
  * @package	Theater/Widgets
+ * @internal
  */
 class Theater_Widgets {
 	

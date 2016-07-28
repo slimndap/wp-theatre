@@ -6,6 +6,7 @@
 	 * Adds a link to both feeds, plus the productions archive feed to header.
 	 *
 	 * @since 0.7
+	 * @internal
 	 *
 	 */
 	class WPT_Feeds {

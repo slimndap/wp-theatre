@@ -3,6 +3,7 @@
 /**
  * The Productions Admin Page.
  * @since	0.15
+ * @internal
  */
 class WPT_Productions_Admin {
 

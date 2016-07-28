@@ -7,7 +7,7 @@
  * @deprecated	0.16
  * @package		Theater/Deprecated
  */
-class WPT_Event extends Theater_Date {
+class WPT_Event extends Theater_Event_Date {
 	
 	function __construct($ID = false, $PostClass = false) {
 		$this->PostClass = $PostClass;		

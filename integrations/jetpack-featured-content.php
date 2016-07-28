@@ -1,4 +1,8 @@
 <?php
+	/**
+	 * WPT_Integration_Jetpack_featured_content class.
+	 * @internal
+	 */
 	class WPT_Integration_Jetpack_featured_content {
 		function __construct() {
 			// set priority high enough to load after add_theme_support in functions.php

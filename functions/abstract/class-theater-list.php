@@ -1,18 +1,15 @@
 <?php
+
 /**
- * Manages listings.
- *
- * Extend this class to compile lists or fully formatted HTML listings.
- * Don't use it directly.
- *
- * @since 0.8
- * @since 0.10	Major rewrite, while maintaining backwards compatibility.
- *
+ * Abstract Theater Lists class.
+ * 
+ * @abstract
  * @package	Theater/Abstracts
  */
-
-abstract class WPT_Listing {
-
+abstract class Theater_List {
+	
+	protected $default_args = array();
+	
 	/**
 	 * Default arguments for all HTML methods.
 	 *
@@ -26,11 +23,46 @@ abstract class WPT_Listing {
 		'paginateby' => array(),
 		'template' => null,
 	);
-
-	function __construct() {
-		add_filter( 'query_vars', array( $this, 'add_query_vars' ) );
+	
+	/**
+	 * Sets the default filter arguments for a list.
+	 * 
+	 * @since	0.16
+	 * @param 	array[string]	$default_args 	Optional. Custom default filter arguments for this list.
+	 * @return 	void
+	 * @uses	Theater_Dates::$default_args to merge the built-in filter argument defaults with custom filter argument defaults.
+	 */
+	function __construct ( $default_args = array() ) {
+		if (!empty( $default_args )) {
+			$this->default_args = wp_parse_args($default_args, $this->default_args);
+		}
+		
 	}
-
+	
+	/**
+	 * Retrieves a list of items if the class is called as a function.
+	 *
+	 * @uses 	Theater_Lists::get() to return an array of event dates.
+	 *
+	 * @since	0.16
+	 * @return 	Theater_Item[]	An array of items.
+	 */
+	function __invoke() {
+		return (array) $this->get();
+	}
+	
+	/**
+	 * Gets a fully formatted list of items in HTML if this class is treated like a string.
+	 *
+	 * @uses 	Theater_Lists::get_html() to return a formatted HTML list of items.
+	 *
+	 * @since	0.16
+	 * @return 	string	Formatted HTML list of items.
+	 */
+	function __toString() {
+		return $this->get_html();
+	}
+	
 	/**
 	 * Adds the page selectors to the public query vars.
 	 *
@@ -42,7 +74,7 @@ abstract class WPT_Listing {
 	 * @param array $vars	The current public query vars.
 	 * @return array		The new public query vars.
 	 */
-	public function add_query_vars( $vars ) {
+	static function add_query_vars( $vars ) {
 		return $vars;
 	}
 
@@ -181,16 +213,16 @@ abstract class WPT_Listing {
 		 *
 		 * @since	0.13.3
 		 * @since	0.13.4	Added the listing object to the filter variables.
+		 * @since	0.16	Removed listing object from the filter params.
 		 *
 		 * @param	string	$html		The HTML of the navigation for a listing filter.
 		 * @param	string	$field		The field being filtered.
 		 *								Eg. 'month' or 'category'.
 		 * @param	array	$options	The possible values for the filter.
 		 * @param	array	$args		The arguments used for the listing.
-		 * @param	object	$listing	The listing object.
 		 */
-		$html = apply_filters( 'wpt/listing/pagination/filter/html',$html, $field, $options, $args, $this );
-		$html = apply_filters( 'wpt/listing/pagination/filter/html/field='.$field, $html, $options, $args, $this );
+		$html = apply_filters( 'wpt/listing/pagination/filter/html',$html, $field, $options, $args );
+		$html = apply_filters( 'wpt/listing/pagination/filter/html/field='.$field, $html, $options, $args );
 
 		return '<div class="wpt_listing_filter_pagination '.$field.'">'.$html.'</div>';
 
@@ -294,7 +326,7 @@ abstract class WPT_Listing {
 	 * @since	0.13.4
 	 * @return 	array	The pagination filters for a listing.
 	 */
-	public function get_pagination_filters() {
+	protected function get_pagination_filters() {
 
 		/**
 		 * Filter the pagination filters for a listing.
@@ -322,7 +354,9 @@ abstract class WPT_Listing {
 	 *							See WPT_Listing::get_html() for possible values.
 	 * @return 	string			The HTML for the page navigation.
 	 */
-	abstract protected function get_html_page_navigation( $args = array() );
+	protected function get_html_page_navigation( $args = array() ) {
+		
+	}
 
 	/**
 	 * Gets a list of events in HTML for a page.
@@ -335,7 +369,9 @@ abstract class WPT_Listing {
 	 * @param 	array $args 	See WPT_Listing::get_html() for possible values.
 	 * @return 	string			The HTML.
 	 */
-	abstract protected function get_html_for_page( $args = array() );
+	protected function get_html_for_page( $args = array() ) {
+		
+	}
 
 	/**
 	 * Gets a list of events.
@@ -344,24 +380,7 @@ abstract class WPT_Listing {
 	 *
 	 * @return array An array of WPT_Event objects.
 	 */
-	abstract function get();
-
-	/**
-	 * @deprecated 0.10
-	 * @see WPT_Listing::get_html()
-	 */
-	public function html( $args = array() ) {
-		_deprecated_function( 'WPT_Listing::html()', '0.10', 'WPT_Listing::get_html()' );
-		return $this->get_html( $args );
-	}
-
-	/**
-	 * @deprecated 0.10
-	 * @see WPT_Listing::get()
-	 */
-	public function load( $filters = array() ) {
-		_deprecated_function( 'WPT_Listing::load()', '0.10', 'WPT_Listing::get()' );
-		return $this->get( $filters );
+	function get($filters = array()) {
+		
 	}
 }
-?>

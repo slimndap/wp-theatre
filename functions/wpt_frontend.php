@@ -1,4 +1,8 @@
 <?php
+/**
+ * WPT_Frontend class.
+ * @internal
+ */
 class WPT_Frontend {
 	function __construct() {
 		add_action( 'init', array( $this, 'enqueue_scripts' ) );

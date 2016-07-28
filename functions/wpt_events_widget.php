@@ -1,12 +1,12 @@
 <?php
-/*
+/**
  * Theater Events widget.
  * Displays all upcoming events in a widget.
  *
  * @since	0.?
  * @since	0.12.1	Added filters to the widget() method.
+ * @internal
  */
-
 class WPT_Events_Widget extends WP_Widget {
 
 	function __construct() {

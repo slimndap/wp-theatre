@@ -15,6 +15,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
  *
  * @package	Theater/Productions
  * @group	Admin
+ * @internal
  */
 class WPT_Productions_List_Table extends WP_List_Table {
 

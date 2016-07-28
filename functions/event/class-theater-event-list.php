@@ -1,35 +1,51 @@
 <?php
 /**
- * Manages production listings.
+ * Events list.
  *
- * Uses this class to compile lists of productions or fully formatted HTML listings of productions.
+ * Use this class to get an array of events or a fully formatted HTML list of events.
+ *
+ * ## Basic usage
+ * <code>
+ * // Retrieve a list of all events.
+ * $events = new Theater_Event_List;
+ * foreach ( $events() as $event ) {
+ *		// $event is a Theater_Event object.	 
+ *		echo $event->title();
+ * }
+ * </code>
+ *
+ * <code>
+ * // Output a formatted list of all events.
+ * $events = new Theater_Event_List;
+ * echo $events;
+ * </code>
+ *
+ * ### Filtered lists
+ * You can pass extra filter arguments to customize the events that are in the list:
+ *
+ * <code>
+ * // Retrieve a list of events with upcoming dates.
+ * $events = new Theater_Event_List( array( 'start' => 'now' ) );
+ * </code>
+ *
+ * See [Theater_Event_List::get()](#_get) for a full list of accepted arguments.
+ *
+ * ### Customized output
+ * You can also formatting arguments to customize the HTML output of the list:
+ *
+ * <code>
+ * // Retrieve a list of events with upcoming dates.
+ * $dates = new Theater_Event_List( array( 'start' => 'now' ) );
+ * </code>
+ *
+ * See [Theater_Event_List::get_html()](#_get_html) for a full list of accepted arguments. 
  *
  * @since 	0.5
  * @since 	0.10	Complete rewrite, while maintaining backwards compatibility.
- * @package	Theater/Productions
+ * @package	Theater/Events
  */
 
-class WPT_Productions extends WPT_Listing {
-
-	/**
-	 * Adds the page selectors for seasons, categories, days, months and years to the public query vars.
-	 *
-	 * Necessary to make `$wp_query->query_vars['wpt_category']` work.
-	 *
-	 * @since 	0.10
-	 * @since	0.13	Added new query vars for days, months and years.
-	 *
-	 * @param 	array 	$vars	The current public query vars.
-	 * @return 	array			The new public query vars.
-	 */
-	public function add_query_vars( $vars ) {
-		$vars[] = 'wpt_day';
-		$vars[] = 'wpt_month';
-		$vars[] = 'wpt_year';
-		$vars[] = 'wpt_season';
-		$vars[] = 'wpt_category';
-		return $vars;
-	}
+class Theater_Event_List extends Theater_List {
 
 	/**
 	 * Gets all categories with productions.

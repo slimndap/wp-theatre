@@ -2,40 +2,13 @@
 /**
  * WPT_Production class.
  *
- * @package	Theater/Event
+ * @package	Theater/Events
  */
 class Theater_Event extends Theater_Item {
 
 	const name = 'event';	
 	const post_type_name = 'wp_theatre_prod';
 
-	/**
-	 * Gets the value for an event field.
-	 * 
-	 * @since	0.16
-	 * @uses	Theater_Event_Field::get() to retrieve the value for an event field.
-	 * @param 	string 	$name		The field name.
-	 * @return	mixed
-	 */
-	function get_field( $name ) {
-		$field = new Theater_Event_Field($name, NULL, $this);
-		return $field->get();		
-	}
-
-	/**
-	 * Gets the HTML output for an event field.
-	 * 
-	 * @since	0.16
-	 * @uses	Theater_Event_Field()::get_html() to retrieve the HTML output for an event field.
-	 * @param 	string 								$name		The field name.
-	 * @param 	WPT_Template_Placeholder_Filter[] 	$filters 	An array of filters to apply to the value if the field.
-	 * @return	string											The HTML output for a field.
-	 */
-	function get_field_html( $name, $filters = array() ) {
-		$field = new Theater_Event_Field($name, $filters, $this);
-		return $field->get_html();	
-	}
-	
 	function get_fields() {
 		
 		$fields = array(
@@ -43,20 +16,37 @@ class Theater_Event extends Theater_Item {
 			'cities',
 			'content',
 			'dates',
-			'event_dates',
 			'dates_summary',
+			'event_dates',
 			'excerpt',
 			'prices',
+			'summary',
 		);
 		
 		return $fields;
 	}
 
+	/**
+	 * Gets the categories of an event.
+	 * 
+	 * @since	0.x
+	 * @todo	The results from wp_get_post_categories() aren’t cached which will result in a db call beign made 
+	 *			every time this function is called. Use this function with care. For performance, functions like 
+	 *			get_the_category() should be used to return categories attached to a post.
+	 * @return	WP_Category[] 	The categories of an event
+	 */
 	function get_categories() {
 		$categories = wp_get_post_categories( $this->ID );
 		return $categories;
 	}
 	
+	/**
+	 * Gets the HTML for the categories of an event.
+	 * 
+	 * @since	0.16
+	 * @uses	Theater_Item::get_field() to get the list of categories for an event.
+	 * @return 	string	The HTML for the categories of an event.
+	 */
 	function get_categories_html() {
 		
 		$categories = $this->get_field('categories');
@@ -80,26 +70,18 @@ class Theater_Event extends Theater_Item {
 	}
 
 	/**
-	 * Production cites.
-	 *
-	 * Returns a summary of the cities of the production events as plain text or as an HTML element.
+	 * Gets the cities of an event.
 	 *
 	 * @since 0.4
-	 *
-	 * @param array $args {
-	 *     @type bool $html Return HTML? Default <false>.
-	 * }
-	 * @return string URL or HTML.
+	 * @uses	Theater_Event::get_event_dates() to get a list of upcoming dates for an event.
+	 * @uses	Theater_Item::get_field() to get the city of an event date.
+	 * @return	string	The cities of an event.
 	 */
 	function get_cities() {
 		
 		$cities = array();
 
-		$events = $this->upcoming();
-		
-		$dates = new Theater_Dates( array( 'start' => 'now' ) );
-		
-		foreach($dates->get() as $date) {
+		foreach( $this->get_event_dates(array( 'start' => 'now' ) ) as $date) {
 			$city = $date->get_field('city');
 			$city = trim( ucwords( $city ) );
 			if (!empty($city)) {
@@ -130,13 +112,25 @@ class Theater_Event extends Theater_Item {
 		return $cities_text;
 	}
 	
-	function get_content() {
-		
-		$content = $this->post()->post_content;
+	/**
+	 * Gets the post content of an event.
+	 * 
+	 * @since	0.x
+	 * @uses	Theater_Item::get_post() to get the post object of an event.
+	 * @return	string	The post content of an event.
+	 */
+	function get_content() {		
+		$content = $this->get_post()->post_content;
 		return $content;
-
 	}
 	
+	/**
+	 * Gets the HTML for the post content of an event.
+	 * 
+	 * @since	0.16
+	 * @uses	Theater_Item::get_post_type() to add the post type to the classes of the HTML output.
+	 * @return	string	The HTML for the post content of an event.
+	 */
 	function get_content_html() {
 		global $wp_theatre;
 		/*
@@ -162,7 +156,7 @@ class Theater_Event extends Theater_Item {
 	}
 
 	/**
-	 * Gets the upcoming production dates.
+	 * Gets the upcoming event dates.
 	 *
 	 * @since	0.4
 	 * @since	0.15.3	Moved HTML output to seperate method.
@@ -170,36 +164,32 @@ class Theater_Event extends Theater_Item {
 	 *					Now returns an array instead of a summary (string).
 	 * @since	0.15.7	Make sure that the keys are reset of the returned array.
 	 *					Fixes #199.
+	 * @uses	Theater_Event::get_event_dates() to get a list of upcoming dates for an event.
+	 * @uses	Theater_Item::get_field() to get the startdate of an event date.
 	 * @return	array	The upcoming production dates.
 	 */
 	function get_dates() {
 
 		$dates = array();
 
-		foreach ( $this->events( array( 'start' => 'now' ) ) as $event ) {
-			$dates[] = $event->get_field('startdate');
+		foreach ( $this->get_event_dates( array( 'start' => 'now' ) ) as $date ) {
+			$dates[] = $date->get_field('startdate');
 		}
 
 		// Remove duplicate dates _without_ preserving keys.
-		$dates = array_values(array_unique( $dates ));
-
-		/**
-		 * Filter the upcoming production dates.
-		 * @since	0.15.3
-		 * @param	array			$dates		The upcoming production dates.
-		 * @param	WPT_Production	$production	The production.
-		 */
-		$dates = apply_filters( 'wpt/production/dates', $dates, $this );
+		$dates = array_values( array_unique( $dates ) );
 
 		return $dates;
 	}
 
 	/**
-	 * Gets the HTML for the upcoming production dates.
+	 * Gets the HTML for the upcoming event dates.
 	 *
 	 * @since	0.15.3
-	 * @param	array	$filters	The template filters to apply.
-	 * @return	string				The HTML for the upcoming production dates.
+	 * @uses	Theater_Item::get_post_type() to add the post type to the classes of the HTML output.
+	 * @uses	Theater_Item::get_field() to get the dates summary of an event date.
+	 * @param 	WPT_Template_Placeholder_Filter[] 	$filters 	An array of filters to apply to the value if the field.
+	 * @return	string				The HTML for the upcoming event dates.
 	 */
 	function get_dates_html( $filters = array() ) {
 
@@ -209,29 +199,23 @@ class Theater_Event extends Theater_Item {
 
 		$html = ob_get_clean();
 
-		/**
-		 * Filter the HTML for the upcoming production dates.
-		 * @since	0.15.3
-		 * @param	string			$html		The HTML for the upcoming production dates.
-		 * @param	WPT_Production	$production	The production.
-		 */
-		$html = apply_filters( 'wpt/production/dates/html', $html, $this );
-
 		return $html;
 	}
 
 	/**
-	 * Gets the summary for the upcoming production dates.
+	 * Gets the summary of the upcoming event dates of an event.
 	 *
 	 * @since	0.15.3
 	 * @since	0.15.7	Fix: A production with both historic and multiple upcoming events 
 	 *					showed the first upcoming event as the enddate.
 	 *					Fixes #200.
-	 * @return	string	The summary for the upcoming production dates.
+	 * @uses	Theater_Item::get_field() to get all upcoming event dates of an event.
+	 * @uses	Theater_Event::get_event_dates() to get all past event dates of an event.
+	 * @return	string	The summary for the upcoming event dates.
 	 */
 	function get_dates_summary() {
 
-		$dates = $this->dates();
+		$dates = $this->get_field('dates');
 
 		if ( empty( $dates ) ) {
 			return '';
@@ -241,8 +225,7 @@ class Theater_Event extends Theater_Item {
 			'end' => 'now',
 			'production' => $this->ID,
 		);
-		$old_events_obj = new Theater_Dates($old_dates_args);
-		$old_events = $old_events_obj->get();
+		$old_events = $this->get_event_dates($old_dates_args);
 
 		if ( empty( $old_events ) ) {
 			if ( 1 == count( $dates ) ) {
@@ -256,17 +239,18 @@ class Theater_Event extends Theater_Item {
 			$dates_summary = sprintf( _x( 'until %s', 'production dates', 'theatre' ), $dates[count( $dates ) -1] );
 		}
 
-		/**
-		 * Filter the summary for the upcoming production dates.
-		 * @since	0.15.3
-		 * @param	string			$dates_summary	The summary for the upcoming production dates.
-		 * @param	WPT_Production	$production		The production.
-		 */
-		$dates_summary = apply_filters( 'wpt/production/dates/summary', $dates_summary, $this );
-
 		return $dates_summary;
 	}
 
+	/**
+	 * Gets the event dates of an event.
+	 * 
+	 * @since	0.16
+	 * @uses	Theater_Event_Date_List::get() to get the event dates of an event.
+	 * @param 	array 	$filters An array of filter arguments. Optional.
+	 * 					See	[Theater_Event_Date_List::get()](class-Theater_Event_Date_List.html#_get) for possible filter arguments.
+	 * @return void
+	 */
 	function get_event_dates( $filters = array() ) {
 
 		$defaults = array(
@@ -276,18 +260,13 @@ class Theater_Event extends Theater_Item {
 
 		$filters = wp_parse_args( $filters, $defaults );
 		
-		$dates = new Theater_Dates($filters);
+		$dates = new Theater_Event_Date_List($filters);
 		return $dates->get();
-
-		if ( ! isset( $this->events ) ) {
-			$this->events = $wp_theatre->events->get( $filters );
-		}
-
-		return $this->events;
+		
 	}
 
 	/**
-	 * Production excerpt.
+	 * Gets the event excerpt.
 	 *
 	 * Returns an excerpt of the production page as plain text or as an HTML element.
 	 *
@@ -296,14 +275,12 @@ class Theater_Event extends Theater_Item {
 	 * @param array $args {
 	 *     @type bool $html Return HTML? Default <false>.
 	 * }
-	 * @return string URL or HTML.
+	 * @return 	string 	The event excerpt.
 	 */
 	function excerpt( $args = array() ) {
-		global $wp_theatre;
 
 		$defaults = array(
 			'words' => 15,
-			'filters' => array(),
 		);
 
 		$args = wp_parse_args( $args, $defaults );
@@ -317,6 +294,13 @@ class Theater_Event extends Theater_Item {
 		return $excerpt;
 	}
 	
+	/**
+	 * Gets the HTML for the excerpt of an event.
+	 * 
+	 * @since	0.16
+	 * @param 	array $filters (default: array())
+	 * @return 	void
+	 */
 	function get_excerpt_html( $filters = array() ) {
 		$value = $this->excerpt();
 		ob_start();
@@ -480,15 +464,6 @@ class Theater_Event extends Theater_Item {
 			$prices_summary .= number_format_i18n( (float) min( $prices ), 2 );
 		}
 
-		/**
-		 * Filter the summary of the prices for the production.
-		 *
-		 * @since	0.15.3
-		 * @param 	string	 		$prices_summary	The current summary.
-		 * @param 	WPT_Production	$production		The production.
-		 */
-		$prices_summary = apply_filters( 'wpt/production/prices/summary',$prices_summary, $this );
-
 		return $prices_summary;
 	}
 
@@ -524,16 +499,15 @@ class Theater_Event extends Theater_Item {
 	 *
 	 * @return object WPT_Season.
 	 */
-	function season() {
-		if ( ! isset( $this->season ) ) {
-			$season = get_post_meta( $this->ID,'wp_theatre_season',true );
-			if ( ! empty( $season ) ) {
-				$this->season = new WPT_Season( $season );
-			} else {
-				$this->season = false;
-			}
+	function get_season() {
+		$season_id = get_post_meta( $this->ID,'wp_theatre_season',true );
+		if ( ! empty( $season_id ) ) {
+			$season = new WPT_Season( $season_id );
+		} else {
+			$season = false;
 		}
-		return $this->season;
+
+		return $season;
 	}
 
 	/**
@@ -545,9 +519,6 @@ class Theater_Event extends Theater_Item {
 	 *
 	 * @since 0.4
 	 *
-	 * @param array $args {
-	 *     @type bool $html Return HTML? Default <false>.
-	 * }
 	 * @return string URL or HTML.
 	 */
 	function get_summary() {
@@ -655,89 +626,13 @@ class Theater_Event extends Theater_Item {
 	 * }
 	 * @return string text or HTML.
 	 */
-	function title( $args = array() ) {
-		global $wp_theatre;
-
-		$defaults = array(
-			'html' => false,
-			'filters' => array(),
-		);
-		$args = wp_parse_args( $args, $defaults );
-
-		if ( ! isset( $this->title ) ) {
-			$post = $this->post();
-			if ( empty( $post ) ) {
-				$title = '';
-			} else {
-				$title = $this->post()->post_title;
-			}
-			$this->title = apply_filters( 'wpt_production_title', $title, $this );
-		}
-
-		if ( $args['html'] ) {
-			$html = '';
-			$html .= '<div class="'.self::post_type_name.'_title">';
-			$html .= $this->apply_template_filters( $this->title(), $args['filters'] );
-			$html .= '</div>';
-			return apply_filters( 'wpt_production_title_html', $html, $this );
-		} else {
-			return $this->title;
-		}
+	function get_title( $args = array() ) {
+		$title = get_the_title( $this->ID );
+		return $title;
 	}
 
 	/**
-	 * Returns value of a custom field.
-	 *
-	 * @since 0.8
-	 *
-	 * @param array $args {
-	 *     @type string $field custom field name.
-	 * }
-	 * @return string.
-	 */
-	function custom( $field, $args = array() ) {
-		global $wp_theatre;
-
-		$defaults = array(
-			'html' => false,
-			'filters' => array(),
-		);
-		$args = wp_parse_args( $args, $defaults );
-
-		if ( ! isset( $this->{$field} ) ) {
-			$this->{$field} = apply_filters(
-				'wpt_production_'.$field,
-				get_post_meta( $this->ID, $field, true ),
-				$field,
-				$this
-			);
-		}
-
-		if ( $args['html'] ) {
-			$html = '';
-			$html .= '<div class="'.self::post_type_name.'_'.$field.'">';
-			$html .= $this->apply_template_filters( $this->{$field}, $args['filters'] );
-			$html .= '</div>';
-
-			return apply_filters( 'wpt_production_'.$field.'_html', $html, $this );
-		} else {
-			return $this->{$field};
-		}
-	}
-
-	function upcoming() {
-		global $wp_theatre;
-		if ( ! isset( $this->upcoming ) ) {
-			$filters = array(
-				'upcoming' => true,
-			);
-			$this->upcoming = $this->events( $filters );
-		}
-		return $this->upcoming;
-	}
-
-	/**
-	 * Gets the HTML for a production.
+	 * Gets the HTML for an event.
 	 *
 	 * @since 	0.4
 	 * @since 	0.10.8	Added a filter to the default template.
@@ -787,38 +682,22 @@ class Theater_Event extends Theater_Item {
 	}
 
 	/**
-	 * The custom post as a WP_Post object.
-	 *
-	 * It can be used to access all properties and methods of the corresponding WP_Post object.
-	 *
-	 * Example:
-	 *
-	 * $event = new WPT_Event();
-	 * echo WPT_Event->post()->post_title();
-	 *
-	 * @since 0.3.5
-	 *
-	 * @return mixed A WP_Post object.
+	 * @deprecated 	0.x
 	 */
-	public function post() {
-		return $this->get_post();
-	}
-
-	private function get_post() {
-		if ( ! isset( $this->post ) ) {
-			$this->post = get_post( $this->ID );
-		}
-		return $this->post;
-	}
-
 	function render() {
 		return $this->html();
 	}
 
+	/**
+	 * @deprecated 	0.16
+	 */
 	function events( $filters = array() ) {
 		return $this->get_event_dates( $filters );
 	}
 
+	/**
+	 * @deprecated 	0.16
+	 */
 	function past() {
 		global $wp_theatre;
 		if ( ! isset( $this->past ) ) {
@@ -829,6 +708,20 @@ class Theater_Event extends Theater_Item {
 			$this->past = $wp_theatre->events->get( $filters );
 		}
 		return $this->past;
+	}
+
+	/**
+	 * @deprecated 	0.16
+	 */
+	function upcoming() {
+		global $wp_theatre;
+		if ( ! isset( $this->upcoming ) ) {
+			$filters = array(
+				'upcoming' => true,
+			);
+			$this->upcoming = $this->events( $filters );
+		}
+		return $this->upcoming;
 	}
 
 }

@@ -1,4 +1,8 @@
 <?php
+	/**
+	 * WPT_Integration_Wpseo class.
+	 * @internal
+	 */
 	class WPT_Integration_Wpseo {
 	
 		function __construct() {

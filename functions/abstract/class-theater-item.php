@@ -125,7 +125,7 @@ abstract class Theater_Item {
 		}
 		return $value;
 	}
-
+	
 	/**
 	 * Gets the value for a field.
 	 * 
@@ -133,7 +133,10 @@ abstract class Theater_Item {
 	 * @param 	string 	$name		The field name.
 	 * @return	mixed
 	 */
-	abstract function get_field( $name );
+	function get_field( $name ) {
+		$field = new Theater_Event_Field($name, NULL, $this);
+		return $field->get();		
+	}
 	
 	/**
 	 * Gets the HTML output for a field.
@@ -143,8 +146,18 @@ abstract class Theater_Item {
 	 * @param 	array 	$filters 	(default: array())
 	 * @return	string				The HTML output for a field.
 	 */
-	abstract function get_field_html( $name, $filters = array() );
+	function get_field_html( $name, $filters = array() ) {
+		$field = new Theater_Event_Field($name, $filters, $this);
+		return $field->get_html();	
+	}
 	
+	/**
+	 * Gets a list of of available fields for this item.
+	 * 
+	 * @since	0.16
+	 * @abstract
+	 * @return 	array
+	 */
 	abstract function get_fields();
 	
 	/**
@@ -178,6 +191,14 @@ abstract class Theater_Item {
 		return static::post_type_name;
 	}
 	
+	/**
+	 * Checks if this item has a certain field.
+	 * 
+	 * @since	0.16
+	 * @param	string	$name
+	 * @uses	Theater_Item::get_fields() to get all fields of an item.
+	 * @return 	bool
+	 */
 	function has_field( $name ) {
 		$has_field = in_array( $name, $this->get_fields() );
 		return $has_field;

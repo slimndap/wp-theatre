@@ -1,4 +1,8 @@
 <?php
+/**
+ * WPT_Admin class.
+ * @internal
+ */
 class WPT_Admin {
 	function __construct() {
 		// Hooks (only in admin screens)

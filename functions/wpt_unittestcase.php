@@ -2,6 +2,7 @@
 /**
  * Base WPT Unittests class.
  * @since	0.15.3
+ * @internal
  */
 
 class WPT_UnitTestCase extends WP_UnitTestCase {

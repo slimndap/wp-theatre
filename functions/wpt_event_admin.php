@@ -3,6 +3,7 @@
 /**
  * Customizes the default admin pages for events.
  * @since	0.13
+ * @internal
  */
 class WPT_Event_Admin {
 

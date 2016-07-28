@@ -7,7 +7,7 @@ class WPT_Test extends WP_UnitTestCase {
 		
 		parent::setUp();
 		
-		$this->wp_theatre = new WP_Theatre();
+		$this->wp_theatre = Theater();
 		
 		$season_args = array(
 			'post_type'=>WPT_Season::post_type_name
@@ -752,8 +752,10 @@ class WPT_Test extends WP_UnitTestCase {
 	function test_theatre_class_is_global() {
 		global $wp_theatre;
 		$this->assertTrue( 
-			is_object($wp_theatre) && 
-			get_class($wp_theatre) == 'WP_Theatre'
+			is_object($wp_theatre)
+		);
+		$this->assertTrue( 
+			get_class($wp_theatre) == 'Theater'
 		);
 	}
 	
@@ -1096,14 +1098,14 @@ class WPT_Test extends WP_UnitTestCase {
 	}
 	
 	function test_date_title() {
-		$date = new Theater_Date($this->upcoming_event_with_prices);
+		$date = new Theater_Event_Date($this->upcoming_event_with_prices);
 		$actual = $date->html();
 		$expected = get_the_title($this->production_with_upcoming_event);
 		$this->assertContains($expected, $actual);		
 	}
 	
 	function test_date_title_html() {
-		$date = new Theater_Date($this->upcoming_event_with_prices);
+		$date = new Theater_Event_Date($this->upcoming_event_with_prices);
 		$title = get_the_title($this->production_with_upcoming_event);
 		$permalink = get_permalink($this->production_with_upcoming_event);
 		
@@ -1128,7 +1130,7 @@ class WPT_Test extends WP_UnitTestCase {
 	}
 
 	function test_date_city() {
-		$dates = new Theater_Dates();
+		$dates = new Theater_Event_Date_List();
 		$actual = $dates->get_html();
 		$expected = '<div class="wp_theatre_event_city">Den Haag</div>';
 		$this->assertContains($expected, $actual);

@@ -1,4 +1,8 @@
 <?php
+/**
+ * WPT_Cart class.
+ * @internal
+ */
 class WPT_Cart {
 	function __construct() {
 		add_action('init',array($this,'init'));

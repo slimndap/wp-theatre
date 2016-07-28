@@ -5,6 +5,7 @@
  *
  * @package	Theater/Setup
  * @since	0.16
+ * @internal
  */
 class Theater_Setup_Language {
 

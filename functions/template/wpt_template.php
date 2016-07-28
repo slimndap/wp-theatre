@@ -11,6 +11,7 @@
  *
  * @since 	0.12.1
  * @package	Theater/Template
+ * @internal
  */
 abstract class WPT_Template {
 

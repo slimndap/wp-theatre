@@ -8,7 +8,7 @@
 		
 		parent::setUp();
 		
-		$this->wp_theatre = new WP_Theatre();
+		$this->wp_theatre = $wp_theatre;
 		
 		$season_args = array(
 			'post_type'=>WPT_Season::post_type_name

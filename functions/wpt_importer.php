@@ -9,6 +9,7 @@
 	 * Always make backups!
 	 *
 	 * @since 0.10
+	 * @internal
 	 */
 	class WPT_Importer {
 		

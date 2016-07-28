@@ -1,30 +1,30 @@
 <?php
 
-/** 
- * The Theater Date class handles individual event dates.
+/**
+ * The Theater Event Date class handles individual event dates.
  *
- * Each event can have one or more dates.
+ * Each event can have one or more event dates.
  *
  * ##Usage
  *
  * <code>
  * // Output an event date as HTML:
- * $date = new Theater_Date( 123 );
+ * $date = new Theater_Event_Date( 123 );
  * echo $date;
  * </code>
  * <code>
  * // Output an event date as HTML with a custom template:
- * $date = new Theater_Date( 123, '{{title}}{{startdate}}{{city}}{{tickets}}' );
+ * $date = new Theater_Event_Date( 123, '{{title}}{{startdate}}{{city}}{{tickets}}' );
  * echo $date;
  * </code>
- * <code> 
+ * <code>
  * // Get the value of an event date field:
- * $date = new Theater_Date( 123 );
+ * $date = new Theater_Event_Date( 123 );
  * $startdate = $date->startdate();
  * </code>
- * <code> 
+ * <code>
  * // Output the value of an event date field as HTML:
- * $date = new Theater_Date( 123 );
+ * $date = new Theater_Event_Date( 123 );
  * echo $date->startdate;
  * </code>
  *
@@ -32,13 +32,13 @@
  *
  * ## HTML template
  *
- * @package	Theater/Date
+ * @package	Theater/Events
  *
  */
 
-class Theater_Date extends Theater_Item {
+class Theater_Event_Date extends Theater_Item {
 
-	const name = 'date';	
+	const name = 'date';
 	const post_type_name = 'wp_theatre_event';
 
 	const tickets_status_onsale = '_onsale';
@@ -46,36 +46,9 @@ class Theater_Date extends Theater_Item {
 	const tickets_status_cancelled = '_cancelled';
 	const tickets_status_soldout = '_soldout';
 	const tickets_status_other = '_other';
-	
-	/**
-	 * Gets the value for an event date field.
-	 * 
-	 * @since	0.16
-	 * @uses	Theater_Date_Field::get() to retrieve the value for an event date field.
-	 * @param 	string 	$name		The field name.
-	 * @return	mixed
-	 */
-	function get_field( $name ) {
-		$field = new Theater_Date_Field($name, NULL, $this);
-		return $field->get();		
-	}
 
-	/**
-	 * Gets the HTML output for an event date field.
-	 * 
-	 * @since	0.16
-	 * @uses	Theater_Date_Field()::get_html() to retrieve the HTML output for an event date field.
-	 * @param 	string 								$name		The field name.
-	 * @param 	WPT_Template_Placeholder_Filter[] 	$filters 	An array of filters to apply to the value if the field.
-	 * @return	string											The HTML output for a field.
-	 */
-	function get_field_html( $name, $filters = array() ) {
-		$field = new Theater_Date_Field($name, $filters, $this);
-		return $field->get_html();	
-	}
-	
 	function get_fields() {
-		
+
 		$fields = array(
 			'duration',
 			'enddate',
@@ -93,41 +66,40 @@ class Theater_Date extends Theater_Item {
 			'tickets_html',
 			'tickets_status',
 			'tickets_url',
-			'title',
 			'venue',
-			'city',			
+			'city',
 		);
-		
+
 		return $fields;
 	}
-	
+
 	/**
 	 * Gets the duration of an event date.
-	 * 
+	 *
 	 * @since	0.x?
-	 * @uses	Theater_Date::get_field() to get the start of an event date.
-	 * @uses	Theater_Date::get_field() to get the end of an event date.
+	 * @uses	Theater_Event_Date::get_field() to get the start of an event date.
+	 * @uses	Theater_Event_Date::get_field() to get the end of an event date.
 	 * @return	string	The duration of an event date.
 	 */
 	function get_duration() {
-		
-		$startdate = $this->get_field('startdatetime');
-		$enddate = $this->get_field('enddatetime');
 
-		if (empty( $enddate )) {
+		$startdate = $this->get_field( 'startdatetime' );
+		$enddate = $this->get_field( 'enddatetime' );
+
+		if ( empty( $enddate ) ) {
 			return '';
 		}
-		
-		if ($enddate < $startdate) {
+
+		if ( $enddate < $startdate ) {
 			return '';
 		}
-		
+
 		$seconds = $enddate - $startdate;
 		$minutes = (int) $seconds / 60;
 		$value = $minutes.' '._n( 'minute','minutes', $minutes, 'theatre' );
-		
+
 		return $value;
-		
+
 	}
 
 	/**
@@ -136,14 +108,14 @@ class Theater_Date extends Theater_Item {
 	 * @since	0.12
 	 * @since	0.12.7	Now returns <false> is no endate is set.
 	 * 					See [#165](https://github.com/slimndap/wp-theatre/issues/165).
-	 * @uses	Theater_Date::get_field() to get the end of an event date.
+	 * @uses	Theater_Event_Date::get_field() to get the end of an event date.
 	 * @return	string 	The event enddate.
 	 *					Returns <false> if no endate is set.
 	 */
 	function get_enddate() {
-		
+
 		$enddate = false;
-		if ( $datetime = $this->get_field('enddatetime') ) {
+		if ( $datetime = $this->get_field( 'enddatetime' ) ) {
 			$enddate = date_i18n(
 				get_option( 'date_format' ),
 				$datetime + get_option( 'gmt_offset' ) * 3600
@@ -156,31 +128,31 @@ class Theater_Date extends Theater_Item {
 	 * Gets the HTML for the event date enddate.
 	 *
 	 * @since	0.12
-	 * @uses	Theater_Date::get_post_type() to add the post type to the classes of the HTML output.
-	 * @uses	Theater_Date::get_field() to get the raw end time of an event date for use with the 'date' filter.
-	 * @uses	Theater_Date::get_field() to get the end date of an event date.
+	 * @uses	Theater_Item::get_post_type() to add the post type to the classes of the HTML output.
+	 * @uses	Theater_Event_Date::get_field() to get the raw end time of an event date for use with the 'date' filter.
+	 * @uses	Theater_Event_Date::get_field() to get the end date of an event date.
 	 * @uses	WPT_Template_Placeholder_Filter::apply_to() to apply filters to the field value.
 	 * @param 	WPT_Template_Placeholder_Filter[] 	$filters 	An array of filters to apply to the value if the field.
-	 * @return 	sring				The HTML for the event date enddate.
+	 * @return 	string				The HTML for the event date enddate.
 	 */
 	function get_enddate_html( $filters = array() ) {
 
 		ob_start();
 		?><div class="<?php echo $this->get_post_type();?>_date <?php echo $this->get_post_type(); ?>_enddate"><?php
-				
-		if ($value = $this->get_field('enddate')) {
 
-			foreach ( $filters as $filter ) {
-				if ( 'date' == $filter->name ) {
-					$value = $filter->apply_to( $this->get_field('enddatetime'), $this );
-				} else {
-					$value = $filter->apply_to( $value, $this );
-				}
-			}
-			
-			echo $value;
-			
+if ( $value = $this->get_field( 'enddate' ) ) {
+
+	foreach ( $filters as $filter ) {
+		if ( 'date' == $filter->name ) {
+			$value = $filter->apply_to( $this->get_field( 'enddatetime' ), $this );
+		} else {
+			$value = $filter->apply_to( $value, $this );
 		}
+	}
+
+	echo $value;
+
+}
 
 		?></div><?php
 
@@ -193,52 +165,52 @@ class Theater_Date extends Theater_Item {
 	 * Gets the event date endtime.
 	 *
 	 * @since	0.12
-	 * @uses	Theater_Date::get_field() to get the end of an event date.
+	 * @uses	Theater_Event_Date::get_field() to get the end of an event date.
 	 * @return	string|bool The event endtime.
 	 *						Returns <false> if no endate is set.
 	 */
 	function get_endtime() {
-		
+
 		$endtime = false;
-		if ( $datetime = $this->get_field('enddatetime') ) {
+		if ( $datetime = $this->get_field( 'enddatetime' ) ) {
 			$endtime = date_i18n(
 				get_option( 'time_format' ),
 				$datetime + get_option( 'gmt_offset' ) * 3600
 			);
-		}		
+		}
 		return $endtime;
-		
+
 	}
 
 	/**
 	 * Gets the HTML for the event endtime.
 	 *
 	 * @since	0.12
-	 * @uses	Theater_Date::get_post_type() to add the post type to the classes of the HTML output.
-	 * @uses	Theater_Date::get_field() to get the raw end time of an event date for use with the 'date' filter.
-	 * @uses	Theater_Date::get_field() to get the end time of an event date.
+	 * @uses	Theater_Item::get_post_type() to add the post type to the classes of the HTML output.
+	 * @uses	Theater_Event_Date::get_field() to get the raw end time of an event date for use with the 'date' filter.
+	 * @uses	Theater_Event_Date::get_field() to get the end time of an event date.
 	 * @uses	WPT_Template_Placeholder_Filter::apply_to() to apply filters to the field value.
 	 * @param 	WPT_Template_Placeholder_Filter[] 	$filters 	An array of filters to apply to the value if the field.
-	 * @return 	sring				The HTML for the event endtime.
+	 * @return 	string				The HTML for the event endtime.
 	 */
 	function get_endtime_html( $filters = array() ) {
-		
+
 		ob_start();
 		?><div class="<?php echo $this->get_post_type();?>_time <?php echo $this->get_post_type(); ?>_endtime"><?php
-				
-		if ($value = $this->get_field('endtime')) {
 
-			foreach ( $filters as $filter ) {
-				if ( 'date' == $filter->name ) {
-					$value = $filter->apply_to( $this->get_field('enddatetime'), $this );
-				} else {
-					$value = $filter->apply_to( $value, $this );
-				}
-			}
-			
-			echo $value;
-			
+if ( $value = $this->get_field( 'endtime' ) ) {
+
+	foreach ( $filters as $filter ) {
+		if ( 'date' == $filter->name ) {
+			$value = $filter->apply_to( $this->get_field( 'enddatetime' ), $this );
+		} else {
+			$value = $filter->apply_to( $value, $this );
 		}
+	}
+
+	echo $value;
+
+}
 
 		?></div><?php
 
@@ -246,7 +218,7 @@ class Theater_Date extends Theater_Item {
 
 		return $html;
 	}
-	
+
 	/**
 	 * Gets the event for an event date.
 	 *
@@ -258,11 +230,11 @@ class Theater_Date extends Theater_Item {
 	 * @return 	WPT_Production|bool The event or <false> if no event is set.
 	 */
 	function get_event() {
-		
+
 		$event_id = get_post_meta( $this->ID, WPT_Production::post_type_name, true );
 
 		// Bail if no production ID is set.
-		if (empty($event_id)) {
+		if ( empty( $event_id ) ) {
 			return false;
 		}
 
@@ -270,13 +242,13 @@ class Theater_Date extends Theater_Item {
 		 * Bail if production doesn't exist.
 		 * See: https://tommcfarlin.com/wordpress-post-exists-by-id/
 		 */
-		if (FALSE === get_post_status( $event_id )) {
+		if ( false === get_post_status( $event_id ) ) {
 			return false;
 		}
-		
+
 		$event = new Theater_Event( $event_id );
 		return $event;
-		
+
 	}
 
 	/**
@@ -319,7 +291,7 @@ class Theater_Date extends Theater_Item {
 	 * @return 	string	The HTML for the event permalink.
 	 */
 	function permalink_html( $args = array() ) {
-		
+
 		$args['html'] = true;
 		$html = $this->event()->permalink( $args );
 
@@ -341,16 +313,16 @@ class Theater_Date extends Theater_Item {
 	 * @return 	array 	The event prices.
 	 */
 	function get_prices() {
-		
-		$prices= array();
+
+		$prices = array();
 
 		$prices_named = get_post_meta( $this->ID,'_wpt_event_tickets_price' );
 
-		foreach ($prices_named as $price_named) {
+		foreach ( $prices_named as $price_named ) {
 			$price_parts = explode( '|',$price_named );
-			$prices[] = (float) $price_parts[0];		
+			$prices[] = (float) $price_parts[0];
 		}
-		
+
 		return $prices;
 	}
 
@@ -358,15 +330,15 @@ class Theater_Date extends Theater_Item {
 	 * Gets the HTML for the event prices.
 	 *
 	 * @since 	0.10.14
-	 * @uses	Theater_Date::get_field_html() to get a summary of the prices for an event date.
-	 * @uses	Theater_Date::get_post_type() to add the post type to the classes of the HTML output.
+	 * @uses	Theater_Event_Date::get_field_html() to get a summary of the prices for an event date.
+	 * @uses	Theater_Item::get_post_type() to add the post type to the classes of the HTML output.
 	 * @return 	string	The HTML for the event prices.
 	 */
 	public function get_prices_html() {
 
 		$html = '';
 
-		$prices_summary_html = $this->get_field_html('prices_summary');
+		$prices_summary_html = $this->get_field_html( 'prices_summary' );
 
 		if ( '' != $prices_summary_html ) {
 			$html = '<div class="'.$this->get_post_type().'_prices">'.$prices_summary_html.'</div>';
@@ -380,18 +352,18 @@ class Theater_Date extends Theater_Item {
 	 * Gets a summary of event date prices.
 	 *
 	 * @since 	0.10.14
-	 * @uses 	Theater_Date::get_field() to get all prices for an event date.
+	 * @uses 	Theater_Event_Date::get_field() to get all prices for an event date.
 	 * @return 	string 	A summary of event date prices.
 	 */
 	public function get_prices_summary() {
 
 		global $wp_theatre;
 
-		$prices = $this->get_field('prices');
+		$prices = $this->get_field( 'prices' );
 
 		$prices_summary = '';
 
-		if ( !empty( $prices ) ) {
+		if ( ! empty( $prices ) ) {
 			if ( count( $prices ) > 1 ) {
 				$prices_summary .= __( 'from','theatre' ).' ';
 			}
@@ -403,19 +375,19 @@ class Theater_Date extends Theater_Item {
 		}
 
 		return $prices_summary;
-		
+
 	}
 
 	/**
 	 * Gets the HTML for the summary of event date prices.
 	 *
 	 * @since 	0.10.14
-	 * @uses	Theater_Date::get_field() to get the summary of prices for the event date.
+	 * @uses	Theater_Event_Date::get_field() to get the summary of prices for the event date.
 	 * @return 	string	The HTML.
 	 */
 	public function get_prices_summary_html() {
 
-		$html = $this->get_field('prices_summary');
+		$html = $this->get_field( 'prices_summary' );
 		$html = esc_html( $html );
 		$html = str_replace( ' ', '&nbsp;', $html );
 
@@ -434,19 +406,19 @@ class Theater_Date extends Theater_Item {
 	 * @since	0.13.1	Check for upcoming event now accounts for timezones.
 	 *					Fixes #167.
 	 *
-	 * @uses	Theater_Date::get_field() to check if an event date is on sale.
-	 * @uses	Theater_Date::get_field() to check if the event date takes place int he future.
-	 * @uses	Theater_Date::get_field() to get the the event date tickets URL.
+	 * @uses	Theater_Event_Date::get_field() to check if an event date is on sale.
+	 * @uses	Theater_Event_Date::get_field() to check if the event date takes place int he future.
+	 * @uses	Theater_Event_Date::get_field() to get the the event date tickets URL.
 	 * @return 	string	The tickets URL or ''.
 	 */
 	function get_tickets() {
 		$tickets = '';
 
 		if (
-			self::tickets_status_onsale == $this->get_field('tickets_status') &&
-			$this->get_field('startdatetime') > current_time( 'timestamp', true )
+			self::tickets_status_onsale == $this->get_field( 'tickets_status' ) &&
+			$this->get_field( 'startdatetime' ) > current_time( 'timestamp', true )
 		) {
-			$tickets = $this->get_field('tickets_url');
+			$tickets = $this->get_field( 'tickets_url' );
 		}
 
 		return $tickets;
@@ -477,30 +449,30 @@ class Theater_Date extends Theater_Item {
 	 * @since	0.13.1	Check for upcoming event now accounts for timezones.
 	 *					Fixes #167.
 	 *
-	 * @uses	Theater_Date::get_post_type() to add the post type to the classes of the HTML output.
-	 * @uses	Theater_Date::get_field() to check if an event date is on sale.
-	 * @uses	Theater_Date::get_field() to check if the event date takes place int he future.
-	 * @uses	Theater_Date::get_field_html() to get the HTML output of the tickets URL of an event date.	 
-	 * @uses	Theater_Date::get_field_html() to get the HTML output of the tickets prices of an event date.	 
-	 * @uses	Theater_Date::get_field_html() to get the HTML output of the tickets status of an event date when
-	 *			the event date is not on sale.	 
+	 * @uses	Theater_Item::get_post_type() to add the post type to the classes of the HTML output.
+	 * @uses	Theater_Event_Date::get_field() to check if an event date is on sale.
+	 * @uses	Theater_Event_Date::get_field() to check if the event date takes place int he future.
+	 * @uses	Theater_Event_Date::get_field_html() to get the HTML output of the tickets URL of an event date.
+	 * @uses	Theater_Event_Date::get_field_html() to get the HTML output of the tickets prices of an event date.
+	 * @uses	Theater_Event_Date::get_field_html() to get the HTML output of the tickets status of an event date when
+	 *			the event date is not on sale.
 	 * @return 	string	The HTML for a valid event tickets link.
 	 */
 	public function get_tickets_html() {
 		$html = '';
 
 		$html .= '<div class="'.$this->get_post_type().'_tickets">';
-		if ( self::tickets_status_onsale == $this->get_field('tickets_status') ) {
+		if ( self::tickets_status_onsale == $this->get_field( 'tickets_status' ) ) {
 
-			if ( $this->get_field('startdatetime') > current_time( 'timestamp', true ) ) {
-				$html .= $this->get_field_html('tickets_url');
+			if ( $this->get_field( 'startdatetime' ) > current_time( 'timestamp', true ) ) {
+				$html .= $this->get_field_html( 'tickets_url' );
 
-				$prices_html = $this->get_field_html('prices');
+				$prices_html = $this->get_field_html( 'prices' );
 				$prices_html = apply_filters( 'wpt_event_tickets_prices_html', $prices_html, $this );
 				$html .= $prices_html;
 			}
 		} else {
-			$html .= $this->get_field_html('tickets_status');
+			$html .= $this->get_field_html( 'tickets_status' );
 		}
 		$html .= '</div>'; // .tickets
 
@@ -516,7 +488,7 @@ class Theater_Date extends Theater_Item {
 	 * @since	0.12	Moved the iframe url to a new method.
 	 *					@see WPT_Event::tickets_url_iframe().
 	 * @uses	WP_Theatre::$wpt_tickets_options to check if the tickets URL uses an iframe.
-	 * @uses	Theater_Date::tickets_url_iframe() to get the URL of the iframe page for this event date.
+	 * @uses	Theater_Event_Date::tickets_url_iframe() to get the URL of the iframe page for this event date.
 	 * @return 	string 	The event tickets URL.
 	 */
 
@@ -525,7 +497,7 @@ class Theater_Date extends Theater_Item {
 		global $wp_theatre;
 
 		$tickets_url = get_post_meta( $this->ID,'tickets_url',true );
-	
+
 		if (
 			! empty( $wp_theatre->wpt_tickets_options['integrationtype'] ) &&
 			'iframe' == $wp_theatre->wpt_tickets_options['integrationtype']  &&
@@ -542,10 +514,10 @@ class Theater_Date extends Theater_Item {
 	 * Gets the event tickets iframe URL.
 	 *
 	 * @since 	0.12
-	 * @uses	Theater_Date::$wpt_tickets_options to get the ID of the iframe page.
-	 * @uses	Theater_Date::get_post_type	to add the post type to the iframe page URL.
-	 * @uses	Theater_Date::$ID to add the post ID to the iframe page URL.
-	 * @uses	Theater_Date::get_event() to get the event of the event date.
+	 * @uses	Theater_Event_Date::$wpt_tickets_options to get the ID of the iframe page.
+	 * @uses	Theater_Event_Date::get_post_type	to add the post type to the iframe page URL.
+	 * @uses	Theater_Event_Date::$ID to add the post ID to the iframe page URL.
+	 * @uses	Theater_Event_Date::get_event() to get the event of the event date.
 	 * @return  string|bool     The event tickets iframe URL or
 	 *							<false> if no iframe page is set.
 	 */
@@ -564,8 +536,8 @@ class Theater_Date extends Theater_Item {
 		}
 
 		$tickets_url_iframe = get_permalink( $tickets_iframe_page );
-		if (get_option('permalink_structure') && $event = $this->get_event()) {
-			$tickets_url_iframe = trailingslashit($tickets_url_iframe).$this->get_post_type().'/'.$this->ID;
+		if ( get_option( 'permalink_structure' ) && $event = $this->get_event() ) {
+			$tickets_url_iframe = trailingslashit( $tickets_url_iframe ).$this->get_post_type().'/'.$this->ID;
 		} else {
 			$tickets_url_iframe = add_query_arg( 'wpt_event_tickets', $this->ID, $tickets_url_iframe );
 		}
@@ -587,10 +559,10 @@ class Theater_Date extends Theater_Item {
 	 * Get the HTML for the event date tickets URL.
 	 *
 	 * @since 0.10.14
-	 * @uses	Theater_Date::get_field() to get the the event date tickets URL.
+	 * @uses	Theater_Event_Date::get_field() to get the the event date tickets URL.
 	 * @uses	WP_Theatre::$wpt_tickets_options to check if the tickets URL uses an iframe.
-	 * @uses	Theater_Date::get_post_type() to add the post type to the classes of the HTML output.
-	 * @uses	Theater_Date::get_field() to get the text inside the event date tickets URL.
+	 * @uses	Theater_Item::get_post_type() to add the post type to the classes of the HTML output.
+	 * @uses	Theater_Event_Date::get_field() to get the text inside the event date tickets URL.
 	 * @return string	The HTML for the event date tickets URL.
 	 */
 	public function get_tickets_url_html() {
@@ -598,7 +570,7 @@ class Theater_Date extends Theater_Item {
 
 		$html = '';
 
-		$tickets_url = $this->get_field('tickets_url');
+		$tickets_url = $this->get_field( 'tickets_url' );
 
 		if ( ! empty( $tickets_url ) ) {
 
@@ -631,7 +603,7 @@ class Theater_Date extends Theater_Item {
 			$html .= ' class="'.implode( ' ' ,$classes ).'"';
 
 			$html .= '>';
-			$html .= $this->get_field('tickets_button');
+			$html .= $this->get_field( 'tickets_button' );
 			$html .= '</a>';
 
 		}
@@ -647,7 +619,7 @@ class Theater_Date extends Theater_Item {
 	 * @since	0.14.7	Added the $args parameter.
 	 * @since	0.15.2	Removed the $args parameter.
 	 *
-	 * @uses	Theater_Date::get_post_type() to get the post type for an event date.
+	 * @uses	Theater_Item::get_post_type() to get the post type for an event date.
 	 * @uses	WPT_Event_Template::get_merged() to get the merged HTML for an event date.
 	 * @return 	string	The HTML for an event date.
 	 */
@@ -694,80 +666,63 @@ class Theater_Date extends Theater_Item {
 	 * Gets the location of an event date.
 	 *
 	 * The location is a combination of the event date venue and city.
-	 * 
+	 *
 	 * @since	0.x
-	 * @uses	Theater_Date::get_field() to get the venue of an event date.
-	 * @uses	Theater_Date::get_field() to get the city of an event date.
+	 * @uses	Theater_Event_Date::get_field() to get the venue of an event date.
+	 * @uses	Theater_Event_Date::get_field() to get the city of an event date.
 	 * @return	string The location of an event date.
 	 */
 	function get_location() {
-		
+
 		$location_parts = array();
-		
-		$venue = $this->get_field('venue');
-		$city = $this->get_field('city');
-		
-		if (!empty($venue)) {
+
+		$venue = $this->get_field( 'venue' );
+		$city = $this->get_field( 'city' );
+
+		if ( ! empty( $venue ) ) {
 			$location_parts[] = $venue;
 		}
-		
-		if (!empty($city)) {
+
+		if ( ! empty( $city ) ) {
 			$location_parts[] = $city;
 		}
-		
-		$value = implode(' ', $location_parts);
+
+		$value = implode( ' ', $location_parts );
 		return $value;
-		
+
 	}
 
 	/**
 	 * Gets the HTML for a location of an event date.
 	 *
 	 * The location is a combination of the event date venue and city.
-	 * 
+	 *
 	 * @since	0.16
-	 * @uses	Theater_Date::get_field_html() to get the HTML for a venue of an event date.
-	 * @uses	Theater_Date::get_field_html() to get the HTML for a city of an event date.
+	 * @uses	Theater_Event_Date::get_field_html() to get the HTML for a venue of an event date.
+	 * @uses	Theater_Event_Date::get_field_html() to get the HTML for a city of an event date.
 	 * @param 	WPT_Template_Placeholder_Filter[] 	$filters 	An array of filters to apply to the value if the field.
 	 * @return	string The location of an event date.
 	 */
 	function get_location_html( $filters = array() ) {
 
 		ob_start();
-		?><div class="<?php echo Theater_Date::post_type_name; ?>_location"><?php 
-			echo $this->get_field_html('venue', $filters);
-			echo $this->get_field_html('city', $filters);
+		?><div class="<?php echo Theater_Event_Date::post_type_name; ?>_location"><?php
+			echo $this->get_field_html( 'venue', $filters );
+			echo $this->get_field_html( 'city', $filters );
 		?></div><?php
 		$html = ob_get_clean();
-		
+
 		return $html;
 	}
 
 	/**
-	 * Gets the title of an event date.
-	 * 
-	 * @since	0.x
-	 * @uses	WPT_Production::title() to get the title of the event.
-	 * @return	string
-	 */
-	function get_title() {
-		
-		if (!($event = $this->event()) ) {
-			return '';	
-		}
-		
-		return $event->title();		
-		
-	}
-	
-	/**
 	 * Gets the tickets status of an event date.
-	 * 
+	 *
 	 * @since	0.x
 	 * @return	string
 	 */
 	function get_tickets_status() {
-		
+
 		$value = get_post_meta( $this->ID,'tickets_status',true );
 
 		if ( empty( $value ) ) {
@@ -775,19 +730,19 @@ class Theater_Date extends Theater_Item {
 		}
 
 		return $value;
-		
+
 	}
 
 	/**
 	 * Get the HTML for the tickets status of an event date.
-	 * 
+	 *
 	 * @since	0.x
-	 * @uses 	Theater_Date::get_field() to get the tickets status of an event.
-	 * @uses	Theater_Date::get_post_type() to add the post type to the classes of the HTML output.
+	 * @uses 	Theater_Event_Date::get_field() to get the tickets status of an event.
+	 * @uses	Theater_Item::get_post_type() to add the post type to the classes of the HTML output.
 	 * @return 	string	The HTML for the tickets status of an event date.
 	 */
 	function get_tickets_status_html() {
-		$tickets_status = $this->get_field('tickets_status');
+		$tickets_status = $this->get_field( 'tickets_status' );
 
 		switch ( $tickets_status ) {
 			case self::tickets_status_onsale :
@@ -818,7 +773,7 @@ class Theater_Date extends Theater_Item {
 
 	/**
 	 * Gets the end timestamp of an event date.
-	 * 
+	 *
 	 * @since	0.16
 	 * @return	int	The end timestamp of an event date.
 	 */
@@ -833,29 +788,29 @@ class Theater_Date extends Theater_Item {
 
 		return $value;
 	}
-	
+
 	/**
 	 * Gets the HTML for the end date and time of an event date.
-	 * 
+	 *
 	 * @since	0.16
 	 * @param 	WPT_Template_Placeholder_Filter[] 	$filters 	An array of filters to apply to the value if the field.
 	 * @return	string	The HTML for the end date and time of an event date.
 	 */
 	function get_enddatetime_html( $filters = array() ) {
-		
+
 		ob_start();
-		?><div class="<?php echo Theater_Date::post_type_name; ?>_datetime <?php echo Theater_Date::post_type_name; ?>_startdatetime"><?php
-			
-			$value = $this->enddate.$this->endtime;		
-			foreach ( $filters as $filter ) {
-				if ( 'date' == $filter->name ) {
-					$value = $filter->apply_to( $this->enddatetime(), $this );
-				} else {
-					$value = $filter->apply_to( $value, $this );
-				}
-			}
+		?><div class="<?php echo Theater_Event_Date::post_type_name; ?>_datetime <?php echo Theater_Event_Date::post_type_name; ?>_startdatetime"><?php
+
+			$value = $this->enddate.$this->endtime;
+foreach ( $filters as $filter ) {
+	if ( 'date' == $filter->name ) {
+		$value = $filter->apply_to( $this->enddatetime(), $this );
+	} else {
+		$value = $filter->apply_to( $value, $this );
+	}
+}
 			echo $value;
-			
+
 		?></div><?php
 
 		$html = ob_get_clean();
@@ -867,13 +822,13 @@ class Theater_Date extends Theater_Item {
 	 * Gets the event date startdate.
 	 *
 	 * @since	0.12
-	 * @uses	Theater_Date::get_field() to get the start timestamp of an event date.
+	 * @uses	Theater_Event_Date::get_field() to get the start timestamp of an event date.
 	 * @return	string The event date startdate.
 	 */
 	function get_startdate() {
 		$startdate = date_i18n(
 			get_option( 'date_format' ),
-			$this->get_field('startdatetime') + get_option( 'gmt_offset' ) * 3600
+			$this->get_field( 'startdatetime' ) + get_option( 'gmt_offset' ) * 3600
 		);
 
 		return $startdate;
@@ -886,30 +841,30 @@ class Theater_Date extends Theater_Item {
 	 * @since	0.15.1	Fix: No longer compensates for the timezone when applying the 'date'-filter.
 	 *					This is already handled by WPT_Template_Placeholder_Filter::callback_date() and
 	 *					resulted in double compensations.
-	 * @uses	Theater_Date::get_post_type() to add the post type to the classes of the HTML output.
-	 * @uses	Theater_Date::get_field() to get the start date of an event date.
-	 * @uses	Theater_Date::get_field() to get the raw start time of an event date for use with the 'date' filter.
+	 * @uses	Theater_Item::get_post_type() to add the post type to the classes of the HTML output.
+	 * @uses	Theater_Event_Date::get_field() to get the start date of an event date.
+	 * @uses	Theater_Event_Date::get_field() to get the raw start time of an event date for use with the 'date' filter.
 	 * @uses	WPT_Template_Placeholder_Filter::apply_to() to apply filters to the field value.
 	 * @param 	WPT_Template_Placeholder_Filter[] 	$filters 	An array of filters to apply to the value if the field.
 	 * @return 	string				The HTML for the event date startdate.
 	 */
 	function get_startdate_html( $filters = array() ) {
-		
+
 		ob_start();
 		?><div class="<?php echo $this->get_post_type();?>_date <?php echo $this->get_post_type(); ?>_startdate"><?php
-				
-		$value = $this->get_field('startdate');
 
-		foreach ( $filters as $filter ) {
-			if ( 'date' == $filter->name ) {
-				$value = $filter->apply_to( $this->get_field('startdatetime'), $this );
-			} else {
-				$value = $filter->apply_to( $value, $this );
-			}
-		}
-		
+		$value = $this->get_field( 'startdate' );
+
+foreach ( $filters as $filter ) {
+	if ( 'date' == $filter->name ) {
+		$value = $filter->apply_to( $this->get_field( 'startdatetime' ), $this );
+	} else {
+		$value = $filter->apply_to( $value, $this );
+	}
+}
+
 		echo $value;
-		
+
 		?></div><?php
 
 		$html = ob_get_clean();
@@ -919,7 +874,7 @@ class Theater_Date extends Theater_Item {
 
 	/**
 	 * Gets the start timestamp of an event date.
-	 * 
+	 *
 	 * @since	0.16
 	 * @return	int|bool	The start timestamp of an event date.
 	 *						Returns <false> if not startdate is set.
@@ -935,33 +890,33 @@ class Theater_Date extends Theater_Item {
 
 		return $value;
 	}
-	
+
 	/**
 	 * Gets the HTMl for the start date and time of an event date.
-	 * 
+	 *
 	 * @since	0.16
 	 * @param 	WPT_Template_Placeholder_Filter[] 	$filters 	An array of filters to apply to the value if the field.
-	 * @uses	Theater_Date::get_post_type() to add the post type to the classes of the HTML output.
-	 * @uses	Theater_Date::get_field_html() to get the HTML for the start date of an event date.
-	 * @uses	Theater_Date::get_field_html() to get the HTML for the start time of an event date.
-	 * @uses	Theater_Date::get_field() to get the raw start time of an event date for use with the 'date' filter.
+	 * @uses	Theater_Item::get_post_type() to add the post type to the classes of the HTML output.
+	 * @uses	Theater_Event_Date::get_field_html() to get the HTML for the start date of an event date.
+	 * @uses	Theater_Event_Date::get_field_html() to get the HTML for the start time of an event date.
+	 * @uses	Theater_Event_Date::get_field() to get the raw start time of an event date for use with the 'date' filter.
 	 * @return	string	Tthe HTMl for the start date and time of an event date.
 	 */
 	function get_startdatetime_html( $filters = array() ) {
-		
+
 		ob_start();
 		?><div class="<?php echo $this->get_post_type(); ?>_datetime <?php echo $this->get_post_type(); ?>_startdatetime"><?php
-			
-			$value = $this->get_field_html('startdate').$this->get_field_html('starttime');		
-			foreach ( $filters as $filter ) {
-				if ( 'date' == $filter->name ) {
-					$value = $filter->apply_to( $this->get_field('startdatetime'), $this );
-				} else {
-					$value = $filter->apply_to( $value, $this );
-				}
-			}
+
+			$value = $this->get_field_html( 'startdate' ).$this->get_field_html( 'starttime' );
+foreach ( $filters as $filter ) {
+	if ( 'date' == $filter->name ) {
+		$value = $filter->apply_to( $this->get_field( 'startdatetime' ), $this );
+	} else {
+		$value = $filter->apply_to( $value, $this );
+	}
+}
 			echo $value;
-			
+
 		?></div><?php
 
 		$html = ob_get_clean();
@@ -974,15 +929,15 @@ class Theater_Date extends Theater_Item {
 	 * Gets the event date starttime.
 	 *
 	 * @since	0.12
-	 * @uses	Theater_Date::get_field() to get the start timestamp of an event date.
+	 * @uses	Theater_Event_Date::get_field() to get the start timestamp of an event date.
 	 * @return	string The event date starttime.
 	 */
 	function get_starttime() {
 		$starttime = date_i18n(
 			get_option( 'time_format' ),
-			$this->get_field('startdatetime') + get_option( 'gmt_offset' ) * 3600
+			$this->get_field( 'startdatetime' ) + get_option( 'gmt_offset' ) * 3600
 		);
-		
+
 		return $starttime;
 	}
 
@@ -991,9 +946,9 @@ class Theater_Date extends Theater_Item {
 	 *
 	 * @since	0.12
 	 * @param 	array 	$filters	The template filters to apply.
-	 * @uses	Theater_Date::get_post_type() to add the post type to the classes of the HTML output.
-	 * @uses	Theater_Date::get_field() to get the start time of an event date.
-	 * @uses	Theater_Date::get_field() to get the raw start time of an event date for use with the 'date' filter.
+	 * @uses	Theater_Item::get_post_type() to add the post type to the classes of the HTML output.
+	 * @uses	Theater_Event_Date::get_field() to get the start time of an event date.
+	 * @uses	Theater_Event_Date::get_field() to get the raw start time of an event date for use with the 'date' filter.
 	 * @uses	WPT_Template_Placeholder_Filter::apply_to() to apply filters to the field value.
 	 * @return 	string				The HTML for the event starttime.
 	 */
@@ -1001,23 +956,23 @@ class Theater_Date extends Theater_Item {
 
 		ob_start();
 		?><div class="<?php echo $this->get_post_type();?>_time <?php echo $this->get_post_type(); ?>_starttime"><?php
-				
+
 		$value = $this->starttime();
 
-		foreach ( $filters as $filter ) {
-			if ( 'date' == $filter->name ) {
-				$value = $filter->apply_to( $this->startdatetime(), $this );
-			} else {
-				$value = $filter->apply_to( $value, $this );
-			}
-		}
-		
+foreach ( $filters as $filter ) {
+	if ( 'date' == $filter->name ) {
+		$value = $filter->apply_to( $this->startdatetime(), $this );
+	} else {
+		$value = $filter->apply_to( $value, $this );
+	}
+}
+
 		echo $value;
-		
+
 		?></div><?php
 
 		$html = ob_get_clean();
-		
+
 		return $html;
 	}
 
@@ -1025,15 +980,15 @@ class Theater_Date extends Theater_Item {
 	 * @deprecated 0.4
 	 */
 	function get_production() {
-		_deprecated_function( 'Theater_Date::get_production()', '0.4', 'Theater_Dates::get_event()' );
+		_deprecated_function( 'Theater_Event_Date::get_production()', '0.4', 'Theater_Event_Dates::get_event()' );
 		return $this->get_event();
 	}
 
 	/**
 	 * @deprecated 0.16
 	 */
-	function production() {		
-		//_deprecated_function( 'Theater_Date::production()', '0.16', 'Theater_Dates::get_event()' );
+	function production() {
+		//_deprecated_function( 'Theater_Event_Date::production()', '0.16', 'Theater_Event_Dates::get_event()' );
 		return $this->event();
 	}
 
@@ -1052,14 +1007,14 @@ class Theater_Date extends Theater_Item {
 		}
 		return $this->summary;
 	}
-	
+
 	/**
 	 * @deprecated	0.16
 	 */
 	function datetime( $enddate = false ) {
 
-		if ( true === $enddate ) {			
-			$value = $this->enddatetime(); 
+		if ( true === $enddate ) {
+			$value = $this->enddatetime();
 		} else {
 			$value = $this->startdatetime( $enddate );
 		}
@@ -1081,7 +1036,7 @@ class Theater_Date extends Theater_Item {
 	 * @deprecated	0.16
 	 */
 	function datetime_html( $filters = array() ) {
-		$html = $this->get_field_html('startdatetime', $filters);
+		$html = $this->get_field_html( 'startdatetime', $filters );
 
 		/**
 		 * Filter the HTML for the event timestamp.
@@ -1095,8 +1050,6 @@ class Theater_Date extends Theater_Item {
 
 		return $html;
 	}
-
-
 }
 
 ?>
