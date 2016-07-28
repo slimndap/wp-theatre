@@ -243,7 +243,7 @@ class Theater {
 		require_once(dirname(__FILE__) . '/functions/wpt_production_widget.php');
 
 		require_once(dirname(__FILE__) . '/functions/wpt_productions_admin.php');
-		require_once(dirname(__FILE__) . '/functions/wpt_productions_List_table.php');
+		require_once(dirname(__FILE__) . '/functions/wpt_productions_list_table.php');
 
 		require_once(dirname(__FILE__) . '/functions/deprecated/class-wp-theatre.php');
 		require_once(dirname(__FILE__) . '/functions/deprecated/class-wpt-production.php');
