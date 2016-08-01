@@ -11,7 +11,7 @@ class WPT_Admin {
 		/*
 		 * Add Theater menu with a priority of 5 to make it possible to add submenu items
 		 * before register_post_type() does. This way the productions admin page (6) can
-		 * appears above the seasons menu.
+		 * appear above the seasons menu.
 		 * @since 0.15
 		 */
 		add_action( 'admin_menu', array($this, 'add_theater_menu' ), 5);		

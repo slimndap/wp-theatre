@@ -8,9 +8,11 @@ License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CZERCBG5SUGQW
 
-A free plugin to publish your events on a WordPress website. Perfect for theaters, clubs, cinemas and festivals.
+A free plugin to publish your events on a WordPress website. Perfect for theaters, music venue, sports clubs, cinemas and festivals.
 
 == Description ==
+
+With the Theater for WordPress plugin it is possible to manage and publish _events_ that have one of more _dates_.
 
 __Features__
 - Show events, concerts, movies or matches on your WordPress website.
@@ -33,8 +35,6 @@ __Available extensions__
 * [ActiveTickets](https://wp.theater/downloads/activetickets-for-wordpress/utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) - Automatically import your ActiveTickets events and sell them through your website.
 * [Veezi](https://wp.theater/downloads/veezi-for-wordpress/utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) - Automatically import your Veezi films and sell them on your website.
 
-> <strong>Newsletter</strong><br>
-> This plugin is in active development and updated frequently. Please [sign-up for the newsletter](https://wp.theater/newsletter?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) to stay informed about upcoming features and successful showcases.
 
 __Missing features?__
 

@@ -1,8 +1,60 @@
 <?php
 /**
- * WPT_Production class.
+ * Handles individual events.
+ *
+ * An event can have one or more event dates.
+ *
+ * ##Usage
+ *
+ * <code>
+ * // Output an event as HTML.
+ * $event = new Theater_Event( 123 );
+ * echo $event;
+ * </code>
+ * <code>
+ * // Output an event as HTML with a custom template:
+ * $event = new Theater_Event( 123, '{{title}}{{dates}}{{location}}' );
+ * echo $event;
+ * </code>
+ * <code>
+ * // Get the value of an event field:
+ * $event = new Theater_Event( 123 );
+ * $dates = $event->dates(); // Eg. '05-06-2017'.
+ * $prices = $event->prices(); // An array of all ticket prices for this date.
+ * $title = $event->title(); // Eg. 'Sound of Music'.
+ * </code>
+ * <code>
+ * // Output the value of an event date field as HTML:
+ * $event = new Theater_Event( 123 );
+ * echo $event->dates;
+ * echo $event->prices;
+ * echo $event->title;
+ * </code>
+ *
+ * ## Fields
+ *
+ * Events have the following fields:
+ *
+ * | field | description |
+ * |---|---|
+ * | `categories` | The categories of the event.
+ * | `cities` | A summary of all the cities that the event takes place.
+ * | `content` | The post content of the event.
+ * | `dates` | A summary of all the dates of the event.
+ * | `excerpt` | The excerpt of the event.
+ * | `summary` | A summary of the event.
+ * | `permalink` | The permalink of the event.
+ * | `title` | The title of the event.
+ * | `thumbnail` | The thumbnail image of the event.
+ *
+ * ## HTML template
+ *
+ * The default template for the HTML output of an event date is:
+ * `{{thumbnail|permalink}} {{title|permalink}} {{dates}} {{cities}}`
  *
  * @package	Theater/Events
+ * @since	0.16
+ *
  */
 class Theater_Event extends Theater_Item {
 
@@ -33,6 +85,7 @@ class Theater_Event extends Theater_Item {
 	 * @todo	The results from wp_get_post_categories() aren’t cached which will result in a db call beign made 
 	 *			every time this function is called. Use this function with care. For performance, functions like 
 	 *			get_the_category() should be used to return categories attached to a post.
+	 * @internal
 	 * @return	WP_Category[] 	The categories of an event
 	 */
 	function get_categories() {
@@ -45,6 +98,7 @@ class Theater_Event extends Theater_Item {
 	 * 
 	 * @since	0.16
 	 * @uses	Theater_Item::get_field() to get the list of categories for an event.
+	 * @internal
 	 * @return 	string	The HTML for the categories of an event.
 	 */
 	function get_categories_html() {
@@ -75,6 +129,7 @@ class Theater_Event extends Theater_Item {
 	 * @since 0.4
 	 * @uses	Theater_Event::get_event_dates() to get a list of upcoming dates for an event.
 	 * @uses	Theater_Item::get_field() to get the city of an event date.
+	 * @internal
 	 * @return	string	The cities of an event.
 	 */
 	function get_cities() {
@@ -117,6 +172,7 @@ class Theater_Event extends Theater_Item {
 	 * 
 	 * @since	0.x
 	 * @uses	Theater_Item::get_post() to get the post object of an event.
+	 * @internal
 	 * @return	string	The post content of an event.
 	 */
 	function get_content() {		
@@ -129,6 +185,7 @@ class Theater_Event extends Theater_Item {
 	 * 
 	 * @since	0.16
 	 * @uses	Theater_Item::get_post_type() to add the post type to the classes of the HTML output.
+	 * @internal
 	 * @return	string	The HTML for the post content of an event.
 	 */
 	function get_content_html() {
@@ -166,6 +223,7 @@ class Theater_Event extends Theater_Item {
 	 *					Fixes #199.
 	 * @uses	Theater_Event::get_event_dates() to get a list of upcoming dates for an event.
 	 * @uses	Theater_Item::get_field() to get the startdate of an event date.
+	 * @internal
 	 * @return	array	The upcoming production dates.
 	 */
 	function get_dates() {
@@ -189,6 +247,7 @@ class Theater_Event extends Theater_Item {
 	 * @uses	Theater_Item::get_post_type() to add the post type to the classes of the HTML output.
 	 * @uses	Theater_Item::get_field() to get the dates summary of an event date.
 	 * @param 	WPT_Template_Placeholder_Filter[] 	$filters 	An array of filters to apply to the value if the field.
+	 * @internal
 	 * @return	string				The HTML for the upcoming event dates.
 	 */
 	function get_dates_html( $filters = array() ) {
@@ -211,6 +270,7 @@ class Theater_Event extends Theater_Item {
 	 *					Fixes #200.
 	 * @uses	Theater_Item::get_field() to get all upcoming event dates of an event.
 	 * @uses	Theater_Event::get_event_dates() to get all past event dates of an event.
+	 * @internal
 	 * @return	string	The summary for the upcoming event dates.
 	 */
 	function get_dates_summary() {
@@ -249,7 +309,7 @@ class Theater_Event extends Theater_Item {
 	 * @uses	Theater_Event_Date_List::get() to get the event dates of an event.
 	 * @param 	array 	$filters An array of filter arguments. Optional.
 	 * 					See	[Theater_Event_Date_List::get()](class-Theater_Event_Date_List.html#_get) for possible filter arguments.
-	 * @return void
+	 * @return	Theater_Event_Date[]	The event dates of an event.
 	 */
 	function get_event_dates( $filters = array() ) {
 
@@ -275,6 +335,7 @@ class Theater_Event extends Theater_Item {
 	 * @param array $args {
 	 *     @type bool $html Return HTML? Default <false>.
 	 * }
+	 * @internal
 	 * @return 	string 	The event excerpt.
 	 */
 	function excerpt( $args = array() ) {
@@ -299,6 +360,7 @@ class Theater_Event extends Theater_Item {
 	 * 
 	 * @since	0.16
 	 * @param 	array $filters (default: array())
+	 * @internal
 	 * @return 	void
 	 */
 	function get_excerpt_html( $filters = array() ) {
@@ -324,6 +386,7 @@ class Theater_Event extends Theater_Item {
 	 *     @type string $text Display text for HTML version. Defaults to the title of the production.
 	 *     @type bool $inside Try to place de link inside the surrounding div. Default <false>.
 	 * }
+	 * @internal
 	 * @return string URL or HTML.
 	 */
 	function permalink( $args = array() ) {
@@ -382,6 +445,7 @@ class Theater_Event extends Theater_Item {
 	 * Gets the prices for the production.
 	 *
 	 * @since	0.15.3
+	 * @internal
 	 * @return	array	The prices for the production.
 	 */
 	function get_prices() {
@@ -413,6 +477,7 @@ class Theater_Event extends Theater_Item {
 	 * Gets the HTML of the prices for the production.
 	 *
 	 * @since	0.15.3
+	 * @internal
 	 * @param   array	$filters	The template filters to apply.
 	 * @return	array				The HTML of the prices for the production.
 	 */
@@ -443,6 +508,7 @@ class Theater_Event extends Theater_Item {
 	 * Gets a summary of the prices for the production.
 	 *
 	 * @since 	0.15.3
+	 * @internal
 	 * @see 	WPT_Production::prices()
 	 * @return 	string 	A summary of the prices for the production.
 	 */
@@ -471,6 +537,7 @@ class Theater_Event extends Theater_Item {
 	 * Gets the HTML for the summary of the prices for the production.
 	 *
 	 * @since 	0.15.3
+	 * @internal
 	 * @see		WPT_Production::prices_summary()
 	 * @return 	string	The HTML for the summary of the prices for the production.
 	 */
@@ -496,6 +563,7 @@ class Theater_Event extends Theater_Item {
 	 * Production season.
 	 *
 	 * @since 0.4
+	 * @internal
 	 *
 	 * @return object WPT_Season.
 	 */
@@ -518,6 +586,7 @@ class Theater_Event extends Theater_Item {
 	 * @todo Add prices.
 	 *
 	 * @since 0.4
+	 * @internal
 	 *
 	 * @return string URL or HTML.
 	 */
@@ -548,6 +617,7 @@ class Theater_Event extends Theater_Item {
 	 * @since 	0.4
 	 * @since	0.12.5	Deprecated the HTML output.
 	 *					Use @see WPT_Production::thumbnail_html() instead.
+	 * @internal
 	 *
 	 * @return 	int	ID of the thumbnail.
 	 */
@@ -580,6 +650,7 @@ class Theater_Event extends Theater_Item {
 	 * Get the production thumbnail HTML.
 	 *
 	 * @since	0.12.5
+	 * @internal
 	 * @param 	string 	$size 		The thumbnail size. Default: 'thumbnail'.
 	 * @param 	array 	$filters 	The template filters to apply.
 	 * @return 	string				The production thumbnail HTML.
@@ -620,6 +691,7 @@ class Theater_Event extends Theater_Item {
 	 * Returns the production title as plain text or as an HTML element.
 	 *
 	 * @since 0.4
+	 * @internal
 	 *
 	 * @param array $args {
 	 *     @type bool $html Return HTML? Default <false>.
@@ -639,9 +711,8 @@ class Theater_Event extends Theater_Item {
 	 * @since	0.14.7	Added the $args parameter.
 	 * @since	0.15.2	Removed the $args parameter.
 	 *
-	 * @param	string	$template	The template for the production HTML.
-	 * @param 	array	$args		The listing args (if the production is part of a listing).
-	 * @return 	string				The HTML for a production.
+	 * @param	string	$template	The template for the event HTML.
+	 * @return 	string				The HTML for an event.
 	 */
 	function get_html( $template = '' ) {
 		$classes = array();
@@ -683,6 +754,7 @@ class Theater_Event extends Theater_Item {
 
 	/**
 	 * @deprecated 	0.x
+	 * @internal
 	 */
 	function render() {
 		return $this->html();
@@ -690,6 +762,7 @@ class Theater_Event extends Theater_Item {
 
 	/**
 	 * @deprecated 	0.16
+	 * @internal
 	 */
 	function events( $filters = array() ) {
 		return $this->get_event_dates( $filters );
@@ -697,6 +770,7 @@ class Theater_Event extends Theater_Item {
 
 	/**
 	 * @deprecated 	0.16
+	 * @internal
 	 */
 	function past() {
 		global $wp_theatre;
@@ -712,6 +786,7 @@ class Theater_Event extends Theater_Item {
 
 	/**
 	 * @deprecated 	0.16
+	 * @internal
 	 */
 	function upcoming() {
 		global $wp_theatre;

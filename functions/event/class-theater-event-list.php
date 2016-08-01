@@ -1,6 +1,6 @@
 <?php
 /**
- * Events list.
+ * Handles event lists.
  *
  * Use this class to get an array of events or a fully formatted HTML list of events.
  *

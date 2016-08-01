@@ -9,7 +9,16 @@
  */
 abstract class Theater_Item {
 
+	/**
+	 * The internal name of this item.
+	 * @internal
+	 */
 	const name = 'undefined';	
+	
+	/**
+	 * The post type of this item.
+	 * @internal
+	 */
 	const post_type_name = 'undefined';
 
 	/**
@@ -25,6 +34,7 @@ abstract class Theater_Item {
 	 * 
 	 * @var		string
 	 * @since	0.16
+	 * @internal
 	 */
 	var $template;
 	
@@ -58,6 +68,7 @@ abstract class Theater_Item {
 	 * 
 	 * @uses	Theater_Item::get_field() to get the value for a field.
 	 * @since	0.16
+	 * @internal
 	 * @param	string	$name	The field name.
 	 * @param 	array	$args	Not used.
 	 * @return	mixed			The value for the field.
@@ -91,6 +102,7 @@ abstract class Theater_Item {
 	 * 
 	 * @uses 	Theater_Item::get_field_html() to get the HTML output for a field.
 	 * @since	0.16
+	 * @internal
 	 * @param 	string	$name	The field name.
 	 * @return 	string			The field HTML output.
 	 */
@@ -103,6 +115,7 @@ abstract class Theater_Item {
 	 * Gets the HTML output of this item.
 	 * 
 	 * @since	0.16
+	 * @internal
 	 * @return 	string	The HTML output of this item.
 	 */
 	function __toString() {
@@ -130,6 +143,7 @@ abstract class Theater_Item {
 	 * Gets the value for a field.
 	 * 
 	 * @since	0.16
+	 * @uses	Theater_Event_Field::get() to get the value of a field.
 	 * @param 	string 	$name		The field name.
 	 * @return	mixed
 	 */
@@ -142,6 +156,7 @@ abstract class Theater_Item {
 	 * Gets the HTML output for a field.
 	 * 
 	 * @since	0.16
+	 * @uses	Theater_Event_Field::get_html() to get the HTML of a field value.
 	 * @param 	string 	$name		The field name.
 	 * @param 	array 	$filters 	(default: array())
 	 * @return	string				The HTML output for a field.
@@ -206,6 +221,7 @@ abstract class Theater_Item {
 
 	/**
 	 * @deprecated	0.16
+	 * @internal
 	 */
 	function html( $template = '' ) {
 		if ( is_array( $template ) ) {
@@ -222,6 +238,7 @@ abstract class Theater_Item {
 	
 	/**
 	 * @deprecated	0.4	
+	 * @internal
 	 */
 	function compile() {
 		return $this->html();
@@ -229,6 +246,7 @@ abstract class Theater_Item {
 
 	/**
 	 * @deprecated	0.4	
+	 * @internal
 	 */
 	function render() {
 		echo $this->html();
@@ -236,6 +254,7 @@ abstract class Theater_Item {
 
 	/**
 	 * @deprecated	0.16
+	 * @internal
 	 */
 	function post_class() {
 		$classes = array();
@@ -245,6 +264,7 @@ abstract class Theater_Item {
 
 	/**
 	 * @deprecated	0.16
+	 * @internal
 	 */
 	public function post() {
 		return $this->get_post();
@@ -252,6 +272,7 @@ abstract class Theater_Item {
 
 	/**
 	 * @deprecated	0.16
+	 * @internal
 	 */
 	protected function get_post() {
 		if ( ! isset( $this->post ) ) {

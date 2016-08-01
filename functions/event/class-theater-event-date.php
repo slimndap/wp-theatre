@@ -1,14 +1,14 @@
 <?php
 
 /**
- * The Theater Event Date class handles individual event dates.
+ * Handles individual event dates.
  *
  * Each event can have one or more event dates.
  *
  * ##Usage
  *
  * <code>
- * // Output an event date as HTML:
+ * // Output an event date as HTML.
  * $date = new Theater_Event_Date( 123 );
  * echo $date;
  * </code>
@@ -20,19 +20,57 @@
  * <code>
  * // Get the value of an event date field:
  * $date = new Theater_Event_Date( 123 );
- * $startdate = $date->startdate();
+ * $startdate = $date->startdate(); // Eg. '05-06-2017'.
+ * $prices = $date->prices(); // An array of all ticket prices for this date.
+ * $title = $date->title(); // Eg. 'Sound of Music'.
  * </code>
  * <code>
  * // Output the value of an event date field as HTML:
  * $date = new Theater_Event_Date( 123 );
  * echo $date->startdate;
+ * echo $date->prices;
+ * echo $date->title;
  * </code>
  *
- * ## Event date fields
+ * ## Fields
+ *
+ * Event dates have the following fields:
+ * | field | description |
+ * |---|---|
+ * | `duration` | The duration, based on the starttime and endtime. |
+ * | `enddate` | The end date |
+ * | `endtime` | The end time |
+ * | `enddatetime` | The timestamp of the end |
+ * | `location` | The location, based on the venue and the city.
+ * | `prices` | The different prices.
+ * | `startdate` | The start date |
+ * | `starttime` | The start time |
+ * | `startdatetime` | The timestamp of the start |
+ * | `tickets` | The tickets link.
+ * | `venue` | The venue.
+ * | `city` | The city.
+ * 
+ * Additionally, the following fields are inherited from the parent event:
+ *
+ * | field | description |
+ * |---|---|
+ * | `categories` | The categories of the event.
+ * | `cities` | A summary of all the cities that the event takes place.
+ * | `content` | The post content of the event.
+ * | `dates` | A summary of all the dates of the event.
+ * | `excerpt` | The excerpt of the event.
+ * | `summary` | A summary of the event.
+ * | `permalink` | The permalink of the event.
+ * | `title` | The title of the event.
+ * | `thumbnail` | The thumbnail image of the event.
  *
  * ## HTML template
  *
+ * The default template for the HTML output of an event date is:
+ * `{{thumbnail|permalink}} {{title|permalink}} {{remark}} {{startdatetime}} {{location}} {{tickets}}`
+ *
  * @package	Theater/Events
+ * @since	0.16
  *
  */
 
@@ -63,7 +101,6 @@ class Theater_Event_Date extends Theater_Item {
 			'starttime',
 			'tickets',
 			'tickets_button',
-			'tickets_html',
 			'tickets_status',
 			'tickets_url',
 			'venue',
@@ -77,6 +114,7 @@ class Theater_Event_Date extends Theater_Item {
 	 * Gets the duration of an event date.
 	 *
 	 * @since	0.x?
+	 * @internal
 	 * @uses	Theater_Event_Date::get_field() to get the start of an event date.
 	 * @uses	Theater_Event_Date::get_field() to get the end of an event date.
 	 * @return	string	The duration of an event date.
@@ -109,6 +147,7 @@ class Theater_Event_Date extends Theater_Item {
 	 * @since	0.12.7	Now returns <false> is no endate is set.
 	 * 					See [#165](https://github.com/slimndap/wp-theatre/issues/165).
 	 * @uses	Theater_Event_Date::get_field() to get the end of an event date.
+	 * @internal
 	 * @return	string 	The event enddate.
 	 *					Returns <false> if no endate is set.
 	 */
@@ -132,6 +171,7 @@ class Theater_Event_Date extends Theater_Item {
 	 * @uses	Theater_Event_Date::get_field() to get the raw end time of an event date for use with the 'date' filter.
 	 * @uses	Theater_Event_Date::get_field() to get the end date of an event date.
 	 * @uses	WPT_Template_Placeholder_Filter::apply_to() to apply filters to the field value.
+	 * @internal
 	 * @param 	WPT_Template_Placeholder_Filter[] 	$filters 	An array of filters to apply to the value if the field.
 	 * @return 	string				The HTML for the event date enddate.
 	 */
@@ -166,6 +206,7 @@ if ( $value = $this->get_field( 'enddate' ) ) {
 	 *
 	 * @since	0.12
 	 * @uses	Theater_Event_Date::get_field() to get the end of an event date.
+	 * @internal
 	 * @return	string|bool The event endtime.
 	 *						Returns <false> if no endate is set.
 	 */
@@ -190,6 +231,7 @@ if ( $value = $this->get_field( 'enddate' ) ) {
 	 * @uses	Theater_Event_Date::get_field() to get the raw end time of an event date for use with the 'date' filter.
 	 * @uses	Theater_Event_Date::get_field() to get the end time of an event date.
 	 * @uses	WPT_Template_Placeholder_Filter::apply_to() to apply filters to the field value.
+	 * @internal
 	 * @param 	WPT_Template_Placeholder_Filter[] 	$filters 	An array of filters to apply to the value if the field.
 	 * @return 	string				The HTML for the event endtime.
 	 */
@@ -220,7 +262,7 @@ if ( $value = $this->get_field( 'endtime' ) ) {
 	}
 
 	/**
-	 * Gets the event for an event date.
+	 * Gets the event that this date belongs to.
 	 *
 	 * @since 	0.4
 	 * @since	0.15	Removed local caching of event production.
@@ -260,6 +302,7 @@ if ( $value = $this->get_field( 'endtime' ) ) {
 	 * @since	0.13.6	Added a 'wpt/event/permalink' filter.
 	 *					Moved HTML version to separate function.
 	 * @uses	WPT_Production::permalink() to get the permalink for an event.
+	 * @internal
 	 * @return 	string	The permalink.
 	 */
 	function permalink( $deprecated = array() ) {
@@ -288,6 +331,7 @@ if ( $value = $this->get_field( 'endtime' ) ) {
 	 *
 	 * @since	0.13.6
 	 * @uses	WPT_Production::permalink() to get the HTML for the permalink for an event.
+	 * @internal
 	 * @return 	string	The HTML for the event permalink.
 	 */
 	function permalink_html( $args = array() ) {
@@ -310,6 +354,7 @@ if ( $value = $this->get_field( 'endtime' ) ) {
 	 * Gets the event prices.
 	 *
 	 * @since 	0.4
+	 * @internal
 	 * @return 	array 	The event prices.
 	 */
 	function get_prices() {
@@ -332,6 +377,7 @@ if ( $value = $this->get_field( 'endtime' ) ) {
 	 * @since 	0.10.14
 	 * @uses	Theater_Event_Date::get_field_html() to get a summary of the prices for an event date.
 	 * @uses	Theater_Item::get_post_type() to add the post type to the classes of the HTML output.
+	 * @internal
 	 * @return 	string	The HTML for the event prices.
 	 */
 	public function get_prices_html() {
@@ -353,6 +399,7 @@ if ( $value = $this->get_field( 'endtime' ) ) {
 	 *
 	 * @since 	0.10.14
 	 * @uses 	Theater_Event_Date::get_field() to get all prices for an event date.
+	 * @internal
 	 * @return 	string 	A summary of event date prices.
 	 */
 	public function get_prices_summary() {
@@ -383,6 +430,7 @@ if ( $value = $this->get_field( 'endtime' ) ) {
 	 *
 	 * @since 	0.10.14
 	 * @uses	Theater_Event_Date::get_field() to get the summary of prices for the event date.
+	 * @internal
 	 * @return 	string	The HTML.
 	 */
 	public function get_prices_summary_html() {
@@ -409,6 +457,7 @@ if ( $value = $this->get_field( 'endtime' ) ) {
 	 * @uses	Theater_Event_Date::get_field() to check if an event date is on sale.
 	 * @uses	Theater_Event_Date::get_field() to check if the event date takes place int he future.
 	 * @uses	Theater_Event_Date::get_field() to get the the event date tickets URL.
+	 * @internal
 	 * @return 	string	The tickets URL or ''.
 	 */
 	function get_tickets() {
@@ -428,6 +477,7 @@ if ( $value = $this->get_field( 'endtime' ) ) {
 	 * Gets the text for the event tickets link.
 	 *
 	 * @since	0.10.14
+	 * @internal
 	 * @return 	string	The text for the event tickets link.
 	 */
 	function get_tickets_button() {
@@ -456,6 +506,7 @@ if ( $value = $this->get_field( 'endtime' ) ) {
 	 * @uses	Theater_Event_Date::get_field_html() to get the HTML output of the tickets prices of an event date.
 	 * @uses	Theater_Event_Date::get_field_html() to get the HTML output of the tickets status of an event date when
 	 *			the event date is not on sale.
+	 * @internal
 	 * @return 	string	The HTML for a valid event tickets link.
 	 */
 	public function get_tickets_html() {
@@ -489,6 +540,7 @@ if ( $value = $this->get_field( 'endtime' ) ) {
 	 *					@see WPT_Event::tickets_url_iframe().
 	 * @uses	WP_Theatre::$wpt_tickets_options to check if the tickets URL uses an iframe.
 	 * @uses	Theater_Event_Date::tickets_url_iframe() to get the URL of the iframe page for this event date.
+	 * @internal
 	 * @return 	string 	The event tickets URL.
 	 */
 
@@ -518,6 +570,7 @@ if ( $value = $this->get_field( 'endtime' ) ) {
 	 * @uses	Theater_Event_Date::get_post_type	to add the post type to the iframe page URL.
 	 * @uses	Theater_Event_Date::$ID to add the post ID to the iframe page URL.
 	 * @uses	Theater_Event_Date::get_event() to get the event of the event date.
+	 * @internal
 	 * @return  string|bool     The event tickets iframe URL or
 	 *							<false> if no iframe page is set.
 	 */
@@ -563,6 +616,7 @@ if ( $value = $this->get_field( 'endtime' ) ) {
 	 * @uses	WP_Theatre::$wpt_tickets_options to check if the tickets URL uses an iframe.
 	 * @uses	Theater_Item::get_post_type() to add the post type to the classes of the HTML output.
 	 * @uses	Theater_Event_Date::get_field() to get the text inside the event date tickets URL.
+	 * @internal
 	 * @return string	The HTML for the event date tickets URL.
 	 */
 	public function get_tickets_url_html() {
@@ -670,6 +724,7 @@ if ( $value = $this->get_field( 'endtime' ) ) {
 	 * @since	0.x
 	 * @uses	Theater_Event_Date::get_field() to get the venue of an event date.
 	 * @uses	Theater_Event_Date::get_field() to get the city of an event date.
+	 * @internal
 	 * @return	string The location of an event date.
 	 */
 	function get_location() {
@@ -701,6 +756,7 @@ if ( $value = $this->get_field( 'endtime' ) ) {
 	 * @uses	Theater_Event_Date::get_field_html() to get the HTML for a venue of an event date.
 	 * @uses	Theater_Event_Date::get_field_html() to get the HTML for a city of an event date.
 	 * @param 	WPT_Template_Placeholder_Filter[] 	$filters 	An array of filters to apply to the value if the field.
+	 * @internal
 	 * @return	string The location of an event date.
 	 */
 	function get_location_html( $filters = array() ) {
@@ -719,6 +775,7 @@ if ( $value = $this->get_field( 'endtime' ) ) {
 	 * Gets the tickets status of an event date.
 	 *
 	 * @since	0.x
+	 * @internal
 	 * @return	string
 	 */
 	function get_tickets_status() {
@@ -739,6 +796,7 @@ if ( $value = $this->get_field( 'endtime' ) ) {
 	 * @since	0.x
 	 * @uses 	Theater_Event_Date::get_field() to get the tickets status of an event.
 	 * @uses	Theater_Item::get_post_type() to add the post type to the classes of the HTML output.
+	 * @internal
 	 * @return 	string	The HTML for the tickets status of an event date.
 	 */
 	function get_tickets_status_html() {
@@ -775,6 +833,7 @@ if ( $value = $this->get_field( 'endtime' ) ) {
 	 * Gets the end timestamp of an event date.
 	 *
 	 * @since	0.16
+	 * @internal
 	 * @return	int	The end timestamp of an event date.
 	 */
 	function get_enddatetime() {
@@ -794,6 +853,7 @@ if ( $value = $this->get_field( 'endtime' ) ) {
 	 *
 	 * @since	0.16
 	 * @param 	WPT_Template_Placeholder_Filter[] 	$filters 	An array of filters to apply to the value if the field.
+	 * @internal
 	 * @return	string	The HTML for the end date and time of an event date.
 	 */
 	function get_enddatetime_html( $filters = array() ) {
@@ -823,6 +883,7 @@ foreach ( $filters as $filter ) {
 	 *
 	 * @since	0.12
 	 * @uses	Theater_Event_Date::get_field() to get the start timestamp of an event date.
+	 * @internal
 	 * @return	string The event date startdate.
 	 */
 	function get_startdate() {
@@ -846,6 +907,7 @@ foreach ( $filters as $filter ) {
 	 * @uses	Theater_Event_Date::get_field() to get the raw start time of an event date for use with the 'date' filter.
 	 * @uses	WPT_Template_Placeholder_Filter::apply_to() to apply filters to the field value.
 	 * @param 	WPT_Template_Placeholder_Filter[] 	$filters 	An array of filters to apply to the value if the field.
+	 * @internal
 	 * @return 	string				The HTML for the event date startdate.
 	 */
 	function get_startdate_html( $filters = array() ) {
@@ -876,6 +938,7 @@ foreach ( $filters as $filter ) {
 	 * Gets the start timestamp of an event date.
 	 *
 	 * @since	0.16
+	 * @internal
 	 * @return	int|bool	The start timestamp of an event date.
 	 *						Returns <false> if not startdate is set.
 	 */
@@ -900,6 +963,7 @@ foreach ( $filters as $filter ) {
 	 * @uses	Theater_Event_Date::get_field_html() to get the HTML for the start date of an event date.
 	 * @uses	Theater_Event_Date::get_field_html() to get the HTML for the start time of an event date.
 	 * @uses	Theater_Event_Date::get_field() to get the raw start time of an event date for use with the 'date' filter.
+	 * @internal
 	 * @return	string	Tthe HTMl for the start date and time of an event date.
 	 */
 	function get_startdatetime_html( $filters = array() ) {
@@ -930,6 +994,7 @@ foreach ( $filters as $filter ) {
 	 *
 	 * @since	0.12
 	 * @uses	Theater_Event_Date::get_field() to get the start timestamp of an event date.
+	 * @internal
 	 * @return	string The event date starttime.
 	 */
 	function get_starttime() {
@@ -950,6 +1015,7 @@ foreach ( $filters as $filter ) {
 	 * @uses	Theater_Event_Date::get_field() to get the start time of an event date.
 	 * @uses	Theater_Event_Date::get_field() to get the raw start time of an event date for use with the 'date' filter.
 	 * @uses	WPT_Template_Placeholder_Filter::apply_to() to apply filters to the field value.
+	 * @internal
 	 * @return 	string				The HTML for the event starttime.
 	 */
 	function get_starttime_html( $filters = array() ) {
@@ -978,6 +1044,7 @@ foreach ( $filters as $filter ) {
 
 	/**
 	 * @deprecated 0.4
+	 * @internal
 	 */
 	function get_production() {
 		_deprecated_function( 'Theater_Event_Date::get_production()', '0.4', 'Theater_Event_Dates::get_event()' );
@@ -986,6 +1053,7 @@ foreach ( $filters as $filter ) {
 
 	/**
 	 * @deprecated 0.16
+	 * @internal
 	 */
 	function production() {
 		//_deprecated_function( 'Theater_Event_Date::production()', '0.16', 'Theater_Event_Dates::get_event()' );
@@ -994,6 +1062,7 @@ foreach ( $filters as $filter ) {
 
 	/**
 	 * @deprecated 0.4 Use $event->prices() instead.
+	 * @internal
 	 */
 	function summary() {
 		global $wp_theatre;
@@ -1010,6 +1079,7 @@ foreach ( $filters as $filter ) {
 
 	/**
 	 * @deprecated	0.16
+	 * @internal
 	 */
 	function datetime( $enddate = false ) {
 
@@ -1034,6 +1104,7 @@ foreach ( $filters as $filter ) {
 
 	/**
 	 * @deprecated	0.16
+	 * @internal
 	 */
 	function datetime_html( $filters = array() ) {
 		$html = $this->get_field_html( 'startdatetime', $filters );

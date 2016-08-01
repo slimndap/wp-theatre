@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Theater Item Field class.
+ * Theater Event Field retrieves field values of events and event dates.
  *
  * @since	0.16
  * @package	Theater/Events

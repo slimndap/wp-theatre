@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Event dates list.
+ * Handles event dates lists.
  *
  * Use this class to retrieve a list of event dates or a fully formatted HTML list of event dates.
  *

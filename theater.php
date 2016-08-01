@@ -27,13 +27,13 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-$wpt_version = '0.15.8';
+$wpt_version = '0.16';
 
 
 /**
  * Main Theater for WordPress class.
  *
- * With the Theater for WordPress plugin it is possible to manage _events_ with one of more _dates_.
+ * With the Theater for WordPress plugin it is possible to manage and publish _events_ that have one of more _dates_.
  *
  * So if you run a theater then 'The Sound Of Music' is an event and the show this weekend is a date.
  *
@@ -91,7 +91,6 @@ $wpt_version = '0.15.8';
  * @copyright	2016 [Slim & Dapper](http://slimndap.com)
  * @license		https://opensource.org/licenses/GPL-3.0 GNU General Public License
  *
- * @example 	[Example of a WordPress for Theater extension](https://github.com/slimndap/wp-theatre-example-extension).
  */
 class Theater {
 
@@ -100,6 +99,7 @@ class Theater {
 	 *
 	 * @var Theater for WordPress
 	 * @since 0.16
+	 * @internal
 	 */
 	protected static $_instance = null;
 
@@ -114,8 +114,8 @@ class Theater {
 	 *
 	 * @since 0.16
 	 * @static
-	 * @see 	Theater()
-	 * @return 	Theater	Main instance.
+	 * @internal
+	 * @return 	Theater	Main Theater instance.
 	 */
 	static function instance() {
 		if ( is_null( self::$_instance ) ) {
@@ -230,6 +230,7 @@ class Theater {
 		require_once(dirname(__FILE__) . '/functions/template/wpt_template_placeholder.php');
 		require_once(dirname(__FILE__) . '/functions/template/wpt_template_placeholder_filter.php');
 
+		// All event classes.
 		require_once(dirname(__FILE__) . '/functions/event/class-theater-event.php');
 		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-field.php');
 		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-date.php');
@@ -365,6 +366,9 @@ class Theater {
 	 * Private functions.
 	 */
 
+	/**
+	 * @internal
+	 */
 	private function get_seasons($PostClass=false) {
 		$args = array(
 			'post_type'=>WPT_Season::post_type_name,
@@ -384,6 +388,7 @@ class Theater {
 
 	/**
 	 * @deprecated 0.4
+	 * @internal
 	 */
 	function compile_events($args=array()) {
 		return $this->events->html($args);
@@ -391,6 +396,7 @@ class Theater {
 
 	/**
 	 * @deprecated 0.4
+	 * @internal
 	 */
 	private function get_events($PostClass = false) {
 		return $this->events();
@@ -398,6 +404,7 @@ class Theater {
 
 	/**
 	 * @deprecated 0.4
+	 * @internal
 	 */
 	function render_events($args=array()) {
 		echo $this->compile_events($args);
@@ -405,6 +412,7 @@ class Theater {
 
 	/**
 	 * @deprecated 0.4
+	 * @internal
 	 */
 	private function get_productions($PostClass = false) {
 		return $this->productions();
@@ -412,6 +420,7 @@ class Theater {
 
 	/**
 	 * @deprecated 0.4
+	 * @internal
 	 */
 	function render_productions($args=array()) {
 		return $this->productions->html_Listing();
@@ -425,6 +434,7 @@ class Theater {
 	
 	/**
 	 * @deprecated 0.8
+	 * @internal
 	 */
 	function deprecated_options() {
 		if (empty($this->wpt_style_options)) {
@@ -437,6 +447,7 @@ class Theater {
 	
 	/**
 	 * @deprecated 0.8
+	 * @internal
 	 */
 	protected function deprecated_properties() {
 		$this->productions = new Theater_Event_List; 	
@@ -449,7 +460,7 @@ class Theater {
  *
  * @since  0.16
  * @package	Theater
- * @return WP_Theatre	The main instance of Theater for WordPress to prevent the need to use globals.
+ * @return 	Theater	The main instance of Theater for WordPress to prevent the need to use globals.
  */
 function Theater() {
 	return Theater::instance();
