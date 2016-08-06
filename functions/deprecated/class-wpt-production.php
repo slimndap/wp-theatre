@@ -28,23 +28,12 @@ class WPT_Production extends Theater_Event {
 	}
 }
 
-function deprecated_wpt_production_field_html_filter( $html, $field, $event) {
-	/*
-	switch($field) {
-		case 'tickets_url' :
-			$html = apply_filters( 'wpt/event/tickets/url/html', $html, $field, $date );
-			break;
-		case 'tickets_status' :
-			$html = apply_filters( 'wpt/event/tickets/status/html', $html, $field, $date );
-			break;
-	}
-	*/
-
-	$html = apply_filters( 'wpt/production/'.$field.'/html', $html, $field, $event );
-	$html = apply_filters( 'wpt_production_'.$field.'_html', $html, $field, $event );
+function deprecated_wpt_production_field_html_filter( $html, $field, $filters, $event) {
+	$html = apply_filters( 'wpt/production/'.$field.'/html', $html, $event );
+	$html = apply_filters( 'wpt_production_'.$field.'_html', $html, $event );
 	return $html;
 }
-add_filter('theater/event/field/html', 'deprecated_wpt_production_field_html_filter', 10, 3);
+add_filter('theater/event/field/html', 'deprecated_wpt_production_field_html_filter', 10, 4);
 
 /**
  * Handles deprecated date field filters.
