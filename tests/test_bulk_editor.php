@@ -20,12 +20,15 @@ class WPT_Bulk_Edit extends WPT_UnitTestCase {
 			'post_title' => 'A draft production',	
 		) );
 
-		$_POST = array(
+		$GLOBALS['hook_suffix'] = 'toplevel_page_theater-events';
+
+		$_REQUEST = array(
+			'action' => 'publish',
 			'production' => array( $production_id ),
 			'_wpnonce' => wp_create_nonce( 'bulk-productions' ),
 		);
 
-		$wp_theatre->productions_admin->process_bulk_actions( 'publish' );
+		$wp_theatre->productions_admin->process_bulk_actions();
 
 		$actual = array(
 			get_post_status( $production_id ),
@@ -48,12 +51,15 @@ class WPT_Bulk_Edit extends WPT_UnitTestCase {
 			'post_title' => 'A draft production',	
 		) );
 
-		$_POST = array(
+		$GLOBALS['hook_suffix'] = 'toplevel_page_theater-events';
+
+		$_REQUEST = array(
+			'action' => 'publish',
 			'production' => array( $production_id ),
 			'_wpnonce' => wp_create_nonce( 'bulk-productions' ),
 		);
 
-		$wp_theatre->productions_admin->process_bulk_actions( 'publish' );
+		$wp_theatre->productions_admin->process_bulk_actions();
 
 		$production = get_post($production_id);
 
@@ -72,12 +78,15 @@ class WPT_Bulk_Edit extends WPT_UnitTestCase {
 
 		$this->setup_test_data();
 
-		$_POST = array(
+		$GLOBALS['hook_suffix'] = 'toplevel_page_theater-events';
+
+		$_REQUEST = array(
+			'action' => 'draft',
 			'production' => array( $this->production_with_upcoming_event, $this->production_with_upcoming_events ),
 			'_wpnonce' => wp_create_nonce( 'bulk-productions' ),
 		);
 
-		$wp_theatre->productions_admin->process_bulk_actions( 'draft' );
+		$wp_theatre->productions_admin->process_bulk_actions();
 
 		$actual = array(
 			get_post_status( $this->production_with_upcoming_event ),
@@ -99,12 +108,15 @@ class WPT_Bulk_Edit extends WPT_UnitTestCase {
 
 		$this->setup_test_data();
 
-		$_POST = array(
+		$GLOBALS['hook_suffix'] = 'toplevel_page_theater-events';
+
+		$_REQUEST = array(
+			'action' => 'draft',
 			'production' => array( $this->production_with_upcoming_event, $this->production_with_upcoming_events ),
 			'_wpnonce' => wp_create_nonce( 'bulk-productions' ),
 		);
 
-		$wp_theatre->productions_admin->process_bulk_actions( 'draft' );
+		$wp_theatre->productions_admin->process_bulk_actions();
 
 		$actual = $wp_theatre->events->get(
 			array(
@@ -129,7 +141,7 @@ class WPT_Bulk_Edit extends WPT_UnitTestCase {
 		$actual = get_post( $this->production_with_upcoming_event );
 		$this->assertNotNull( $actual );
 
-		$_POST = array(
+		$_REQUEST = array(
 			'_wpnonce' => wp_create_nonce( 'bulk-productions' ),
 			'delete_all' => 1234,
 		);
