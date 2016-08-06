@@ -477,6 +477,10 @@
 		$expected = 4; // 2 productions with matching events and 2 sticky productions.
 		$this->assertEquals($expected, substr_count($returned, '"wp_theatre_prod"'));
 
+		$returned = do_shortcode('[wpt_productions end="now" ignore_sticky_posts="true"]');
+		$expected = 1; // 1 productions with matching events.
+		$this->assertEquals($expected, substr_count($returned, '"wp_theatre_prod"'));
+
 		$returned = do_shortcode('[wpt_productions end="now"]');
 		$expected = 3; // 1 productions with matching events and 2 sticky productions.
 		$this->assertEquals($expected, substr_count($returned, '"wp_theatre_prod"'));
