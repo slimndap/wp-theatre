@@ -48,6 +48,7 @@ class WP_Theatre {
 		$this->feeds = new WPT_Feeds();
 		$this->transient = new WPT_Transient();
 		$this->listing_page = new WPT_Listing_Page();
+		Theater_Event_Archive::init();
 		$this->calendar = new WPT_Calendar();
 		$this->context = new WPT_Context();
 		$this->filter = new WPT_Filter();
@@ -103,6 +104,7 @@ class WP_Theatre {
 	 */
 	function includes() {
 		require_once(dirname(__FILE__) . '/functions/wpt_listing.php');
+		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-archive.php');
 
 		require_once(dirname(__FILE__) . '/functions/template/wpt_template.php');	
 		require_once(dirname(__FILE__) . '/functions/template/wpt_template_placeholder.php');	

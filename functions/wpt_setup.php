@@ -194,7 +194,7 @@
 					'edit_item' => __('Edit event','theatre')
 				),
 				'public' => true,
-				'has_archive' => false,
+				'has_archive' => true,
 				'show_in_menu'  => false,
 				'show_in_admin_bar' => true,
 					'supports' => array('title', 'editor', 'excerpt', 'thumbnail','comments'),
