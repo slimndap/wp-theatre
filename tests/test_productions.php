@@ -307,7 +307,8 @@
 			'end' => false,
 			'groupby' => false,
 			'limit' => false,
-			'order' => 'asc'
+			'order' => 'asc',
+			'ignore_sticky_posts' => false,
 		);
 		$unique_args = array_merge(
 			array( 'atts' => $args ), 
@@ -470,16 +471,16 @@
 		$this->assertEquals($expected, $actual, $html);
 		
 		$returned = do_shortcode('[wpt_productions start="today" end="+2 days"]');
-		$expected = 4; // 2 productions with matching events and 2 sticky productions.
-		$this->assertEquals($expected, substr_count($returned, '"wp_theatre_prod"'));
+		$expected = 3; // 1 productions with matching events and 2 sticky productions.
+		$this->assertEquals($expected, substr_count($returned, '"wp_theatre_prod"'), $returned);
 
 		$returned = do_shortcode('[wpt_productions start="'.date('Y-m-d',time() + (2 * DAY_IN_SECONDS)).'"]');
 		$expected = 4; // 2 productions with matching events and 2 sticky productions.
 		$this->assertEquals($expected, substr_count($returned, '"wp_theatre_prod"'));
 
 		$returned = do_shortcode('[wpt_productions end="now" ignore_sticky_posts="true"]');
-		$expected = 1; // 1 productions with matching events.
-		$this->assertEquals($expected, substr_count($returned, '"wp_theatre_prod"'));
+		$expected = 2; // 2 productions with matching events.
+		$this->assertEquals($expected, substr_count($returned, '"wp_theatre_prod"'), $returned);
 
 		$returned = do_shortcode('[wpt_productions end="now"]');
 		$expected = 3; // 1 productions with matching events and 2 sticky productions.
@@ -498,9 +499,11 @@
 				
 		$html = do_shortcode('[wpt_productions groupby="day"]');
 
-		// should contain 'wpt_listing_group day'.
-		$this->assertEquals(7, substr_count($html, '<h3 class="wpt_listing_group day">'));		
-		$this->assertEquals(7, substr_count($html, '"wp_theatre_prod"'));
+		// Should have headers for 7 days.
+		$this->assertEquals(7, substr_count($html, '<h3 class="wpt_listing_group day">'), $html);		
+		
+		// Should contain all 7 events.
+		$this->assertEquals(7, substr_count($html, '"wp_theatre_prod"'), $html);
 		
 	}
 	
@@ -529,7 +532,7 @@
 				
 		$html = do_shortcode('[wpt_productions groupby="month" post__in="'.$production_with_two_months.'"]');
 		
-		$this->assertEquals(2, substr_count($html, '<h3 class="wpt_listing_group month">'));		
+		$this->assertEquals(2, substr_count($html, '<h3 class="wpt_listing_group month">'), $html);		
 		$this->assertContains('<h3 class="wpt_listing_group month">'.date_i18n('F',$in_two_months_date).'</h3>', $html);
 		$this->assertEquals(2, substr_count($html, '"wp_theatre_prod"'));
 	}
