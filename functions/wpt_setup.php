@@ -175,6 +175,7 @@
 		 * @since	0.15	Renamed post type title from 'Production' to 'Event'.
 		 * @since	0.15.6	Fixed the text-domain used in the 'Production' post type.
 		 * @since	0.15.9	Added a filter to the post type args.
+		 * @since	0.15.10	Productions now have an archive ('has_archive' == true).
 		 *
 		 * @see		WPT_Production_Permalink::get_permalink()	The production permalink.
 		 *				
