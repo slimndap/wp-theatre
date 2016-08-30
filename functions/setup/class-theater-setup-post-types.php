@@ -21,6 +21,7 @@ class Theater_Setup_Post_Types {
 	 * @since	0.15	Renamed post type title from 'Production' to 'Event'.
 	 * @since	0.15.6	Fixed the text-domain used in the 'Production' post type.
 	 * @since	0.15.9	Added a filter to the post type args.
+	 * @since	0.15.10	Events now have an archive ('has_archive' == true).
 	 * @since	0.16	Moved every post type to a separate function.
 	 *
 	 * @uses 	Theater_Setup_Post_Types::register_post_type_event to register the event custom post type.
@@ -43,7 +44,7 @@ class Theater_Setup_Post_Types {
 	 * @static
 	 * @since	0.16
 	 * @return 	void
-	 * @uses	WPT_Production_Permalink::get_base()	to retrieve the slug for events.
+	 * @uses	WPT_Production_Permalink::get_base() to retrieve the slug for events.
 	 */
 	protected static function register_post_type_event() {
 

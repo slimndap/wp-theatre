@@ -152,6 +152,7 @@ class Theater {
 		$this->feeds = new WPT_Feeds();
 		$this->transient = new WPT_Transient();
 		$this->listing_page = new WPT_Listing_Page();
+		Theater_Event_Archive::init();
 		$this->calendar = new WPT_Calendar();
 		$this->context = new WPT_Context();
 		$this->filter = new WPT_Filter();
@@ -230,6 +231,7 @@ class Theater {
 		require_once(dirname(__FILE__) . '/functions/template/wpt_template_placeholder.php');
 		require_once(dirname(__FILE__) . '/functions/template/wpt_template_placeholder_filter.php');
 
+
 		// All event classes.
 		require_once(dirname(__FILE__) . '/functions/event/class-theater-event.php');
 		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-field.php');
@@ -237,6 +239,7 @@ class Theater {
 		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-date-link.php');
 		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-list.php');
 		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-date-list.php');
+		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-archive.php');
 
 
 		require_once(dirname(__FILE__) . '/functions/wpt_production_permalink.php');

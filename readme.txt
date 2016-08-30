@@ -2,7 +2,7 @@
 Contributors: slimndap
 Tags: theatre, stage, venue, events, shows, concerts, tickets, ticketing, sports, performances, calendar, festival, workshops, theater, cinema
 Requires at least: 4.0
-Tested up to: 4.5
+Tested up to: 4.6
 Stable tag: 0.15
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -133,7 +133,8 @@ This release focusses on a more streamlined experience when managing your events
     * Simplified the events admin screen.
     * Added a new `{{prices}}` placeholder for productions (0.15.3).
     * Events can now be filtered by tags (0.15.5).
-    
+	* Activated events archive pages (0.15.10).
+	    
 * Bugfix
     * The translation setting for the header above events on the productions page was also being used in other places (eg. the admin menu) (0.15.2). Thank you [Bob Morris](https://wordpress.org/support/profile/bob-morris)!
 	* Seasons are now hidden from search results (0.15.3).
@@ -141,6 +142,7 @@ This release focusses on a more streamlined experience when managing your events
 	* Updates for extension plugins were not working anymore (0.15.6).
 	* Events where not always showing the correct end date.
 	* Search results no longer get lost when navigating on the Events page in the WordPress admin (0.15.9).
+	* Fixed an issue with the 'end' filter for events (0.15.10).
     
 = 0.14 =
 
@@ -218,6 +220,9 @@ Release Date: May 30th, 2015
 
 
 == Upgrade Notice ==
+
+= 0.15.10 =
+Fixes the ordering of events on archive pages. Fixes a problem with the 'end' filter for events.
 
 = 0.15.9 =
 Fixes a problem where search results got lost when navigating on the Theater Events page in the WordPress admin.

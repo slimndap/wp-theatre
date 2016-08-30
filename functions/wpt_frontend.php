@@ -342,6 +342,7 @@ class WPT_Frontend {
 	 * @since	0.10.9	Improved the unique key for transients.
 	 *					Fixes issue #97.
 	 * @since	0.14.7	Added $shortcode to shortcode_atts().
+	 * @since	0.15.10	Added 'ignored_stikcy_posts' to the shortcode atts.
 	 *
 	 * @param 	array 	$atts
 	 * @param 	string 	$content (default: null)
@@ -369,6 +370,7 @@ class WPT_Frontend {
 			'groupby' => false,
 			'limit' => false,
 			'order' => 'asc',
+			'ignore_sticky_posts' => false,
 		);
 
 		$atts = shortcode_atts( $defaults,$atts, 'wpt_productions' );
