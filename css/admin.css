@@ -651,19 +651,20 @@ body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event f
   width: 32px;
   margin: 0;
   float: left;
-  border-radius: 2px;
   overflow: hidden;
 }
 body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod figure img,
 body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event figure img {
   width: 100%;
   height: auto;
+  border-radius: 2px;
 }
 body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod figure.placeholder,
 body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event figure.placeholder {
   background-color: #c5c5c5;
   text-align: center;
   height: 32px;
+  border-radius: 2px;
 }
 body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod figure.placeholder .dashicons,
 body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event figure.placeholder .dashicons {
