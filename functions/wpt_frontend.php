@@ -1,4 +1,4 @@
-	<?php
+<?php
 class WPT_Frontend {
 	function __construct() {
 		add_action( 'init', array( $this, 'enqueue_scripts' ) );
