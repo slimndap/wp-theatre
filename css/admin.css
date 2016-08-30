@@ -623,6 +623,12 @@ body.wp-admin.post-type-wp_theatre_event #wpt_event_publish .inside .submit {
 .theater_page_wpt_extensions .plugin-card .action-links {
   width: auto;
 }
+@media screen and (max-width: 1100px) and (min-width: 782px), (max-width: 480px) {
+  .theater_page_wpt_extensions .plugin-card .name,
+  .theater_page_wpt_extensions .plugin-card .desc {
+    margin-right: 0;
+  }
+}
 .theater_page_wpt_extensions .plugin-icon {
   line-height: 128px;
   background-color: rgba(6, 156, 136, 0.75);
