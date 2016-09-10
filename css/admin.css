@@ -623,6 +623,12 @@ body.wp-admin.post-type-wp_theatre_event #wpt_event_publish .inside .submit {
 .theater_page_wpt_extensions .plugin-card .action-links {
   width: auto;
 }
+@media screen and (max-width: 1100px) and (min-width: 782px), (max-width: 480px) {
+  .theater_page_wpt_extensions .plugin-card .name,
+  .theater_page_wpt_extensions .plugin-card .desc {
+    margin-right: 0;
+  }
+}
 .theater_page_wpt_extensions .plugin-icon {
   line-height: 128px;
   background-color: rgba(6, 156, 136, 0.75);
@@ -651,19 +657,20 @@ body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event f
   width: 32px;
   margin: 0;
   float: left;
-  border-radius: 2px;
   overflow: hidden;
 }
 body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod figure img,
 body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event figure img {
   width: 100%;
   height: auto;
+  border-radius: 2px;
 }
 body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod figure.placeholder,
 body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event figure.placeholder {
   background-color: #c5c5c5;
   text-align: center;
   height: 32px;
+  border-radius: 2px;
 }
 body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod figure.placeholder .dashicons,
 body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event figure.placeholder .dashicons {
