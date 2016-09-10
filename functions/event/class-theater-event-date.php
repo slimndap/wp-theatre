@@ -180,19 +180,19 @@ class Theater_Event_Date extends Theater_Item {
 		ob_start();
 		?><div class="<?php echo $this->get_post_type();?>_date <?php echo $this->get_post_type(); ?>_enddate"><?php
 
-if ( $value = $this->get_field( 'enddate' ) ) {
+			if ( $value = $this->get_field( 'enddate' ) ) {
 
-	foreach ( $filters as $filter ) {
-		if ( 'date' == $filter->name ) {
-			$value = $filter->apply_to( $this->get_field( 'enddatetime' ), $this );
-		} else {
-			$value = $filter->apply_to( $value, $this );
-		}
-	}
-
-	echo $value;
-
-}
+				foreach ( $filters as $filter ) {
+					if ( 'date' == $filter->name ) {
+						$value = $filter->apply_to( $this->get_field( 'enddatetime' ), $this );
+					} else {
+						$value = $filter->apply_to( $value, $this );
+					}
+				}
+			
+				echo $value;
+			
+			}
 
 		?></div><?php
 
@@ -313,14 +313,11 @@ if ( $value = $this->get_field( 'endtime' ) ) {
 
 		$permalink = $this->event()->permalink( $deprecated );
 
-		/**
-		 * Filter the event permalink.
-		 *
-		 * @since	0.13.6
-		 * @param	string		$permalink	The event permalink.
-		 * @param	WPT_Event	$event		The event.
-		 */
-		$permalink = apply_filters( 'wpt/event/permalink', $permalink, $this );
+		$permalink = apply_filters( 
+			'theater/'.$this->get_name().'/field', 
+			$permalink, 'permalink', $this 
+		);
+		
 		return $permalink;
 	}
 
@@ -339,14 +336,11 @@ if ( $value = $this->get_field( 'endtime' ) ) {
 		$args['html'] = true;
 		$html = $this->event()->permalink( $args );
 
-		/**
-		 * Filter the HTML for the event permalink.
-		 *
-		 * @since	0.13.6
-		 * @param	string		$html	The HTML for the event permalink.
-		 * @param	WPT_Event	$event	The event.
-		 */
-		$html = apply_filters( 'wpt/event/permalink/html', $html, $this );
+		$html = apply_filters( 
+			'theater/'.$this->get_name().'/field/html', 
+			$html, 'permalink', NULL, $this 
+		);
+		
 		return $html;
 	}
 
@@ -519,7 +513,6 @@ if ( $value = $this->get_field( 'endtime' ) ) {
 				$html .= $this->get_field_html( 'tickets_url' );
 
 				$prices_html = $this->get_field_html( 'prices' );
-				$prices_html = apply_filters( 'wpt_event_tickets_prices_html', $prices_html, $this );
 				$html .= $prices_html;
 			}
 		} else {
@@ -594,15 +587,6 @@ if ( $value = $this->get_field( 'endtime' ) ) {
 		} else {
 			$tickets_url_iframe = add_query_arg( 'wpt_event_tickets', $this->ID, $tickets_url_iframe );
 		}
-
-		/**
-		 * Filter the event tickets iframe URL.
-		 *
-		 * @since 	0.12
-		 * @param 	string		$tickets_url_iframe		The event tickets iframe URL.
-		 * @param	WPT_Event	$this					The event object.
-		 */
-		$tickets_url_iframe = apply_filters( 'wpt/event/tickets/url/iframe', $tickets_url_iframe, $this );
 
 		return $tickets_url_iframe;
 
@@ -686,20 +670,15 @@ if ( $value = $this->get_field( 'endtime' ) ) {
 		$html = $template->get_merged();
 
 		/**
-		 * Filter the HTML output for an event.
+		 * Filter the HTML output for an event date.
 		 *
 		 * @since	0.14.7
-		 * @param	string				$html		The HTML output for an event.
-		 * @param	WPT_Event_Template	$template	The event template.
-		 * @param	array				$args		The listing args (if the event is part of a listing).
-		 * @param	WPT_Event			$event		The event.
+		 * @param	string				$html		The HTML output for an event date.
+		 * @param	WPT_Event_Template	$template	The event date template.
+		 * @param	array				$args		The listing args (if the event date is part of an event list).
+		 * @param	WPT_Event			$event		The event date.
 		 */
-		$html = apply_filters( 'wpt/event/html',$html, $template, $this );
-
-		/**
-		 * @deprecated	0.14.7
-		 */
-		$html = apply_filters( 'wpt_event_html',$html, $this );
+		$html = apply_filters( 'theater/date/html', $html, $template, $this );
 
 		/**
 		 * Filter the classes for an event.
@@ -1089,16 +1068,6 @@ foreach ( $filters as $filter ) {
 			$value = $this->startdatetime( $enddate );
 		}
 
-		/**
-		 * Filter the event datetime.
-		 *
-		 * @since	0.12.7
-		 * @param	datetime	$datetime	The event timestamp.
-		 * @param	WPT_Event	$event		The event.
-		 */
-		$value = apply_filters( 'wpt/event/datetime', $value, $this );
-		$value = apply_filters( 'wpt_event_datetime', $value, $this );
-
 		return $value;
 	}
 
@@ -1108,16 +1077,6 @@ foreach ( $filters as $filter ) {
 	 */
 	function datetime_html( $filters = array() ) {
 		$html = $this->get_field_html( 'startdatetime', $filters );
-
-		/**
-		 * Filter the HTML for the event timestamp.
-		 *
-		 * @since 	0.12.7
-		 * @param	string		$html		The HTML for the event timestamp.
-		 * @param	array       $filters    The template filters to apply.
-		 * @param	WPT_Event	$event		The event.
-		 */
-		$html = apply_filters( 'wpt/event/datetime/html', $html, $filters, $this );
 
 		return $html;
 	}

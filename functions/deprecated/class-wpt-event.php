@@ -115,28 +115,100 @@ class WPT_Event extends Theater_Event_Date {
 			}
 		}
 	}
+	/**
+	 * @deprecated 0.4
+	 * @internal
+	 */
+	function get_production() {
+		_deprecated_function( 'Theater_Event_Date::get_production()', '0.4', 'Theater_Event_Dates::get_event()' );
+		return $this->get_event();
+	}
+
+	/**
+	 * @deprecated 0.4 Use $event->prices() instead.
+	 * @internal
+	 */
+	function summary() {
+		global $wp_theatre;
+		if ( ! isset( $this->summary ) ) {
+			$args = array(
+			'summary' => true,
+			);
+			$this->summary = array(
+			'prices' => $this->prices( $args ),
+			);
+		}
+		return $this->summary;
+	}
+
+	/**
+	 * @deprecated	0.16
+	 * @internal
+	 */
+	function datetime( $enddate = false ) {
+
+		if ( true === $enddate ) {
+			$value = $this->enddatetime();
+		} else {
+			$value = $this->startdatetime( $enddate );
+		}
+
+		return $value;
+	}
+
+	/**
+	 * @deprecated	0.16
+	 * @internal
+	 */
+	function datetime_html( $filters = array() ) {
+		$html = $this->get_field_html( 'startdatetime', $filters );
+
+		return $html;
+	}
 }
 	
 
+/**
+ * Handles deprecated date field HTML filters.
+ * @deprecated	0.16
+ */
 function deprecated_wpt_event_field_html_filter( $html, $field, $filters, $date) {
 	switch($field) {
+		case 'datetime' :
 		case 'enddate' :
 		case 'endtime' :
 		case 'startdate' :
 		case 'starttime' :
-		case 'prices' :
-		case 'tickets' :
-			$html = apply_filters( 'wpt/event/'.$field.'/html', $html, $filters, $date );
+			$html = apply_filters( 'wpt/event/'.$field.'/html', $html, $filters, $date );		
 			break;
 		case 'tickets_url' :
-			$html = apply_filters( 'wpt/event/tickets/url/html', $html, $field, $date );
+			$html = apply_filters( 'wpt/event/tickets/url/html', $html, $date );
 			break;
 		case 'tickets_status' :
-			$html = apply_filters( 'wpt/event/tickets/status/html', $html, $field, $date );
+			$html = apply_filters( 'wpt/event/tickets/status/html', $html, $date );
 			break;
+		default: 
+			$html = apply_filters( 'wpt/event/'.$field.'/html', $html, $date );
 	}
 
-	$html = apply_filters( 'wpt_event_'.$field.'_html', $html, $date );
+	switch($field) {
+		case 'city' :
+		case 'location' :
+		case 'remark' :
+		case 'tickets_prices' :
+		case 'tickets' :
+		case 'tickets_url' :
+		case 'title' :
+		case 'venue' :
+			$html = apply_filters( 'wpt_event_'.$field.'_html', $html, $date );
+			break;
+		case 'prices' :
+			$html = apply_filters( 'wpt_event_tickets_prices_html', $html, $date );
+			break;
+		default :
+			$html = apply_filters( 'wpt_event_'.$field.'_html', $html, $field, $date );
+	}
+
 	return $html;
 }
 add_filter('theater/date/field/html', 'deprecated_wpt_event_field_html_filter', 10, 4);
@@ -146,16 +218,8 @@ add_filter('theater/date/field/html', 'deprecated_wpt_event_field_html_filter', 
  * @deprecated	0.16
  */
 function deprecated_wpt_event_field_filters($value, $field, $date) {
-	
+
 	switch($field) {
-		case 'enddate' :
-		case 'endtime' :
-		case 'startdate' :
-		case 'starttime' :
-		case 'prices' :
-		case 'tickets' :
-			$value = apply_filters( 'wpt/event/'.$field, $value, $date );
-			break;
 		case 'prices_summary' :
 			$value = apply_filters( 'wpt/event/prices/summary', $value, $date );
 			break;
@@ -165,12 +229,35 @@ function deprecated_wpt_event_field_filters($value, $field, $date) {
 		case 'tickets_url' :
 			$value = apply_filters( 'wpt/event/tickets/url', $value, $date );
 			break;
+		case 'tickets_url_iframe' :
+			$value = apply_filters( 'wpt/event/tickets/url/iframe', $value, $date );
+			break;
 		case 'tickets_status' :
 			$value = apply_filters( 'wpt/event/tickets/status', $value, $date );
 			break;
+		case 'tickets_status' :
+			$value = apply_filters( 'wpt/event/tickets/status', $value, $date );
+			break;
+		default :
+			$value = apply_filters( 'wpt/event/'.$field, $value, $date );
 	}
 
-	$value = apply_filters( 'wpt_event_'.$field, $value, $field, $date );
+	switch($field) {
+		case 'datetime' :
+		case 'duration' :
+		case 'location' :
+		case 'prices' :
+		case 'remark' :
+		case 'tickets' :
+		case 'tickets_status' :
+		case 'tickets_url' :
+		case 'title' :
+		case 'venue' :
+			$value = apply_filters('wpt_event_'.$field, $value, $date);
+			break;
+		default:
+			$value = apply_filters( 'wpt_event_'.$field, $value, $field, $date );
+	}
 	
 	return $value;
 }
@@ -191,4 +278,11 @@ function deprecated_wpt_event_endtime_html_filter($html, $filters, $event) {
 	return $html;
 }
 add_filter('theater/date/field/endtime/html', 'deprecated_wpt_event_endtime_html_filter', 10 , 3);
+
+function deprecated_wpt_event_html($html, $template, $event) {
+	$html = apply_filters( 'wpt/event/html', $html, $template, $event );
+	$html = apply_filters( 'wpt_event_html', $html, $event );
+	return $html;
+}
+add_filter('theater/date/html', 'deprecated_wpt_event_html', 10 , 3);
 
