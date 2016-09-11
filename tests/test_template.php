@@ -167,6 +167,41 @@ class WPT_Test_Template extends WP_UnitTestCase {
 		$this->assertEquals($expected, $actual);			
 	}
 
+	function test_template_placeholder_filter_permalink_on_thumbnail() {
+		add_theme_support( 'post-thumbnails' );	
+	    $this->assume_role( 'author' );
+	
+	    // create attachment
+	    $filename = dirname(__FILE__).'/assets/thumbnail.jpg';
+	    $contents = file_get_contents( $filename );
+	    $upload = wp_upload_bits( $filename, null, $contents );
+	    $this->assertTrue( empty( $upload['error'] ) );
+	
+	    $attachment = array(
+	      'post_title' => 'Post Thumbnail',
+	      'post_type' => 'attachment',
+	      'post_mime_type' => 'image/jpeg',
+	      'guid' => $upload['url']
+	    );
+	    $attachment_id = wp_insert_attachment( $attachment, $upload['file'] );
+	
+	    $post = array( 'post_title' => 'Post Thumbnail Test', 'post_thumbnail' => $attachment_id );
+		$production_id = $this->create_production();	
+		set_post_thumbnail($production_id, $attachment_id);
+		
+		$production = new WPT_Production($production_id);
+		$event_id = $this->create_event_for_production($production_id)	;
+		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() + (2 * DAY_IN_SECONDS)));
+		
+		$event = new WPT_Event($event_id);
+		$template = new WPT_Event_Template($event, '{{thumbnail(\'medium\')|permalink}}');
+		
+		$expected = 'class="attachment-medium size-medium wp-post-image" alt="Post Thumbnail" /></a></figure>';
+		$actual = $template->get_merged();
+		
+		$this->assertContains($expected, $actual);			
+	}
+
 	function test_template_placeholder_filter_date() {
 		$production_id = $this->create_production();	
 		$event_id = $this->create_event_for_production($production_id);

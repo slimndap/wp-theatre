@@ -80,7 +80,7 @@ abstract class Theater_Item {
 			if (!empty($args[0]['filters'])) {
 				return $this->get_field_html( $name, $args[0]['filters'] );
 			}
-			return $this->get_field_html( $name );
+			return $this->get_field_html( $name, array(), $args );
 		}
 		
 		// Handle deprecated usage of '{field}_html' item methods.
@@ -89,9 +89,9 @@ abstract class Theater_Item {
 			array_pop($name_parts);
 			$name = implode('_', $name_parts);
 			if (!empty($args[0])) {
-				return $this->get_field_html( $name, $args[0] );
+				return $this->get_field_html( $name, $args[0], $args );
 			}
-			return $this->get_field_html( $name );
+			return $this->get_field_html( $name, array(), $args );
 		}
 		
 		return $this->get_field( $name );
@@ -161,8 +161,8 @@ abstract class Theater_Item {
 	 * @param 	array 	$filters 	(default: array())
 	 * @return	string				The HTML output for a field.
 	 */
-	function get_field_html( $name, $filters = array() ) {
-		$field = new Theater_Event_Field($name, $filters, $this);
+	function get_field_html( $name, $filters = array(), $args = array() ) {
+		$field = new Theater_Event_Field($name, $filters, $this, $args );
 		return $field->get_html();	
 	}
 	
@@ -283,5 +283,3 @@ abstract class Theater_Item {
 	
 
 }
-
-?>

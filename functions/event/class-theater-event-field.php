@@ -11,11 +11,13 @@ class Theater_Event_Field {
 	protected $name;
 	protected $filters = array();
 	protected $item;
+	protected $data;
 	
-	function __construct( $name, $filters = array(), $item ) {
+	function __construct( $name, $filters = array(), $item, $data = array() ) {
 		$this->name = $name;
 		$this->filters = $filters;
 		$this->item = $item;
+		$this->data = $data;
 	}
 	
 	function __invoke( $args = array() ) {
@@ -42,12 +44,12 @@ class Theater_Event_Field {
 		
 		$value = apply_filters( 
 			'theater/'.$this->item->get_name().'/field', 
-			$value, $this->name, $this->item 
+			$value, $this->name, $this->item, $this->data 
 		);
 		
 		$value = apply_filters( 
 			'theater/'.$this->item->get_name().'/field?name='.$this->name, 
-			$value, $this->item 
+			$value, $this->item, $this->data
 		);
 
 		return $value;
@@ -73,10 +75,10 @@ class Theater_Event_Field {
 	function get_html() {
 		
 		if (method_exists($this->item, 'get_'.$this->name.'_html')) {
-			$html = $this->item->{'get_'.$this->name.'_html'}( $this->filters );			
+			$html = $this->item->{'get_'.$this->name.'_html'}( $this->filters, $this->data );			
 		} else {
 			$value = (string) $this->get();
-			
+
 			ob_start();
 			?><div class="<?php echo $this->item->get_post_type(); ?>_<?php echo $this->name; ?>"><?php 
 				echo $this->apply_template_filters( $value, $this->filters ); 
@@ -86,12 +88,12 @@ class Theater_Event_Field {
 		
 		$html = apply_filters( 
 			'theater/'.$this->item->get_name().'/field/html', 
-			$html, $this->name, $this->filters, $this->item 
+			$html, $this->name, $this->filters, $this->item, $this->data 
 		);
 		
 		$html = apply_filters( 
 			'theater/'.$this->item->get_name().'/field/html?name='.$this->name, 
-			$html, $this->filters, $this->item 
+			$html, $this->filters, $this->item, $this->data 
 		);
 		
 		return $html;

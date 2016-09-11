@@ -28,30 +28,62 @@ class WPT_Production extends Theater_Event {
 	}
 }
 
+/**
+ * Handles deprecated event field HTML filters.
+ * @deprecated	0.16
+ */
 function deprecated_wpt_production_field_html_filter( $html, $field, $filters, $event) {
-	$html = apply_filters( 'wpt/production/'.$field.'/html', $html, $event );
+	
+	switch ($field) {
+		case 'prices_summary' :
+			$html = apply_filters( 'wpt/production/'.$field.'/html', $html, $event );
+			break;
+		default :
+			$html = apply_filters( 'wpt/production/prices/summary/html', $html, $event );
+	}
+	
 	$html = apply_filters( 'wpt_production_'.$field.'_html', $html, $event );
+	
 	return $html;
 }
 add_filter('theater/event/field/html', 'deprecated_wpt_production_field_html_filter', 10, 4);
 
 /**
- * Handles deprecated date field filters.
+ * Handles deprecated event field filters.
  * @deprecated	0.16
  */
 function deprecated_wpt_production_field_filters($value, $field, $event) {
 
 	switch($field) {
+		case 'dates' :
+		case 'prices' :
+		case 'thumbnail' :
+			$value = apply_filters( 'wpt/production/'.$field, $value, $event );		
+			break;
 		case 'dates_summary' :
 			$value = apply_filters( 'wpt/production/dates/summary', $value, $event );
 			break;
 		case 'prices_summary' :
 			$value = apply_filters( 'wpt/production/prices/summary', $value, $event );
 			break;
+		default :
+			$value = apply_filters( 'wpt/production/'.$field, $value, $field, $event );
 	}
-
-	$value = apply_filters( 'wpt/production/'.$field, $value, $field, $event );
-	$value = apply_filters( 'wpt_production_'.$field, $value, $field, $event );
+	
+	switch($field) {
+		case 'categories' :
+		case 'cities' :
+		case 'content' :
+		case 'dates' :
+		case 'excerpt' :
+		case 'permalink' :
+		case 'thumbnail' :
+		case 'title' :
+			$value = apply_filters( 'wpt_production_'.$field, $value, $event );
+			break;
+		default:
+			$value = apply_filters( 'wpt_production_'.$field, $value, $field, $event );
+	}
 	
 	return $value;
 }

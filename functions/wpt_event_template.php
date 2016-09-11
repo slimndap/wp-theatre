@@ -64,15 +64,17 @@ class WPT_Event_Template extends WPT_Template {
 				if ( ! empty($args[0]) ) {
 					$size = $args[0];
 				}
-				if ($production = $this->object->production()) {
-					$value = $production->thumbnail_html($size, $filters);				
+				if ($event = $this->object->get_event()) {
+					$value = $event->get_thumbnail_html($filters, array( 'size' => $size));				
 				}
 				break;
 			case 'categories':
 			case 'content':
+			case 'dates':
+			case 'startdates':
 			case 'excerpt':
-				if ($production = $this->object->get_event()) {
-					$value = $production->get_field_html($field, $filters);
+				if ($event = $this->object->get_event()) {
+					$value = $event->get_field_html($field, $filters);
 				}
 				break;
 			case 'date':
@@ -80,10 +82,6 @@ class WPT_Event_Template extends WPT_Template {
 				break;
 			case 'time':
 				$value = $this->object->get_field_html( 'starttime', $filters );
-				break;
-			case 'prices':
-			case 'tickets':
-				$value = $this->object->{$field.'_html'}($filters);
 				break;
 			default:
 				$value = $this->object->get_field_html( $field, $filters );

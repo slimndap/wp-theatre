@@ -59,24 +59,12 @@ class WPT_Production_Template extends WPT_Template {
 				if ( ! empty($args[0]) ) {
 					$size = $args[0];
 				}
-				$value = $this->object->thumbnail_html($size, $filters);
-				break;
-			case 'prices' :
-				$value = $this->object->prices_html();
+				$value = $this->object->get_thumbnail_html($filters, array('size' => $size));
 				break;
 			case 'dates':
 				$value = $this->object->get_field_html('startdates', $filters);
-			case 'title':
-			case 'dates':
-			case 'cities':
-			case 'content':
-			case 'summary':
-			case 'categories':
-				$value = $this->object->{$field}($value_args);
-				break;
 			default:
 				$value = $this->object->get_field_html( $field, $filters );
-//				$value = $this->object->custom( $field,$value_args );
 		}
 
 		/**

@@ -24,7 +24,7 @@ class Theater_Event_Date_Link {
 		add_action( 'wp_trash_post',array( __CLASS__, 'trash_dates' ) );
 		add_action( 'untrash_post',array( __CLASS__, 'untrash_dates' ) );
 		
-		add_filter( 'theater/date/field', array(__CLASS__, 'get_production_field_values'), 10, 3);
+		add_filter( 'theater/date/field', array(__CLASS__, 'get_event_field_values'), 10, 3);
 
 	}
 
@@ -62,7 +62,7 @@ class Theater_Event_Date_Link {
 		}
 	}
 
-	static function get_production_field_values( $value, $field, $date) {
+	static function get_event_field_values( $value, $field, $date) {
 		
 		if (!empty($value)) {
 			return $value;

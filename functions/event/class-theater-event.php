@@ -350,7 +350,6 @@ class Theater_Event extends Theater_Item {
 		if ( empty( $excerpt ) ) {
 			 $excerpt = wp_trim_words( strip_shortcodes( $this->post()->post_content ), $args['words'] );
 		}
-		$excerpt = apply_filters( 'wpt_production_excerpt',$excerpt, $this );
 
 		return $excerpt;
 	}
@@ -389,56 +388,70 @@ class Theater_Event extends Theater_Item {
 	 * @internal
 	 * @return string URL or HTML.
 	 */
-	function permalink( $args = array() ) {
+	function permalink( $deprecated = array() ) {
+
+		if ( ! empty( $deprecated['html'] ) ) {
+			return $this->get_field_html( 'permalink', array(), $deprecated );
+		}
+
+		$permalink = get_permalink( $this->ID );
+
+		$permalink = apply_filters( 
+			'theater/'.$this->get_name().'/field', 
+			$permalink, 'permalink', $this 
+		);
+		
+		return $permalink;
+
+	}
+	
+	function get_permalink_html( $filters = array(), $args = array() ) {
+
+		// Add support for the deprecated permalink_html( $args ) syntax.	
+		if (!empty ($args[0]) && is_array($args[0])) {
+			$args = $args[0];
+		}
+
 		$defaults = array(
-			'html' => false,
-			'text' => $this->title(),
+			'text' => $this->get_field('title'),
 			'inside' => false,
 		);
-
 		$args = wp_parse_args( $args, $defaults );
 
-		if ( ! isset( $this->permalink ) ) {
-			$this->permalink = apply_filters( 'wpt_production_permalink',get_permalink( $this->ID ), $this );
-		}
+		if ( $args['inside'] ) {
+			
+			$text_sanitized = trim( $args['text'] );
 
-		if ( $args['html'] ) {
-			$html = '';
+			$before = '';
+			$after = '';
+			$text = $args['text'];
 
-			if ( $args['inside'] ) {
-				$text_sanitized = trim( $args['text'] );
-
-				$before = '';
-				$after = '';
-				$text = $args['text'];
-
-				$elements = array( 'div','figure' );
-				foreach ( $elements as $element ) {
-					if (
-						$args['inside'] &&
-						strpos( $text_sanitized, '<'.$element ) === 0 &&
-						strrpos( $text_sanitized, '</'.$element ) === strlen( $text_sanitized ) - strlen( $element ) - 3
-					) {
-						$before = substr( $args['text'], 0, strpos( $args['text'], '>' ) + 1 );
-						$after = '</'.$element.'>';
-						$text = substr( $args['text'], strpos( $args['text'], '>' ) + 1, strrpos( $args['text'],'<' ) - strpos( $args['text'], '>' ) - 1 );
-						continue;
-					}
+			$elements = array( 'div','figure' );
+			foreach ( $elements as $element ) {
+				if (
+					$args['inside'] &&
+					strpos( $text_sanitized, '<'.$element ) === 0 &&
+					strrpos( $text_sanitized, '</'.$element ) === strlen( $text_sanitized ) - strlen( $element ) - 3
+				) {
+					$before = substr( $args['text'], 0, strpos( $args['text'], '>' ) + 1 );
+					$after = '</'.$element.'>';
+					$text = substr( $args['text'], strpos( $args['text'], '>' ) + 1, strrpos( $args['text'],'<' ) - strpos( $args['text'], '>' ) - 1 );
+					continue;
 				}
-				$inside_args = array(
-					'html' => true,
-					'text' => $text,
-				);
-				return $before.$this->permalink( $inside_args ).$after;
-			} else {
-				$html .= '<a href="'.get_permalink( $this->ID ).'">';
-				$html .= $args['text'];
-				$html .= '</a>';
 			}
-			return apply_filters( 'wpt_production_permalink_html', $html, $this );
+			$inside_args = array(
+				'text' => $text,
+			);
+			return $before.$this->get_field_html('permalink', $filters, $inside_args).$after;
+			
 		} else {
-			return $this->permalink;
+			ob_start();
+			?><a href="<?php echo $this->permalink(); ?>"><?php echo $args['text']; ?></a><?php
+			$html = ob_get_clean();
 		}
+
+		return $html;
+
 	}
 
 	/**
@@ -461,15 +474,6 @@ class Theater_Event extends Theater_Item {
 		$prices = array_unique( $prices );
 		sort( $prices );
 
-		/**
-		 * Filter the prices of the production.
-		 *
-		 * @since	0.15.3
-		 * @param 	array	 		$prices		The current prices.
-		 * @param 	WPT_Production	$production	The production.
-		 */
-		$prices = apply_filters( 'wpt/production/prices', $prices, $this );
-
 		return $prices;
 	}
 
@@ -491,15 +495,6 @@ class Theater_Event extends Theater_Item {
 			?><div class="<?php echo $this->get_post_type(); ?>_prices"><?php echo $this->apply_template_filters( $prices_summary_html, $filters ); ?></div><?php
 			$html = ob_get_clean();
 		}
-
-		/**
-		 * Filter the HTML of the prices for the production.
-		 *
-		 * @since	0.15.3
-		 * @param 	string	 		$html		The current html.
-		 * @param 	WPT_Production	$production	The production.
-		 */
-		$html = apply_filters( 'wpt/production/prices/html', $html, $this );
 
 		return $html;
 	}
@@ -546,15 +541,6 @@ class Theater_Event extends Theater_Item {
 		$html = $this->get_field('prices_summary');
 		$html = esc_html( $html );
 		$html = str_replace( ' ', '&nbsp;', $html );
-
-		/**
-		 * Filter the HTML for the summary of the prices for the production.
-		 *
-		 * @since	0.15.3
-		 * @param 	string	 		$html		The current html.
-		 * @param 	WPT_Production	$production	The production.
-		 */
-		$html = apply_filters( 'wpt/production/prices/summary/html', $html, $this );
 
 		return $html;
 	}
@@ -629,7 +615,7 @@ class Theater_Event extends Theater_Item {
 				'filters' => array(),
 			);
 			$deprecated = wp_parse_args( $deprecated, $defaults );
-			return $this->thumbnail_html( $deprecated['size'], $deprecated['filters'] );
+			return $this->get_field_html('thumbnail', $deprecated['filters'], array('size' => $deprecated['size'])  );
 		}
 
 		$thumbnail = get_post_thumbnail_id( $this->ID );
@@ -641,48 +627,59 @@ class Theater_Event extends Theater_Item {
 		 * @param	int				ID			The production thumbnail ID.
 		 * @param	WPT_Production	$production	The production.
 		 */
-		$thumbnail = apply_filters( 'wpt/production/thumbnail', $thumbnail, $this );
+		$thumbnail = apply_filters( 
+			'theater/'.$this->get_name().'/field', 
+			$thumbnail, 'thumbnail', $this 
+		);
 
 		return $thumbnail;
 	}
 
 	/**
-	 * Get the production thumbnail HTML.
+	 * Get the event thumbnail HTML.
 	 *
 	 * @since	0.12.5
 	 * @internal
-	 * @param 	string 	$size 		The thumbnail size. Default: 'thumbnail'.
 	 * @param 	array 	$filters 	The template filters to apply.
-	 * @return 	string				The production thumbnail HTML.
+	 * @param 	array 	$args 		The thumbnail arguments. 
+	 *								Use this to define the thumbnails size:
+	 *								<code>
+	 *								$args = array( 'size' => 'medium' );
+	 *								</code>
+	 * @return 	string				The event thumbnail HTML.
 	 */
-	function thumbnail_html( $size = 'thumbnail', $filters = array() ) {
+	function get_thumbnail_html( $filters = array(), $args = array() ) {
 
-		$html = '';
-		$thumbnail = get_the_post_thumbnail( $this->ID,$size );
-		if ( ! empty( $thumbnail ) ) {
-			$html .= '<figure>';
-			$html .= $this->apply_template_filters( $thumbnail, $filters );
-			$html .= '</figure>';
+		// Add support for $size in deprecated thumbnail_html($size, $filters) syntax.
+		if (!empty($args[0]) && !is_array($args[0])) {
+			$args['size'] = $args[0];
 		}
 
-		/**
-		 * Filter the production thumbnail HTML.
-		 *
-		 * @since	0.12.5
-		 * @param	string			$html		The production thumbnail HTML.
-		 * @param	string			$size		The thumbnail size.
-		 * @param	array			$filters	The template filters to apply.
-		 * @param	WPT_Production	$production	The production.
-		 */
-		$html = apply_filters( 'wpt/production/thumbnail/html/size='.$size, $html, $filters, $this );
-		$html = apply_filters( 'wpt/production/thumbnail/html', $html, $size, $filters, $this );
+		// Add support for $filters in deprecated thumbnail_html($size, $filters) syntax.
+		if (!is_array($filters)) {
+			$filters = array();
+			if (!empty($args[1]) && is_array($args[1])) {
+				$filters = $args[1];
+			}
+		}
+		
+		$defaults = array(
+			'size' => 'thumbnail',
+		);
+		$args = wp_parse_args($args, $defaults);
 
-		/**
-		 * @deprecated	0.12.5
-		 */
-		$html = apply_filters( 'wpt_production_thumbnail_html', $html, $this );
+		ob_start();
+
+		$thumbnail = get_the_post_thumbnail( $this->ID, $args['size'] );
+
+		if ( ! empty( $thumbnail ) ) {
+			?><figure><?php echo $this->apply_template_filters( $thumbnail, $filters ); ?></figure><?php
+		}
+
+		$html = ob_get_clean();
 
 		return $html;
+
 	}
 
 	/**
