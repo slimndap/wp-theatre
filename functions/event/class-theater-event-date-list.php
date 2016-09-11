@@ -1014,7 +1014,7 @@ class Theater_Event_Date_List extends Theater_List {
 	 * @uses	Theater_Dates::get_pagination_filters()
 	 * @return 	array	The pagination filters for an event listing.
 	 */
-	protected function get_pagination_filters() {
+	function get_pagination_filters() {
 
 		$filters = parent::get_pagination_filters();
 

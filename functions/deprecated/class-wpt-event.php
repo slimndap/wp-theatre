@@ -1,5 +1,4 @@
-<?php
-
+<?php
 /**
  * WPT_Event class.
  * 

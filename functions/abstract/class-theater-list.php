@@ -213,7 +213,6 @@ abstract class Theater_List {
 		 *
 		 * @since	0.13.3
 		 * @since	0.13.4	Added the listing object to the filter variables.
-		 * @since	0.16	Removed listing object from the filter params.
 		 *
 		 * @param	string	$html		The HTML of the navigation for a listing filter.
 		 * @param	string	$field		The field being filtered.
@@ -221,8 +220,8 @@ abstract class Theater_List {
 		 * @param	array	$options	The possible values for the filter.
 		 * @param	array	$args		The arguments used for the listing.
 		 */
-		$html = apply_filters( 'wpt/listing/pagination/filter/html',$html, $field, $options, $args );
-		$html = apply_filters( 'wpt/listing/pagination/filter/html/field='.$field, $html, $options, $args );
+		$html = apply_filters( 'wpt/listing/pagination/filter/html',$html, $field, $options, $args, $this );
+		$html = apply_filters( 'wpt/listing/pagination/filter/html/field='.$field, $html, $options, $args, $this );
 
 		return '<div class="wpt_listing_filter_pagination '.$field.'">'.$html.'</div>';
 
