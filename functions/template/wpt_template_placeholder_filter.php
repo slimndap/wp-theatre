@@ -61,19 +61,27 @@ class WPT_Template_Placeholder_Filter {
 	 * Applies the filter to a content string.
 	 *
 	 * @since	0.12.1
+	 * @since	0.15.11				No longer corrupts $this->args.
+	 *								Fixes #215.
 	 * @param 	string	$content
 	 * @return 	string				The content string with the filter applied.
 	 */
 	public function apply_to($content) {
-		array_unshift( $this->args, $content, $this->object );
-		$content = call_user_func_array( $this->callback, $this->args );
+		
+		/*
+		 * Prepare the callback args.
+		 */
+		$callback_args = $this->args;
+		array_unshift( $callback_args, $content, $this->object );
+		
+		$content = call_user_func_array( $this->callback, $callback_args );
 		return $content;
 	}
 
 	/**
-	 * The default filter callsback.
+	 * The default filter callback.
 	 *
-	 * This callback is used for all filter that do not have a callback assigned.
+	 * This callback is used for all filters that do not have a callback assigned.
 	 *
 	 * @since	0.12.1
 	 * @access 	protected
