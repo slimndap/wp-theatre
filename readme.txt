@@ -218,6 +218,9 @@ Release Date: May 30th, 2015
 
 == Upgrade Notice ==
 
+= 0.15.11 =
+Small bugfixes and CSS tweaks.
+
 = 0.15.10 =
 Fixes the ordering of events on archive pages. Fixes a problem with the 'end' filter for events.
 
