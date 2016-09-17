@@ -167,6 +167,41 @@ class WPT_Test_Template extends WP_UnitTestCase {
 		$this->assertEquals($expected, $actual);			
 	}
 
+	function test_template_placeholder_filter_permalink_on_thumbnail() {
+		add_theme_support( 'post-thumbnails' );	
+	    $this->assume_role( 'author' );
+	
+	    // create attachment
+	    $filename = dirname(__FILE__).'/assets/thumbnail.jpg';
+	    $contents = file_get_contents( $filename );
+	    $upload = wp_upload_bits( $filename, null, $contents );
+	    $this->assertTrue( empty( $upload['error'] ) );
+	
+	    $attachment = array(
+	      'post_title' => 'Post Thumbnail',
+	      'post_type' => 'attachment',
+	      'post_mime_type' => 'image/jpeg',
+	      'guid' => $upload['url']
+	    );
+	    $attachment_id = wp_insert_attachment( $attachment, $upload['file'] );
+	
+	    $post = array( 'post_title' => 'Post Thumbnail Test', 'post_thumbnail' => $attachment_id );
+		$production_id = $this->create_production();	
+		set_post_thumbnail($production_id, $attachment_id);
+		
+		$production = new WPT_Production($production_id);
+		$event_id = $this->create_event_for_production($production_id)	;
+		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', time() + (2 * DAY_IN_SECONDS)));
+		
+		$event = new WPT_Event($event_id);
+		$template = new WPT_Event_Template($event, '{{thumbnail(\'medium\')|permalink}}');
+		
+		$expected = 'wp-post-image" alt="Post Thumbnail" /></a></figure>';
+		$actual = $template->get_merged();
+		
+		$this->assertContains($expected, $actual);			
+	}
+
 	function test_template_placeholder_filter_date() {
 		$production_id = $this->create_production();	
 		$event_id = $this->create_event_for_production($production_id);
@@ -220,7 +255,7 @@ class WPT_Test_Template extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test if datetime doesn't mess up timezone if used in conjunction with 'date' filter.
+	 * Test if datetime doesn't mess up timezone is used in conjunction with 'date' filter.
 	 * See: https://github.com/slimndap/wp-theatre/issues/161
 	 */
 	function test_timezone_with_date_template_filter() {
@@ -243,6 +278,41 @@ class WPT_Test_Template extends WP_UnitTestCase {
 		$this->assertEquals($expected, $actual);			
 	}
 	
+	/**
+	 * Test if the date template placeholder filter works if the same instance is run twice.
+	 * Until 0.15.10, whenever WPT_Template_Placeholder_Filter::apply_to() was run,
+	 * the instance's $args were corrupted.
+	 * If the instance is a date filter, and it is run again, then the date filter callback
+	 * received the corrupt $args, resulting in unwanted output.
+	 * See: https://github.com/slimndap/wp-theatre/issues/215
+	 */
+	function test_template_placeholder_filter_date_filter_running_twice() {
+		
+		// A dummy function that applies the date template placeholder filter again.
+		$func = create_function(
+			'$html, $filters, $event',
+			'return $filters[0]->apply_to( $event->datetime() - DAY_IN_SECONDS);'
+		);
+		
+		add_filter('wpt/event/startdate/html', $func, 10, 3);
+		
+		$production_id = $this->create_production();	
+		$event_id = $this->create_event_for_production($production_id);
+
+		$startdate = time() + (2 * DAY_IN_SECONDS);
+		$date_format = 'D d';
+
+		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', $startdate));
+		
+		$event = new WPT_Event($event_id);
+		$template = new WPT_Event_Template($event, '{{startdate|date(\''.$date_format.'\')}}');
+		
+		$expected = date($date_format,$startdate - DAY_IN_SECONDS);
+		$actual = $template->get_merged();
+		
+		$this->assertEquals($expected, $actual);			
+				
+	}
 
 
 }
