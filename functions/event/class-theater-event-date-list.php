@@ -433,25 +433,30 @@ class Theater_Event_Date_List extends Theater_List {
 	/**
 	 * Gets an array of all days with event dates.
 	 *
-	 * @since 0.8
-	 * @since 0.10				No longer limits the output to days with upcoming events.
-	 *							See: https://github.com/slimndap/wp-theatre/issues/75
-	 * 							Renamed method from `days()` to `get_days()`.
-	 * @since 0.10.1			Removed custom sorting. Rely on the sorting order of the events instead.
-	 * @since 0.10.6            Added custom sorting again.
-	 *							Can't rely on sorting order of events, because historic events have no
-	 *							`_wpt_order` set.
+	 * @since 	0.8
+	 * @since 	0.10	No longer limits the output to days with upcoming events.
+	 *					See: https://github.com/slimndap/wp-theatre/issues/75
+	 * 					Renamed method from `days()` to `get_days()`.
+	 * @since 	0.10.1	Removed custom sorting. Rely on the sorting order of the events instead.
+	 * @since 	0.10.6	Added custom sorting again.
+	 *					Can't rely on sorting order of events, because historic events have no
+	 *					`_wpt_order` set.
+	 * @since	0.15.11	Added support for next day start time offset.
 	 *
-	 * @uses	Theater_Dates::get() to get a list of all event dates for a list.
-	 *
-	 * @param 	array $filters	See `Theater_Dates::get()` for possible values.
-	 * @return 	array 			Days.
+	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
+	 * @param 	array 	$filters	See WPT_Events::get() for possible values.
+	 * @return 	array 				All days with events
 	 */
 	function get_days( $filters = array() ) {
 		$dates = $this->get( $filters );
 		$days = array();
 		foreach ( $dates as $date ) {
-			$days[ date( 'Y-m-d',$date->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ] = date_i18n( 'D j M',$date->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+			
+			$day_datetime = $date->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
+			$day_datetime -= Theater_Helpers_Time::get_next_day_start_time_offset();
+			
+			$days[ date( 'Y-m-d', $day_datetime) ] = date_i18n( 'D j M', $day_datetime );
+
 		}
 
 		if ( ! empty( $filters['order'] ) && 'desc' == $filters['order'] ) {
@@ -571,8 +576,10 @@ class Theater_Event_Date_List extends Theater_List {
 	/**
 	 * Gets a list of event dates in HTML for a single day.
 	 *
-	 * @since 0.10
+	 * @since	0.10
+	 * @since	0.15.11	Added support for next day start time offset.
 	 *
+	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
 	 * @uses	Theater_Dates::get_html_grouped();
 	 *
 	 * @access 	protected
@@ -590,7 +597,7 @@ class Theater_Event_Date_List extends Theater_List {
 			empty( $args['start'] ) ||
 			(strtotime( $args['start'] ) < strtotime( $day ))
 		) {
-			$args['start'] = $day;
+			$args['start'] = $day.' +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
 
 		/*
@@ -601,7 +608,7 @@ class Theater_Event_Date_List extends Theater_List {
 			empty( $args['end'] ) ||
 			(strtotime( $args['end'] ) > strtotime( $day.' +1 day' ))
 		) {
-			$args['end'] = $day.' +1 day';
+			$args['end'] = $day.' +1 day +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
 
 		return $this->get_html_grouped( $args );
@@ -610,8 +617,10 @@ class Theater_Event_Date_List extends Theater_List {
 	/**
 	 * Gets a list of event dates in HTML for a single month.
 	 *
-	 * @since 0.10
+	 * @since	0.10
+	 * @since	0.15.11	Added support for next day start time offset.
 	 *
+	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
 	 * @uses 	Theater_Dates::get_html_grouped();
 	 *
 	 * @access 	protected
@@ -629,7 +638,7 @@ class Theater_Event_Date_List extends Theater_List {
 			empty( $args['start'] ) ||
 			(strtotime( $args['start'] ) < strtotime( $month ))
 		) {
-			$args['start'] = $month;
+			$args['start'] = $month.' +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
 
 		/*
@@ -640,7 +649,7 @@ class Theater_Event_Date_List extends Theater_List {
 			empty( $args['end'] ) ||
 			(strtotime( $args['end'] ) > strtotime( $month.' +1 month' ))
 		) {
-			$args['end'] = $month.' +1 month';
+			$args['end'] = $month.' +1 month +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
 
 		return $this->get_html_grouped( $args );
@@ -650,7 +659,9 @@ class Theater_Event_Date_List extends Theater_List {
 	 * Gets a list of event dates in HTML for a single year.
 	 *
 	 * @since 0.10
+	 * @since	0.15.11	Added support for next day start time offset.
 	 *
+	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
 	 * @uses 	Theater_Dates::get_html_grouped();
 	 *
 	 * @access 	protected
@@ -668,7 +679,7 @@ class Theater_Event_Date_List extends Theater_List {
 			empty( $args['start'] ) ||
 			(strtotime( $args['start'] ) < strtotime( $year.'-01-01' ))
 		) {
-			$args['start'] = $year.'-01-01';
+			$args['start'] = $year.'-01-01 +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
 
 		/*
@@ -679,7 +690,7 @@ class Theater_Event_Date_List extends Theater_List {
 			empty( $args['end'] ) ||
 			(strtotime( $args['end'] ) > strtotime( $year.'-01-01 +1 year' ))
 		) {
-			$args['end'] = $year.'-01-01 +1 year';
+			$args['end'] = $year.'-01-01 +1 year +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
 
 		return $this->get_html_grouped( $args );
@@ -976,17 +987,19 @@ class Theater_Event_Date_List extends Theater_List {
 	/**
 	 * Gets all months that have events.
 	 *
-	 * @since 0.5
-	 * @since 0.10				No longer limits the output to months with upcoming events.
-	 *							See: https://github.com/slimndap/wp-theatre/issues/75
-	 * 							Renamed method from `months()` to `get_months()`.
-	 * @since 0.10.1			Removed custom sorting. Rely on the sorting order of the events instead.
-	 * @since 0.10.6            Added custom sorting again.
-	 *							Can't rely on sorting order of events, because historic events have no
-	 *							`_wpt_order` set.
+	 * @since 	0.5
+	 * @since	0.10	No longer limits the output to months with upcoming events.
+	 *					See: https://github.com/slimndap/wp-theatre/issues/75
+	 * 					Renamed method from `months()` to `get_months()`.
+	 * @since 	0.10.1	Removed custom sorting. Rely on the sorting order of the events instead.
+	 * @since 	0.10.6 	Added custom sorting again.
+	 *					Can't rely on sorting order of events, because historic events have no
+	 *					`_wpt_order` set.
+	 * @since	0.15.11	Added support for next day start time offset.
 	 *
 	 * @uses	Theater_Dates::get() to get a list of all event dates for a list.
 	 * @uses	Theater_Date::datetime()
+	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
 	 *
 	 * @param 	array $filters	See Theater_Dates::get() for possible values.
 	 * @return 	array 			Months.
@@ -995,7 +1008,10 @@ class Theater_Event_Date_List extends Theater_List {
 		$events = $this->get( $filters );
 		$months = array();
 		foreach ( $events as $event ) {
-			$months[ date( 'Y-m',$event->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ] = date_i18n( 'M Y',$event->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+			$month_datetime = $event->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
+			$month_datetime -= Theater_Helpers_Time::get_next_day_start_time_offset();
+
+			$months[ date( 'Y-m',$month_datetime ) ] = date_i18n( 'M Y',$month_datetime );
 		}
 
 		if ( ! empty( $filters['order'] ) && 'desc' == $filters['order'] ) {
@@ -1061,14 +1077,16 @@ class Theater_Event_Date_List extends Theater_List {
 	/**
 	 * Gets all distincs years for an event dates list.
 	 *
-	 * @since 0.10
-	 * @since 0.10.1			Removed custom sorting. Rely on the sorting order of the events instead.
-	 * @since 0.10.6            Added custom sorting again.
-	 *							Can't rely on sorting order of events, because historic events have no
-	 *							`_wpt_order` set.
+	 * @since 	0.10
+	 * @since 	0.10.1	Removed custom sorting. Rely on the sorting order of the events instead.
+	 * @since 	0.10.6	Added custom sorting again.
+	 *					Can't rely on sorting order of events, because historic events have no
+	 *					`_wpt_order` set.
+	 * @since	0.15.11	Added support for next day start time offset.
 	 *
 	 * @uses	Theater_Dates::get() to get a list of all event dates for a list.
 	 * @uses	Theater_Date::datetime()
+	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
 	 *
 	 * @param 	array $filters	See Theater_Dates::get() for possible values.
 	 * @return 	array 			Years.
@@ -1077,7 +1095,11 @@ class Theater_Event_Date_List extends Theater_List {
 		$events = $this->get( $filters );
 		$years = array();
 		foreach ( $events as $event ) {
-			$years[ date( 'Y',$event->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ] = date_i18n( 'Y',$event->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+			$year_datetime = $event->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
+			$year_datetime -= Theater_Helpers_Time::get_next_day_start_time_offset();
+
+
+			$years[ date( 'Y',$year_datetime) ] = date_i18n( 'Y',$year_datetime );
 		}
 
 		if ( ! empty( $filters['order'] ) && 'desc' == $filters['order'] ) {

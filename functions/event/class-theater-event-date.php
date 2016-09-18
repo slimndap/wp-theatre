@@ -861,15 +861,19 @@ foreach ( $filters as $filter ) {
 	 * Gets the event date startdate.
 	 *
 	 * @since	0.12
+	 * @since	0.15.11	Added support for next day start time offset.
+	 *
+	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
 	 * @uses	Theater_Event_Date::get_field() to get the start timestamp of an event date.
 	 * @internal
 	 * @return	string The event date startdate.
 	 */
 	function get_startdate() {
-		$startdate = date_i18n(
-			get_option( 'date_format' ),
-			$this->get_field( 'startdatetime' ) + get_option( 'gmt_offset' ) * 3600
-		);
+		$startdatedatetime = $this->get_field('startdatetime');
+		$startdatedatetime += ( get_option( 'gmt_offset' ) * 3600 );
+		$startdatedatetime -= Theater_Helpers_Time::get_next_day_start_time_offset();
+
+		$startdate = date_i18n(	get_option( 'date_format' ), $startdatedatetime);
 
 		return $startdate;
 	}

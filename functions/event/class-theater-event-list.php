@@ -240,15 +240,17 @@ class Theater_Event_List extends Theater_List {
 	}
 
 	/**
-	 * Gets a list of productions in HTML for a single day.
+	 * Gets a list of events in HTML for a single day.
 	 *
-	 * @since 0.13
+	 * @since 	0.13
+	 * @since	0.15.11	Added support for next day start time offset.
 	 *
-	 * @see WPT_Productions::get_html_grouped();
+	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
+	 * @uses 	Theater_Event_List::get_html_grouped();
 	 *
 	 * @access 	private
 	 * @param 	string $day		The day in `YYYY-MM-DD` format.
-	 * @param 	array $args 	See WPT_Productions::get_html() for possible values.
+	 * @param 	array $args 	See Theater_Event_List::get_html() for possible values.
 	 * @return 	string			The HTML.
 	 */
 	private function get_html_for_day( $day, $args = array() ) {
@@ -261,7 +263,7 @@ class Theater_Event_List extends Theater_List {
 			empty( $args['start_after'] ) ||
 			(strtotime( $args['start_after'] ) < strtotime( $day ))
 		) {
-			$args['start_after'] = $day;
+			$args['start_after'] = $day.' +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
 
 		/*
@@ -272,7 +274,7 @@ class Theater_Event_List extends Theater_List {
 			empty( $args['start_before'] ) ||
 			(strtotime( $args['start_before'] ) > strtotime( $day.' +1 day' ))
 		) {
-			$args['start_before'] = $day.' +1 day';
+			$args['start_before'] = $day.' +1 day +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
 
 		// No sticky productions in a day view.
@@ -282,15 +284,17 @@ class Theater_Event_List extends Theater_List {
 	}
 
 	/**
-	 * Gets a list of productions in HTML for a single month.
+	 * Gets a list of events in HTML for a single month.
 	 *
-	 * @since 0.13
+	 * @since 	0.13
+	 * @since	0.15.11	Added support for next day start time offset.
 	 *
-	 * @see WPT_Productions::get_html_grouped();
+	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
+	 * @uses	Theater_Event_List::get_html_grouped();
 	 *
 	 * @access 	private
 	 * @param 	string 	$month	The month in `YYYY-MM` format.
-	 * @param 	array 	$args 	See WPT_Productions::get_html() for possible values.
+	 * @param 	array 	$args 	See Theater_Event_List::get_html() for possible values.
 	 * @return 	string			The HTML.
 	 */
 	private function get_html_for_month( $month, $args = array() ) {
@@ -303,7 +307,7 @@ class Theater_Event_List extends Theater_List {
 			empty( $args['start_after'] ) ||
 			(strtotime( $args['start_after'] ) < strtotime( $month ))
 		) {
-			$args['start_after'] = $month;
+			$args['start_after'] = $month.' +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
 
 		/*
@@ -314,7 +318,7 @@ class Theater_Event_List extends Theater_List {
 			empty( $args['start_before'] ) ||
 			(strtotime( $args['start_before'] ) > strtotime( $month.' +1 month' ))
 		) {
-			$args['start_before'] = $month.' +1 month';
+			$args['start_before'] = $month.' +1 month +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
 
 		// No sticky productions in a month view.
@@ -324,15 +328,17 @@ class Theater_Event_List extends Theater_List {
 	}
 
 	/**
-	 * Gets a list of productions in HTML for a single year.
+	 * Gets a list of events in HTML for a single year.
 	 *
-	 * @since 0.13
+	 * @since 	0.13
+	 * @since	0.15.11	Added support for next day start time offset.
 	 *
-	 * @see WPT_Productions::get_html_grouped();
+	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
+	 * @uses	Theater_Event_List::get_html_grouped();
 	 *
-	 * @access private
+	 * @access 	private
 	 * @param 	string 	$year	The year in `YYYY` format.
-	 * @param 	array 	$args 	See WPT_Productions::get_html() for possible values.
+	 * @param 	array 	$args 	See Theater_Event_List::get_html() for possible values.
 	 * @return 	string			The HTML.
 	 */
 	private function get_html_for_year( $year, $args = array() ) {
@@ -345,7 +351,7 @@ class Theater_Event_List extends Theater_List {
 			empty( $args['start_after'] ) ||
 			(strtotime( $args['start_after'] ) < strtotime( $year.'-01-01' ))
 		) {
-			$args['start_after'] = $year.'-01-01';
+			$args['start_after'] = $year.'-01-01 +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
 
 		/*
@@ -356,7 +362,7 @@ class Theater_Event_List extends Theater_List {
 			empty( $args['start_before'] ) ||
 			(strtotime( $args['start_before'] ) > strtotime( $year.'-01-01 +1 year' ))
 		) {
-			$args['start_before'] = $year.'-01-01 +1 year';
+			$args['start_before'] = $year.'-01-01 +1 year +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
 
 		// No sticky productions in a year view.

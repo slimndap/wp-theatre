@@ -239,6 +239,9 @@ class Theater {
 		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-date-link.php');
 		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-list.php');
 		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-date-list.php');
+
+		require_once(dirname(__FILE__) . '/functions/helpers/class-theater-helpers-time.php');
+
 		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-archive.php');
 
 
