@@ -1249,6 +1249,9 @@ class WPT_Event {
 	 * Gets the event startdate.
 	 *
 	 * @since	0.12
+	 * @since	0.15.11	Added support for next day start time offset.
+	 *
+	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
 	 * @return	string The event startdate.
 	 */
 	function startdate() {

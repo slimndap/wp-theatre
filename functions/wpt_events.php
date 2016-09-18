@@ -95,17 +95,19 @@ class WPT_Events extends WPT_Listing {
 	/**
 	 * Gets an array of all days with events.
 	 *
-	 * @since 0.8
-	 * @since 0.10				No longer limits the output to days with upcoming events.
-	 *							See: https://github.com/slimndap/wp-theatre/issues/75
-	 * 							Renamed method from `days()` to `get_days()`.
-	 * @since 0.10.1			Removed custom sorting. Rely on the sorting order of the events instead.
-	 * @since 0.10.6            Added custom sorting again.
-	 *							Can't rely on sorting order of events, because historic events have no
-	 *							`_wpt_order` set.
+	 * @since 	0.8
+	 * @since 	0.10	No longer limits the output to days with upcoming events.
+	 *					See: https://github.com/slimndap/wp-theatre/issues/75
+	 * 					Renamed method from `days()` to `get_days()`.
+	 * @since 	0.10.1	Removed custom sorting. Rely on the sorting order of the events instead.
+	 * @since 	0.10.6	Added custom sorting again.
+	 *					Can't rely on sorting order of events, because historic events have no
+	 *					`_wpt_order` set.
+	 * @since	0.15.11	Added support for next day start time offset.
 	 *
-	 * @param 	array $filters	See WPT_Events::get() for possible values.
-	 * @return 	array 			Days.
+	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
+	 * @param 	array 	$filters	See WPT_Events::get() for possible values.
+	 * @return 	array 				All days with events
 	 */
 	function get_days( $filters = array() ) {
 		$events = $this->get( $filters );
@@ -206,11 +208,13 @@ class WPT_Events extends WPT_Listing {
 	/**
 	 * Gets a list of events in HTML for a single day.
 	 *
-	 * @since 0.10
+	 * @since 	0.10
+	 * @since	0.15.11	Added support for next day start time offset.
 	 *
-	 * @see WPT_Events::get_html_grouped();
+	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
+	 * @uses 	WPT_Events::get_html_grouped();
 	 *
-	 * @access private
+	 * @access 	private
 	 * @param 	string $day		The day in `YYYY-MM-DD` format.
 	 * @param 	array $args 	See WPT_Events::get_html() for possible values.
 	 * @return 	string			The HTML.
@@ -245,11 +249,13 @@ class WPT_Events extends WPT_Listing {
 	/**
 	 * Gets a list of events in HTML for a single month.
 	 *
-	 * @since 0.10
+	 * @since 	0.10
+	 * @since	0.15.11	Added support for next day start time offset.
 	 *
-	 * @see WPT_Events::get_html_grouped();
+	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
+	 * @uses 	WPT_Events::get_html_grouped();
 	 *
-	 * @access private
+	 * @access 	private
 	 * @param 	string $day		The month in `YYYY-MM` format.
 	 * @param 	array $args 	See WPT_Events::get_html() for possible values.
 	 * @return 	string			The HTML.
@@ -284,11 +290,13 @@ class WPT_Events extends WPT_Listing {
 	/**
 	 * Gets a list of events in HTML for a single year.
 	 *
-	 * @since 0.10
+	 * @since 	0.10
+	 * @since	0.15.11	Added support for next day start time offset.
 	 *
-	 * @see WPT_Events::get_html_grouped();
+	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
+	 * @uses 	WPT_Events::get_html_grouped();
 	 *
-	 * @access private
+	 * @access 	private
 	 * @param 	string $day		The year in `YYYY` format.
 	 * @param 	array $args 	See WPT_Events::get_html() for possible values.
 	 * @return 	string			The HTML.
@@ -609,17 +617,20 @@ class WPT_Events extends WPT_Listing {
 	/**
 	 * Gets all months that have events.
 	 *
-	 * @since 0.5
-	 * @since 0.10				No longer limits the output to months with upcoming events.
-	 *							See: https://github.com/slimndap/wp-theatre/issues/75
-	 * 							Renamed method from `months()` to `get_months()`.
-	 * @since 0.10.1			Removed custom sorting. Rely on the sorting order of the events instead.
-	 * @since 0.10.6            Added custom sorting again.
-	 *							Can't rely on sorting order of events, because historic events have no
-	 *							`_wpt_order` set.
+	 * @since 	0.5
+	 * @since	0.10	No longer limits the output to months with upcoming events.
+	 *					See: https://github.com/slimndap/wp-theatre/issues/75
+	 * 					Renamed method from `months()` to `get_months()`.
+	 * @since 	0.10.1	Removed custom sorting. Rely on the sorting order of the events instead.
+	 * @since 	0.10.6 	Added custom sorting again.
+	 *					Can't rely on sorting order of events, because historic events have no
+	 *					`_wpt_order` set.
+	 * @since	0.15.11	Added support for next day start time offset.
 	 *
-	 * @param array $filters	See WPT_Events::get() for possible values.
-	 * @return array 			Months.
+	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
+	 *
+	 * @param 	array 	$filters	See WPT_Events::get() for possible values.
+	 * @return 	array 				All months that have events.
 	 */
 	function get_months( $filters = array() ) {
 		$events = $this->get( $filters );
@@ -643,14 +654,17 @@ class WPT_Events extends WPT_Listing {
 	/**
 	 * Gets all years that have events.
 	 *
-	 * @since 0.10
-	 * @since 0.10.1			Removed custom sorting. Rely on the sorting order of the events instead.
-	 * @since 0.10.6            Added custom sorting again.
-	 *							Can't rely on sorting order of events, because historic events have no
-	 *							`_wpt_order` set.
+	 * @since 	0.10
+	 * @since 	0.10.1	Removed custom sorting. Rely on the sorting order of the events instead.
+	 * @since 	0.10.6	Added custom sorting again.
+	 *					Can't rely on sorting order of events, because historic events have no
+	 *					`_wpt_order` set.
+	 * @since	0.15.11	Added support for next day start time offset.
 	 *
-	 * @param 	array $filters	See WPT_Events::get() for possible values.
-	 * @return 	array 			Years.
+	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
+	 *
+	 * @param 	array 	$filters	See WPT_Events::get() for possible values.
+	 * @return 	array 				All years that have events.
 	 */
 	function get_years( $filters = array() ) {
 		$events = $this->get( $filters );

@@ -225,9 +225,11 @@ class WPT_Productions extends WPT_Listing {
 	/**
 	 * Gets a list of productions in HTML for a single day.
 	 *
-	 * @since 0.13
+	 * @since 	0.13
+	 * @since	0.15.11	Added support for next day start time offset.
 	 *
-	 * @see WPT_Productions::get_html_grouped();
+	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
+	 * @uses 	WPT_Productions::get_html_grouped();
 	 *
 	 * @access 	private
 	 * @param 	string $day		The day in `YYYY-MM-DD` format.
@@ -267,9 +269,11 @@ class WPT_Productions extends WPT_Listing {
 	/**
 	 * Gets a list of productions in HTML for a single month.
 	 *
-	 * @since 0.13
+	 * @since 	0.13
+	 * @since	0.15.11	Added support for next day start time offset.
 	 *
-	 * @see WPT_Productions::get_html_grouped();
+	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
+	 * @uses	WPT_Productions::get_html_grouped();
 	 *
 	 * @access 	private
 	 * @param 	string 	$month	The month in `YYYY-MM` format.
@@ -309,11 +313,13 @@ class WPT_Productions extends WPT_Listing {
 	/**
 	 * Gets a list of productions in HTML for a single year.
 	 *
-	 * @since 0.13
+	 * @since 	0.13
+	 * @since	0.15.11	Added support for next day start time offset.
 	 *
-	 * @see WPT_Productions::get_html_grouped();
+	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
+	 * @uses	WPT_Productions::get_html_grouped();
 	 *
-	 * @access private
+	 * @access 	private
 	 * @param 	string 	$year	The year in `YYYY` format.
 	 * @param 	array 	$args 	See WPT_Productions::get_html() for possible values.
 	 * @return 	string			The HTML.
