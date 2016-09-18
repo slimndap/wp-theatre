@@ -99,6 +99,9 @@ class WPT_Template_Placeholder_Filter {
 	 * Applies a date format to a date or time string.
 	 *
 	 * @since 	0.12.1
+	 * @since	0.15.11	Added support for next day start time offset.
+	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
+	 *
 	 * @access 	protected
 	 * @param 	string		$content	A date or time string.
 	 * @param 	mixed		$object		The object (a production or event).
@@ -114,7 +117,7 @@ class WPT_Template_Placeholder_Filter {
 			}
 			$content = date_i18n(
 				$format,
-				$timestamp + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS
+				$timestamp + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS - Theater_Helpers_Time::get_next_day_start_time_offset()
 			);
 		}
 		return $content;
