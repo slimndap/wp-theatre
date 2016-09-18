@@ -1073,22 +1073,280 @@ class WPT_Test extends WP_UnitTestCase {
 		);
 		$in_50_mins_date = strtotime('+ 50 minutes', time() + HOUR_IN_SECONDS * $wordpress_timezone_offset);
 
-		echo date('Y-m-d H:i:s', $in_50_mins_date);
-
 		$event_in_50_mins = $this->factory->post->create($event_args);
 		add_post_meta($event_in_50_mins, WPT_Production::post_type_name, $production_in_50_mins);
 		add_post_meta($event_in_50_mins, 'event_date', date('Y-m-d H:i:s', $in_50_mins_date));
 		
 		$event = new WPT_Event($event_in_50_mins);
 		
-		$args = array(
-			'start' => 'now',	
-		);
-		
 		$expected = 'Production in 50 minutes';
 		$actual = do_shortcode('[wpt_events]');
 		$this->assertContains( $expected, $actual);
 		
+	}
+	
+	function test_is_nightly_event_start_date_on_previous_day() {
+
+		// Set the next dat start time offset to 4:00 AM.
+		$func = create_function(
+			'$next_day_start_time_offset',
+			'return 4 * HOUR_IN_SECONDS;'
+		);
+		
+		add_filter('Theater/Helpers/Time/Next_Day_Start_Time_Offset', $func);
+		
+		// Prepare an event that starts on 1 Jan 03:59 AM.
+		$production_args = array(
+			'post_type'=>WPT_Production::post_type_name,
+			'post_title' => 'Production on January 1st',
+		);	
+		$production_on_jan_1 = $this->factory->post->create($production_args);
+
+		$event_args = array(
+			'post_type'=>WPT_Event::post_type_name,
+			'post_title' => 'Event on January 1st, 03:59 AM',
+		);
+
+		$event_on_jan_1 = $this->factory->post->create($event_args);
+		add_post_meta($event_on_jan_1, WPT_Production::post_type_name, $production_on_jan_1);
+		add_post_meta($event_on_jan_1, 'event_date', date('Y-m-d H:i:s', strtotime((date('Y') + 2).'-01-01 03:59', time())));
+		
+		$event = new WPT_Event($event_on_jan_1);
+		
+		$expected = date_i18n( get_option('date_format'), strtotime((date('Y')+1).'-12-31'));
+		$actual = $event->startdate();
+		$this->assertContains( $expected, $actual);
+
+	}
+	
+	function test_is_nightly_event_shown_on_previous_day() {
+		// Set the next dat start time offset to 4:00 AM.
+		$func = create_function(
+			'$next_day_start_time_offset',
+			'return 4 * HOUR_IN_SECONDS;'
+		);
+		
+		add_filter('Theater/Helpers/Time/Next_Day_Start_Time_Offset', $func);
+		
+		// Prepare an event that starts on 1 Jan 03:59 AM.
+		$production_args = array(
+			'post_type'=>WPT_Production::post_type_name,
+			'post_title' => 'Production on January 1st',
+		);	
+		$production_on_jan_1 = $this->factory->post->create($production_args);
+
+		$event_args = array(
+			'post_type'=>WPT_Event::post_type_name,
+			'post_title' => 'Event on January 1st, 03:59 AM',
+		);
+
+		$event_on_jan_1 = $this->factory->post->create($event_args);
+		add_post_meta($event_on_jan_1, WPT_Production::post_type_name, $production_on_jan_1);
+		add_post_meta($event_on_jan_1, 'event_date', date('Y-m-d H:i:s', strtotime((date('Y') + 2).'-01-01 03:59', time())));
+		
+		$event = new WPT_Event($event_on_jan_1);
+		
+		$expected = '<h3 class="wpt_listing_group day">'.date_i18n( 'l d F',strtotime((date('Y')+1).'-12-31'));
+		$actual = do_shortcode('[wpt_events groupby=day start="'.(date('Y')+1).'-12-31"]');
+		$this->assertContains( $expected, $actual);
+		
+	}
+	
+	function test_is_nightly_event_shown_in_month_of_previous_day() {
+		// Set the next day start time offset to 4:00 AM.
+		$func = create_function(
+			'$next_day_start_time_offset',
+			'return 4 * HOUR_IN_SECONDS;'
+		);
+		
+		add_filter('Theater/Helpers/Time/Next_Day_Start_Time_Offset', $func);
+		
+		// Prepare an event that starts on 1 Jan 03:59 AM.
+		$production_args = array(
+			'post_type'=>WPT_Production::post_type_name,
+			'post_title' => 'Production on January 1st',
+		);	
+		$production_on_jan_1 = $this->factory->post->create($production_args);
+
+		$event_args = array(
+			'post_type'=>WPT_Event::post_type_name,
+			'post_title' => 'Event on January 1st, 03:59 AM',
+		);
+
+		$event_on_jan_1 = $this->factory->post->create($event_args);
+		add_post_meta($event_on_jan_1, WPT_Production::post_type_name, $production_on_jan_1);
+		add_post_meta($event_on_jan_1, 'event_date', date('Y-m-d H:i:s', strtotime((date('Y') + 2).'-01-01 03:59', time())));
+		
+		$event = new WPT_Event($event_on_jan_1);
+		
+		$expected = '<h3 class="wpt_listing_group month">'.date_i18n( 'F',strtotime((date('Y')+1).'-12-31'));
+		$actual = do_shortcode('[wpt_events groupby=month start="'.(date('Y')+1).'-12-31"]');
+		$this->assertContains( $expected, $actual);
+		
+	}
+	
+	function test_is_nightly_event_shown_in_year_of_previous_day() {
+		
+		// Set the next day start time offset to 4:00 AM.
+		$func = create_function(
+			'$next_day_start_time_offset',
+			'return 4 * HOUR_IN_SECONDS;'
+		);
+		
+		add_filter('Theater/Helpers/Time/Next_Day_Start_Time_Offset', $func);
+		
+		// Prepare an event that starts on 1 Jan 03:59 AM.
+		$production_args = array(
+			'post_type'=>WPT_Production::post_type_name,
+			'post_title' => 'Production on January 1st',
+		);	
+		$production_on_jan_1 = $this->factory->post->create($production_args);
+
+		$event_args = array(
+			'post_type'=>WPT_Event::post_type_name,
+			'post_title' => 'Event on January 1st, 03:59 AM',
+		);
+
+		$event_on_jan_1 = $this->factory->post->create($event_args);
+		add_post_meta($event_on_jan_1, WPT_Production::post_type_name, $production_on_jan_1);
+		add_post_meta($event_on_jan_1, 'event_date', date('Y-m-d H:i:s', strtotime((date('Y') + 2).'-01-01 03:59', time())));
+		
+		$event = new WPT_Event($event_on_jan_1);
+		
+		$expected = '<h3 class="wpt_listing_group year">'.date_i18n( 'Y',strtotime((date('Y')+1).'-12-31'));
+		$actual = do_shortcode('[wpt_events groupby=year start="'.(date('Y')+1).'-12-31"]');
+		$this->assertContains( $expected, $actual);
+		
+	}
+	
+	function test_is_production_with_nightly_event_start_date_on_previous_day() {
+		// Set the next dat start time offset to 4:00 AM.
+		$func = create_function(
+			'$next_day_start_time_offset',
+			'return 4 * HOUR_IN_SECONDS;'
+		);
+		
+		add_filter('Theater/Helpers/Time/Next_Day_Start_Time_Offset', $func);
+		
+		// Prepare an event that starts on 1 Jan 03:59 AM.
+		$production_args = array(
+			'post_type'=>WPT_Production::post_type_name,
+			'post_title' => 'Production on January 1st',
+		);	
+		$production_on_jan_1 = $this->factory->post->create($production_args);
+
+		$event_args = array(
+			'post_type'=>WPT_Event::post_type_name,
+			'post_title' => 'Event on January 1st, 03:59 AM',
+		);
+
+		$event_on_jan_1 = $this->factory->post->create($event_args);
+		add_post_meta($event_on_jan_1, WPT_Production::post_type_name, $production_on_jan_1);
+		add_post_meta($event_on_jan_1, 'event_date', date('Y-m-d H:i:s', strtotime((date('Y') + 2).'-01-01 03:59', time())));
+		
+		$production = new WPT_Production($production_on_jan_1);
+		
+		$expected = date_i18n( get_option('date_format'), strtotime((date('Y')+1).'-12-31'));
+		$actual = $production->dates();
+		$this->assertContains( $expected, $actual);
+		
+	}
+	
+	function test_is_production_with_nightly_event_shown_on_previous_day() {
+		// Set the next dat start time offset to 4:00 AM.
+		$func = create_function(
+			'$next_day_start_time_offset',
+			'return 4 * HOUR_IN_SECONDS;'
+		);
+		
+		add_filter('Theater/Helpers/Time/Next_Day_Start_Time_Offset', $func);
+		
+		// Prepare an event that starts on 1 Jan 03:59 AM.
+		$production_args = array(
+			'post_type'=>WPT_Production::post_type_name,
+			'post_title' => 'Production on January 1st',
+		);	
+		$production_on_jan_1 = $this->factory->post->create($production_args);
+
+		$event_args = array(
+			'post_type'=>WPT_Event::post_type_name,
+			'post_title' => 'Event on January 1st, 03:59 AM',
+		);
+
+		$event_on_jan_1 = $this->factory->post->create($event_args);
+		add_post_meta($event_on_jan_1, WPT_Production::post_type_name, $production_on_jan_1);
+		add_post_meta($event_on_jan_1, 'event_date', date('Y-m-d H:i:s', strtotime((date('Y') + 2).'-01-01 03:59', time())));
+		
+		$expected = '<h3 class="wpt_listing_group day">'.date_i18n( 'l d F',strtotime((date('Y')+1).'-12-31'));
+		$actual = do_shortcode('[wpt_productions groupby=day start="'.(date('Y')+1).'-12-31"]');
+		$this->assertContains( $expected, $actual);
+		
+	}
+	
+	function test_is_production_with_nightly_event_shown_in_month_of_previous_day() {
+		// Set the next day start time offset to 4:00 AM.
+		$func = create_function(
+			'$next_day_start_time_offset',
+			'return 4 * HOUR_IN_SECONDS;'
+		);
+		
+		add_filter('Theater/Helpers/Time/Next_Day_Start_Time_Offset', $func);
+		
+		// Prepare an event that starts on 1 Jan 03:59 AM.
+		$production_args = array(
+			'post_type'=>WPT_Production::post_type_name,
+			'post_title' => 'Production on January 1st',
+		);	
+		$production_on_jan_1 = $this->factory->post->create($production_args);
+
+		$event_args = array(
+			'post_type'=>WPT_Event::post_type_name,
+			'post_title' => 'Event on January 1st, 03:59 AM',
+		);
+
+		$event_on_jan_1 = $this->factory->post->create($event_args);
+		add_post_meta($event_on_jan_1, WPT_Production::post_type_name, $production_on_jan_1);
+		add_post_meta($event_on_jan_1, 'event_date', date('Y-m-d H:i:s', strtotime((date('Y') + 2).'-01-01 03:59', time())));
+		
+		$event = new WPT_Event($event_on_jan_1);
+		
+		$expected = '<h3 class="wpt_listing_group month">'.date_i18n( 'F',strtotime((date('Y')+1).'-12-31'));
+		$actual = do_shortcode('[wpt_productions groupby=month start="'.(date('Y')+1).'-12-31"]');
+		$this->assertContains( $expected, $actual);
+		
+	}
+	
+	function test_is_production_with_nightly_event_shown_in_year_of_previous_day() {
+		// Set the next day start time offset to 4:00 AM.
+		$func = create_function(
+			'$next_day_start_time_offset',
+			'return 4 * HOUR_IN_SECONDS;'
+		);
+		
+		add_filter('Theater/Helpers/Time/Next_Day_Start_Time_Offset', $func);
+		
+		// Prepare an event that starts on 1 Jan 03:59 AM.
+		$production_args = array(
+			'post_type'=>WPT_Production::post_type_name,
+			'post_title' => 'Production on January 1st',
+		);	
+		$production_on_jan_1 = $this->factory->post->create($production_args);
+
+		$event_args = array(
+			'post_type'=>WPT_Event::post_type_name,
+			'post_title' => 'Event on January 1st, 03:59 AM',
+		);
+
+		$event_on_jan_1 = $this->factory->post->create($event_args);
+		add_post_meta($event_on_jan_1, WPT_Production::post_type_name, $production_on_jan_1);
+		add_post_meta($event_on_jan_1, 'event_date', date('Y-m-d H:i:s', strtotime((date('Y') + 2).'-01-01 03:59', time())));
+		
+		$event = new WPT_Event($event_on_jan_1);
+		
+		$expected = '<h3 class="wpt_listing_group year">'.date_i18n( 'Y',strtotime((date('Y')+1).'-12-31'));
+		$actual = do_shortcode('[wpt_productions groupby=year start="'.(date('Y')+1).'-12-31"]');
+		$this->assertContains( $expected, $actual);
+			
 	}
 	
 }

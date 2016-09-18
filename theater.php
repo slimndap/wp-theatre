@@ -103,6 +103,8 @@ class WP_Theatre {
 	 * @return void
 	 */
 	function includes() {
+		require_once(dirname(__FILE__) . '/functions/helpers/class-theater-helpers-time.php');
+
 		require_once(dirname(__FILE__) . '/functions/wpt_listing.php');
 		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-archive.php');
 

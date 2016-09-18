@@ -1249,14 +1249,20 @@ class WPT_Event {
 	 * Gets the event startdate.
 	 *
 	 * @since	0.12
-	 * @return	string The even startdate.
+	 * @since	0.15.11	Added support for next day start time offset.
+	 *
+	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
+	 * @return	string The event startdate.
 	 */
 	function startdate() {
-		$startdate = date_i18n(
-			get_option( 'date_format' ),
-			$this->datetime() + get_option( 'gmt_offset' ) * 3600
-		);
+		$startdate_datetime = $this->datetime();
+		$startdate_datetime += ( get_option( 'gmt_offset' ) * 3600 );
+		$startdate_datetime -= Theater_Helpers_Time::get_next_day_start_time_offset();
+
+		$startdate = date_i18n(	get_option( 'date_format' ), $startdate_datetime);
+
 		$startdate = apply_filters( 'wpt/event/startdate', $startdate, $this );
+
 		return $startdate;
 	}
 
