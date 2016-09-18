@@ -111,7 +111,12 @@ class WPT_Events extends WPT_Listing {
 		$events = $this->get( $filters );
 		$days = array();
 		foreach ( $events as $event ) {
-			$days[ date( 'Y-m-d',$event->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ] = date_i18n( 'D j M',$event->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+			
+			$day_datetime = $event->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
+			$day_datetime -= Theater_Helpers_Time::get_next_day_start_time_offset();
+			
+			$days[ date( 'Y-m-d', $day_datetime) ] = date_i18n( 'D j M', $day_datetime );
+			
 		}
 
 		if ( ! empty( $filters['order'] ) && 'desc' == $filters['order'] ) {
@@ -220,7 +225,7 @@ class WPT_Events extends WPT_Listing {
 			empty( $args['start'] ) ||
 			(strtotime( $args['start'] ) < strtotime( $day ))
 		) {
-			$args['start'] = $day;
+			$args['start'] = $day.' +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
 
 		/*
@@ -231,7 +236,7 @@ class WPT_Events extends WPT_Listing {
 			empty( $args['end'] ) ||
 			(strtotime( $args['end'] ) > strtotime( $day.' +1 day' ))
 		) {
-			$args['end'] = $day.' +1 day';
+			$args['end'] = $day.' +1 day +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
 
 		return $this->get_html_grouped( $args );
@@ -259,7 +264,7 @@ class WPT_Events extends WPT_Listing {
 			empty( $args['start'] ) ||
 			(strtotime( $args['start'] ) < strtotime( $month ))
 		) {
-			$args['start'] = $month;
+			$args['start'] = $month.' +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
 
 		/*
@@ -270,7 +275,7 @@ class WPT_Events extends WPT_Listing {
 			empty( $args['end'] ) ||
 			(strtotime( $args['end'] ) > strtotime( $month.' +1 month' ))
 		) {
-			$args['end'] = $month.' +1 month';
+			$args['end'] = $month.' +1 month +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
 
 		return $this->get_html_grouped( $args );
@@ -298,7 +303,7 @@ class WPT_Events extends WPT_Listing {
 			empty( $args['start'] ) ||
 			(strtotime( $args['start'] ) < strtotime( $year.'-01-01' ))
 		) {
-			$args['start'] = $year.'-01-01';
+			$args['start'] = $year.'-01-01 +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
 
 		/*
@@ -309,7 +314,7 @@ class WPT_Events extends WPT_Listing {
 			empty( $args['end'] ) ||
 			(strtotime( $args['end'] ) > strtotime( $year.'-01-01 +1 year' ))
 		) {
-			$args['end'] = $year.'-01-01 +1 year';
+			$args['end'] = $year.'-01-01 +1 year +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
 
 		return $this->get_html_grouped( $args );
@@ -620,7 +625,10 @@ class WPT_Events extends WPT_Listing {
 		$events = $this->get( $filters );
 		$months = array();
 		foreach ( $events as $event ) {
-			$months[ date( 'Y-m',$event->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ] = date_i18n( 'M Y',$event->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+			$month_datetime = $event->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
+			$month_datetime -= Theater_Helpers_Time::get_next_day_start_time_offset();
+
+			$months[ date( 'Y-m',$month_datetime ) ] = date_i18n( 'M Y',$month_datetime );
 		}
 
 		if ( ! empty( $filters['order'] ) && 'desc' == $filters['order'] ) {
@@ -648,7 +656,12 @@ class WPT_Events extends WPT_Listing {
 		$events = $this->get( $filters );
 		$years = array();
 		foreach ( $events as $event ) {
-			$years[ date( 'Y',$event->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ] = date_i18n( 'Y',$event->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+
+			$year_datetime = $event->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
+			$year_datetime -= Theater_Helpers_Time::get_next_day_start_time_offset();
+
+
+			$years[ date( 'Y',$year_datetime) ] = date_i18n( 'Y',$year_datetime );
 		}
 
 		if ( ! empty( $filters['order'] ) && 'desc' == $filters['order'] ) {

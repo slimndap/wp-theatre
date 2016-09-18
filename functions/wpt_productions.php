@@ -244,7 +244,7 @@ class WPT_Productions extends WPT_Listing {
 			empty( $args['start_after'] ) ||
 			(strtotime( $args['start_after'] ) < strtotime( $day ))
 		) {
-			$args['start_after'] = $day;
+			$args['start_after'] = $day.' +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
 
 		/*
@@ -255,7 +255,7 @@ class WPT_Productions extends WPT_Listing {
 			empty( $args['start_before'] ) ||
 			(strtotime( $args['start_before'] ) > strtotime( $day.' +1 day' ))
 		) {
-			$args['start_before'] = $day.' +1 day';
+			$args['start_before'] = $day.' +1 day +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
 
 		// No sticky productions in a day view.
@@ -286,7 +286,7 @@ class WPT_Productions extends WPT_Listing {
 			empty( $args['start_after'] ) ||
 			(strtotime( $args['start_after'] ) < strtotime( $month ))
 		) {
-			$args['start_after'] = $month;
+			$args['start_after'] = $month.' +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
 
 		/*
@@ -297,7 +297,7 @@ class WPT_Productions extends WPT_Listing {
 			empty( $args['start_before'] ) ||
 			(strtotime( $args['start_before'] ) > strtotime( $month.' +1 month' ))
 		) {
-			$args['start_before'] = $month.' +1 month';
+			$args['start_before'] = $month.' +1 month +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
 
 		// No sticky productions in a month view.
@@ -328,7 +328,7 @@ class WPT_Productions extends WPT_Listing {
 			empty( $args['start_after'] ) ||
 			(strtotime( $args['start_after'] ) < strtotime( $year.'-01-01' ))
 		) {
-			$args['start_after'] = $year.'-01-01';
+			$args['start_after'] = $year.'-01-01 +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
 
 		/*
@@ -339,7 +339,7 @@ class WPT_Productions extends WPT_Listing {
 			empty( $args['start_before'] ) ||
 			(strtotime( $args['start_before'] ) > strtotime( $year.'-01-01 +1 year' ))
 		) {
-			$args['start_before'] = $year.'-01-01 +1 year';
+			$args['start_before'] = $year.'-01-01 +1 year +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
 
 		// No sticky productions in a year view.
