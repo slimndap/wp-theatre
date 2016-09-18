@@ -99,7 +99,7 @@ class WPT_Template_Placeholder_Filter {
 	 * Applies a date format to a date or time string.
 	 *
 	 * @since 	0.12.1
-	 * @since	0.15.11	Added support for next day start time offset.
+	 * @since	0.15.11.1	Added support for next day start time offset.
 	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
 	 *
 	 * @access 	protected
