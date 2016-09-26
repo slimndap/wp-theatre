@@ -6,6 +6,9 @@
  * Customizes the archive pages of events.
  *
  * @since	0.15.10
+ * @since	0.15.12	'Pre_get_posts' filters no longer run on admin pages.
+ *					Fixes: https://wordpress.org/support/topic/incomplete-backend-listing-after-update/
+ *					See: https://core.trac.wordpress.org/ticket/18993
  * @package	Theater/Events
  */
 class Theater_Event_Archive {
@@ -16,6 +19,7 @@ class Theater_Event_Archive {
 			add_action( 'pre_get_posts', array( __CLASS__, 'set_events_order' ) );
 			add_action( 'pre_get_posts', array( __CLASS__, 'remove_past_events' ) );			
 		}
+		
 	}
 
 	/**
