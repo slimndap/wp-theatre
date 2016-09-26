@@ -226,6 +226,9 @@ Release Date: May 30th, 2015
 
 == Upgrade Notice ==
 
+= 0.15.12 =
+Fixes a problem that was introduced in 0.15.10 were past events were not visible in the admin.
+
 = 0.15.11 =
 Small bugfixes and CSS tweaks.
 
