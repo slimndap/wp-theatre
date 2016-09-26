@@ -88,6 +88,29 @@ class WPT_Extensions_Promo {
 		}
 		return $extensions;
 	}
+	
+	/**
+	 * Gets the extensions for a category.
+	 * 
+	 * @access 	protected
+	 * @since	0.15.12
+	 * @param	$category_slug	The category slug.
+	 * @return	array			The extensions for the category.
+	 */
+	protected function get_extensions_for_category($category) {
+		
+		$extensions_for_category = array();
+
+		foreach ( $this->get_extensions() as $extension) {
+			$categories = wp_list_pluck( $extension->categories, 'slug');
+			if (in_array($category, $categories)) {
+				$extensions_for_category[]	 = $extension;
+			}
+		}
+		
+		return $extensions_for_category;
+		
+	}
 
 	/**
 	 * Outputs the HTML for the Extensions page.
@@ -97,56 +120,32 @@ class WPT_Extensions_Promo {
 	 * @return 	void
 	 */
 	function get_page() {
-		$html = '';
-		$html .= '<div class="wrap">';
-		$html .= '<h1>'.esc_html__( 'Theater for WordPress extensions','theatre' ).'</h1>';
-		$html .= '<p>'.__( 'Extensions are plugins that <strong><em>add functionality</em></strong> to the Theater for WordPress plugin.', 'theatre' ).'</p>';
+		?><div class="wrap">
+			<h1><?php esc_html_e( 'Theater for WordPress extensions','theatre' ); ?></h1>
+			<p><?php _e( 'Extensions are plugins that <strong><em>add functionality</em></strong> to the Theater for WordPress plugin.', 'theatre' ); ?></p><?php
 
-		$html .= '<div class="widefat">';
-
-		$extensions = $this->get_extensions();
-		foreach ( $extensions as $extension ) {
-			$extension_link = add_query_arg(
-				array(
-					'utm_source'   => 'plugin-extensions-page',
-					'utm_medium'   => 'plugin-card',
-					'utm_campaign' => 'admin',
-					'utm_content'  => urlencode( $extension->title ),
-				), $extension->permalink
-			);
-
-			$html .= '<div class="plugin-card">';
-
-			$html .= '<div class="plugin-card-top">';
-
-			$html .= '<div class="name column-name">';
-			$html .= '<h3>';
-			$html .= '<a href="'.$extension_link.'" class="">';
-			$html .= esc_html( $extension->title );
-			$html .= '<span class="plugin-icon">'.$extension->thumbnail.'</span>';
-			$html .= '</a>';
-			$html .= '</h3>';
-			$html .= '</div>';
-
-			$html .= '<div class="action-links">';
-			$html .= '<ul class="plugin-action-buttons">';
-
-			$html .= '<li>';
-			$html .= '<a href="'.$extension_link.'" class="button">'.__( 'Get extension','theatre' ).'</a>';
-			$html .= '</li>';
-
-			$html .= '</ul>';
-			$html .= '</div>';
-
-			$html .= '<div class="desc column-description">';
-			$html .= $extension->excerpt;
-			$html .= '</div>';
-
-			$html .= '</div>';
-
-			$html .= '</div>';
+		$extensions_popular = $this->get_extensions_for_category('popular');
+		if (!empty($extensions_popular)) {
+			?><h2><?php _e('Our most popular extensions', 'theatre'); ?></h2><?php
+			echo  $this->get_extensions_html($extensions_popular);
 		}
-		$html .= '</div>';
+		
+		$extensions_cinema = $this->get_extensions_for_category('cinema');
+		if (!empty($extensions_cinema)) {
+			?><br class="clear" /><h2><?php _e('Extensions for your movie theater', 'theatre'); ?></h2><?php
+			echo  $this->get_extensions_html($extensions_cinema);
+		}
+		
+		$extensions_ticketing = $this->get_extensions_for_category('ticketing');
+		if (!empty($extensions_ticketing)) {
+			?><br class="clear" /><h2><?php _e('Connect your existing ticketing solution', 'theatre'); ?></h2><?php
+			echo  $this->get_extensions_html($extensions_ticketing);
+		}
+		
+		?><br class="clear" /><h2><?php _e('All extensions', 'theatre'); ?></h2><?php
+		
+		$extensions = $this->get_extensions();
+		echo $this->get_extensions_html($extensions);
 
 		if ( empty($extensions) ) {
 			$extensions_link = add_query_arg(
@@ -156,12 +155,68 @@ class WPT_Extensions_Promo {
 					'utm_campaign' => 'admin',
 				), 'https://wp.theater/extensions/'
 			);
-			$html .= '<p><a href="'.$extensions_link.'" class="button-primary">'.__( 'Browse all extensions','theatre' ).'</a></p>';
+			?><p>
+				<a href="<?php echo $extensions_link; ?>" class="button-primary"><?php 
+					esc_html_e( 'Browse all extensions','theatre' ); 
+				?></a>
+			</p><?php
 		}
-
-		echo $html;
 	}
 
+	/**
+	 * Gets the HTML for a set of extensions.
+	 * 
+	 * @access 	protected
+	 * @since	0.15.12
+	 * @param 	array	$extensions	The extensions.
+	 * @return	string				The HTML for the set of extensions
+	 */
+	protected function get_extensions_html($extensions) {
+		
+		ob_start();
+		?><div class="widefat">
+			<?php
+			foreach ( $extensions as $extension ) {
+				$extension_link = add_query_arg(
+					array(
+						'utm_source'   => 'plugin-extensions-page',
+						'utm_medium'   => 'plugin-card',
+						'utm_campaign' => 'admin',
+						'utm_content'  => urlencode( $extension->title ),
+					), $extension->permalink
+				);
+	
+				?><div class="plugin-card">
+					<div class="plugin-card-top">
+						<div class="name column-name">
+							<h3>
+								<a href="<?php echo $extension_link; ?>"><?php 
+									echo esc_html( $extension->title ); 
+									?><span class="plugin-icon"><?php echo $extension->thumbnail; ?></span>
+								</a>
+							</h3>
+						</div>
+	
+						<div class="action-links">
+							<ul class="plugin-action-buttons">
+								<li>
+									<a href="<?php echo $extension_link; ?>" class="button"><?php _e( 'Get extension','theatre' ); ?></a>
+								</li>
+	
+							</ul>
+						</div>
+	
+						<div class="desc column-description"><?php echo $extension->excerpt; ?></div>
+					</div>
+	
+				</div><?php
+			}
+			?></div><?php
+		
+		return ob_get_clean();
+		
+		
+	}
 
 
 }
