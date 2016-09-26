@@ -134,7 +134,7 @@ class WPT_Productions_List_Table extends WP_List_Table {
 	function get_columns() {
 		$columns = array(
 			'cb' => '<input type="checkbox" />',
-			'title' => __( 'Event', 'theatre' ),
+			'title' => __( 'Title', 'theatre' ),
 			'categories' => __( 'Categories', 'theatre' ),
 		);
 		return $columns;
@@ -206,14 +206,6 @@ class WPT_Productions_List_Table extends WP_List_Table {
 		?><p><?php
 			_e( 'No events found.', 'theatre' );
 		?></p><?php
-if ( empty( $_REQUEST['s'] ) ) {
-	?><p><?php
-		printf(
-			__( '<a href="%s">Add an event.</a>', 'theatre' ),
-			admin_url( 'post-new.php?post_type='.WPT_Production::post_type_name )
-		);
-	?></p><?php
-}
 	}
 
 	/**

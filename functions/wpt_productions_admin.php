@@ -15,6 +15,8 @@ class WPT_Productions_Admin {
 		add_filter( 'wpt/production/thumbnail/html', array( $this, 'add_production_thumbnail_placeholder' ), 10, 4 );
 		
 		add_action ('current_screen', array($this, 'process_bulk_actions'));
+		
+		add_action('init', array($this, 'hide_welcome_panel'));
 	}
 
 
@@ -129,7 +131,9 @@ class WPT_Productions_Admin {
 				</a>
 				<?php echo $this->get_search_request_summary_html(); ?>
 			</h1><?php
-
+				
+			echo $this->get_welcome_panel_html();
+			
 			$list_table->views();
 
 			?><form method="get">
@@ -282,5 +286,76 @@ class WPT_Productions_Admin {
 			printf( __( 'Search results for &#8220;%s&#8221;' ),sanitize_text_field( $_REQUEST['s'] ) );
 		?></span><?php
 		return ob_get_clean();
+	}
+	
+	protected function get_welcome_panel_html() {
+		
+		$hide_welcome_panel = get_user_meta( get_current_user_id(), 'theater-hide-welcome-panel', true );
+
+		if ($hide_welcome_panel) {
+			return;
+		}
+		
+		ob_start();
+		?><div class="welcome-panel">
+			<a class="welcome-panel-close" href="<?php 
+				$dismiss_url = admin_url('admin.php?page=theater-events');
+				$dismiss_url = wp_nonce_url( $dismiss_url, 'theater-hide-welcome', 'theater-nonce' );
+				echo $dismiss_url;
+			?>" aria-label="Dismiss the Theater for WordPress welcome panel">
+				Dismiss
+			</a>
+			<div class="welcome-panel-content">
+				<h2>Theater for WordPress</h2>
+				<div class="welcome-panel-column-container">
+					<div class="welcome-panel-column">
+						<h3>Getting started</h3>
+						<a class="button button-primary button-hero" href="https://wp.theater/wp-admin/customize.php">Add an event</a>
+					</div>
+					<div class="welcome-panel-column">
+						<h3>Next steps</h3>
+						<ul>
+							<li>
+								<a href="<?php echo admin_url('admin.php?page=wpt_admin'); ?>" class="dashicons-before dashicons-admin-settings welcome-icon"> Show events on your website</a>
+							</li>
+							<li>
+								<a href="<?php echo admin_url('admin.php?page=wpt_extensions'); ?>" class="dashicons-before dashicons-admin-plugins welcome-icon"> Install an extension</a>
+							</li>
+						</ul>
+					</div>
+					<div class="welcome-panel-column">
+						<h3>Get help</h3>
+						<ul>
+							<li>
+								<a href="https://wordpress.org/support/plugin/theatre" class="dashicons-before dashicons-list-view welcome-icon"> Read the FAQ</a>
+							</li>
+							<li>
+								<a href="https://wordpress.org/support/plugin/theatre" class="dashicons-before dashicons-format-status welcome-icon"> Ask a question on the forum</a>
+							</li>
+							<li>
+								<a href="https://wp.theater/support/?utm_source=plugin-events-admin-page&utm_medium=welcom-panel&utm_campaign=admin" class="welcome-icon"><?php echo get_avatar( 'jeroen@slimndap.com', 20 ); ?> Contact the author</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div><?php
+
+		return ob_get_clean();
+	}
+	
+	function hide_welcome_panel() {
+		
+		if (empty($_GET['theater-nonce'])) {
+			return;
+		}
+		
+		if (!wp_verify_nonce( $_GET['theater-nonce'], 'theater-hide-welcome' )) {
+			return;
+		}
+		
+		$hide_welcome_panel = get_user_meta( get_current_user_id(), 'theater-hide-welcome-panel', true );
+		
+		update_user_meta( get_current_user_id(), 'theater-hide-welcome-panel', true);
 	}
 }

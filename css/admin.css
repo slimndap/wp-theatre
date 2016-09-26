@@ -713,6 +713,30 @@ body.toplevel_page_theater-events .wp-list-table tbody tr td .row-actions {
   clear: left;
   margin-left: 42px;
 }
+body.toplevel_page_theater-events .welcome-panel h2 {
+  background-image: url(../assets/logo@1x.png);
+  background-size: 100% auto;
+  background-repeat: no-repeat;
+  max-width: 90%;
+  width: 300px;
+  height: 70px;
+  text-indent: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  position: relative;
+  left: -4px;
+}
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  body.toplevel_page_theater-events .welcome-panel h2 {
+    background-image: url(../assets/logo@2x.png);
+  }
+}
+body.toplevel_page_theater-events .welcome-panel img.avatar {
+  display: inline-block;
+  vertical-align: top;
+  margin: 0 10px 0 0;
+  border-radius: 50% 50%;
+}
 @font-face {
   font-family: "theatre-webfont";
   src: url("../font/theatre-webfont.eot");
