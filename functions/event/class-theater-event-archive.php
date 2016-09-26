@@ -11,8 +11,11 @@
 class Theater_Event_Archive {
 
 	static function init() {
-		add_action( 'pre_get_posts', array( __CLASS__, 'set_events_order' ) );
-		add_action( 'pre_get_posts', array( __CLASS__, 'remove_past_events' ) );
+		
+		if (!is_admin()) {
+			add_action( 'pre_get_posts', array( __CLASS__, 'set_events_order' ) );
+			add_action( 'pre_get_posts', array( __CLASS__, 'remove_past_events' ) );			
+		}
 	}
 
 	/**
