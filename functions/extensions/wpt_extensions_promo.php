@@ -117,6 +117,7 @@ class WPT_Extensions_Promo {
 	 *
 	 * @since	0.13.2
 	 * @since	0.14.1	Extensions page layout was broken in WP 4.4.
+	 * @since	0.15.12	Added categories.
 	 * @return 	void
 	 */
 	function get_page() {
