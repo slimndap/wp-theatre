@@ -310,7 +310,8 @@ class WPT_Productions_Admin {
 				<div class="welcome-panel-column-container">
 					<div class="welcome-panel-column">
 						<h3>Getting started</h3>
-						<a class="button button-primary button-hero" href="https://wp.theater/wp-admin/customize.php">Add an event</a>
+						<a class="button button-primary button-hero" href="https://wp.theater/wp-admin/customize.php">Add Your Event</a>
+						<p>or, <a href="https://wp.theater/extensions/?utm_source=plugin-events-admin-page&utm_medium=welcom-panel&utm_campaign=admin">import your existing events</a>
 					</div>
 					<div class="welcome-panel-column">
 						<h3>Next steps</h3>
