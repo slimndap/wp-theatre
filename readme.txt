@@ -8,7 +8,7 @@ License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CZERCBG5SUGQW
 
-A free plugin to publish your events on a WordPress website. Perfect for theaters, clubs, cinemas and festivals.
+A free plugin to publish your events on a WordPress website. Perfect for theaters, live venues, cinemas and festivals.
 
 == Description ==
 A WordPress plugin to manage events with all necessary shortcodes and widgets for your theater.
@@ -36,9 +36,6 @@ __Integrate with your existing ticketing solution__
 * [Ticketlab](https://wp.theater/downloads/ticketlab-for-wordpress/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) - Automatically import your Ticketlab films and sell them on your website.
 * [Ticketmatic](https://wp.theater/downloads/ticketmatic-for-wordpress/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) - Automatically import your Ticketmatic events and sell them on your website.
 * [Veezi](https://wp.theater/downloads/veezi-for-wordpress/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) - Automatically import your Veezi films and sell them on your website.
-
-> <strong>Newsletter</strong><br>
-> This plugin is in active development and updated frequently. Please [sign-up for the newsletter](https://wp.theater/newsletter?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) to stay informed about upcoming features and successful showcases.
 
 __Missing features?__
 
@@ -148,6 +145,7 @@ This release focusses on a more streamlined experience when managing your events
 	* Events where not always showing the correct end date.
 	* Search results no longer get lost when navigating on the Events page in the WordPress admin (0.15.9).
 	* Fixed an issue with the 'end' filter for events (0.15.10).
+	* Fixed the sort order of events on the admin screen after you changed the status of an event (0.15.13). Thank you [Menno Luitjes](https://www.linkedin.com/in/mennoluitjes)!
     
 = 0.14 =
 
@@ -226,8 +224,11 @@ Release Date: May 30th, 2015
 
 == Upgrade Notice ==
 
+= 0.15.13 =
+Fixes a problem with the sort order of events on the admin screen.
+
 = 0.15.12 =
-Fixes a problem that was introduced in 0.15.10 were past events were not visible in the admin.
+Fixes a problem that was introduced in 0.15.10 where past events were not visible in the admin.
 
 = 0.15.11 =
 Small bugfixes and CSS tweaks.
