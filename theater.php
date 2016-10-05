@@ -43,7 +43,7 @@ class WP_Theatre {
 		// Setup
 		$this->setup = new WPT_Setup();
 		$this->admin = new WPT_Admin();
-		$this->order = new WPT_Order();
+		Theater_Event_Order::init();
 		$this->status = new WPT_Status();
 		$this->feeds = new WPT_Feeds();
 		$this->transient = new WPT_Transient();
@@ -71,6 +71,10 @@ class WP_Theatre {
 		} else {
 			$this->frontend = new WPT_Frontend();
 		}
+		
+		// Deprecated properties
+		$this->order = new WPT_Order();
+		
 		
 		// Options
 		$this->wpt_language_options = get_option( 'wpt_language' );
@@ -107,6 +111,7 @@ class WP_Theatre {
 
 		require_once(dirname(__FILE__) . '/functions/wpt_listing.php');
 		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-archive.php');
+		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-order.php');
 
 		require_once(dirname(__FILE__) . '/functions/template/wpt_template.php');	
 		require_once(dirname(__FILE__) . '/functions/template/wpt_template_placeholder.php');	
@@ -133,7 +138,6 @@ class WP_Theatre {
 		require_once(dirname(__FILE__) . '/functions/wpt_season.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_widget.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_admin.php');
-		require_once(dirname(__FILE__) . '/functions/wpt_order.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_status.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_feeds.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_transient.php');	
@@ -156,6 +160,8 @@ class WP_Theatre {
 		}
 		require_once(dirname(__FILE__) . '/integrations/wordpress-seo.php');
 		require_once(dirname(__FILE__) . '/integrations/jetpack-featured-content.php');
+		
+		require_once(dirname(__FILE__) . '/functions/deprecated/class-wpt-order.php');
 		
 	}
 	

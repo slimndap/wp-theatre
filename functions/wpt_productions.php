@@ -1096,7 +1096,7 @@ class WPT_Productions extends WPT_Listing {
 						'compare' => 'IN',
 					),
 					array(
-						'key' => $wp_theatre->order->meta_key,
+						'key' => THEATER_ORDER_INDEX_KEY,
 						'value' => time(),
 						'compare' => '>=',
 					),

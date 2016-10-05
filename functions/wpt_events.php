@@ -801,7 +801,7 @@ class WPT_Events extends WPT_Listing {
 
 		if ( $filters['start'] ) {
 			$args['meta_query'][] = array(
-				'key' => $wp_theatre->order->meta_key,
+				'key' => THEATER_ORDER_INDEX_KEY,
 				'value' => strtotime( $filters['start'], current_time( 'timestamp' ) ) - get_option( 'gmt_offset' ) * 3600,
 				'compare' => '>=',
 				'type' => 'NUMERIC',
@@ -817,7 +817,7 @@ class WPT_Events extends WPT_Listing {
 
 		if ( $filters['end'] ) {
 			$args['meta_query'][] = array(
-				'key' => $wp_theatre->order->meta_key,
+				'key' => THEATER_ORDER_INDEX_KEY,
 				'value' => strtotime( $filters['end'], current_time( 'timestamp' ) ) - get_option( 'gmt_offset' ) * 3600,
 				'compare' => '<=',
 				'type' => 'NUMERIC',
