@@ -79,7 +79,7 @@ class WPT_Test_Event_Order extends WPT_UnitTestCase {
 
 		$this->setup_test_data();
 
-		update_post_meta( $this->upcoming_event_with_prices, 'event_date', date( 'Y-m-d H:i:s', time() + (MONTH_IN_SECONDS) ) );
+		update_post_meta( $this->upcoming_event_with_prices, 'event_date', date( 'Y-m-d H:i:s', time() + (30 * DAY_IN_SECONDS) ) );
 
 		$events = $wp_theatre->productions->get();
 
