@@ -82,10 +82,8 @@ class WPT_Productions_List_Table extends WP_List_Table {
 		// Set the production template.
 		$template = '{{thumbnail}}{{title}}{{dates}}{{cities}}';
 
-		$wpt_order = date('Y-m-d H:i:s', get_post_meta( $production->ID, '_wpt_order', true ));
-
 		return sprintf('%1$s %2$s',
-			$production->html( $template ).$wpt_order,
+			$production->html( $template ),
 			$this->row_actions( $actions )
 		);
 	}
