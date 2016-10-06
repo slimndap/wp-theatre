@@ -1113,7 +1113,7 @@ class Theater_Event_List extends Theater_List {
 						'compare' => 'IN',
 					),
 					array(
-						'key' => $wp_theatre->order->meta_key,
+						'key' => THEATER_ORDER_INDEX_KEY,
 						'value' => time(),
 						'compare' => '>=',
 					),

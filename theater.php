@@ -29,7 +29,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 $wpt_version = '0.16';
 
-
 /**
  * Main Theater for WordPress class.
  *
@@ -145,14 +144,15 @@ class Theater {
 		Theater_Setup::init();
 
 		$this->admin = new WPT_Admin();
-		Theater_Admin_Plugins::init();
-		
-		$this->order = new WPT_Order();
+
+		Theater_Admin_Plugins::init();		
+		Theater_Event_Order::init();
+		Theater_Event_Archive::init();
+
 		$this->status = new WPT_Status();
 		$this->feeds = new WPT_Feeds();
 		$this->transient = new WPT_Transient();
 		$this->listing_page = new WPT_Listing_Page();
-		Theater_Event_Archive::init();
 		$this->calendar = new WPT_Calendar();
 		$this->context = new WPT_Context();
 		$this->filter = new WPT_Filter();
@@ -214,6 +214,10 @@ class Theater {
 		if ( ! defined( 'THEATER_VERSION' ) ) {
 			define( 'THEATER_VERSION', $this->wpt_version );	
 		}
+		if ( ! defined( 'THEATER_ORDER_INDEX_KEY' ) ) {
+			define( 'THEATER_ORDER_INDEX_KEY', '_wpt_order' );
+		}
+
 	}
 
 	/**
@@ -243,6 +247,7 @@ class Theater {
 		require_once(dirname(__FILE__) . '/functions/helpers/class-theater-helpers-time.php');
 
 		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-archive.php');
+		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-order.php');
 
 
 		require_once(dirname(__FILE__) . '/functions/wpt_production_permalink.php');
@@ -252,9 +257,6 @@ class Theater {
 		require_once(dirname(__FILE__) . '/functions/wpt_productions_admin.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_productions_list_table.php');
 
-		require_once(dirname(__FILE__) . '/functions/deprecated/class-wp-theatre.php');
-		require_once(dirname(__FILE__) . '/functions/deprecated/class-wpt-production.php');
-		require_once(dirname(__FILE__) . '/functions/deprecated/class-wpt-event.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_event_admin.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_event_editor.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_event_template.php');
@@ -269,8 +271,6 @@ class Theater {
 
 		require_once(dirname(__FILE__) . '/functions/wpt_admin.php');
 		require_once(dirname(__FILE__) . '/functions/admin/class-theater-admin-plugins.php');
-
-		require_once(dirname(__FILE__) . '/functions/wpt_order.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_status.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_feeds.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_transient.php');
@@ -294,6 +294,11 @@ class Theater {
 		require_once(dirname(__FILE__) . '/integrations/wordpress-seo.php');
 		require_once(dirname(__FILE__) . '/integrations/jetpack-featured-content.php');
 
+		require_once(dirname(__FILE__) . '/functions/deprecated/class-wp-theatre.php');
+		require_once(dirname(__FILE__) . '/functions/deprecated/class-wpt-production.php');
+		require_once(dirname(__FILE__) . '/functions/deprecated/class-wpt-event.php');
+		require_once(dirname(__FILE__) . '/functions/deprecated/class-wpt-order.php');
+		
 	}
 
 	/**
@@ -315,7 +320,7 @@ class Theater {
 		wp_schedule_event( time(), 'wpt_schedule', 'wpt_cron');
 
 		//defines the post types so the rules can be flushed.
-		$this->setup->init();
+		Theater_Setup::init();
 
 		//and flush the rules.
 		flush_rewrite_rules();
@@ -458,6 +463,7 @@ class Theater {
 	protected function deprecated_properties() {
 		$this->productions = new Theater_Event_List; 	
 		$this->events = new Theater_Event_Date_List; 	
+		$this->order = new WPT_Order();
  	}
 }
 

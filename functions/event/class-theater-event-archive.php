@@ -14,19 +14,20 @@
 class Theater_Event_Archive {
 
 	static function init() {
-		
-		if (!is_admin()) {
-			add_action( 'pre_get_posts', array( __CLASS__, 'set_events_order' ) );
-			add_action( 'pre_get_posts', array( __CLASS__, 'remove_past_events' ) );			
+
+		if ( ! is_admin() ) {
+			add_action( 'pre_get_posts', array( __CLASS__, 'set_events_order' ), 10 );
+			add_action( 'pre_get_posts', array( __CLASS__, 'remove_past_events' ), 10 );
 		}
-		
+
 	}
 
 	/**
-	 * Orders all events by start date on event archive pages.
-	 * 
+	 * Orders events in ascending order on event archive pages.
+	 *
 	 * @since	0.15.10
-	 * @uses	WPT_Order::meta_key to order events on the event archive page by start date.
+	 * @since	0.15.13     Only set the order to ascending.
+	 *						Leave all other ordering to the Theater_Event_Order class.
 	 * @param 	WP_Query	$query
 	 * @return 	void
 	 */
@@ -42,8 +43,6 @@ class Theater_Event_Archive {
 			return;
 		}
 
-		$query->set( 'meta_key', $wp_theatre->order->meta_key );
-		$query->set( 'orderby', 'meta_value' );
 		$query->set( 'order', 'ASC' );
 
 	}
@@ -75,7 +74,7 @@ class Theater_Event_Archive {
 		}
 
 		$meta_query[] = array(
-			'key' => $wp_theatre->order->meta_key,
+			'key' => THEATER_ORDER_INDEX_KEY,
 			'value' => current_time( 'timestamp' ) - get_option( 'gmt_offset' ) * 3600,
 			'compare' => '>',
 		);

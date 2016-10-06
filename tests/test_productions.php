@@ -254,8 +254,8 @@
 		}
 		
 		$expected = array(
-			$this->production_with_historic_event, // no upcoming events, follows creation order.
-			$this->production_with_historic_event_sticky, // no upcoming events, follows creation order.
+			$this->production_with_historic_event_sticky, // no upcoming events, follows last event order.
+			$this->production_with_historic_event, // no upcoming events, follows last event order.
 			$this->production_with_upcoming_events, // tomorrow
 			$this->production_with_upcoming_event, // in 2 days
 			$this->production_with_upcoming_and_historic_events // next week

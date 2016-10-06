@@ -8,7 +8,7 @@
  * ## Basic usage
  * <code>
  * // Retrieve a list of all dates.
- * $dates = new Theater_Dates;
+ * $dates = new Theater_Event_Date_List;
  * foreach ( $dates() as $date ) {
  *		// $date is a Theater_Date object.	 
  *		echo $date->title();
@@ -17,7 +17,7 @@
  *
  * <code>
  * // Output a formatted list of all dates.
- * $dates = new Theater_Dates;
+ * $dates = new Theater_Event_Date_List;
  * echo $dates;
  * </code>
  *
@@ -26,18 +26,18 @@
  *
  * <code>
  * // Retrieve a list of upcoming dates.
- * $dates = new Theater_Dates( array( 'start' => 'now' ) );
+ * $dates = new Theater_Event_Date_List( array( 'start' => 'now' ) );
  * </code>
  * <code>
  * // Retrieve a list of dates for a single event.
- * $dates = new Theater_Dates( array( 'event' => 123 ) );
+ * $dates = new Theater_Event_Date_List( array( 'event' => 123 ) );
  * </code>
  * <code>
  * // Retrieve a list of upcoming dates for a single event.
- * $dates = new Theater_Dates( array( 'event' => 123, 'start' => 'now' ) );
+ * $dates = new Theater_Event_Date_List( array( 'event' => 123, 'start' => 'now' ) );
  * </code>
  *
- * See [Theater_Dates::get()](#_get) for a full list of accepted arguments.
+ * See [Theater_Event_Date_List::get()](#_get) for a full list of accepted arguments.
  *
  * ### Customized output
  * You can also formatting arguments to customize the HTML output of the list:
@@ -47,7 +47,7 @@
  * $dates = new Theater_Dates( array( 'start' => 'now' ) );
  * </code>
  *
- * See [Theater_Dates::get_html()](#_get_html) for a full list of accepted arguments. 
+ * See [Theater_Event_Date_List::get_html()](#_get_html) for a full list of accepted arguments. 
  *
  * @since 	0.5
  * @since 	0.10	Complete rewrite, while maintaining backwards compatibility.
