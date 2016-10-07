@@ -41,6 +41,8 @@
 			add_action('wpt_importer/production/metabox/actions/importer='.$this->slug, array($this, 'add_production_metabox_reimport_button'), 10, 2);
 			add_action('wp_loaded', array( $this, 'reimport_production' ));
 			
+			add_action( 'admin_notices', array($this, 'show_import_error_in_admin_notice'));
+			
 		}
 		
 		/**
@@ -420,6 +422,36 @@
 			}
 		}
 		
+		function show_import_error_in_admin_notice() {
+			
+			if (empty($this->stats['errors'])) {
+				return;
+			}
+
+			$current_screen = get_current_screen();
+			if ('theater_page_wpt_admin' != $current_screen->id) {
+				return;
+			}
+
+			?><div class="notice notice-error">
+				<p>
+					<strong><?php 
+						printf(
+							__('There was a problem with the last %s import on %s %s.', 'theatre'), 
+							$this->name,
+							date_i18n(get_option('date_format'), $this->stats['start']),
+							date_i18n(get_option('time_format'), $this->stats['start'])
+						); 
+					?></strong>
+				</p><?php
+				foreach ($this->stats['errors'] as $error) {
+					?><p><?php echo $error;?></p><?php
+				}
+			?></div><?php
+			
+					
+		}
+
 		/**
 		 * Sets the prices of an event.
 		 * 
@@ -584,7 +616,7 @@
 		 * @return void
 		 */
 		function execute() {
-			$this->stats['start'] = time();
+			$this->stats['start'] = current_time( 'timestamp' );
 			$this->stats['events_created'] = 0;
 			$this->stats['events_updated'] = 0;
 			$this->stats['productions_created'] = 0;
@@ -601,7 +633,7 @@
 			
 			// update wpt_order
 
-			$this->stats['end'] = time();
+			$this->stats['end'] = current_time( 'timestamp' );
 			
 			$this->save_stats();
 		}
