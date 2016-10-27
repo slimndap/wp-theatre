@@ -66,10 +66,22 @@ class Theater_Event_Order {
 
 		// Bail if event doesn't have any event dates at all.
 		if ( empty( $event_dates ) ) {
-			return -1;
+			$order_index = -1;
+		} else {
+			$order_index = $event_dates[0]->datetime();
 		}
 
-		return $event_dates[0]->datetime();
+		/**
+		 * Filters the calculated order index of an event.
+		 * 
+		 * @since	0.15.14
+		 * @param	int	$order_index	The current calculated order index.
+		 * @param	WPT_Production		The event.
+		 * @param	WPT_Event[]			The event dates of the event.
+		 */
+		$order_index = apply_filters('theater/event/order/index/calculate', $order_index, $event, $event_dates);
+
+		return $order_index;
 	}
 
 	/**
