@@ -1093,7 +1093,7 @@ class WPT_Test extends WP_UnitTestCase {
 			'return 4 * HOUR_IN_SECONDS;'
 		);
 		
-		add_filter('Theater/Helpers/Time/Next_Day_Start_Time_Offset', $func);
+		add_filter('theater/helpers/time/next_day_start_time_offset', $func);
 		
 		// Prepare an event that starts on 1 Jan 03:59 AM.
 		$production_args = array(
@@ -1126,7 +1126,7 @@ class WPT_Test extends WP_UnitTestCase {
 			'return 4 * HOUR_IN_SECONDS;'
 		);
 		
-		add_filter('Theater/Helpers/Time/Next_Day_Start_Time_Offset', $func);
+		add_filter('theater/helpers/time/next_day_start_time_offset', $func);
 		
 		// Prepare an event that starts on 1 Jan 03:59 AM.
 		$production_args = array(
@@ -1159,7 +1159,7 @@ class WPT_Test extends WP_UnitTestCase {
 			'return 4 * HOUR_IN_SECONDS;'
 		);
 		
-		add_filter('Theater/Helpers/Time/Next_Day_Start_Time_Offset', $func);
+		add_filter('theater/helpers/time/next_day_start_time_offset', $func);
 		
 		// Prepare an event that starts on 1 Jan 03:59 AM.
 		$production_args = array(
@@ -1193,7 +1193,7 @@ class WPT_Test extends WP_UnitTestCase {
 			'return 4 * HOUR_IN_SECONDS;'
 		);
 		
-		add_filter('Theater/Helpers/Time/Next_Day_Start_Time_Offset', $func);
+		add_filter('theater/helpers/time/next_day_start_time_offset', $func);
 		
 		// Prepare an event that starts on 1 Jan 03:59 AM.
 		$production_args = array(
@@ -1226,7 +1226,7 @@ class WPT_Test extends WP_UnitTestCase {
 			'return 4 * HOUR_IN_SECONDS;'
 		);
 		
-		add_filter('Theater/Helpers/Time/Next_Day_Start_Time_Offset', $func);
+		add_filter('theater/helpers/time/next_day_start_time_offset', $func);
 		
 		// Prepare an event that starts on 1 Jan 03:59 AM.
 		$production_args = array(
@@ -1259,7 +1259,7 @@ class WPT_Test extends WP_UnitTestCase {
 			'return 4 * HOUR_IN_SECONDS;'
 		);
 		
-		add_filter('Theater/Helpers/Time/Next_Day_Start_Time_Offset', $func);
+		add_filter('theater/helpers/time/next_day_start_time_offset', $func);
 		
 		// Prepare an event that starts on 1 Jan 03:59 AM.
 		$production_args = array(
@@ -1290,7 +1290,7 @@ class WPT_Test extends WP_UnitTestCase {
 			'return 4 * HOUR_IN_SECONDS;'
 		);
 		
-		add_filter('Theater/Helpers/Time/Next_Day_Start_Time_Offset', $func);
+		add_filter('theater/helpers/time/next_day_start_time_offset', $func);
 		
 		// Prepare an event that starts on 1 Jan 03:59 AM.
 		$production_args = array(
@@ -1323,7 +1323,7 @@ class WPT_Test extends WP_UnitTestCase {
 			'return 4 * HOUR_IN_SECONDS;'
 		);
 		
-		add_filter('Theater/Helpers/Time/Next_Day_Start_Time_Offset', $func);
+		add_filter('theater/helpers/time/next_day_start_time_offset', $func);
 		
 		// Prepare an event that starts on 1 Jan 03:59 AM.
 		$production_args = array(
@@ -1357,7 +1357,7 @@ class WPT_Test extends WP_UnitTestCase {
 			'return 4 * HOUR_IN_SECONDS;'
 		);
 		
-		add_filter('Theater/Helpers/Time/Next_Day_Start_Time_Offset', $func);
+		add_filter('theater/helpers/time/next_day_start_time_offset', $func);
 		
 		// Prepare an event that starts on 1 Jan 03:59 AM.
 		$production_args = array(
