@@ -433,6 +433,7 @@ class WPT_Productions extends WPT_Listing {
 	 * @since 	0.10
 	 * @since	0.13	Added support for days, months and years.
 	 * @since	0.14.7	Added $args to $production->html().
+	 * @since	0.15.14	Added $args to all header filters.
 	 *
 	 * @see WPT_Production::html();
 	 * @see WPT_Productions::get_html_for_season();
@@ -461,7 +462,18 @@ class WPT_Productions extends WPT_Listing {
 				foreach ( $days as $day => $name ) {
 					if ( $day_html = $this->get_html_for_day( $day, $args ) ) {
 						$html .= '<h3 class="wpt_listing_group day">';
-						$html .= apply_filters( 'wpt_listing_group_day',date_i18n( 'l d F',strtotime( $day ) ),$day );
+												
+						/**
+						 * Filter the day header in a productions list.
+						 * 
+						 * @since 	0.13
+						 * @since	0.15.14	Added the $args param.
+						 * @param	string	$header	The header.
+						 * @param	string	$day	The day.
+						 * @param	array	$args	The arguments for the HTML of this list.
+						 */
+						$html .= apply_filters( 'wpt_listing_group_day',date_i18n( 'l d F',strtotime( $day ) ), $day, $args );
+						
 						$html .= '</h3>';
 						$html .= $day_html;
 					}
@@ -472,7 +484,18 @@ class WPT_Productions extends WPT_Listing {
 				foreach ( $months as $month => $name ) {
 					if ( $month_html = $this->get_html_for_month( $month, $args ) ) {
 						$html .= '<h3 class="wpt_listing_group month">';
-						$html .= apply_filters( 'wpt_listing_group_month',date_i18n( 'F',strtotime( $month ) ),$month );
+
+						/**
+						 * Filter the month header in a productions list.
+						 * 
+						 * @since 	0.13
+						 * @since	0.15.14	Added the $args param.
+						 * @param	string	$header	The header.
+						 * @param	string	$month	The month.
+						 * @param	array	$args	The arguments for the HTML of this list.
+						 */
+						$html .= apply_filters( 'wpt_listing_group_month',date_i18n( 'F',strtotime( $month ) ), $month, $args );
+
 						$html .= '</h3>';
 						$html .= $month_html;
 					}
@@ -482,8 +505,18 @@ class WPT_Productions extends WPT_Listing {
 				$years = $this->get_years( $args );
 				foreach ( $years as $year => $name ) {
 					if ( $year_html = $this->get_html_for_year( $year, $args ) ) {
+						
+						/**
+						 * Filter the year header in a productions list.
+						 * 
+						 * @since 	0.13
+						 * @since	0.15.14	Added the $args param.
+						 * @param	string	$header	The header.
+						 * @param	int		$year	The year.
+						 * @param	array	$args	The arguments for the HTML of this list.
+						 */						
 						$html .= '<h3 class="wpt_listing_group year">';
-						$html .= apply_filters( 'wpt_listing_group_year',date_i18n( 'Y',strtotime( $year.'-01-01' ) ),$year );
+						$html .= apply_filters( 'wpt_listing_group_year',date_i18n( 'Y',strtotime( $year.'-01-01' ) ), $year, $args );
 						$html .= '</h3>';
 						$html .= $year_html;
 					}
@@ -494,7 +527,18 @@ class WPT_Productions extends WPT_Listing {
 				foreach ( $seasons as $season_id => $season_title ) {
 					if ( $season_html = $this->get_html_for_season( $season_id, $args ) ) {
 						$html .= '<h3 class="wpt_listing_group season">';
-						$html .= apply_filters( 'wpt_listing_group_season',$season_title,$season_id );
+
+						/**
+						 * Filter the season header in a productions list.
+						 * 
+						 * @since 	0.13
+						 * @since	0.15.14	Added the $args param.
+						 * @param	string	$season_title	The header.
+						 * @param	string	$season_id		The season ID.
+						 * @param	array	$args			The arguments for the HTML of this list.
+						 */
+						$html .= apply_filters( 'wpt_listing_group_season', $season_title, $season_id, $args );
+
 						$html .= '</h3>';
 						$html .= $season_html;
 					}
@@ -505,7 +549,17 @@ class WPT_Productions extends WPT_Listing {
 				foreach ( $categories as $cat_id => $name ) {
 					if ( $cat_html = $this->get_html_for_category( $cat_id, $args ) ) {
 						$html .= '<h3 class="wpt_listing_group category">';
-						$html .= apply_filters( 'wpt_listing_group_category',$name,$cat_id );
+						
+						/**
+						 * Filter the category header in a productions list.
+						 * 
+						 * @since 	0.13
+						 * @since	0.15.14	Added the $args param.
+						 * @param	string	$name	The header.
+						 * @param	string	$cat_id	The category ID.
+						 * @param	array	$args	The arguments for the HTML of this list.
+						 */						
+						$html .= apply_filters( 'wpt_listing_group_category',$name, $cat_id, $args );
 						$html .= '</h3>';
 						$html .= $cat_html;
 					}
