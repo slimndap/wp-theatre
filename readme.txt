@@ -146,6 +146,7 @@ This release focusses on a more streamlined experience when managing your events
 	* Search results no longer get lost when navigating on the Events page in the WordPress admin (0.15.9).
 	* Fixed an issue with the 'end' filter for events (0.15.10).
 	* Fixed the sort order of events on the admin screen after you changed the status of an event (0.15.13). Thank you [Menno Luitjes](https://www.linkedin.com/in/mennoluitjes)!
+	* Fixed a problem with the changelog of extensions if you're running multiple extensions (0.15.14).
     
 = 0.14 =
 
@@ -223,6 +224,9 @@ Release Date: May 30th, 2015
 
 
 == Upgrade Notice ==
+
+= 0.15.14 =
+Fixes a problem with the changelog of extensions if you're running multiple extensions.
 
 = 0.15.13 =
 Fixes a problem with the sort order of events on the admin screen.
