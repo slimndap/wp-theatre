@@ -358,8 +358,8 @@ class WPT_Events extends WPT_Listing {
 			$html = $this->get_html_for_year( $wp_query->query_vars['wpt_year'], $args );
 		} elseif ( ! empty( $wp_query->query_vars['wpt_month'] ) ) {
 			$html = $this->get_html_for_month( $wp_query->query_vars['wpt_month'], $args );
-		} elseif ( ! empty( $wp_query->query_vars['wpt_day'] ) ) {
-			$html = $this->get_html_for_day( $wp_query->query_vars['wpt_day'], $args );
+		} elseif ( ! empty( $wp_query->query['wpt_day'] ) ) {
+			$html = $this->get_html_for_day( $wp_query->query['wpt_day'], $args );
 		} elseif ( ! empty( $wp_query->query_vars['wpt_category'] ) ) {
 			$html = $this->get_html_for_category( $wp_query->query_vars['wpt_category'], $args );
 		} else {
