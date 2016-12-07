@@ -573,18 +573,19 @@
 		 *    If unsuccesful: Clean up, unmark all previously imported events.
 		 * 4. Save import stats for display on the settings screen.
 		 *
-		 * @since 0.10
+		 * @since 	0.10
+		 * @since	0.15.15	Fixed missing timezone support for import start and end times.
 		 *
-		 * @see WPT_Importer::mark_upcoming_events()
-		 * @see WPT_Importer::process_feed()
-		 * @see WPT_Importer::remove_marked_events()
-		 * @see WPT_Importer::unmark_events()
-		 * @see WPT_Importer::save_stats()
+		 * @uses 	WPT_Importer::mark_upcoming_events()
+		 * @uses 	WPT_Importer::process_feed()
+		 * @uses 	WPT_Importer::remove_marked_events()
+		 * @uses	WPT_Importer::unmark_events()
+		 * @uses 	WPT_Importer::save_stats()
 		 *
 		 * @return void
 		 */
 		function execute() {
-			$this->stats['start'] = time();
+			$this->stats['start'] = current_time( 'timestamp' );
 			$this->stats['events_created'] = 0;
 			$this->stats['events_updated'] = 0;
 			$this->stats['productions_created'] = 0;
@@ -599,9 +600,7 @@
 				$this->unmark_events();
 			}
 			
-			// update wpt_order
-
-			$this->stats['end'] = time();
+			$this->stats['end'] = current_time( 'timestamp' );
 			
 			$this->save_stats();
 		}
