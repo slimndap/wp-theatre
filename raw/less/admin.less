@@ -1,14 +1,17 @@
 @import "lesshat.less";
 @import "admin/jquery.datetimepicker.less";
-@import "admin/event.less";
 @import "admin/settings.less";
+@import "admin/wpt_admin";
 @import "admin/wpt_event_editor";
+@import "admin/wpt_event_admin";
+@import "admin/wpt_extensions_promo";
+@import "admin/wpt_production_admin";
 
 @font-face {
 	.font-face('theatre-webfont', ~'../font/theatre-webfont',normal, normal);
 }
 
-#toplevel_page_theatre {
+#toplevel_page_theater-events {
 	.wp-menu-image {
 		&:before {
 			font-family: 'theatre-webfont' !important;
@@ -26,13 +29,16 @@ textarea#wpt_custom_css {
 .wp-list-table {
 	&.fixed {
 		.column-thumbnail {
-			width: 6em;
+			width: 4em;
 			figure {
 				margin: 0;
 				padding: 0;
 				img {
 					width: 100%;
 					height: auto;
+				}
+				@media(max-width: 782px) {
+					width: 4em;
 				}
 			}
 		}	

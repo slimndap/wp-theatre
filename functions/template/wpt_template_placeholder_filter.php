@@ -61,19 +61,27 @@ class WPT_Template_Placeholder_Filter {
 	 * Applies the filter to a content string.
 	 *
 	 * @since	0.12.1
+	 * @since	0.15.11				No longer corrupts $this->args.
+	 *								Fixes #215.
 	 * @param 	string	$content
 	 * @return 	string				The content string with the filter applied.
 	 */
 	public function apply_to($content) {
-		array_unshift( $this->args, $content, $this->object );
-		$content = call_user_func_array( $this->callback, $this->args );
+		
+		/*
+		 * Prepare the callback args.
+		 */
+		$callback_args = $this->args;
+		array_unshift( $callback_args, $content, $this->object );
+		
+		$content = call_user_func_array( $this->callback, $callback_args );
 		return $content;
 	}
 
 	/**
-	 * The default filter callsback.
+	 * The default filter callback.
 	 *
-	 * This callback is used for all filter that do not have a callback assigned.
+	 * This callback is used for all filters that do not have a callback assigned.
 	 *
 	 * @since	0.12.1
 	 * @access 	protected
@@ -91,6 +99,9 @@ class WPT_Template_Placeholder_Filter {
 	 * Applies a date format to a date or time string.
 	 *
 	 * @since 	0.12.1
+	 * @since	0.15.11.1	Added support for next day start time offset.
+	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
+	 *
 	 * @access 	protected
 	 * @param 	string		$content	A date or time string.
 	 * @param 	mixed		$object		The object (a production or event).
@@ -106,7 +117,7 @@ class WPT_Template_Placeholder_Filter {
 			}
 			$content = date_i18n(
 				$format,
-				$timestamp + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS
+				$timestamp + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS - Theater_Helpers_Time::get_next_day_start_time_offset()
 			);
 		}
 		return $content;

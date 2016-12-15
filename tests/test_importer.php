@@ -9,6 +9,9 @@ class WPT_Demo_Importer extends WPT_Importer {
 			'slug' => 'wpt_demoimporter',
 			'name' => 'Demo Importer',
 			'options' => get_option( 'wpt_demoimporter' ),
+			'callbacks' => array(
+				'reimport_production' => array($this, 'process_reimport_production'),
+			),
 		);
 
 		$this->feed = array(
@@ -62,6 +65,52 @@ class WPT_Demo_Importer extends WPT_Importer {
 
 	}
 	
+	function process_reimport_production($production_id) {
+
+		if (!$this->ready_for_import()) {
+			return false;	
+		}
+		
+		$source_ref = get_post_meta($production_id, '_wpt_source_ref', true);
+
+		if (empty($source_ref)) {
+			return false;
+		}
+
+		for ( $p = 0; $p < count( $this->feed );$p++ ) {
+			$production_ref = 'demo_'.$p;
+			if ($production_ref==$source_ref) {
+
+				$production_post = array(
+					'ID' => $production_id,
+					'post_title' => 'Production '.$p,
+					'post_content' => 'Supercool stuff',
+				);
+				wp_update_post($production_post);
+				
+				for ( $e = 0;$e < count( $this->feed[ $p ] );$e++ ) {
+					$event_ref = $production_ref.'_'.$e;
+					$event_date = strtotime( $this->feed[ $p ][ $e ] );
+					$event_args = array(
+						'production' => $production_id,
+						'venue' => 'venue',
+						'city' => 'city',
+						'tickets_url' => 'http://slimndap.com',
+						'event_date' => date_i18n( 'Y-m-d H:i:s',$event_date ),
+						'ref' => $event_ref,
+						'prices' => array( 1, 2, '3|kids', 4 ),
+					);
+					$event_args = apply_filters( 'wpt/test/importer/process_feed/event/args', $event_args, $this->feed[ $p ][ $e ] );
+					$event = $this->update_event( $event_args );
+				}
+			}
+		}
+
+		return true;
+		
+
+	}
+
 	function ready_for_import() {
 		return true;
 	}
@@ -89,6 +138,7 @@ class WPT_Test_Importer extends WP_UnitTestCase {
 		$args = array(
 			'post_type' => WPT_Production::post_type_name,
 			'post_status' => array('all'),	
+			'posts_per_page' => -1,
 		);
 		foreach( get_posts($args) as $production) {
 			wp_update_post( array(
@@ -100,6 +150,7 @@ class WPT_Test_Importer extends WP_UnitTestCase {
 		$args = array(
 			'post_type' => WPT_Event::post_type_name,
 			'post_status' => array('all'),	
+			'posts_per_page' => -1,
 		);
 		foreach( get_posts($args) as $event) {
 			wp_update_post( array(
@@ -267,6 +318,128 @@ class WPT_Test_Importer extends WP_UnitTestCase {
 		$expected = $error;
 		
 		$this->assertContains($expected, $actual);
+	}
+	
+	
+	/**
+	 * Test if previously imported event are properly removed after the next import.
+	 * See: https://github.com/slimndap/wp-theatre/issues/182
+	 */
+	function test_import_events_cleanup() {
+		global $wp_theatre;
+
+		$importer = new WPT_Demo_Importer();
+
+		// Store the originals feed (with only 4 events).
+		$feed_small = $importer->feed;
+		
+		// Replace feed with 30 events.
+		$feed_large = array(
+			array('Today', 'Tomorrow'),
+		);
+		for($i=2;$i<30;$i++) {
+			$feed_large[] = array('Today + '.$i.' days');
+		}
+		$importer->feed = $feed_large;
+
+		// Import the 30 events
+		$importer->execute();
+		$this->publish_all();
+		$events = $wp_theatre->events->get();
+		$this->assertCount(30, $events);
+		
+		// Import again, but with the originals feed.
+		$importer->feed = $feed_small;
+		$importer->execute();
+		$this->publish_all();
+		$events = $wp_theatre->events->get();
+		
+		// All events from the large feed should be gone.
+		$this->assertCount(4, $events);
+		
+	}
+	
+	function test_reimport_production() {
+		global $wp_theatre;
+
+		$importer = new WPT_Demo_Importer();
+
+		$importer->execute();
+		$this->publish_all();
+
+		$productions = $wp_theatre->productions->get();
+		
+		// Pick 'Production 0'.
+		$production_id = $productions[0]->ID;
+		
+		$production_args = array(
+			'ID' => $production_id,
+			'post_title' => 'A changed title',
+			'post_content' => 'Changed content',
+		);
+		wp_update_post($production_args);
+		
+
+		$production_html_args = array(
+			'template' => '{{title}}{{content}}',	
+		);
+		
+		// Make sure the content was updated.
+		$production = new WPT_Production($production_id);
+		$actual = $production->html($production_html_args);
+		$expected = 'Changed content';
+		$this->assertContains($expected, $actual);
+		
+		$importer->execute_reimport($production_id);
+
+		// Reload production to refresh 'title' and 'content' values.
+		$production = new WPT_Production($production_id);
+
+		$actual = $production->html($production_html_args);
+
+		// Test if original content title is back.
+		$expected = 'Supercool stuff';
+		$this->assertContains($expected, $actual);
+
+		// Test if original production title is back.
+		$expected = 'Production 0';
+		$this->assertContains($expected, $actual);
+		
+	}
+
+	function test_reimport_production_events() {
+		global $wp_theatre;
+
+		$importer = new WPT_Demo_Importer();
+
+		$importer->execute();
+		$this->publish_all();
+
+		$productions = $wp_theatre->productions->get();
+		
+		// Pick 'Production 0'.
+		$production_id = $productions[0]->ID;
+		
+		
+		$events = $productions[0]->events();
+		
+		// Delete the first event.
+		wp_delete_post($events[0]->ID, true);
+		
+		// Make sure it is gone.
+		$production = new WPT_Production($production_id);
+		$actual = $production->events();
+		$expected = 1;
+		$this->assertCount($expected, $actual);
+				
+		$importer->execute_reimport($production_id);
+
+		// Test if the deleted event is back.
+		$production = new WPT_Production($production_id);
+		$actual = $production->events();
+		$expected = 2;
+		$this->assertCount($expected, $actual);
+
 	}
 
 }

@@ -11,6 +11,7 @@
 			if (is_admin()) {
 				add_action('admin_init', array($this,'admin_init'));
 				add_filter('wpt_admin_page_tabs', array($this,'wpt_admin_page_tabs'));
+				add_filter('display_post_states', array($this, 'set_display_post_state'), 10 , 2);
 			} else {
 				add_action('the_content', array($this, 'the_content'));
 				add_filter('wpt_production_page_content_before', array($this, 'wpt_production_page_content_before'));
@@ -59,14 +60,14 @@
 
 		        add_settings_section(
 		            'wpt_listing_page_page', // ID
-		            __('Upcoming events','wp_theatre'), // Title
+		            __('Upcoming events','theatre'), // Title
 		            '', // Callback
 		            'wpt_listing_page' // Page
 		        );  
 
 		        add_settings_field(
 		            'wpt_listing_page_post_id', // ID
-		            __('Page to show upcoming events on','wp_theatre'), // Title 
+		            __('Page to show upcoming events on','theatre'), // Title 
 		            array( $this, 'settings_field_wpt_listing_page_post_id' ), // Callback
 		            'wpt_listing_page', // Page
 		            'wpt_listing_page_page' // Section           
@@ -74,7 +75,7 @@
 
 		        add_settings_field(
 		            'wpt_listing_page_position', // ID
-		            __('Position on page','wp_theatre'), // Title 
+		            __('Position on page','theatre'), // Title 
 		            array( $this, 'settings_field_wpt_listing_page_position' ), // Callback
 		            'wpt_listing_page', // Page
 		            'wpt_listing_page_page' // Section           
@@ -82,7 +83,7 @@
 		        
 		        add_settings_field(
 		            'wpt_listing_page_nav_events', // ID
-		            __('Arrange the events','wp_theatre'), // Title 
+		            __('Arrange the events','theatre'), // Title 
 		            array( $this, 'settings_field_wpt_listing_page_nav_events' ), // Callback
 		            'wpt_listing_page', // Page
 		            'wpt_listing_page_page' // Section           
@@ -90,7 +91,7 @@
 		        
 		        add_settings_field(
 		            'wpt_listing_page_template', // ID
-		            __('Template','wp_theatre'), // Title 
+		            __('Template','theatre'), // Title 
 		            array( $this, 'settings_field_wpt_listing_template' ), // Callback
 		            'wpt_listing_page', // Page
 		            'wpt_listing_page_page' // Section           
@@ -98,14 +99,14 @@
 		        
 		        add_settings_section(
 		            'wpt_listing_production_page', // ID
-		            __('Events on production pages','wp_theatre'), // Title
+		            __('Events on production pages','theatre'), // Title
 		            '', // Callback
 		            'wpt_listing_page' // Page
 		        );  
 		
 		        add_settings_field(
 		            'wpt_listing_page_position_on_production_page', // ID
-		            __('Position on page','wp_theatre'), // Title 
+		            __('Position on page','theatre'), // Title 
 		            array( $this, 'settings_field_wpt_listing_page_position_on_production_page' ), // Callback
 		            'wpt_listing_page', // Page
 		            'wpt_listing_production_page' // Section           
@@ -113,7 +114,7 @@
 
 		        add_settings_field(
 		            'wpt_listing_page_template_on_production_page', // ID
-		            __('Template','wp_theatre'), // Title 
+		            __('Template','theatre'), // Title 
 		            array( $this, 'settings_field_wpt_listing_template_on_production_page' ), // Callback
 		            'wpt_listing_page', // Page
 		            'wpt_listing_production_page' // Section           
@@ -368,9 +369,9 @@
 	 	
 	    public function settings_field_wpt_listing_page_position() {
 			$options = array(
-				'above' => __('show above content','wp_theatre'),
-				'below' => __('show below content','wp_theatre'),
-				'not' => __('manually, using <code>'.$this->shortcode($this->options).'</code> shortcode','wp_theatre')
+				'above' => __('show above content','theatre'),
+				'below' => __('show below content','theatre'),
+				'not' => __('manually, using <code>'.esc_html($this->shortcode($this->options)).'</code> shortcode','theatre')
 			);
 			
 			foreach($options as $key=>$value) {
@@ -391,9 +392,9 @@
 	 	
 	    public function settings_field_wpt_listing_page_position_on_production_page() {
 			$options = array(
-				'above' => __('show above content','wp_theatre'),
-				'below' => __('show below content','wp_theatre'),
-				'' => __('manually, using <code>[wpt_production_events]</code> shortcode','wp_theatre')
+				'above' => __('show above content','theatre'),
+				'below' => __('show below content','theatre'),
+				'' => __('manually, using <code>[wpt_production_events]</code> shortcode','theatre')
 			);
 			
 			foreach($options as $key=>$value) {
@@ -418,8 +419,8 @@
 	 	
 	    public function settings_field_wpt_listing_page_type() {
 			$options = array(
-				WPT_Production::post_type_name => __('productions','wp_theatre'),
-				WPT_Event::post_type_name => __('events','wp_theatre')
+				WPT_Production::post_type_name => __('productions','theatre'),
+				WPT_Event::post_type_name => __('events','theatre')
 			);
 			
 			foreach($options as $key=>$value) {
@@ -440,16 +441,16 @@
 	 	
 	    public function settings_field_wpt_listing_page_nav_events() {
 			$options_groupby = array(
-				'day' => __('day','wp_theatre'),
-				'month' => __('month','wp_theatre'),
-				'year' => __('year','wp_theatre'),
-				'category' => __('category','wp_theatre')
+				'day' => __('day','theatre'),
+				'month' => __('month','theatre'),
+				'year' => __('year','theatre'),
+				'category' => __('category','theatre')
 			);
 			
 			$options = array(
-				'' => __('as a plain list','wp_theatre'),
-				'grouped' => __('grouped by','wp_theatre'),
-				'paginated' => __('paginate by','wp_theatre')
+				'' => __('as a plain list','theatre'),
+				'grouped' => __('grouped by','theatre'),
+				'paginated' => __('paginate by','theatre')
 			);
 			
 			echo '<div id="listing_page_nav_events" class="wpt_settings_radio_with_selects">';
@@ -495,13 +496,13 @@
 	 	
 	    public function settings_field_wpt_listing_page_nav_productions() {
 			$options_groupby = array(
-				'category' => __('category','wp_theatre')
+				'category' => __('category','theatre')
 			);
 			
 			$options = array(
-				'' => __('as a plain list','wp_theatre'),
-				'grouped' => __('grouped by','wp_theatre'),
-				'paginated' => __('paginate by','wp_theatre')
+				'' => __('as a plain list','theatre'),
+				'grouped' => __('grouped by','theatre'),
+				'paginated' => __('paginate by','theatre')
 			);
 			
 			echo '<div id="listing_page_nav_productions" class="wpt_settings_radio_with_selects">';
@@ -540,17 +541,34 @@
 			echo '</div>';
 	    }
 	    
+	    /**
+	     * Adds the 'Events page' display state to the listing page in the pages list tabel.
+	     * 
+	     * @since	0.13
+	     * @since	0.14.3	Bugfix: Avoid PHP errors when no listing page is set.
+	     *					Fixes #181.
+	     * @param 	array 	$post_states	An array of post display states.
+	     * @param 	int 	$post			The post ID.
+	     * @return	array					The new array of post display states.
+	     */
+	    public function set_display_post_state($post_states, $post) { 
+			if ( ($listing_page = $this->page()) && $post->ID == $listing_page->ID ) {
+			    $post_states['wpt_listing_page'] = __('Events page', 'theatre');
+		    }
+		    return $post_states;
+	    }
+	    
 	 	/*
 	 	 * Show input to set the field that is used for the navigation on the listing page.
 	 	 */
 	 	
 	    public function settings_field_wpt_listing_page_groupby() {
 			$options = array(
-				'day' => __('day','wp_theatre'),
-				'month' => __('month','wp_theatre'),
-				'year' => __('year','wp_theatre'),
-				'category' => __('category','wp_theatre'),
-				'season' => __('season','wp_theatre')
+				'day' => __('day','theatre'),
+				'month' => __('month','theatre'),
+				'year' => __('year','theatre'),
+				'category' => __('category','theatre'),
+				'season' => __('season','theatre')
 			);
 			
 			foreach($options as $key=>$value) {
@@ -573,7 +591,7 @@
 			echo '<p>';
 			echo '<textarea id="wpt_custom_css" name="wpt_listing_page[listing_page_template]">';
 			if (!empty($this->options['listing_page_template'])) {
-				echo $this->options['listing_page_template'];
+				echo esc_html($this->options['listing_page_template']);
 			}
 			echo '</textarea>';
 			echo '</p>';
@@ -588,7 +606,7 @@
 			echo '<p>';
 			echo '<textarea id="wpt_custom_css" name="wpt_listing_page[listing_page_template_on_production_page]">';
 			if (!empty($this->options['listing_page_template_on_production_page'])) {
-				echo $this->options['listing_page_template_on_production_page'];
+				echo esc_html($this->options['listing_page_template_on_production_page']);
 			}
 			echo '</textarea>';
 			echo '</p>';
@@ -623,12 +641,18 @@
 	 	/*
 	 	 * Get the URL for the listing page.
 	 	 *
-	 	 * @since 0.8
-	 	 * @since 0.10.2	Category now uses slug instead of term_id.
+	 	 * @since 	0.8
+	 	 * @since 	0.10.2	Category now uses slug instead of term_id.
+	 	 * @since	0.12.1	Trailingslashit to avoid an extra redirect.
+	 	 * @since	0.13.1	Pagination now work when listing page is same as front page.
+	 	 *					Fixes #98.
 	 	 * 
 	     * @param array $args {
 	     *     An array of arguments. Optional.
 	     *
+	     *     @type string $wpt_day      	Day to filter on. No day-filter when set to <false>. 
+	     *                                 	Accepts <yyyy-mm-dd> or <false>.
+	     *                                 	Default <false>.
 	     *     @type string $wpt_month      Month to filter on. No month-filter when set to <false>. 
 	     *                                 	Accepts <yyyy-mm> or <false>.
 	     *                                 	Default <false>.
@@ -636,11 +660,10 @@
 	     *                                 	Default <false>.
 	     * }
 	     * @return string URL.
-	 	 */
-	 	
+	 	 */	
 	 	function url($args=array()) {
-	 		if ($this->page()) {
-		 		$url = trailingslashit(get_permalink($this->page()->ID));
+	 		if ($page = $this->page()) {
+		 		$url = get_permalink($page->ID);
 		 		$defaults = array(
 		 			'wpt_month' => false,
 		 			'wpt_day' => false,
@@ -648,22 +671,24 @@
 		 		);
 		 		$args = wp_parse_args($args, $defaults);
 
-	 			if (get_option('permalink_structure')) {	
+	 			if (get_option('permalink_structure') && get_option('page_on_front') != $page->ID) {
+		 			$url = trailingslashit($url);
 			 		if ($args['wpt_category']) {
 			 			if ($category=get_category_by_slug($args['wpt_category'])) {
 					 		$url.= $category->slug.'/';
 			 			}
 			 		}
-			 		
 			 		if ($args['wpt_month']) {
 				 		$url.= substr($args['wpt_month'],0,4).'/'.substr($args['wpt_month'],5,2);
 			 		}
-			 		
 			 		if ($args['wpt_day']) {
 				 		$url.= substr($args['wpt_day'],0,4).'/'.substr($args['wpt_day'],5,2).'/'.substr($args['wpt_day'],8,2);
 			 		}
-	
+			 		$url = trailingslashit($url);
 	 			} else {
+		 			if (get_option('page_on_front') == $page->ID) {
+			 			$url = add_query_arg('pagename', $page->post_name, $url);
+		 			}
 			 		if ($args['wpt_category']) {
 			 			$url = add_query_arg('wpt_category', $args['wpt_category'], $url);
 			 		}
@@ -716,7 +741,7 @@
 	 	
 	 	function wpt_admin_page_tabs($tabs) {
 			$tabs = array_merge(
-				array('wpt_listing_page'=>__('Display','wp_theatre')),
+				array('wpt_listing_page'=>__('Display','theatre')),
 				$tabs
 			);
 			return $tabs;
@@ -727,11 +752,9 @@
 	 	 *
 	 	 * @see WPT_Listing::filter_pagination()
 	 	 * @since	?.?
-	 	 * @since	0.12.1	Trailingslashit to avoid an extra redirect.
 	 	 */
 	 	function wpt_listing_filter_pagination_url($url) {
 	 		if (
-	 			get_option('permalink_structure') &&
 	 			$this->page() &&
 	 			is_page($this->page()->ID)
 	 		) {
@@ -741,7 +764,6 @@
 		 		} else {
 			 		$url = $this->url($url_parts['query']);		 		
 		 		}
-		 		$url = trailingslashit($url);
 	 		}
 		 	return $url;
 	 	}
@@ -785,13 +807,17 @@
 		}
 
 	 	/**
-	 	 * Gets an event listing for use on a production page.
+	 	 * Gets the HTML for an event listing for use on a production page.
 	 	 * 
-	 	 * @since 0.9.5
-	 	 * @access private
-	 	 * @return string
+	 	 * @since 	0.9.5
+	 	 * @since	0.15.2	Added support for the header translation that you can set
+	 	 *					in the Theater settings.
+	 	 *
+	 	 * @access 	private
+	 	 * @return 	string	The HTML for an event listing for use on a production page.
 	 	 */
 	 	private function wpt_production_page_events_content() {
+		 	global $wp_theatre;
 		 	
 			$production = new WPT_Production();			
 
@@ -802,7 +828,24 @@
 			$events_html = do_shortcode('[wpt_production_events]'.$template.'[/wpt_production_events]');
 
 			if (!empty($events_html)) {
-				$events_header_html = apply_filters('wpt_production_page_events_header','<h3>'.__('Events','wp_theatre').'</h3>');
+				
+				$events_header = __('Events','theatre');
+				
+				if (!empty($wp_theatre->wpt_language_options['language_events'])) {
+					$events_header = $wp_theatre->wpt_language_options['language_events'];
+				}
+				
+				$events_header_html = '<h3>'.esc_html($events_header).'</h3>';
+				
+				/**
+				 * Filter the HTML of the header for an event listing on a production page.
+				 * 
+				 * @since	0.9.5
+				 * @param	string	$events_header_html		The HTML of the header for an event 
+				 *											listing on a production page.
+				 */
+				$events_header_html = apply_filters('wpt_production_page_events_header',$events_header_html);
+				
 				$events_html = $events_header_html.$events_html;
 			}
 			
@@ -838,11 +881,19 @@
 		function __construct() {
 			parent::__construct(
 				'wpt_categories_widget',
-				__('Theater Categories','wp_theatre'), // Name
-				array( 'description' => __( 'Categories with upcoming events', 'wp_theatre' ), ) // Args
+				__('Theater Categories','theatre'), // Name
+				array( 'description' => __( 'Categories with upcoming events', 'theatre' ), ) // Args
 			);
 		}
 		
+		/**
+		 * Outputs the widget HTML.
+		 * 
+		 * @since	0.8
+		 * @since	0.15.8	Fixed a typo in the closing <ul>.
+		 * @param 	mixed 	$args
+		 * @param 	mixed 	$instance
+		 */
 		public function widget($args,$instance) {
 			global $wp_theatre;
 			
@@ -870,7 +921,7 @@
 					$html.='</a>';
 					$html.= '</li>';
 				}
-				$html = '<ul class="wpt_categories">'.$html.'</li>';
+				$html = '<ul class="wpt_categories">'.$html.'</ul>';
 
 				$wp_theatre->transient->set('cat', array(), $html);
 			}
@@ -882,7 +933,7 @@
 		
 		public function form($instance) {
 			$defaults = array(
-				'title' => __( 'Categories', 'wp_theatre' )
+				'title' => __( 'Categories', 'theatre' )
 			);
 			$values = wp_parse_args( $instance, $defaults );
 

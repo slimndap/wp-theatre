@@ -1,3 +1,4 @@
 config.codekit
 *.iml
 .idea
+apidocs

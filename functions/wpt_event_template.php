@@ -27,6 +27,8 @@ class WPT_Event_Template extends WPT_Template {
 	 * Gets the value for a field from an event.
 	 *
 	 * @since 	0.12.1
+	 * @since	0.15	Fixed an error when no production is set for the event.
+	 *
 	 * @access 	protected
 	 * @param 	string	$field		The field.
 	 * @param 	array 	$args		Arguments for the field (optional).
@@ -56,13 +58,20 @@ class WPT_Event_Template extends WPT_Template {
 				$value = $this->object->{$field}($value_args);
 				break;
 			case 'thumbnail':
+				$size = 'thumbnail';
 				if ( ! empty($args[0]) ) {
-					$value_args['size'] = $args[0];
+					$size = $args[0];
 				}
+				if ($production = $this->object->production()) {
+					$value = $production->thumbnail_html($size, $filters);				
+				}
+				break;
 			case 'categories':
 			case 'content':
 			case 'excerpt':
-				$value = $this->object->production()->{$field}($value_args);
+				if ($production = $this->object->production()) {
+					$value = $production->{$field}($value_args);
+				}
 				break;
 			case 'startdate':
 			case 'date':

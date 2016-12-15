@@ -2,6 +2,7 @@
 
 @import "wpt_listing.less";
 @import "wpt_calendar.less";
+@import '_thickbox';
 
 .wpt_productions,
 .wpt_events {
@@ -67,9 +68,21 @@
 						content: ',\00a0';
 					}
 				}
+				&:empty {
+					+ .wp_theatre_event_city {
+						&:before {
+							display: none;
+						}
+					}
+				}
 			}
 			.wp_theatre_event_city {
 				display: inline;
+				&:empty {
+					&:before {
+						display: none;
+					}
+				}
 			}
 		}
 		.wp_theatre_event_tickets {

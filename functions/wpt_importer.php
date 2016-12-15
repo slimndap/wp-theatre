@@ -18,12 +18,14 @@
 				'slug' => '',
 				'name' => '',
 				'options' => array(),
+				'callbacks' => array(),
 			);
 			$args = wp_parse_args($args, $defaults);
 			
 			$this->slug = $args['slug'];
 			$this->name = $args['name'];
 			$this->options = $args['options'];
+			$this->callbacks = $args['callbacks'];
 			$this->marker = '_'.$this->slug.'_marker';
 			$this->options = get_option($this->slug);
 			$this->stats = get_option($this->slug.'_stats');
@@ -34,6 +36,10 @@
 			add_filter('admin_init',array($this,'add_settings_fields'));
 			add_filter('wpt_admin_page_tabs',array($this,'add_settings_tab'));
 			add_action($this->slug.'_import', array($this, 'execute' ));
+			
+			add_action( 'add_meta_boxes', array($this, 'add_production_metabox') );
+			add_action('wpt_importer/production/metabox/actions/importer='.$this->slug, array($this, 'add_production_metabox_reimport_button'), 10, 2);
+			add_action('wp_loaded', array( $this, 'reimport_production' ));
 			
 		}
 		
@@ -69,6 +75,68 @@
 			return false;
 		}
 
+		
+		/**
+		 * Outputs the metabox for the importer on the production edit form.
+		 * 
+		 * The metabox tells the user that the production was imported with the current importer.
+		 * It can also hold buttons with action that are specific to this importer.
+		 *
+		 * @since	0.14.5
+		 * @since	0.15.6	Changed 'production' to 'event' in the metabox message.
+		 * @param 	WP_Post	$post	The current post (production).
+		 */
+		function production_metabox($post) {
+			ob_start();
+			?><p><?php printf(__('This event is imported from %s.', 'theatre'), $this->name); ?></p><?php
+			
+			$message = ob_get_clean();
+			
+			/**
+			 * Filter the message inside the metabox.
+			 * 
+			 * @since	0.14.5
+			 * @param	string	$message	The message.
+			 * @param	WP_Post	$post		The post (production).
+			 */
+			$message = apply_filters('wpt/importer/production/metabox/message', $message, $post);
+			$message = apply_filters('wpt/importer/production/metabox/message/importer='.$this->slug, $message, $post);
+			
+			echo $message;
+			
+			$actions = array();
+			
+			/**
+			 * Filter the actions inside the metabox.
+			 *
+			 * Use this filter to add actions that are specific to this importer.
+			 *
+			 * Actions use this format:
+			 *
+			 * 	array(
+		     * 		'label' => 'Do something',
+		     *		'url' => 'http://slimndap.com',
+	         *	);
+	         *
+	         * Used by @see WPT_Importer::add_production_metabox_reimport_button() to add a button
+	         * that re-imports the current production.
+			 * 
+			 * @since	0.14.5
+			 * @param 	array	$actions	The actions.
+			 * @param	WP_Post	$post		The post (production).
+			 */
+			$actions = apply_filters('wpt_importer/production/metabox/actions', $actions, $post);
+			$actions = apply_filters('wpt_importer/production/metabox/actions/importer='.$this->slug, $actions, $post);
+			
+			ob_start();
+			?><div class="wpt_importer_production_metabox_actions"><?php
+			foreach ($actions as $action) {
+				?><a href="<?php echo $action['url'];?>" class="button"><?php echo $action['label'];?></a><?php
+			}
+			?></div><?php
+			echo ob_get_clean();
+		}
+		
 		/**
 		 * Adds an error to the importer stats.
 		 *
@@ -86,7 +154,79 @@
 		}
 
 		/**
-		 * Created a new event.
+		 * Adds a metabox for this importer to the production edit form.
+		 * 
+		 * @since	0.14.5
+		 * @param 	string	$post_type	The post type of the current post.
+		 */
+		function add_production_metabox($post_type) {
+
+			// Bail if the current post is not a production.
+			if (WPT_Production::post_type_name!=$post_type) {
+				return;
+			}
+
+			$production_id = intval($_GET['post']);			
+
+			// Show the metabox if the production was imported by this importer.
+			$production_metabox_visible = $this->slug == get_post_meta($production_id, '_wpt_source', true);
+
+			/**
+			 * Filters the visibility of this metabox.
+			 * 
+			 * Importers can use this to set their own visibility rules.
+			 * 
+			 * @since	0.14.5
+			 * @param	bool	$production_metabox_visible	Show this metabox?
+			 * @param	int		$production_id				The production ID.
+			 */
+			$production_metabox_visible = apply_filters('wpt/importer/production/metabox/visible', $production_metabox_visible, $production_id);
+			$production_metabox_visible = apply_filters('wpt/importer/production/metabox/visible/importer='.$this->slug, $production_metabox_visible, $production_id);
+			
+			// Bail if visibility is set to false.
+			if (!$production_metabox_visible) {
+				return;	
+			}
+
+			add_meta_box(
+                'wpt_importer_'.$this->slug,
+                $this->name,
+                array( $this, 'production_metabox' ),
+                $post_type,
+                'side',
+                'high'
+            );	
+            	
+        }
+        
+        /**
+         * Adds a re-import action to the metabox on the production edit form.
+         * 
+         * @since	0.14.5
+         * @param 	array	$actions	The current actions inside the metabox.
+         * @param 	WP_Post	$post		The post (production).
+         * @return	array				The updated actions inside the metabox.
+         */
+        function add_production_metabox_reimport_button($actions, $post) {
+	        
+	        // Bail if no re-import callback is defined.
+	        if (empty($this->callbacks['reimport_production'])) {
+		        return $actions;
+	        }
+	        
+	        $url = add_query_arg('wpt_reimport', $this->slug);
+	        $url = wp_nonce_url($url, 'wpt_reimport');
+	        
+	        $actions[] = array(
+		        'label' => __('Re-import', 'theatre'),
+		        'url' => $url,
+	        );
+	        
+	        return $actions;
+        }
+
+		/**
+		 * Creates a new event.
 		 *
 		 * Use this helper function to create a new event while processing your feed.
 		 * 
@@ -378,10 +518,9 @@
 		}
 
 		/**
-		 * Updates the thumbnails of a production from a URL.
+		 * Updates the thumbnail of a production from a URL.
 		 *
 		 * Use this helper function to import thumbnails while processing your feed.
-		 * If no existing event is found then a new one is created.
 		 * 
 		 * @since 0.10
 		 *
@@ -434,18 +573,19 @@
 		 *    If unsuccesful: Clean up, unmark all previously imported events.
 		 * 4. Save import stats for display on the settings screen.
 		 *
-		 * @since 0.10
+		 * @since 	0.10
+		 * @since	0.15.15	Fixed missing timezone support for import start and end times.
 		 *
-		 * @see WPT_Importer::mark_upcoming_events()
-		 * @see WPT_Importer::process_feed()
-		 * @see WPT_Importer::remove_marked_events()
-		 * @see WPT_Importer::unmark_events()
-		 * @see WPT_Importer::save_stats()
+		 * @uses 	WPT_Importer::mark_upcoming_events()
+		 * @uses 	WPT_Importer::process_feed()
+		 * @uses 	WPT_Importer::remove_marked_events()
+		 * @uses	WPT_Importer::unmark_events()
+		 * @uses 	WPT_Importer::save_stats()
 		 *
 		 * @return void
 		 */
 		function execute() {
-			$this->stats['start'] = time();
+			$this->stats['start'] = current_time( 'timestamp' );
 			$this->stats['events_created'] = 0;
 			$this->stats['events_updated'] = 0;
 			$this->stats['productions_created'] = 0;
@@ -460,17 +600,41 @@
 				$this->unmark_events();
 			}
 			
-			// update wpt_order
-
-			$this->stats['end'] = time();
+			$this->stats['end'] = current_time( 'timestamp' );
 			
 			$this->save_stats();
+		}
+		
+		/**
+		 * Executes the re-import of a production.
+		 * 
+		 * 1. Mark previously imported upcoming events for this production.
+		 * 2. Runs the re-import callback function.
+		 * 3. If successful: Remove all previously imported upcoming events for this production
+		 *    that are no longer present in your feed.
+		 *    If unsuccesful: Clean up, unmark all previously imported events for this production.
+		 *
+		 * @since	0.14.5
+		 * @param 	int	$production_id	The production ID.
+		 */
+		function execute_reimport($production_id) {
+			$this->mark_production_events($production_id);
+			
+			$reimport_result = call_user_func_array( $this->callbacks['reimport_production'], array( $production_id ) );
+			
+			if ($reimport_result) {
+				$this->remove_marked_events();			
+			} else {
+				$this->unmark_events();
+			}			
 		}
 
 		/**
 		 * Gets all events that are marked.
 		 *
- 		 * @since 0.10
+ 		 * @since 	0.10
+ 		 * @since	0.14.3	Bugfix: Added 'posts_per_page' argument to ensure that all marked events are returned.
+ 		 *					Fixes #182.
 		 *
 		 * @see WPT_Importer::mark_upcoming_events()
 		 * @see WPT_Importer::unmark_events()
@@ -483,6 +647,7 @@
 			$args = array(
 				'post_type' => WPT_Event::post_type_name,
 				'post_status' => 'any',
+				'posts_per_page' => -1,
 				'meta_query' => array(
 					array(
 						'key' => $this->marker,
@@ -518,9 +683,51 @@
 		}
 		
 		/**
+		 * Marks all upcoming events of a production.
+		 * 
+		 * @see 	WPT_Importer::execute_reimport()
+		 * @access  private
+		 * @since	0.14.5
+		 * @param 	int		$production_id	The production ID.
+		 */
+		private function mark_production_events($production_id) {
+			global $wp_theatre;
+			
+			$args = array(
+				'post_type' => WPT_Event::post_type_name,
+				'post_status' => 'any',
+				'posts_per_page' => -1,
+				'meta_query' => array(
+					array(
+						'key' => '_wpt_source',
+						'value' => $this->slug,
+					),
+					array(
+						'key' => THEATER_ORDER_INDEX_KEY,
+						'value' => time(),
+						'compare' => '>=',
+					),
+					array(
+						'key' => WPT_Production::post_type_name,
+						'value' => $production_id,
+						'compare' => '=',						
+					)
+				),
+			);
+			
+			$events = get_posts($args);
+			
+			foreach($events as $event) {
+				add_post_meta($event->ID, $this->marker, 1, true);
+			}			
+		}
+		
+		/**
 		 * Mark any previously imported upcoming events.
 		 * 
-		 * @since 0.10
+		 * @since 	0.10
+ 		 * @since	0.14.3	Bugfix: Added 'posts_per_page' argument to ensure that all events are marked.
+ 		 *					Fixes #182.
 		 *
 		 * @see WPT_Importer::execute()
 		 * 
@@ -534,13 +741,14 @@
 			$args = array(
 				'post_type' => WPT_Event::post_type_name,
 				'post_status' => 'any',
+				'posts_per_page' => -1,
 				'meta_query' => array(
 					array(
 						'key' => '_wpt_source',
 						'value' => $this->slug,
 					),
 					array(
-						'key' => $wp_theatre->order->meta_key,
+						'key' => THEATER_ORDER_INDEX_KEY,
 						'value' => time(),
 						'compare' => '>=',
 					),
@@ -552,6 +760,47 @@
 			foreach($events as $event) {
 				add_post_meta($event->ID, $this->marker, 1, true);
 			}
+			
+		}
+		
+		/**
+		 * Executes the re-import of a production when the 'Re-import'-link is clicked in 
+		 * the metabox for this importer on the production edit form.
+		 * 
+		 * Hooked into the `wp_loaded` option.
+		 * 
+		 * @since 0.14.5
+		 *
+		 * @see WPT_Importer::execute_reimport()
+		 * @see WPT_Importer::init()
+		 *
+		 * @return void
+		 */
+		function reimport_production() {
+			
+			if (empty($_GET['wpt_reimport'])) {
+				return;
+			}
+			
+			if ($this->slug != $_GET['wpt_reimport']) {
+				return false;
+			}
+			
+			if (!check_admin_referer( 'wpt_reimport' )) {
+				return false;
+			}
+			
+			if (empty($this->callbacks['reimport_production'])) {
+				return false;
+			}
+			
+			if (empty($_GET['post'])) {
+				return false;
+			}
+			
+			$production_id = intval($_GET['post']);
+			
+			$this->execute_reimport($production_id);
 			
 		}
 		
@@ -699,14 +948,14 @@
 	
 	        add_settings_section(
 	            $this->slug.'_settings', // ID
-	            __('Import','wp_theatre'), // Title
+	            __('Import','theatre'), // Title
 	            '', // Callback
 	            $this->slug // Page
 	        );  
 
 	        add_settings_field(
 	            'schedule', // ID
-	            __('Schedule','wp_theatre'), // Title 
+	            __('Schedule','theatre'), // Title 
 	            array( $this, 'settings_field_schedule' ), // Callback
 	            $this->slug, // Page
 	            $this->slug.'_settings' // Section           
@@ -720,14 +969,14 @@
 	
 	        add_settings_section(
 	            $this->slug.'_status', // ID
-	            __('Status','wp_theatre'), // Title
+	            __('Status','theatre'), // Title
 	            '', // Callback
 	            $this->slug // Page
 	        );  
 
 	        add_settings_field(
 	            'status', // ID
-	            __('Ready for import','wp_theatre'), // Title 
+	            __('Ready for import','theatre'), // Title 
 	            array( $this, 'settings_field_status' ), // Callback
 	            $this->slug, // Page
 	            $this->slug.'_status' // Section           
@@ -735,7 +984,7 @@
 	        
 	        add_settings_field(
 	            'next import', // ID
-	            __('Next import','wp_theatre'), // Title 
+	            __('Next import','theatre'), // Title 
 	            array( $this, 'settings_field_next_import' ), // Callback
 	            $this->slug, // Page
 	            $this->slug.'_status' // Section           
@@ -743,7 +992,7 @@
 	        
 	        add_settings_field(
 	            'last import', // ID
-	            __('Last import','wp_theatre'), // Title 
+	            __('Last import','theatre'), // Title 
 	            array( $this, 'settings_field_last_import' ), // Callback
 	            $this->slug, // Page
 	            $this->slug.'_status' // Section           
@@ -770,7 +1019,7 @@
 
 			echo '<select id="schedule" name="'.$this->slug.'[schedule]">';
 			
-			echo '<option value="manual">'.__('Manual','wp_theatre').'</option>';
+			echo '<option value="manual">'.__('Manually','theatre').'</option>';
 
 			foreach($schedules as $name => $value) {
 
@@ -789,7 +1038,7 @@
 				$import_url = add_query_arg('wpt_import', $this->slug);
 				$import_url = wp_nonce_url( $import_url, 'wpt_import' );
 	
-				echo '<p><a href="'.esc_url($import_url).'">'.__('Run import now','wp_theatre').'</a></>';				
+				echo '<p><a href="'.esc_url($import_url).'">'.__('Run import now','theatre').'</a></>';				
 				
 			}
 		}
@@ -809,9 +1058,9 @@
 			echo '<p>';
 			
 			if ($this->ready_for_import()) {
-				_e('Yes','wp_theatre');
+				_e('Yes','theatre');
 			} else {
-				_e('No','wp_theatre');
+				_e('No','theatre');
 			}
 
 			echo '</p>';
@@ -830,7 +1079,7 @@
 		function settings_field_next_import() {
 			
 			if ($timestamp = wp_next_scheduled( $this->slug.'_import' )) {
-				echo sprintf(__('In %s.','wp_theatre'),human_time_diff($timestamp));
+				echo sprintf(__('In %s.','theatre'),human_time_diff($timestamp));
 			}
 		}
 		
@@ -851,7 +1100,7 @@
 			
 			if (!empty($this->stats['start'])) {
 				echo '<tr>';
-				echo '<th><strong>'.__('Start','wp_theatre').'</strong></th>';
+				echo '<th><strong>'.__('Start','theatre').'</strong></th>';
 
 				echo '<td>'.
 					date_i18n(get_option('date_format'), $this->stats['start']).
@@ -863,7 +1112,7 @@
 
 				if (!empty($this->stats['end'])) {
 					echo '<tr>';
-					echo '<th>'.__('Duration','wp_theatre').'</th>';
+					echo '<th>'.__('Duration','theatre').'</th>';
 					echo '<td>'.human_time_diff($this->stats['start'], $this->stats['end']).'</td>';				
 					echo '</tr>';
 				}
@@ -875,14 +1124,14 @@
 				 */
 
 				if (!empty($this->stats['errors'])) {
-					$msg = '<p><strong>'.__('Import failed. Please try again, or contact your help desk if the problem persists.','wp_theatre'). '</strong></p>';
+					$msg = '<p><strong>'.__('Import failed. Please try again, or contact your help desk if the problem persists.','theatre'). '</strong></p>';
 					if (defined('WP_DEBUG') && WP_DEBUG === true) {
 						foreach ($this->stats['errors'] as $error) {
 							$msg .= '<p>'.$error.'</p>';
 						}
 					}
 					echo '<tr>';
-					echo '<th>'.__('Error','wp_theatre').'</th>';
+					echo '<th>'.__('Error','theatre').'</th>';
 					echo '<td>'.$msg.'</td>';				
 					echo '</tr>';
 				}

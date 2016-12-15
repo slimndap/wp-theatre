@@ -332,10 +332,10 @@
   margin-left: 8px;
 }
 .xdsoft_datetimepicker .xdsoft_copyright a {
-  color: #eeeeee !important;
+  color: #eee !important;
 }
 .xdsoft_datetimepicker .xdsoft_copyright a:hover {
-  color: #aaaaaa !important;
+  color: #aaa !important;
 }
 .xdsoft_time_box {
   position: relative;
@@ -434,13 +434,13 @@
   color: #666;
 }
 .xdsoft_datetimepicker.xdsoft_dark .xdsoft_copyright {
-  color: #333333 !important;
+  color: #333 !important;
 }
 .xdsoft_datetimepicker.xdsoft_dark .xdsoft_copyright a {
-  color: #111111 !important;
+  color: #111 !important;
 }
 .xdsoft_datetimepicker.xdsoft_dark .xdsoft_copyright a:hover {
-  color: #555555 !important;
+  color: #555 !important;
 }
 .xdsoft_dark .xdsoft_time_box {
   border: 1px solid #333;
@@ -465,17 +465,17 @@
   position: relative;
   padding: 4px 17px 4px 33px;
   border: 1px solid #d7d8da;
-  background: -moz-linear-gradient(top, #ffffff 0%, #f4f8fa 73%);
+  background: -moz-linear-gradient(top, #fff 0%, #f4f8fa 73%);
   /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffffff), color-stop(73%, #f4f8fa));
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fff), color-stop(73%, #f4f8fa));
   /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top, #ffffff 0%, #f4f8fa 73%);
+  background: -webkit-linear-gradient(top, #fff 0%, #f4f8fa 73%);
   /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(top, #ffffff 0%, #f4f8fa 73%);
+  background: -o-linear-gradient(top, #fff 0%, #f4f8fa 73%);
   /* Opera 11.10+ */
-  background: -ms-linear-gradient(top, #ffffff 0%, #f4f8fa 73%);
+  background: -ms-linear-gradient(top, #fff 0%, #f4f8fa 73%);
   /* IE10+ */
-  background: linear-gradient(to bottom, #ffffff 0%, #f4f8fa 73%);
+  background: linear-gradient(to bottom, #fff 0%, #f4f8fa 73%);
   /* W3C */
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff', endColorstr='#f4f8fa', GradientType=0);
   /* IE6-9 */
@@ -485,30 +485,61 @@
 .xdsoft_datetimepicker .blue-gradient-button:hover span,
 .xdsoft_datetimepicker .blue-gradient-button:focus span {
   color: #454551;
-  background: -moz-linear-gradient(top, #f4f8fa 0%, #ffffff 73%);
+  background: -moz-linear-gradient(top, #f4f8fa 0%, #FFF 73%);
   /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f4f8fa), color-stop(73%, #ffffff));
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f4f8fa), color-stop(73%, #FFF));
   /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top, #f4f8fa 0%, #ffffff 73%);
+  background: -webkit-linear-gradient(top, #f4f8fa 0%, #FFF 73%);
   /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(top, #f4f8fa 0%, #ffffff 73%);
+  background: -o-linear-gradient(top, #f4f8fa 0%, #FFF 73%);
   /* Opera 11.10+ */
-  background: -ms-linear-gradient(top, #f4f8fa 0%, #ffffff 73%);
+  background: -ms-linear-gradient(top, #f4f8fa 0%, #FFF 73%);
   /* IE10+ */
-  background: linear-gradient(to bottom, #f4f8fa 0%, #ffffff 73%);
+  background: linear-gradient(to bottom, #f4f8fa 0%, #FFF 73%);
   /* W3C */
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f4f8fa', endColorstr='#FFF', GradientType=0);
   /* IE6-9 */
 }
-#poststuff .wp_theatre_event > div {
-  float: none;
-  width: auto;
-}
-#poststuff .wp_theatre_event > div.content .title {
-  display: none;
-}
 .wpt_settings_radio_with_selects {
   line-height: 2em;
+}
+.wpt_meta_box_form {
+  width: 100%;
+  border-spacing: 0;
+  color: #555;
+}
+.wpt_meta_box_form tr th,
+.wpt_meta_box_form tr td {
+  border-top: 1px solid #F0F0F0;
+  border-left: 1px solid #E1E1E1;
+  text-align: left;
+  vertical-align: top;
+  padding: 8px 12px;
+}
+.wpt_meta_box_form tr th {
+  background: #F9F9F9;
+  border-left: none;
+  width: 24%;
+}
+.wpt_meta_box_form tr th p {
+  color: #777;
+  font-weight: normal;
+  font-style: normal;
+}
+.wpt_meta_box_form tr td {
+  border-right: none;
+}
+.wpt_meta_box_form tr td input[type=text] {
+  width: 100%;
+}
+.wpt_meta_box_form tr td textarea {
+  max-width: 100%;
+  width: 200px;
+  height: 6em;
+}
+.wpt_meta_box_form tr:first-child th,
+.wpt_meta_box_form tr:first-child td {
+  border-top: none;
 }
 #wpt_event_editor .inside {
   padding: 0;
@@ -530,49 +561,14 @@
 #wpt_event_editor .inside .wpt_event_editor_listing table tr td.wpt_event_editor_event_actions {
   text-align: right;
 }
+#wpt_event_editor .inside .wpt_event_editor_listing table tr td .wp_theatre_event_remark {
+  font-style: italic;
+}
 #wpt_event_editor .inside .wpt_event_editor_create .wpt_event_editor_create_actions {
   display: none;
 }
-#wpt_event_editor .inside .wpt_event_editor_form {
-  width: 100%;
-  border-spacing: 0;
-  color: #555;
-}
-#wpt_event_editor .inside .wpt_event_editor_form tr th,
-#wpt_event_editor .inside .wpt_event_editor_form tr td {
-  border-top: 1px solid #F0F0F0;
-  border-left: 1px solid #E1E1E1;
-  text-align: left;
-  vertical-align: top;
-  padding: 8px 12px;
-}
-#wpt_event_editor .inside .wpt_event_editor_form tr th {
-  background: #F9F9F9;
-  border-left: none;
-  width: 24%;
-}
-#wpt_event_editor .inside .wpt_event_editor_form tr th p {
-  color: #777;
-  font-weight: normal;
-  font-style: normal;
-}
-#wpt_event_editor .inside .wpt_event_editor_form tr td {
-  border-right: none;
-}
-#wpt_event_editor .inside .wpt_event_editor_form tr td input[type=text] {
-  width: 100%;
-}
 #wpt_event_editor .inside .wpt_event_editor_form tr td input[type=text][name=wpt_event_editor_tickets_status_other] {
   width: auto;
-}
-#wpt_event_editor .inside .wpt_event_editor_form tr td textarea {
-  max-width: 100%;
-  width: 200px;
-  height: 6em;
-}
-#wpt_event_editor .inside .wpt_event_editor_form tr:first-child th,
-#wpt_event_editor .inside .wpt_event_editor_form tr:first-child td {
-  border-top: none;
 }
 body.js #wpt_event_editor .inside .wpt_event_editor_create .wpt_event_editor_create_actions {
   display: block;
@@ -603,6 +599,120 @@ body.js #wpt_event_editor .inside .wpt_event_editor_create.open .wpt_event_edito
 body.js #wpt_event_editor .inside .wpt_event_editor_create.open .wpt_event_editor_form {
   display: table;
 }
+body.wp-admin.post-type-wp_theatre_event #post-body-content {
+  display: none;
+}
+body.wp-admin.post-type-wp_theatre_event #wpt_event_publish h3 {
+  border-bottom: none;
+}
+body.wp-admin.post-type-wp_theatre_event #wpt_event_publish .inside {
+  padding: 10px;
+  margin: 0;
+  background: #f5f5f5;
+  border-top: 1px solid #ddd;
+}
+body.wp-admin.post-type-wp_theatre_event #wpt_event_publish .inside .submit {
+  margin: 0;
+  padding: 0;
+  text-align: right;
+}
+.theater_page_wpt_extensions .plugin-card .name,
+.theater_page_wpt_extensions .plugin-card .desc {
+  margin-right: 148px;
+}
+.theater_page_wpt_extensions .plugin-card .action-links {
+  width: auto;
+}
+@media screen and (max-width: 1100px) and (min-width: 782px), (max-width: 480px) {
+  .theater_page_wpt_extensions .plugin-card .name,
+  .theater_page_wpt_extensions .plugin-card .desc {
+    margin-right: 0;
+  }
+}
+.theater_page_wpt_extensions .plugin-icon {
+  line-height: 128px;
+  background-color: rgba(6, 156, 136, 0.75);
+  border-radius: 2px;
+}
+.theater_page_wpt_extensions .plugin-icon img {
+  width: 100%;
+  height: auto;
+  vertical-align: middle;
+}
+body.toplevel_page_theater-events .view-switch .view-compact:before {
+  content: '\f164';
+}
+body.toplevel_page_theater-events .view-switch .view-list:before {
+  content: '\f163';
+}
+body.toplevel_page_theater-events .wp-list-table tbody tr td.column-categories:empty:before {
+  content: '—';
+}
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod > *,
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event > * {
+  margin-left: 42px;
+}
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod figure,
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event figure {
+  width: 32px;
+  margin: 0;
+  float: left;
+  overflow: hidden;
+}
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod figure img,
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event figure img {
+  width: 100%;
+  height: auto;
+  border-radius: 2px;
+}
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod figure.placeholder,
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event figure.placeholder {
+  background-color: #c5c5c5;
+  text-align: center;
+  height: 32px;
+  border-radius: 2px;
+}
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod figure.placeholder .dashicons,
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event figure.placeholder .dashicons {
+  line-height: 32px;
+  color: white;
+}
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod .wp_theatre_prod_title,
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event .wp_theatre_prod_title,
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod .wp_theatre_event_title,
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event .wp_theatre_event_title {
+  font-weight: bold;
+}
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod .wp_theatre_event_location > *,
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event .wp_theatre_event_location > * {
+  display: inline;
+}
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod .wp_theatre_event_location .wp_theatre_event_venue + .wp_theatre_event_city:before,
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event .wp_theatre_event_location .wp_theatre_event_venue + .wp_theatre_event_city:before {
+  content: ', ';
+}
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod .wp_theatre_event_location .wp_theatre_event_venue + .wp_theatre_event_city:empty:before,
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event .wp_theatre_event_location .wp_theatre_event_venue + .wp_theatre_event_city:empty:before {
+  content: '';
+}
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod .wp_theatre_event_location .wp_theatre_event_venue:empty + .wp_theatre_event_city:before,
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event .wp_theatre_event_location .wp_theatre_event_venue:empty + .wp_theatre_event_city:before {
+  content: '';
+}
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_prod .wp_theatre_event_remark,
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event .wp_theatre_event_remark {
+  font-style: italic;
+}
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wp_theatre_event_tickets:empty:before {
+  content: '—';
+}
+body.toplevel_page_theater-events .wp-list-table tbody tr td .wpt_production_categories {
+  margin: 0;
+}
+body.toplevel_page_theater-events .wp-list-table tbody tr td .row-actions {
+  clear: left;
+  margin-left: 42px;
+}
 @font-face {
   font-family: "theatre-webfont";
   src: url("../font/theatre-webfont.eot");
@@ -610,7 +720,7 @@ body.js #wpt_event_editor .inside .wpt_event_editor_create.open .wpt_event_edito
   font-weight: normal;
   font-style: normal;
 }
-#toplevel_page_theatre .wp-menu-image:before {
+#toplevel_page_theater-events .wp-menu-image:before {
   font-family: 'theatre-webfont' !important;
   content: '\e808';
 }
@@ -619,7 +729,7 @@ textarea#wpt_custom_css {
   height: 200px;
 }
 .wp-list-table.fixed .column-thumbnail {
-  width: 6em;
+  width: 4em;
 }
 .wp-list-table.fixed .column-thumbnail figure {
   margin: 0;
@@ -628,6 +738,11 @@ textarea#wpt_custom_css {
 .wp-list-table.fixed .column-thumbnail figure img {
   width: 100%;
   height: auto;
+}
+@media (max-width: 782px) {
+  .wp-list-table.fixed .column-thumbnail figure {
+    width: 4em;
+  }
 }
 .wptheatre_prod .row-actions,
 .wp_theatre_event .row-actions {

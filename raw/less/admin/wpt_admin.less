@@ -1,0 +1,42 @@
+.wpt_meta_box_form {
+	width: 100%;
+	border-spacing: 0;
+	color: #555;
+	tr {
+		th, td {
+			border-top: 1px solid #F0F0F0;
+			border-left: 1px solid #E1E1E1;
+			text-align: left;
+			vertical-align: top;
+			padding: 8px 12px;
+		}
+		th {
+			background: #F9F9F9;
+			border-left: none;
+			width: 24%;
+			p {
+				color: #777;
+				font-weight: normal;
+				font-style: normal;
+			}
+		}
+		td {
+			border-right: none;
+			input {
+				&[type=text] {
+					width: 100%;
+				}
+			}
+			textarea {
+				max-width: 100%;
+				width: 200px;
+				height: 6em;
+			}
+		}
+		&:first-child {
+			th, td {
+				border-top: none;					
+			}
+		}
+	}
+}
