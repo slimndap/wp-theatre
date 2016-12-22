@@ -1,1199 +1,687 @@
 <?php
-/*
- * Manages production listings.
- *
- * Uses this class to compile lists of productions or fully formatted HTML listings of productions.
- *
- * @since 0.5
- * @since 0.10	Complete rewrite, while maintaining backwards compatibility.
- */
+class WPT_Frontend {
+	function __construct() {
+		add_action( 'init', array( $this, 'enqueue_scripts' ) );
+		add_action( 'wp_head', array( $this, 'wp_head' ) );
 
-class WPT_Productions extends WPT_Listing {
+		add_filter( 'the_content', array( $this, 'the_content' ) );
 
-	/**
-	 * Adds the page selectors for seasons, categories, days, months and years to the public query vars.
-	 *
-	 * Necessary to make `$wp_query->query_vars['wpt_category']` work.
-	 *
-	 * @since 	0.10
-	 * @since	0.13	Added new query vars for days, months and years.
-	 *
-	 * @param 	array 	$vars	The current public query vars.
-	 * @return 	array			The new public query vars.
-	 */
-	public function add_query_vars( $vars ) {
-		$vars[] = 'wpt_day';
-		$vars[] = 'wpt_month';
-		$vars[] = 'wpt_year';
-		$vars[] = 'wpt_season';
-		$vars[] = 'wpt_category';
-		return $vars;
+		add_shortcode( 'wpt_events', array( $this, 'wpt_events' ) );
+		add_shortcode( 'wpt_productions', array( $this, 'wpt_productions' ) );
+		add_shortcode( 'wpt_seasons', array( $this, 'wpt_productions' ) );
+
+		add_shortcode( 'wp_theatre_iframe', array( $this, 'get_iframe_html' ) );
+
+		add_shortcode( 'wpt_production_events', array( $this, 'wpt_production_events' ) );
+
+		add_shortcode( 'wpt_season_productions', array( $this, 'wpt_season_productions' ) );
+		add_shortcode( 'wpt_season_events', array( $this, 'wpt_season_events' ) );
+
+		add_shortcode( 'wpt_event_ticket_button', array( $this, 'wpt_event_ticket_button' ) );
+
+		$this->options = get_option( 'theatre' );
+
+		// Deprecated
+		add_shortcode( 'wp_theatre_events', array( $this, 'wpt_events' ) );
+		add_action( 'template_redirect', array( $this, 'redirect_deprecated_tickets_page_url' ) );
 	}
 
 	/**
-	 * Gets all categories with productions.
+	 * Enqueues the Theater javascript and CSS files.
 	 *
-	 * @since 	0.5
-	 * @since 	0.10	Renamed method from `categories()` to `get_categories()`.
-	 * @since 	0.10.2	Now returns the slug instead of the term_id as the array keys.
-	 * @since 	0.10.14	Significally decreased the number of queries used.
-	 * @since	0.13.3	Now uses the production filters.
-	 *					Added filters to manipulate the categories.
-	 *
-	 * @param 	array 	$filters	See WPT_Productions::get() for possible values.
-	 * @return 	array 				The categories.
+	 * @since	0.?
+	 * @since	0.13	Added thickbox args to manipulate the behaviour of the tickets thickbox.
+	 * @since	0.13.5	Moved main.js to footer.
+	 * @return 	void
 	 */
-	function get_categories( $filters ) {
-		$categories = array();
+	function enqueue_scripts() {
+		global $wp_theatre;
 
-		$productions = $this->get( $filters );
+		// Add built-in Theatre javascript
+		wp_enqueue_script( 'wp_theatre_js', plugins_url( '../js/main.js', __FILE__ ), array( 'jquery' ), $wp_theatre->wpt_version, true );
 
-		if ( ! empty( $productions ) ) {
-			$production_ids = wp_list_pluck( $productions, 'ID' );
+		// Add built-in Theatre stylesheet
+		if ( ! empty( $wp_theatre->wpt_style_options['stylesheet'] ) ) {
+			wp_enqueue_style( 'wp_theatre', plugins_url( '../css/style.css', __FILE__ ), null, $wp_theatre->wpt_version );
+		}
+
+		// Add Thickbox files
+		if (
+			! empty( $wp_theatre->wpt_tickets_options['integrationtype'] ) &&
+			'lightbox' == $wp_theatre->wpt_tickets_options['integrationtype']
+		) {
+			wp_enqueue_script( 'thickbox' );
+
+			$thickbox_args = array(
+				'width' => 800,
+				'height' => 600,
+				'disable_width' => false,
+			);
 
 			/**
-			 * Filter the categories arguments.
-			 * You can use this to alter the ordering of the categories.
-			 * For possible values see:
-			 * https://codex.wordpress.org/Function_Reference/wp_get_object_terms
+			 * Filter the thickbox arguments.
 			 *
-			 * @since	0.13.3
-			 * @param	$args	array	The current arguments.
+			 * @since	0.13
+			 *
+			 * @param 	array	The thickbox arguments.
 			 */
-			$args = apply_filters( 'wpt/productions/categories/args', array() );
-			$terms = wp_get_object_terms( $production_ids, 'category', $args );
+			$thickbox_args = apply_filters( 'wpt/frontend/thickbox/args', $thickbox_args );
 
-			foreach ( $terms as $term ) {
-				$categories[ $term->slug ] = $term->name;
+			wp_localize_script( 'thickbox', 'thickbox_args', $thickbox_args );
+
+			wp_enqueue_style( 'thickbox', includes_url( '/js/thickbox/thickbox.css' ), null, $wp_theatre->wpt_version );
+		}
+	}
+
+
+	function wp_head() {
+		global $wp_theatre;
+		global $wpt_version;
+
+		$html = array();
+
+		$html[] = '<meta name="generator" content="Theater '.$wpt_version.'" />';
+
+		if ( ! empty( $wp_theatre->wpt_style_options['custom_css'] ) ) {
+			$html[] .= '<!-- Custom Theater CSS -->';
+			$html[] .= '<style>';
+			$html[] .= $wp_theatre->wpt_style_options['custom_css'];
+			$html[] .= '</style>';
+		}
+
+		echo implode( "\n",$html )."\n";
+	}
+
+	/**
+	 * Adds events listing to the content of a production page.
+	 *
+	 * @since 	?
+	 * @since 	0.11	Event are now only added to the main post content.
+	 * 					As explained by Pippin:
+	 *					https://pippinsplugins.com/playing-nice-with-the-content-filter/
+	 * @param 	string 	$content
+	 * @return 	void
+	 */
+	public function the_content( $content ) {
+		global $wp_theatre;
+
+		if ( is_singular( WPT_Production::post_type_name ) && is_main_query() ) {
+			if (
+				isset( $wp_theatre->options['show_season_events'] ) &&
+				in_array( $wp_theatre->options['show_season_events'], array( 'above', 'below' ) )
+			) {
+				$events_html = '<h3>'.__( 'Events','theatre' ).'</h3>';
+				$events_html .= '[wpt_season_events]';
+
+				switch ( $wp_theatre->options['show_season_events'] ) {
+					case 'above' :
+						$content = $events_html.$content;
+						break;
+					case 'below' :
+						$content .= $events_html;
+				}
 			}
+			if (
+				isset( $wp_theatre->options['show_season_productions'] ) &&
+				in_array( $wp_theatre->options['show_season_productions'], array( 'above', 'below' ) )
+			) {
+				$productions_html = '<h3>'.__( 'Productions','theatre' ).'</h3>';
+				$productions_html .= '[wpt_season_productions]';
 
-			asort( $categories );
+				switch ( $wp_theatre->options['show_season_productions'] ) {
+					case 'above' :
+						$content = $productions_html.$content;
+						break;
+					case 'below' :
+						$content .= $productions_html;
+				}
+			}
 		}
 
-		/**
-		 * Filter the categories that have productions.
-		 *
-		 * @since	0.13.3
-		 * @param	array	$categories	The current categories.
-		 * @param	array	$filters	The production filters.
-		 */
-		$categories = apply_filters( 'wpt/productions/categories', $categories, $filters );
+		if ( is_singular( WPT_Production::post_type_name ) && is_main_query() ) {
 
-		return $categories;
-	}
-
-	/**
-	 * Gets the CSS classes for a production listing.
-	 *
-	 * @see WPT_Listing::get_classes_for_html()
-	 *
-	 * @since 	0.10
-	 * @since	0.14.7	Added $args to parent::get_classes_for_html().
-	 *
-	 * @access 	protected
-	 * @param 	array $args 	See WPT_Productions::get_html() for possible values. Default: array().
-	 * @return 	array 			The CSS classes.
-	 */
-	protected function get_classes_for_html( $args = array() ) {
-
-		// Start with the default classes for listings.
-		$classes = parent::get_classes_for_html( $args );
-
-		$classes[] = 'wpt_productions';
-
-		// Thumbnail
-		if ( ! empty( $args['template'] ) && false === strpos( $args['template'],'{{thumbnail}}' ) ) {
-			$classes[] = 'wpt_productions_without_thumbnail';
-		}
-
-		/**
-		 * Filter the CSS classes.
-		 *
-		 * @since 0.10
-		 *
-		 * @param 	array $classes 	The CSS classes.
-		 * @param 	array $args 	The $args that are being used for the listing.
-		 */
-		$classes = apply_filters( 'wpt_productions_classes', $classes, $args );
-
-		return $classes;
-	}
-
-	/**
-	 * Gets all days with productions.
-	 *
-	 * @since 0.13
-	 *
-	 * @param 	array $filters  The filters for the productions.
-	 *							See WPT_Productions::get() for possible values.
-	 * @return 	array 			The days.
-	 */
-	private function get_days( $filters ) {
-		global $wp_theatre;
-
-		$days = array();
-
-		$production_ids = array();
-		foreach ( $this->get( $filters ) as $production ) {
-			$production_ids[] = $production->ID;
-		}
-		$production_ids = array_unique( $production_ids );
-
-		if ( ! empty( $production_ids ) ) {
-			// Inherit the date filters from the production filters.
-			$event_defaults = array(
-				'upcoming' => false,
-				'start' => false,
-				'end' => false,
-				'production' => $production_ids,
-			);
-			$event_filters = shortcode_atts( $event_defaults, $filters );
-			$days = $wp_theatre->events->get_days( $event_filters );
-		}
-		return $days;
-	}
-
-	/**
-	 * Gets all months with productions.
-	 *
-	 * @since 0.13
-	 *
-	 * @param 	array $filters  The filters for the productions.
-	 *							See WPT_Productions::get() for possible values.
-	 * @return 	array 			The months.
-	 */
-	private function get_months( $filters ) {
-		global $wp_theatre;
-
-		$months = array();
-
-		$production_ids = array();
-		foreach ( $this->get( $filters ) as $production ) {
-			$production_ids[] = $production->ID;
-		}
-		$production_ids = array_unique( $production_ids );
-
-		if ( ! empty( $production_ids ) ) {
-			// Inherit the date filters from the production filters.
-			$event_defaults = array(
-				'upcoming' => false,
-				'start' => false,
-				'end' => false,
-				'production' => $production_ids,
-			);
-			$event_filters = shortcode_atts( $event_defaults, $filters );
-			$months = $wp_theatre->events->get_months( $event_filters );
-		}
-		return $months;
-	}
-
-	/**
-	 * Gets all years with productions.
-	 *
-	 * @since 0.13
-	 *
-	 * @param 	array $filters  The filters for the productions.
-	 *							See WPT_Productions::get() for possible values.
-	 * @return 	array 			The years.
-	 */
-	private function get_years( $filters ) {
-		global $wp_theatre;
-
-		$years = array();
-
-		$production_ids = array();
-		foreach ( $this->get( $filters ) as $production ) {
-			$production_ids[] = $production->ID;
-		}
-		$production_ids = array_unique( $production_ids );
-
-		if ( ! empty( $production_ids ) ) {
-			// Inherit the date filters from the production filters.
-			$event_defaults = array(
-				'upcoming' => false,
-				'start' => false,
-				'end' => false,
-				'production' => $production_ids,
-			);
-			$event_filters = shortcode_atts( $event_defaults, $filters );
-			$years = $wp_theatre->events->get_years( $event_filters );
-		}
-		return $years;
-
-	}
-
-	/**
-	 * Gets a list of productions in HTML for a single day.
-	 *
-	 * @since 	0.13
-	 * @since	0.15.11	Added support for next day start time offset.
-	 *
-	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
-	 * @uses 	WPT_Productions::get_html_grouped();
-	 *
-	 * @access 	private
-	 * @param 	string $day		The day in `YYYY-MM-DD` format.
-	 * @param 	array $args 	See WPT_Productions::get_html() for possible values.
-	 * @return 	string			The HTML.
-	 */
-	private function get_html_for_day( $day, $args = array() ) {
-
-		/*
-		 * Set the `start`-filter to today.
-		 * Except when the active `start`-filter is set to a later date.
-		 */
-		if (
-			empty( $args['start_after'] ) ||
-			(strtotime( $args['start_after'] ) < strtotime( $day ))
-		) {
-			$args['start_after'] = $day.' +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
-		}
-
-		/*
-		 * Set the `end`-filter to the next day.
-		 * Except when the active `end`-filter is set to an earlier date.
-		 */
-		if (
-			empty( $args['start_before'] ) ||
-			(strtotime( $args['start_before'] ) > strtotime( $day.' +1 day' ))
-		) {
-			$args['start_before'] = $day.' +1 day +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
-		}
-
-		// No sticky productions in a day view.
-		$args['ignore_sticky_posts'] = true;
-
-		return $this->get_html_grouped( $args );
-	}
-
-	/**
-	 * Gets a list of productions in HTML for a single month.
-	 *
-	 * @since 	0.13
-	 * @since	0.15.11	Added support for next day start time offset.
-	 *
-	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
-	 * @uses	WPT_Productions::get_html_grouped();
-	 *
-	 * @access 	private
-	 * @param 	string 	$month	The month in `YYYY-MM` format.
-	 * @param 	array 	$args 	See WPT_Productions::get_html() for possible values.
-	 * @return 	string			The HTML.
-	 */
-	private function get_html_for_month( $month, $args = array() ) {
-
-		/*
-		 * Set the `start`-filter to the first day of the month.
-		 * Except when the active `start`-filter is set to a later date.
-		 */
-		if (
-			empty( $args['start_after'] ) ||
-			(strtotime( $args['start_after'] ) < strtotime( $month ))
-		) {
-			$args['start_after'] = $month.' +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
-		}
-
-		/*
-		 * Set the `end`-filter to the first day of the next month.
-		 * Except when the active `end`-filter is set to an earlier date.
-		 */
-		if (
-			empty( $args['start_before'] ) ||
-			(strtotime( $args['start_before'] ) > strtotime( $month.' +1 month' ))
-		) {
-			$args['start_before'] = $month.' +1 month +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
-		}
-
-		// No sticky productions in a month view.
-		$args['ignore_sticky_posts'] = true;
-
-		return $this->get_html_grouped( $args );
-	}
-
-	/**
-	 * Gets a list of productions in HTML for a single year.
-	 *
-	 * @since 	0.13
-	 * @since	0.15.11	Added support for next day start time offset.
-	 *
-	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
-	 * @uses	WPT_Productions::get_html_grouped();
-	 *
-	 * @access 	private
-	 * @param 	string 	$year	The year in `YYYY` format.
-	 * @param 	array 	$args 	See WPT_Productions::get_html() for possible values.
-	 * @return 	string			The HTML.
-	 */
-	private function get_html_for_year( $year, $args = array() ) {
-
-		/*
-		 * Set the `start`-filter to the first day of the year.
-		 * Except when the active `start`-filter is set to a later date.
-		 */
-		if (
-			empty( $args['start_after'] ) ||
-			(strtotime( $args['start_after'] ) < strtotime( $year.'-01-01' ))
-		) {
-			$args['start_after'] = $year.'-01-01 +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
-		}
-
-		/*
-		 * Set the `end`-filter to the first day of the next year.
-		 * Except when the active `end`-filter is set to an earlier date.
-		 */
-		if (
-			empty( $args['start_before'] ) ||
-			(strtotime( $args['start_before'] ) > strtotime( $year.'-01-01 +1 year' ))
-		) {
-			$args['start_before'] = $year.'-01-01 +1 year +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
-		}
-
-		// No sticky productions in a year view.
-		$args['ignore_sticky_posts'] = true;
-
-		return $this->get_html_grouped( $args );
-	}
-
-	/**
-	 * Gets a list of productions in HTML for a page.
-	 *
-	 * @since 	0.10
-	 * @since	0.13	Added support for days, months and years.
-	 *
-	 * @see WPT_Productions::get_html_grouped();
-	 * @see WPT_Productions::get_html_for_season();
-	 * @see WPT_Productions::get_html_for_category();
-	 *
-	 * @access protected
-	 * @param 	array $args 	See WPT_Productions::get_html() for possible values.
-	 * @return 	string			The HTML.
-	 */
-	protected function get_html_for_page( $args = array() ) {
-		global $wp_query;
-
-		/*
-		 * Check if the user used the page navigation to select a particular page.
-		 * Then revert to the corresponding WPT_Events::get_html_for_* method.
-		 * @see WPT_Events::get_html_page_navigation().
-		 */
-
-		if ( ! empty( $wp_query->query_vars['wpt_season'] ) ) {
-			$html = $this->get_html_for_season( $wp_query->query_vars['wpt_season'], $args );
-		} elseif ( ! empty( $wp_query->query_vars['wpt_category'] ) ) {
-			$html = $this->get_html_for_category( $wp_query->query_vars['wpt_category'], $args );
-		} elseif ( ! empty( $wp_query->query_vars['wpt_year'] ) ) {
-			$html = $this->get_html_for_year( $wp_query->query_vars['wpt_year'], $args );
-		} elseif ( ! empty( $wp_query->query_vars['wpt_month'] ) ) {
-			$html = $this->get_html_for_month( $wp_query->query_vars['wpt_month'], $args );
-		} elseif ( ! empty( $wp_query->query_vars['wpt_day'] ) ) {
-			$html = $this->get_html_for_day( $wp_query->query_vars['wpt_day'], $args );
-		} else {
-			/*
-			 * The user didn't select a page.
-			 * Show the full listing.
+			/**
+			 * Filter the content of a production page.
+			 *
+			 * @since 0.9.5
+			 *
+			 * @param string  $content 	The current content of the production.
 			 */
-			$html = $this->get_html_grouped( $args );
-		}
+			$content = apply_filters( 'wpt_production_page_content', $content );
 
-		/**
-		 * Filter the HTML for a page in a listing.
-		 *
-		 * @since	0.13.4
-		 * @param	string	$html_group	The HTML for this page.
-		 * @param	array	$args		The arguments for the HTML of this listing.
-		 */
-		$html = apply_filters( 'wpt/productions/html/page', $html, $args );
+			$content_before = '';
 
-		return $html;
-	}
+			/**
+			 * Filter the content before the content of a production page.
+			 *
+			 * @since 0.9.5
+			 *
+			 * @param string  $content_before 	The current content before the production content.
+			 */
+			$content_before = apply_filters( 'wpt_production_page_content_before', $content_before );
 
-	/**
-	 * Gets a list of events in HTML for a single season.
-	 *
-	 * @since 0.10
-	 *
-	 * @see WPT_Productions::get_html_grouped();
-	 *
-	 * @access private
-	 * @param 	int $season_id	ID of the season.
-	 * @param 	array $args 	See WPT_Productions::get_html() for possible values.
-	 * @return 	string			The HTML.
-	 */
-	private function get_html_for_season( $season_id, $args = array() ) {
-		$args['season'] = $season_id;
-		return $this->get_html_grouped( $args );
-	}
+			$content_after = '';
 
-	/**
-	 * Gets a list of productions in HTML.
-	 *
-	 * The productions can be grouped inside a page by setting $groupby.
-	 * If $groupby is not set then all productions are show in a single, ungrouped list.
-	 *
-	 * @since 	0.10
-	 * @since	0.13	Added support for days, months and years.
-	 * @since	0.14.7	Added $args to $production->html().
-	 * @since	0.15.14	Added $args to all header filters.
-	 *
-	 * @see WPT_Production::html();
-	 * @see WPT_Productions::get_html_for_season();
-	 * @see WPT_Productions::get_html_for_category();
-	 *
-	 * @access 	protected
-	 * @param 	array $args 	See WPT_Productions::get_html() for possible values.
-	 * @return 	string			The HTML.
-	 */
-	private function get_html_grouped( $args = array() ) {
+			/**
+			 * Filter the content after the content of a production page.
+			 *
+			 * @since 0.9.5
+			 *
+			 * @param string  $content_after 	The current content after the production content.
+			 */
+			$content_after = apply_filters( 'wpt_production_page_content_after', $content_after );
 
-		$args = wp_parse_args( $args, $this->default_args_for_html );
-
-		/*
-		 * Get the `groupby` setting and remove it from $args.
-		 * $args can now be passed on to any of the other `get_html_*`-methods safely
-		 * without the risk of creating grouped listings within grouped listings.
-		 */
-		$groupby = $args['groupby'];
-		$args['groupby'] = false;
-
-		$html = '';
-		switch ( $groupby ) {
-			case 'day':
-				$days = $this->get_days( $args );
-				foreach ( $days as $day => $name ) {
-					if ( $day_html = $this->get_html_for_day( $day, $args ) ) {
-						$html .= '<h3 class="wpt_listing_group day">';
-												
-						/**
-						 * Filter the day header in a productions list.
-						 * 
-						 * @since 	0.13
-						 * @since	0.15.14	Added the $args param.
-						 * @param	string	$header	The header.
-						 * @param	string	$day	The day.
-						 * @param	array	$args	The arguments for the HTML of this list.
-						 */
-						$html .= apply_filters( 'wpt_listing_group_day',date_i18n( 'l d F',strtotime( $day ) ), $day, $args );
-						
-						$html .= '</h3>';
-						$html .= $day_html;
-					}
-				}
-				break;
-			case 'month':
-				$months = $this->get_months( $args );
-				foreach ( $months as $month => $name ) {
-					if ( $month_html = $this->get_html_for_month( $month, $args ) ) {
-						$html .= '<h3 class="wpt_listing_group month">';
-
-						/**
-						 * Filter the month header in a productions list.
-						 * 
-						 * @since 	0.13
-						 * @since	0.15.14	Added the $args param.
-						 * @param	string	$header	The header.
-						 * @param	string	$month	The month.
-						 * @param	array	$args	The arguments for the HTML of this list.
-						 */
-						$html .= apply_filters( 'wpt_listing_group_month',date_i18n( 'F',strtotime( $month ) ), $month, $args );
-
-						$html .= '</h3>';
-						$html .= $month_html;
-					}
-				}
-				break;
-			case 'year':
-				$years = $this->get_years( $args );
-				foreach ( $years as $year => $name ) {
-					if ( $year_html = $this->get_html_for_year( $year, $args ) ) {
-						
-						/**
-						 * Filter the year header in a productions list.
-						 * 
-						 * @since 	0.13
-						 * @since	0.15.14	Added the $args param.
-						 * @param	string	$header	The header.
-						 * @param	int		$year	The year.
-						 * @param	array	$args	The arguments for the HTML of this list.
-						 */						
-						$html .= '<h3 class="wpt_listing_group year">';
-						$html .= apply_filters( 'wpt_listing_group_year',date_i18n( 'Y',strtotime( $year.'-01-01' ) ), $year, $args );
-						$html .= '</h3>';
-						$html .= $year_html;
-					}
-				}
-				break;
-			case 'season':
-				$seasons = $this->get_seasons( $args );
-				foreach ( $seasons as $season_id => $season_title ) {
-					if ( $season_html = $this->get_html_for_season( $season_id, $args ) ) {
-						$html .= '<h3 class="wpt_listing_group season">';
-
-						/**
-						 * Filter the season header in a productions list.
-						 * 
-						 * @since 	0.13
-						 * @since	0.15.14	Added the $args param.
-						 * @param	string	$season_title	The header.
-						 * @param	string	$season_id		The season ID.
-						 * @param	array	$args			The arguments for the HTML of this list.
-						 */
-						$html .= apply_filters( 'wpt_listing_group_season', $season_title, $season_id, $args );
-
-						$html .= '</h3>';
-						$html .= $season_html;
-					}
-				}
-				break;
-			case 'category':
-				$categories = $this->get_categories( $args );
-				foreach ( $categories as $cat_id => $name ) {
-					if ( $cat_html = $this->get_html_for_category( $cat_id, $args ) ) {
-						$html .= '<h3 class="wpt_listing_group category">';
-						
-						/**
-						 * Filter the category header in a productions list.
-						 * 
-						 * @since 	0.13
-						 * @since	0.15.14	Added the $args param.
-						 * @param	string	$name	The header.
-						 * @param	string	$cat_id	The category ID.
-						 * @param	array	$args	The arguments for the HTML of this list.
-						 */						
-						$html .= apply_filters( 'wpt_listing_group_category',$name, $cat_id, $args );
-						$html .= '</h3>';
-						$html .= $cat_html;
-					}
-				}
-				break;
-			default:
-				/*
-				 * No stickies in paginated or grouped views
-				 */
-				if (
-					! empty( $args['paginateby'] ) ||
-					! empty( $args['groupby'] )
-				) {
-					$args['ignore_sticky_posts'] = true;
-				}
-
-				$productions = $this->get( $args );
-				$productions = $this->preload_productions_with_events( $productions );
-				$html_group = '';
-				foreach ( $productions as $production ) {
-					$html_group .= $production->html( $args['template'], $args );
-				}
-
-				/**
-				 * Filter the HTML for a group in a listing.
-				 *
-				 * @since	0.12.7
-				 * @param	string	$html_group	The HTML for this group.
-				 * @param	array	$args		The arguments for the HTML of this listing.
-				 */
-				$html_group = apply_filters( 'wpt/productions/html/grouped/group', $html_group, $args );
-
-				$html .= $html_group;
+			$content = $content_before.$content.$content_after;
 
 		}
-		return $html;
+
+		return $content;
 	}
 
 	/**
-	 * Gets a fully formatted listing of productions in HTML.
+	 * Gets output for the [wpt_events] shortcode.
 	 *
-	 * The list of productions is compiled using filter-arguments that are part of $args.
-	 * See WPT_Productions::get() for possible values.
+	 * @since 	0.?
+	 * @since 	0.10.9	Improved the unique key for transients.
+	 *					Fixes issue #97.
+	 * @since 	0.11.8	Support for 'post__in' and 'post__not_in'.
+	 *					Fixes #128.
+	 * @since	0.14.4	Support for 'production'.
 	 *
-	 * The productions can be shown on a single page or be cut up into multiple pages by setting
-	 * $paginateby. If $paginateby is set then a page navigation is added to the top of
-	 * the listing.
-	 *
-	 * The productions can be grouped inside the pages by setting $groupby.
-	 *
-	 * @since 0.5
-	 * @since 0.10	Moved parts of this method to seperate reusable methods.
-	 *				Renamed method from `html()` to `get_html()`.
-	 *				Rewrote documentation.
-	 *
-	 * @see WPT_Listing::get_html()
-	 * @see WPT_Productions::get_html_pagination()
-	 * @see WPT_Productions::get_html_for_page()
-	 *
-	 * @param array $args {
-	 * 		An array of arguments. Optional.
-	 *
-	 *		These can be any of the arguments used in the $filters of WPT_Productions::get(), plus:
-	 *
-	 *		@type array		$paginateby	Fields to paginate the listing by.
-	 *									@see WPT_Productions::get_html_pagination() for possible values.
-	 *									Default <[]>.
-	 *		@type string    $groupby    Field to group the listing by.
-	 *									@see WPT_Productions::get_html_grouped() for possible values.
-	 *									Default <false>.
-	 * 		@type string	$template	Template to use for the individual productions.
-	 *									Default <NULL>.
-	 * }
-		 * @return string HTML.
+	 * @param 	array 	$atts
+	 * @param 	string 	$content (default: null)
+	 * @return 	string 	The HTML output.
 	 */
-	public function get_html( $args = array() ) {
-
-		$html = parent::get_html( $args );
-
-		/**
-		 * Filter the formatted listing of productions in HTML.
-		 *
-		 * @since 0.10
-		 *
-		 * @param 	string $html 	The HTML.
-		 * @param 	array $args 	The $args that are being used for the listing.
-		 */
-		$html = apply_filters( 'wpt_productions_html', $html, $args );
-
-		return  $html;
-	}
-
-	/**
-	 * Gets a list of productions in HTML for a single category.
-	 *
-	 * @since 0.10
-		 * @since 0.10.2	Category now uses slug instead of term_id.
-	 *
-	 * @see WPT_Productions::get_html_grouped();
-	 *
-	 * @access private
-	 * @param 	string $category_slug	Slug of the category.
-	 * @param 	array $args 			See WPT_Productions::get_html() for possible values.
-	 * @return 	string					The HTML.
-	 */
-	private function get_html_for_category( $category_slug, $args = array() ) {
-		if ( $category = get_category_by_slug( $category_slug ) ) {
-				$args['cat'] = $category->term_id;
-		}
-
-		return $this->get_html_grouped( $args );
-	}
-
-	/**
-	 * Gets the pagination filters for a production listing.
-	 *
-	 * @since	0.13.4
-	 * @return 	array	The pagination filters for a production listing.
-	 */
-	public function get_pagination_filters() {
-
-		$filters = parent::get_pagination_filters();
-
-		$filters['day'] = array(
-			'title' => __( 'Days', 'theatre' ),
-			'query_arg' => 'wpt_day',
-			'callback' => array( $this, 'get_days' ),
-		);
-
-		$filters['month'] = array(
-			'title' => __( 'Months', 'theatre' ),
-			'query_arg' => 'wpt_month',
-			'callback' => array( $this, 'get_months' ),
-		);
-
-		$filters['year'] = array(
-			'title' => __( 'Years', 'theatre' ),
-			'query_arg' => 'wpt_year',
-			'callback' => array( $this, 'get_years' ),
-		);
-
-		$filters['category'] = array(
-			'title' => __( 'Categories', 'theatre' ),
-			'query_arg' => 'wpt_category',
-			'callback' => array( $this, 'get_categories' ),
-		);
-
-		$filters['season'] = array(
-			'title' => __( 'Seasons', 'theatre' ),
-			'query_arg' => 'wpt_season',
-			'callback' => array( $this, 'get_seasons' ),
-		);
-
-		/**
-		 * Filter the pagination filters for a production listing.
-		 *
-		 * @since 	0.13.4
-		 * @param	array	$filters	The pagination filters for a production listing.
-		 */
-		$filters = apply_filters( 'wpt/productions/pagination/filters', $filters );
-
-		return $filters;
-	}
-
-	/**
-	 * Gets the page navigation for an event listing in HTML.
-	 *
-	 * @see WPT_Listing::filter_pagination()
-	 * @see WPT_Events::get_days()
-	 * @see WPT_Events::get_months()
-	 * @see WPT_Events::get_categories()
-	 *
-	 * @since 	0.10
-	 * @since	0.13	Added support for days, months and years.
-	 * @since	0.13.4	Show the pagination filters in the same order as the
-	 *					the 'paginateby' argument.
-	 *
-	 * @access protected
-	 * @param 	array $args     The arguments being used for the event listing.
-	 *							See WPT_Events::get_html() for possible values.
-	 * @return 	string			The HTML for the page navigation.
-	 */
-	protected function get_html_page_navigation( $args = array() ) {
+	function wpt_events( $atts, $content = null ) {
+		global $wp_theatre;
 		global $wp_query;
-
-		$html = '';
-
-		$paginateby = empty( $args['paginateby'] ) ? array() : $args['paginateby'];
-
-		$filters = $this->get_pagination_filters();
-
-		foreach ( $filters as $filter_name => $filter_options ) {
-			if ( ! empty( $wp_query->query_vars[ $filter_options['query_arg'] ] ) ) {
-				$paginateby[] = $filter_name;
-			}
-		}
-
-		$paginateby = array_unique( $paginateby );
-
-		foreach ( $paginateby as $paginateby_filter ) {
-			if ( ! empty( $filters[ $paginateby_filter ] ) ) {
-				$options = call_user_func_array(
-					$filters[ $paginateby_filter ]['callback'],
-					array( $args )
-				);
-
-				$html .= $this->filter_pagination(
-					$paginateby_filter,
-					$options,
-					$args
-				);
-			}
-		}
-
-		/**
-		 * Filter the HTML of the page navigation for productions list.
-		 *
-		 * @since	0.13.3
-		 * @param 	string 	$html	The HTML of the page navigation for an event listing.
-		 * @param 	array 	$args	The arguments being used for the event listing.
-		 */
-		$html = apply_filters( 'wpt/productions/html/page/navigation', $html, $args );
-
-		return $html;
-	}
-
-	/**
-	 * Gets all productions between 'start' and 'end'.
-	 *
-	 * @access 	private
-	 * @since	0.13
-	 * @param 	string 	$start	The start time. Can be anything that strtotime understands.
-	 * @param 	string 	$end	The end time. Can be anything that strtotime understands.
-	 * @return 	array			The productions.
-	 */
-	private function get_productions_by_date( $start_after = false, $start_before = false, $end_before = false ) {
-		global $wp_theatre;
-		$productions = array();
-		if ( $start_after || $start_before || $end_before ) {
-			$events_args = array(
-				'start' => $start_after,
-				'end' => $start_before,
-			);
-			$events = $wp_theatre->events->get( $events_args );
-
-			$productions_after_end = array();
-			if ($end_before) {
-				foreach ( $events as $event ) {
-					$end_datetime = strtotime( $end_before, current_time( 'timestamp' ) ) - get_option( 'gmt_offset' ) * 3600;
-					if ( $event->datetime() > $end_datetime) {	
-						$productions_after_end[] = $event->production()->ID;
-					}
-				}				
-			}
-
-			foreach ( $events as $event ) {
-				$production_id = $event->production()->ID;
-				if (!in_array($production_id, $productions_after_end)) {
-					$productions[] = $production_id;				
-				}
-			}
-
-			$productions = array_unique( $productions );
-
-		}
-		return $productions;
-	}
-
-	/**
-	 * Gets an array of all categories with productions.
-	 *
-	 * @since Unknown
-	 * @since 0.10	Renamed method from `seasons()` to `get_seasons()`.
-	 *
-	 * @param 	array $filters	See WPT_Productions::get() for possible values.
-	 * @return 	array 			An array of WPT_Season objects.
-	 */
-	public function get_seasons() {
-		$productions = $this->get();
-		$seasons = array();
-		foreach ( $productions as $production ) {
-			if ( $production->season() ) {
-				$seasons[ $production->season()->ID ] = $production->season()->title();
-			}
-		}
-		arsort( $seasons );
-		return $seasons;
-	}
-
-	/**
-	 * Gets a list of productions.
-	 *
-	 * @since 	0.5
-	 * @since 	0.10	Renamed method from `load()` to `get()`.
-	 * 					Added 'order' to $args.
-	 * @since	0.13	Support for 'start' and 'end'.
-	 * @since	0.14.2	Fixed a conflict when using 'start' and 'post__not_in' together.
-	 *					See #183.
-	 * @since	0.15	Added support for 's' (keyword search).
-	 * @since	0.15.10	Introduced new 'start_before', 'start_after' and 'end_before' filters.
-	 *					Deprecated the 'start' and 'end' filters.
-	 *
-	 * @param array $args {
-	 *		string $order. 			See WP_Query.
-	 *		int $season. 			Only return productions that are linked to $season.
-	 *		int $limit. 			See WP_Query.
-	 *		$post__in. 				See WP_Query.
-	 * 		$post__not_in. 			See WP_Query.
-	 * 		$cat. 					See WP_Query.
-	 * 		$category_name. 		See WP_Query.
-	 *  	category__and. 			See WP_Query.
-	 * 		category__in. 			See WP_Query.
-	 * 		category__not_in. 		See WP_Query.
-	 * 		ignore_sticky_posts. 	See WP_Query.
-	 * }
-	 * @return array 	An array of WPT_Production objects.
-	 */
-	public function get( $filters = array() ) {
-		global $wp_theatre;
 
 		$defaults = array(
-			'order' => 'asc',
+			'cat' => false,
+			'category' => false, // deprecated since v0.9.
+			'category_name' => false,
+			'category__and' => false,
+			'category__in' => false,
+			'category__not_in' => false,
+			'tag' => false,
+			'day' => false,
+			'end' => false,
+			'groupby' => false,
 			'limit' => false,
+			'month' => false,
+			'order' => 'asc',
+			'paginateby' => array(),
 			'post__in' => false,
 			'post__not_in' => false,
-			'start_before' => false,
-			'start_after' => false,
+			'production' => false,
+			'season' => false,
+			'start' => false,
+			'year' => false,
+		);
+
+		/**
+		 * Filter the defaults for the [wpt_events] shortcode.
+		 *
+		 * @since 	0.11.9
+		 * @param 	array 	$defaults	The current defaults.
+		 */
+		$defaults = apply_filters( 'wpt/frontend/shortcode/events/defaults', $defaults );
+
+		$atts = shortcode_atts( $defaults, $atts, 'wpt_events' );
+
+		if ( ! empty( $atts['paginateby'] ) ) {
+			$fields = explode( ',',$atts['paginateby'] );
+			for ( $i = 0;$i < count( $fields );$i++ ) {
+				$fields[ $i ] = trim( $fields[ $i ] );
+			}
+			$atts['paginateby'] = $fields;
+		}
+
+		if ( ! empty( $atts['post__in'] ) ) {
+			$atts['post__in'] = explode( ',',$atts['post__in'] );
+			$atts['post__in'] = array_map( 'trim',$atts['post__in'] );
+		}
+
+		if ( ! empty( $atts['post__not_in'] ) ) {
+			$atts['post__not_in'] = explode( ',',$atts['post__not_in'] );
+			$atts['post__not_in'] = array_map( 'trim',$atts['post__not_in'] );
+		}
+
+		if ( ! empty( $atts['production'] ) ) {
+			$atts['production'] = explode( ',',$atts['production'] );
+			$atts['production'] = array_map( 'trim',$atts['production'] );
+		}
+
+		if ( ! empty( $atts['year'] ) ) {
+			$atts['start'] = date( 'Y-m-d',strtotime( $atts['year'].'-01-01' ) );
+			$atts['end'] = date( 'Y-m-d',strtotime( $atts['year'].'-01-01 + 1 year' ) );
+		}
+
+		if ( ! empty( $atts['month'] ) ) {
+			$atts['start'] = date( 'Y-m-d',strtotime( $atts['month'] ) );
+			$atts['end'] = date( 'Y-m-d',strtotime( $atts['month'].' + 1 month' ) );
+		}
+
+		if ( ! empty( $atts['day'] ) ) {
+			$atts['start'] = date( 'Y-m-d',strtotime( $atts['day'] ) );
+			$atts['end'] = date( 'Y-m-d',strtotime( $atts['day'].' + 1 day' ) );
+		}
+
+		if ( ! empty( $atts['category__in'] ) ) {
+			$atts['category__in'] = explode( ',',$atts['category__in'] );
+		}
+
+		if ( ! empty( $atts['category__not_in'] ) ) {
+			$atts['category__not_in'] = explode( ',',$atts['category__not_in'] );
+		}
+
+		if (
+			empty( $atts['start'] ) &&
+			empty( $atts['end'] )
+		) {
+			$atts['start'] = 'now';
+		}
+
+		if ( ! is_null( $content ) && ! empty( $content ) ) {
+			$atts['template'] = html_entity_decode( $content );
+		}
+
+		/**
+		 * Deprecated since v0.9.
+		 * Use `cat`, `category_name`, `category__and`, `category__in` or `category__not_in` instead.
+		 */
+
+		if ( ! empty( $atts['category'] ) ) {
+			$categories = array();
+			$fields = explode( ',',$atts['category'] );
+			for ( $i = 0;$i < count( $fields );$i++ ) {
+				$category_id = trim( $fields[ $i ] );
+				if ( is_numeric( $category_id ) ) {
+					$categories[] = trim( $fields[ $i ] );
+				} else {
+					if ( $category = get_category_by_slug( $category_id ) ) {
+						$categories[] = $category->term_id;
+					}
+				}
+			}
+			$atts['cat'] = implode( ',',$categories );
+		}
+
+		/**
+		 * Filter the filters for the events listing.
+		 *
+		 * @since 	0.11.9
+		 * @param 	array 	$atts	The current filters, based on the shortcode attributes.
+		 */
+		$atts = apply_filters( 'wpt/frontend/shortcode/events/filters', $atts );
+
+		/*
+		 * Base the $args parameter for the transient on $atts and $wp_query,
+		 * to create unique keys for every page of paginated lists.
+		 */
+		$unique_args = array_merge(
+			array( 'atts' => $atts ),
+			array( 'wp_query' => $wp_query->query_vars )
+		);
+
+		if ( ! ( $html = $wp_theatre->transient->get( 'e', $unique_args ) ) ) {
+			$html = $wp_theatre->events->get_html( $atts );
+			$wp_theatre->transient->set( 'e', $unique_args, $html );
+		}
+		return $html;
+	}
+
+	/**
+	 * Gets output for the [wpt_productions] shortcode.
+	 *
+	 * @since 	0.?
+	 * @since	0.10.9	Improved the unique key for transients.
+	 *					Fixes issue #97.
+	 * @since	0.14.7	Added $shortcode to shortcode_atts().
+	 * @since	0.15.10	Added 'ignored_stikcy_posts' to the shortcode atts.
+	 *
+	 * @param 	array 	$atts
+	 * @param 	string 	$content (default: null)
+	 * @return 	string 	The HTML output.
+	 */
+	function wpt_productions( $atts, $content = null ) {
+		global $wp_theatre;
+		global $wp_query;
+
+		$defaults = array(
+			'paginateby' => array(),
+			'post__in' => false,
+			'post__not_in' => false,
+			'upcoming' => false,
+			'season' => false,
+			'category' => false, // deprecated since v0.9.
 			'cat' => false,
 			'category_name' => false,
 			'category__and' => false,
 			'category__in' => false,
 			'category__not_in' => false,
-			'end_before' => false,
 			'tag' => false,
-			'season' => false,
-			'ignore_sticky_posts' => false,
-			'status' => array('publish'),
-			's' => false,
-			
-			// Deprecated filters.
 			'start' => false,
+			'start_before' => false,
+			'start_after' => false,
 			'end' => false,
-			'upcoming' => false,
-		);
-		$filters = wp_parse_args( $filters, $defaults );
-
-		$args = array(
-			'post_type' => WPT_Production::post_type_name,
-			'post_status' => $filters['status'],
-			'meta_query' => array(),
-			'order' => $filters['order'],
+			'end_before' => false,
+			'groupby' => false,
+			'limit' => false,
+			'order' => 'asc',
+			'ignore_sticky_posts' => false,
 		);
 
-		if ( $filters['post__in'] ) {
-			$args['post__in'] = $filters['post__in'];
-		}
+		$atts = shortcode_atts( $defaults,$atts, 'wpt_productions' );
 
-		if ( $filters['post__not_in'] ) {
-			$args['post__not_in'] = $filters['post__not_in'];
-		}
-
-		if ( $filters['season'] ) {
-			$args['meta_query'][] = array(
-				'key' => WPT_Season::post_type_name,
-				'value' => $filters['season'],
-				'compare' => '=',
-			);
-		}
-
-		if ( $filters['cat'] ) {
-			$args['cat'] = $filters['cat'];
-		}
-
-		if ( $filters['category_name'] ) {
-			$args['category_name'] = $filters['category_name'];
-		}
-
-		if ( $filters['category__and'] ) {
-			$args['category__and'] = $filters['category__and'];
-		}
-
-		if ( $filters['category__in'] ) {
-			$args['category__in'] = $filters['category__in'];
-		}
-
-		if ( $filters['category__not_in'] ) {
-			$args['category__not_in'] = $filters['category__not_in'];
-		}
-
-		if ($filters['tag']) {
-			$args['tag'] = $filters['tag'];
-		}
-
-		if ( $filters['limit'] ) {
-			$args['posts_per_page'] = $filters['limit'];
-		} else {
-			$args['posts_per_page'] = -1;
-		}
-
-		if ($filters['s']) {
-			$args['s'] = $filters['s'];
-		}
-
-		// Rewrite deprecated filters to proper filters.
-		if ($filters['start'] && ! $filters['start_after']) {
-			$filters['start_after'] = $filters['start'];
-		}
-
-		if ($filters['end'] && ! $filters['end_before']) {
-			$filters['end_before'] = $filters['end'];
-		}
-
-		if (
-			$filters['upcoming'] &&
-			! $filters['start_after'] &&
-			! $filters['end_before']
-		) {
-			$filters['start_after'] = 'now';
-		}
-
-		$filters['start'] = false;
-		$filters['end'] = false;
-		$filters['upcoming'] = false;
-		
-		/*
-		 * Filter productions by date.
-         *
-         * Uses @see WPT_Productions::get_productions_by_date() to get a list of
-		 * production IDs that match the dates. The IDs are then added a a 'post__in'
-		 * argument.
-		 *
-         * If the 'post__in' argument is already set, then the existing list of
-         * production IDs is limited to IDs that are also part of the production IDs from
-         * the date selection.
-         *
-		 * If this results in an empty list of production IDs then further execution is
-		 * halted and an empty array is returned, because there are no matching productions.
-		 */
-		if ( $filters['start_after'] || $filters['end_before'] ) {
-			$productions_by_date = $this->get_productions_by_date( $filters['start_after'], $filters['start_before'],$filters['end_before'] );
-			if ( empty( $args['post__in'] ) ) {
-				$args['post__in'] = $productions_by_date;
-			} else {
-				$args['post__in'] = array_intersect(
-					$args['post__in'],
-					$productions_by_date
-				);
+		if ( ! empty( $atts['paginateby'] ) ) {
+			$fields = explode( ',',$atts['paginateby'] );
+			for ( $i = 0;$i < count( $fields );$i++ ) {
+				$fields[ $i ] = trim( $fields[ $i ] );
 			}
-			// Remove production that are in 'post__not_in'.
-			if ( ! empty( $args['post__not_in'] ) ) {
-			    $args['post__in'] = array_diff( $args['post__in'], $args['post__not_in'] );
+			$atts['paginateby'] = $fields;
+		}
+
+		if ( ! empty( $atts['post__in'] ) ) {
+			$atts['post__in'] = explode( ',',$atts['post__in'] );
+		}
+
+		if ( ! empty( $atts['post__not_in'] ) ) {
+			$atts['post__not_in'] = explode( ',',$atts['post__not_in'] );
+		}
+
+		if ( ! empty( $atts['category__in'] ) ) {
+			$atts['category__in'] = explode( ',',$atts['category__in'] );
+		}
+
+		if ( ! empty( $atts['category__not_in'] ) ) {
+			$atts['category__not_in'] = explode( ',',$atts['category__not_in'] );
+		}
+
+		if ( ! is_null( $content ) && ! empty( $content ) ) {
+			$atts['template'] = html_entity_decode( $content );
+		}
+
+		/**
+		 * Deprecated since v0.9.
+		 * Use `cat`, `category_name`, `category__and`, `category__in` or `category__not_in` instead.
+		 */
+
+		if ( ! empty( $atts['category'] ) ) {
+			$categories = array();
+			$fields = explode( ',',$atts['category'] );
+			for ( $i = 0;$i < count( $fields );$i++ ) {
+				$category_id = trim( $fields[ $i ] );
+				if ( is_numeric( $category_id ) ) {
+					$categories[] = trim( $fields[ $i ] );
+				} else {
+					if ( $category = get_category_by_slug( $category_id ) ) {
+						$categories[] = $category->term_id;
+					}
+				}
+			}
+			$atts['cat'] = implode( ',',$categories );
+		}
+
+		/**
+		 * Filter the filters for the productions listing.
+		 *
+		 * @since 	0.12.7
+		 * @param 	array 	$atts	The current filters, based on the shortcode attributes.
+		 */
+		$atts = apply_filters( 'wpt/frontend/shortcode/productions/filters', $atts );
+
+		/*
+		 * Base the $args parameter for the transient on $atts and $wp_query,
+		 * to create unique keys for every page of paginated lists.
+		 */
+		$unique_args = array_merge(
+			array( 'atts' => $atts ),
+			array( 'wp_query' => $wp_query->query_vars )
+		);
+
+		if ( ! ( $html = $wp_theatre->transient->get( 'p', $unique_args ) ) ) {
+			$html = $wp_theatre->productions->get_html( $atts );
+			$wp_theatre->transient->set( 'p', $unique_args, $html );
+		}
+
+		return $html;
+	}
+
+	function wpt_seasons( $atts, $content = null ) {
+		global $wp_theatre;
+
+		$atts = shortcode_atts( array(
+			'thumbnail' => true,
+			'fields' => null,
+			'upcoming' => true,
+			'paginateby' => null,
+		), $atts );
+
+		if ( ! empty( $atts['fields'] ) ) {
+			$fields = explode( ',',$atts['fields'] );
+			for ( $i = 0;$i < count( $fields );$i++ ) {
+				$fields[ $i ] = trim( $fields[ $i ] );
+			}
+			$atts['fields'] = $fields;
+		}
+
+		if ( ! empty( $atts['paginateby'] ) ) {
+			$fields = explode( ',',$atts['paginateby'] );
+			for ( $i = 0;$i < count( $fields );$i++ ) {
+				$fields[ $i ] = trim( $fields[ $i ] );
+			}
+			$atts['paginateby'] = $fields;
+		}
+
+		if ( ! empty( $atts['thumbnail'] ) ) {
+			$atts['thumbnail'] = $atts['thumbnail'] == 1;
+		}
+
+		$wp_theatre->seasons->filters['upcoming'] = $atts['upcoming'];
+		return $wp_theatre->seasons->html( $atts );
+	}
+
+	function wpt_season_events( $atts, $content = null ) {
+		global $wp_theatre;
+
+		$atts = shortcode_atts( array(
+			'upcoming' => true,
+			'past' => false,
+			'paginateby' => array(),
+			'season' => false,
+			'groupby' => false,
+			'limit' => false,
+		), $atts);
+
+		if ( is_singular( WPT_Season::post_type_name ) ) {
+			$atts['season'] = get_the_ID();
+
+			if ( ! is_null( $content ) && ! empty( $content ) ) {
+				$atts['template'] = html_entity_decode( $content );
+			}
+
+			if ( ! empty( $atts['paginateby'] ) ) {
+				$fields = explode( ',',$atts['paginateby'] );
+				for ( $i = 0;$i < count( $fields );$i++ ) {
+					$fields[ $i ] = trim( $fields[ $i ] );
+				}
+				$atts['paginateby'] = $fields;
+			}
+
+			return $wp_theatre->events->get_html( $atts );
+		}
+	}
+
+	function wpt_season_productions( $atts, $content = null ) {
+		global $wp_theatre;
+
+		$atts = shortcode_atts( array(
+			'paginateby' => array(),
+			'upcoming' => false,
+			'season' => false,
+			'groupby' => false,
+			'limit' => false,
+		), $atts);
+
+		if ( is_singular( WPT_Season::post_type_name ) ) {
+			$atts['season'] = get_the_ID();
+
+			if ( ! is_null( $content ) && ! empty( $content ) ) {
+				$atts['template'] = html_entity_decode( $content );
+			}
+
+			if ( ! empty( $atts['paginateby'] ) ) {
+				$fields = explode( ',',$atts['paginateby'] );
+				for ( $i = 0;$i < count( $fields );$i++ ) {
+					$fields[ $i ] = trim( $fields[ $i ] );
+				}
+				$atts['paginateby'] = $fields;
+			}
+
+			return $wp_theatre->productions->get_html( $atts );
+		}
+	}
+
+	/**
+	 * Gets the HTML for the [wp_theatre_iframe] shortcode.
+	 *
+	 * @since  	?.?
+	 * @since	0.12	Work with the 'wpt_event_tickets' query var,
+	 * 					instead of $_GET vars.
+	 * @since	0.13.3	Added the 'wpt/frontend/iframe/html' filter.
+	 * @since	0.14	Fixed a PHP notice when the 'wpt_event_tickets' is not set.
+	 *					Eg. when the iframe page is called directly.
+	 * @return 	string	The HTML for the [wpt_event_tickets] shortcode.
+	 */
+	function get_iframe_html() {
+		$html = '';
+
+		$event_id = (int) get_query_var( 'wpt_event_tickets' );
+
+		$tickets_url = '';
+
+		if ( ! empty( $event_id ) ) {
+			$tickets_url = get_post_meta( $event_id,'tickets_url',true );
+			if ( ! empty( $tickets_url ) ) {
+				$html .= '<iframe src="'.$tickets_url.'" class="wp_theatre_iframe"></iframe>';
 			}
 		}
 
 		/**
-		 * Filter the $args before doing get_posts().
+		 * Filter the HTML for the [wp_theatre_iframe] shortcode.
 		 *
-		 * @since 	0.9.2
-		 * @since	0.15.14	Added $filters to the params.
-		 *
-		 * @param 	array 	$args 		The arguments to use in get_posts to retrieve productions.
-		 * @param	array	$filters	The filters for this list.
+		 * @since	0.13.3
+		 * @param 	string	$html			The HTML for the [wp_theatre_iframe] shortcode.
+		 * @param	string	$tickets_url	The event tickets url.
+		 * @pararm	int		$event_id		The event ID.
 		 */
-		$args = apply_filters( 'wpt_productions_load_args', $args, $filters );
-		$args = apply_filters( 'wpt_productions_get_args', $args, $filters );
+		$html = apply_filters( 'wpt/frontend/iframe/html', $html, $tickets_url, $event_id );
 
-		$posts = array();
-
-		/*
-		 * Don't try to retrieve productions if the 'post_in' argument is an empty array.
-		 * This can happen when the date filter doesn't match any productions.
-		 *
-         * This is different from the way that WP_Query handles an empty 'post__in' argument.
+		/**
+		 * @deprecated	0.13.3
+		 * Use 'wpt/frontend/iframe/html' filter instead.
 		 */
-		if (
-			! isset( $args['post__in'] ) ||	// True when 'post__in', 'start', 'end' and 'upcoming' filters are not used.
-			! empty( $args['post__in'] )		// True when the date filter resulted in matching productions.
-		) {
-			$posts = get_posts( $args );
-		}
+		do_action( 'wp_theatre_iframe' );
 
-		/*
-		 * Add sticky productions.
-		 * Unless in filtered, paginated or grouped views.
-		 */
-		if (
-			! $filters['ignore_sticky_posts'] &&
-			empty( $args['cat'] ) &&
-			empty( $args['category_name'] ) &&
-			empty( $args['category__and'] ) &&
-			empty( $args['category__in'] ) &&
-			empty( $args['tag'] ) &&
-			! $filters['post__in'] &&
-			! $filters['season'] &&
-			$args['posts_per_page'] < 0
-		) {
-			$sticky_posts = get_option( 'sticky_posts' );
-
-			if ( ! empty( $sticky_posts ) ) {
-				$sticky_offset = 0;
-
-				foreach ( $posts as $post ) {
-					if ( in_array( $post->ID,$sticky_posts ) ) {
-						$offset = array_search( $post->ID, $sticky_posts );
-						unset( $sticky_posts[ $offset ] );
-					}
-				}
-
-				if ( ! empty( $sticky_posts ) ) {
-					/*
-					 * Respect $args['post__not_in']. Remove them from $sticky_posts.
-					 * We can't just add it to the `$sticky_args` below, because
-					 * `post__not_in` is overruled by `post__in'.
-					 */
-					if ( ! empty( $args['post__not_in'] ) ) {
-						foreach ( $args['post__not_in'] as $post__not_in_id ) {
-							if ( in_array( $post__not_in_id,$sticky_posts ) ) {
-								$offset = array_search( $post__not_in_id, $sticky_posts );
-								unset( $sticky_posts[ $offset ] );
-							}
-						}
-					}
-
-					/*
-					 * Continue if there are any $sticky_posts left.
-					 */
-					if ( ! empty( $sticky_posts ) ) {
-						$sticky_args = array(
-							'post__in' => $sticky_posts,
-							'post_type' => WPT_Production::post_type_name,
-							'post_status' => 'publish',
-							'nopaging' => true,
-						);
-
-						/*
-						 * Respect $args['category__not_in'].
-						 */
-						if ( ! empty( $args['category__not_in'] ) ) {
-							$sticky_args['category__not_in'] = $args['category__not_in'];
-						}
-
-						$stickies = get_posts( $sticky_args );
-						foreach ( $stickies as $sticky_post ) {
-							array_splice( $posts, $sticky_offset, 0, array( $sticky_post ) );
-							$sticky_offset++;
-						}
-					}
-				}
-			}
-		}
-		$productions = array();
-		for ( $i = 0;$i < count( $posts );$i++ ) {
-			$key = $posts[ $i ]->ID;
-			$productions[] = new WPT_Production( $posts[ $i ]->ID );
-		}
-
-		return $productions;
+		return $html;
 	}
 
-	/**
-	 * Preloads productions with their events.
+	/*
+	 * Gets the HTML output for the [wpt_production_events] shortcode.
 	 *
-	 * Sets the events of a each production in a list of productions with a single query.
-	 * This dramatically decreases the number of queries needed to show a listing of productions.
+     * Examples:
+	 *     [wpt_production_events production=123]
+	 *     [wpt_production_events production=123,456]
+	 *     [wpt_production_events production=123]{{title|permalink}}{{datetime}}{{tickets}}[/wpt_production_events]
 	 *
-	 * @since 	0.10.14
-	 * @access 	private
-	 * @param 	array	$productions	An array of WPT_Production objects.
-	 * @return 	array					An array of WPT_Production objects, with the events preloaded.
+	 * On the page of a single production you can leave out the production:
+	 *
+	 *     [wpt_production_events]
+	 *
+	 * @since 	0.?
+	 * @since	0.14.4	Use the [wpt_events] shortcode to render the output.
+	 * @since	0.14.7	Added support for filtered shortcode atts.
+	 *
+	 * @param 	array	$atts		The shortcode attributes.
+	 * @param 	string	$template 	The template. Default <null>.
+	 * @return 	string				The HTML output for the [wpt_production_events] shortcode.
 	 */
-	private function preload_productions_with_events( $productions ) {
+	function wpt_production_events( $atts, $template = null ) {
 		global $wp_theatre;
-		$production_ids = array();
 
-		foreach ( $productions as $production ) {
-			$production_ids[] = $production->ID;
+		$atts = shortcode_atts( array(
+			'production' => false,
+		), $atts, 'wpt_production_events' );
+
+		// Fallback to ID of current production.
+		if ( empty( $atts['production'] ) && is_singular( WPT_Production::post_type_name ) ) {
+			$atts['production'] = get_the_ID();
 		}
 
-		$production_ids = array_unique( $production_ids );
-
-		$events = get_posts(
-			array(
-				'post_type' => WPT_Event::post_type_name,
-				'posts_per_page' => -1,
-				'post_status' => 'publish',
-				'meta_query' => array(
-					array(
-						'key' => WPT_Production::post_type_name,
-						'value' => array_unique( $production_ids ),
-						'compare' => 'IN',
-					),
-					array(
-						'key' => THEATER_ORDER_INDEX_KEY,
-						'value' => time(),
-						'compare' => '>=',
-					),
-				),
-				'order' => 'ASC',
-			)
-		);
-
-		$productions_with_keys = array();
-
-		foreach ( $events as $event ) {
-			$production_id = get_post_meta( $event->ID, WPT_Production::post_type_name, true );
-			if ( ! empty( $production_id ) ) {
-				$productions_with_keys[ $production_id ][] = new WPT_Event( $event );
-			}
+		// Bail if no production is defined.
+		if ( empty( $atts['production'] ) ) {
+			return;
 		}
 
-		for ( $i = 0; $i < count( $productions );$i++ ) {
-			if ( in_array( $productions[ $i ]->ID, array_keys( $productions_with_keys ) ) ) {
-				$productions[ $i ]->events = $productions_with_keys[ $productions[ $i ]->ID ];
-			}
+		if ( empty( $template ) ) {
+			$template = '{{remark}}{{datetime}}{{location}}{{tickets}}';
 		}
-		 return $productions;
+
+		$shortcode_atts = '';
+		foreach ( $atts as $key => $value ) {
+			$shortcode_atts .= $key.'="'.$value.'" ';
+		}
+
+		$shortcode = '[wpt_events '.$shortcode_atts.']'.$template.'[/wpt_events]';
+		return do_shortcode( $shortcode );
+	}
+
+	function wpt_event_ticket_button( $atts, $content = null ) {
+		$atts = shortcode_atts( array(
+			'id' => false,
+		), $atts );
+		extract( $atts );
+
+		if ( $id ) {
+			$event = new WPT_Event( $id );
+			$args = array(
+				'html' => true,
+			);
+			return $event->tickets( $args );
+		}
 	}
 
 	/**
-	 * @deprecated 0.10
-	 * @see WPT_Productions::get_categories()
+	 * Redirects any visits to old style tickets page URLs to the new (0.12) pretty tickets page URLs.
+	 *
+	 * Old: http://example.com/tickets-page/?Event=123
+	 * New: http://example.com/tickets-page/my-event/123
+	 *
+	 * @since	0.12.3
+	 * @return	void
 	 */
-	public function categories( $filters = array() ) {
-		_deprecated_function( 'WPT_Productions::categories()', '0.10', 'WPT_Productions::get_categories()' );
-		return $this->get_categories( $filters );
-	}
+	public function redirect_deprecated_tickets_page_url() {
+		global $wp_theatre;
 
-	/**
-	 * @deprecated 0.10
-	 * @see WPT_Productions::get_seasons()
-	 */
-	public function seasons( $filters = array() ) {
-		_deprecated_function( 'WPT_Productions::get_seasons()', '0.10', 'WPT_Productions::get_seasons()' );
-		return $this->get_seasons( $filters );
+		$theatre_options = $wp_theatre->wpt_tickets_options;
+		if (
+			isset( $theatre_options['iframepage'] ) &&
+			$theatre_options['iframepage'] == get_the_id() &&
+			isset( $_GET[ __( 'Event','theatre' ) ] )
+		) {
+			// We are on the tickets page, using the old style URL, let's redirect
+			$event = new WPT_Event( $_GET[ __( 'Event','theatre' ) ] );
+			if ( ! empty( $event ) ) {
+				$tickets_url_iframe = $event->tickets_url_iframe();
+				if ( ! empty( $tickets_url_iframe ) ) {
+					// Redirect, Moved Permanently
+					wp_redirect( $tickets_url_iframe, 301 );
+					exit();
+				}
+			}
+		}
 	}
 }
+
 ?>
