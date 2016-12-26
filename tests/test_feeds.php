@@ -20,13 +20,13 @@ class WPT_Test_Feeds extends WPT_UnitTestCase {
 	
 	function test_upcoming_productions_feed_is_valid() {
 		global $wp_theatre;
-		$this->setup_test_data();
-
 
 		$production_with_tricky_name_id = $this->factory->post->create( 
 			array(
 				'post_type' => WPT_Production::post_type_name,
-				'post_title' => 'Töm & Jerrÿ',
+				'post_title' => 'Gebr. de Nobel - Oud & Nieuw – Fuif',
+				'post_excerpt' => 'Töm & Jerrÿ',
+				'post_content' => 'Töm & Jerrÿ',
 			)
 		);
 		$event_with_tricky_name_id = $this->factory->post->create( 
@@ -37,13 +37,15 @@ class WPT_Test_Feeds extends WPT_UnitTestCase {
 		add_post_meta( $event_with_tricky_name_id, WPT_Production::post_type_name, $production_with_tricky_name_id );
 		add_post_meta( $event_with_tricky_name_id, 'event_date', date( 'Y-m-d H:i:s', time() + (2 * DAY_IN_SECONDS) ) );
 
-		
-		$feed = $wp_theatre->feeds->get_upcoming_productions();
-		$xmlDoc = new DOMDocument();
-		$xmlDoc->loadXML($feed);		
-//		$xml=simplexml_load_string($wp_theatre->feeds->get_upcoming_productions());
+		$this->go_to( '/?feed=upcoming_productions' );
 
-		$this->assertEquals(4, substr_count($wp_theatre->feeds->get_upcoming_productions(), '<item'));
+		$xml = new DomDocument();
+		$xml->loadXML( $wp_theatre->feeds->get_upcoming_productions() );
+		echo $xml->saveXML();
+		$actual = substr_count($xml->saveXML(), '<item');
+		$expected = 1;
+		
+		$this->assertEquals($expected, $actual);
 		
 	}
 	
@@ -54,12 +56,11 @@ class WPT_Test_Feeds extends WPT_UnitTestCase {
 		$production_with_tricky_name_id = wp_insert_post( 
 			array(
 				'post_type' => WPT_Production::post_type_name,
-				'post_title' => 'Töm & Jerrÿ',
+				'post_title' => 'Gebr. de Nobel - Oud & Nieuw – Fuif',
 				'post_excerpt' => 'Töm & Jerrÿ',
 				'post_content' => 'Töm & Jerrÿ',
 			)
 		);
-								
 		
 		$event_with_tricky_name_id = $this->factory->post->create( 
 			array(
@@ -69,17 +70,15 @@ class WPT_Test_Feeds extends WPT_UnitTestCase {
 		add_post_meta( $event_with_tricky_name_id, WPT_Production::post_type_name, $production_with_tricky_name_id );
 		add_post_meta( $event_with_tricky_name_id, 'event_date', date( 'Y-m-d H:i:s', time() + (2 * DAY_IN_SECONDS) ) );
 
-		$production = new WPT_Production($production_with_tricky_name_id);
-		print_r( $production->post());
+		$this->go_to( '/?feed=upcoming_events' );
 
-		echo get_the_title( $production_with_tricky_name_id );exit;
-		$feed = $wp_theatre->feeds->get_upcoming_events();
-echo $feed;
-		$xmlDoc = new DOMDocument();
-		$xmlDoc->loadXML($feed);		
-//		$xml=simplexml_load_string($wp_theatre->feeds->get_upcoming_productions());
-echo $xmlDoc->saveXML();
-		$this->assertEquals(4, substr_count($wp_theatre->feeds->get_upcoming_productions(), '<item'));
+		$xml = new DomDocument();
+		$xml->loadXML( $wp_theatre->feeds->get_upcoming_events() );
+		
+		$actual = substr_count($xml->saveXML(), '<item');
+		$expected = 1;
+		
+		$this->assertEquals($expected, $actual);
 		
 	}
 
