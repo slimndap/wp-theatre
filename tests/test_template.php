@@ -182,11 +182,9 @@ class WPT_Test_Template extends WP_UnitTestCase {
 	      'post_type' => 'attachment',
 	      'post_mime_type' => 'image/jpeg',
 	      'guid' => $upload['url'],
-	      'meta_input' => array(
-		      '_wp_attachment_image_alt' => 'Post thumbnail alt text',
-	      )
 	    );
 	    $attachment_id = wp_insert_attachment( $attachment, $upload['file'] );
+	    add_post_meta( $attachment_id, '_wp_attachment_image_alt', 'Post thumbnail alt text', true );
 	
 	    $post = array( 'post_title' => 'Post Thumbnail Test', 'post_thumbnail' => $attachment_id );
 		$production_id = $this->create_production();	
