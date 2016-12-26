@@ -928,6 +928,9 @@ class WPT_Event_Editor {
 			}
 		}
 
+		// Re-hook.
+		add_action( 'save_post', array( $this, 'save_event' ) );
+		
 		return $production_id;
 
 	}

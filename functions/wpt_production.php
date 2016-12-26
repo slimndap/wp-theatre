@@ -297,9 +297,9 @@ class WPT_Production {
 
 		$defaults = array(
 			'production' => $this->ID,
-			'status' => $this->post()->post_status,
+			'status' => get_post_status( $this->ID ),
 		);
-
+		
 		$filters = wp_parse_args( $filters, $defaults );
 
 		if ( ! isset( $this->events ) ) {

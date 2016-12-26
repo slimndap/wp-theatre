@@ -181,7 +181,10 @@ class WPT_Test_Template extends WP_UnitTestCase {
 	      'post_title' => 'Post Thumbnail',
 	      'post_type' => 'attachment',
 	      'post_mime_type' => 'image/jpeg',
-	      'guid' => $upload['url']
+	      'guid' => $upload['url'],
+	      'meta_input' => array(
+		      '_wp_attachment_image_alt' => 'Post thumbnail alt text',
+	      )
 	    );
 	    $attachment_id = wp_insert_attachment( $attachment, $upload['file'] );
 	
@@ -196,7 +199,7 @@ class WPT_Test_Template extends WP_UnitTestCase {
 		$event = new WPT_Event($event_id);
 		$template = new WPT_Event_Template($event, '{{thumbnail(\'medium\')|permalink}}');
 		
-		$expected = 'wp-post-image" alt="Post Thumbnail" /></a></figure>';
+		$expected = 'wp-post-image" alt="Post thumbnail alt text"';
 		$actual = $template->get_merged();
 		
 		$this->assertContains($expected, $actual);			
