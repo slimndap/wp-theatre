@@ -292,6 +292,16 @@ class WPT_Production {
 		return $dates_summary;
 	}
 
+	/**
+	 * Gets the events of a production.
+	 * 
+	 * @since	0.?
+	 * @since	0.15.15	Use get_post_status() instead of $this->post()->post_status to
+	 *					make sure that we're not using a locally cached value.
+	 * @param 	array 	$filters	The filters for the events.
+	 *								See WPT_Events::get() for possible values.
+	 * @return	WPT_Event[]
+	 */
 	function events( $filters = array() ) {
 		global $wp_theatre;
 
