@@ -2,7 +2,7 @@
 Contributors: slimndap
 Tags: theatre, stage, venue, events, shows, concerts, tickets, ticketing, sports, performances, calendar, festival, workshops, theater, cinema
 Requires at least: 4.0
-Tested up to: 4.6
+Tested up to: 4.7
 Stable tag: 0.15
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -147,6 +147,7 @@ This release focusses on a more streamlined experience when managing your events
 	* Fixed an issue with the 'end' filter for events (0.15.10).
 	* Fixed the sort order of events on the admin screen after you changed the status of an event (0.15.13). Thank you [Menno Luitjes](https://www.linkedin.com/in/mennoluitjes)!
 	* Fixed a problem with the changelog of extensions if you're running multiple extensions (0.15.14).
+	* Fixed a problem with the event editor in WordPress 4.7 (0.15.15).
     
 = 0.14 =
 
@@ -224,6 +225,8 @@ Release Date: May 30th, 2015
 
 
 == Upgrade Notice ==
+= 0.15.15 =
+Fixes several compatibility issues with WordPress 4.7.
 
 = 0.15.14 =
 Fixes a problem with the changelog of extensions if you're running multiple extensions.
