@@ -895,6 +895,10 @@ class WPT_Event_Editor {
 		if ( ! current_user_can( 'edit_post', $production_id ) ) {
 			return $production_id; }
 
+		if ( WPT_Production::post_type_name != get_post_type( $production_id )) {
+			return $production_id;
+		}
+
 		/*
 		 * Event needs at least at start time.
 		 */
