@@ -331,7 +331,11 @@ class WPT_Events extends WPT_Listing {
 	/**
 	 * Gets a list of events in HTML for a page.
 	 *
-	 * @since 0.10
+	 * @since	0.10
+	 * @since	0.15.16		Replaced $wp_query->query_vars['wpt_day'] with $wp_query->query['wpt_day'].
+	 *						Fixes #217.
+	 *						Maybe this is caused by wp_resolve_numeric_slug_conflicts(), which was
+	 *						added in WP 4.3.
 	 *
 	 * @see WPT_Events::get_html_grouped()
 	 * @see WPT_Events::get_html_for_year()
