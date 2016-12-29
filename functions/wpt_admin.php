@@ -126,14 +126,6 @@ class WPT_Admin {
 	            'wpt_style', // Page
 	            'display_section_id' // Section
 	        );
-
-	        add_settings_field(
-	            'css', // ID
-	            __('Custom CSS','theatre'), // Title
-	            array( $this, 'settings_field_css' ), // Callback
-	            'wpt_style', // Page
-	            'display_section_id' // Section
-	        );
 		}
 
 		if ($this->tab=='wpt_tickets') {
@@ -446,18 +438,6 @@ class WPT_Admin {
             </form>
         </div>
         <?php
-    }
-
-    public function settings_field_css() {
-    	global $wp_theatre;
-
-		echo '<p>';
-		echo '<textarea id="wpt_custom_css" name="wpt_style[custom_css]">';
-		if (!empty($wp_theatre->wpt_style_options['custom_css'])) {
-			echo esc_html($wp_theatre->wpt_style_options['custom_css']);
-		}
-		echo '</textarea>';
-		echo '</p>';
     }
 
     public function settings_field_stylesheet() {

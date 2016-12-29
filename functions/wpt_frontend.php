@@ -82,13 +82,6 @@ class WPT_Frontend {
 
 		$html[] = '<meta name="generator" content="Theater '.$wpt_version.'" />';
 
-		if ( ! empty( $wp_theatre->wpt_style_options['custom_css'] ) ) {
-			$html[] .= '<!-- Custom Theater CSS -->';
-			$html[] .= '<style>';
-			$html[] .= $wp_theatre->wpt_style_options['custom_css'];
-			$html[] .= '</style>';
-		}
-
 		echo implode( "\n",$html )."\n";
 	}
 
