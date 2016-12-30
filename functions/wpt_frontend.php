@@ -74,6 +74,13 @@ class WPT_Frontend {
 	}
 
 
+	/**
+	 * wp_head function.
+	 * 
+	 * @since	0.?
+	 * @since	0.15.16	Removed custom CSS.
+	 * @return 	void
+	 */
 	function wp_head() {
 		global $wp_theatre;
 		global $wpt_version;
