@@ -1,15 +1,29 @@
 <?php
+/**
+ * Custom CSS class.
+ *
+ * Add custom CSS to the front end.
+ * @deprecated	0.15.16 because this is now natively supported in WP 4.7.
+ */
 class Theater_Custom_CSS {
 	
-	static function init() {		
+	static function init() {	
 		if (self::is_custom_css_supported()) {
+			// Hooks if custom CSS is part of WP (WP 4.7+).
 			add_action( 'wp_head', array( __CLASS__, 'migrate_custom_css' ), 5);		
 		} else {
+			// Hooks if custom CSS is not part of WP (WP 4.6-).
 			add_action( 'wp_head', array( __CLASS__, 'add_custom_css_to_head' ) );
 			add_action( 'admin_init', array( __CLASS__, 'add_settings_section' ), 20);			
 		}
 	}
 	
+	/**
+	 * Adds the custom CSS to the head of the page.
+	 * 
+	 * @since	0.15.16	Moved from WPT_Frontend::wp_head().
+	 * @return 	void
+	 */
 	static function add_custom_css_to_head() {
 		global $wp_theatre;
 		
@@ -22,6 +36,12 @@ class Theater_Custom_CSS {
 		
 	}
 	
+	/**
+	 * Adds a custom CSS section to the 'Style' tab in Theater admin settings.
+	 * 
+	 * @since	0.15.16	Moved from WPT_Admin::admin_init().
+	 * @return 	void
+	 */
 	static function add_settings_section() {
 		global $wp_theatre;
 		
@@ -30,17 +50,29 @@ class Theater_Custom_CSS {
 	        add_settings_field(
 	            'css', // ID
 	            __('Custom CSS','theatre'), // Title
-	            array( __CLASS__, 'get_settings_field_html' ), // Callback
+	            array( __CLASS__, 'settings_field_html' ), // Callback
 	            'wpt_style', // Page
 	            'display_section_id' // Section
 	        );						
 		}
 	}
 	
+	/**
+	 * Gets the Theater Style options.
+	 * 
+	 * @since	0.15.16
+	 * @return	array
+	 */
 	static function get_css_options() {
 		return get_option('wpt_style');
 	}
 	
+	/**
+	 * Gets the custom CSS from the Theater Style options.
+	 * 
+	 * @since	0.15.16
+	 * @return	string|bool
+	 */
 	static function get_custom_css() {
 		$options = self::get_css_options();
 		
@@ -51,7 +83,14 @@ class Theater_Custom_CSS {
 		return $options['custom_css'];
 	}
 	
-	static function get_settings_field_html() {
+	/**
+	 * Outputs the HTML for the custom CSS field in the Theater admin settings.
+	 * 
+	 * @since	0.15.16	
+	 * @since	0.15.16	Moved from WPT_Admin::settings_field_css().
+	 * @return void
+	 */
+	static function settings_field_html() {
     	global $wp_theatre;
 
 		$css = self::get_custom_css();
@@ -65,10 +104,22 @@ class Theater_Custom_CSS {
 		</p><?php
     }
     
+    /**
+     * Checks if custom CSS is supported natively by WordPress.
+     * 
+     * @since	0.15.16
+     * @return	bool
+     */
     static function is_custom_css_supported() {
 	    return function_exists( 'wp_update_custom_css_post' );
     }
     
+    /**
+     * Migrates deprecated custom CSS from Theater to WP.
+     * 
+     * @since	0.15.16
+     * @return 	void
+     */
     static function migrate_custom_css() {
 	    global $wp_theatre;
 	    

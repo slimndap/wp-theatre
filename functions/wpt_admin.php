@@ -31,6 +31,13 @@ class WPT_Admin {
 
 	}
 
+	/**
+	 * admin_init function.
+	 * 
+	 * @since	0.?
+	 * @since	0.15.16	Removed custom CSS section.
+	 * @return 	void
+	 */
 	function admin_init() {
         global $wp_theatre;
 
