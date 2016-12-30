@@ -32,6 +32,10 @@ class WPT_Test_CSS extends WPT_UnitTestCase {
 
 		global $wp_theatre;
 		
+		if (!function_exists( 'wp_update_custom_css_post' )) {
+			return;
+		}
+		
 		$options = array(
 			'custom_css' => '.wpt-test { background-color: red; }',
 		);
@@ -55,6 +59,11 @@ class WPT_Test_CSS extends WPT_UnitTestCase {
 			return;
 		}
 		
+		$options = array(
+			'custom_css' => '.wpt-test { background-color: red; }',
+		);
+		
+		add_option( 'wpt_style', $options );
 		do_action('admin_init');
 		
 		ob_start();
@@ -69,6 +78,10 @@ class WPT_Test_CSS extends WPT_UnitTestCase {
 	
 	function test_css_admin_field_is_not_loaded_wp_47_and_up() {
 		global $wp_theatre;
+		
+		if (!function_exists( 'wp_update_custom_css_post' )) {
+			return;
+		}
 		
 		do_action('admin_init');
 		
