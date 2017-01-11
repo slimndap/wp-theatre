@@ -163,7 +163,6 @@ class Theater_Event_Order {
 	 *
 	 * @since	0.6.2
 	 * @since	0.15.13	No longer sort queries that only query non-event post types.
-	 * @since	0.15.15	No longer sort queries that also query non-event post types.
 	 * @uses	Theater_Event_Order::get_event_post_types() to get the post types for events and event dates.
 	 *
 	 * @param 	WP_Query	$query
@@ -183,14 +182,6 @@ class Theater_Event_Order {
 		if ( empty( $event_post_types_in_query ) ) {
 			return;
 		}
-
-		$other_post_types_in_query = array_diff( $post_types, self::get_event_post_types() );
-
-		if ( ! empty( $other_post_types_in_query ) ) {
-			return;
-		}
-
-		// This query is for event post types and event post types only, sort query
 
 		$query->set( 'meta_key','_wpt_order' );
 		$query->set( 'orderby','meta_value' );
