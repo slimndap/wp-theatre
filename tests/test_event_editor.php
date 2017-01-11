@@ -207,7 +207,6 @@ class WPT_Test_Event_Editor extends WP_UnitTestCase {
 	}
 
 	function test_event_inherits_production_status_on_production_page() {
-
 		$this->assume_role( 'author' );
 
 		// Create a fake post submission.

@@ -895,15 +895,16 @@ class WPT_Event_Editor {
 		if ( ! current_user_can( 'edit_post', $production_id ) ) {
 			return $production_id; }
 
+		if ( WPT_Production::post_type_name != get_post_type( $production_id )) {
+			return $production_id;
+		}
+
 		/*
-		 * Event needs at least at start time.
+		 * Event needs at least a start time.
 		 */
 		if ( empty($_POST['wpt_event_editor_event_date']) ) {
 			return $production_id;
 		}
-
-		// Unhook to avoid loops.
-		remove_action( 'save_post', array( $this, 'save_event' ) );
 
 		$production_post = get_post( $production_id );
 
@@ -915,6 +916,9 @@ class WPT_Event_Editor {
 			'post_date_gmt' => get_gmt_from_date( $production_post->post_date ),
 		);
 
+		// Unhook to avoid loops and make sure it only runs once.
+		remove_action( 'save_post', array( $this, 'save_event' ) );
+
 		if ( $event_id = wp_insert_post( $event_post ) ) {
 
 			add_post_meta( $event_id, WPT_Production::post_type_name, $production_id, true );
@@ -924,9 +928,9 @@ class WPT_Event_Editor {
 			}
 		}
 
-		// Rehook.
+		// Re-hook.
 		add_action( 'save_post', array( $this, 'save_event' ) );
-
+		
 		return $production_id;
 
 	}
