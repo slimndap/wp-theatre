@@ -59,19 +59,19 @@ class Theater_Event_Order {
 		global $wp_theatre;
 
 		$event = new WPT_Production( $event_id );
-		$event_dates = $wp_theatre->events->get( 
-			array( 
-				'start' => 'now', 
-				'production' => $event_id, 
+		$event_dates = $wp_theatre->events->get(
+			array(
+				'start' => 'now',
+				'production' => $event_id,
 				'status' => get_post_status( $event_id ),
 			)
 		);
 
 		// Use the last event if no upcoming events are found.
 		if ( empty( $event_dates ) ) {
-			$event_dates = $wp_theatre->events->get( 
-				array( 
-					'production' => $event_id, 
+			$event_dates = $wp_theatre->events->get(
+				array(
+					'production' => $event_id,
 					'status' => get_post_status( $event_id ),
 				)
 			);
@@ -87,7 +87,7 @@ class Theater_Event_Order {
 
 		/**
 		 * Filters the calculated order index of an event.
-		 * 
+		 *
 		 * @since	0.15.14
 		 * @param	int	$order_index	The current calculated order index.
 		 * @param	WPT_Production		The event.
@@ -180,6 +180,7 @@ class Theater_Event_Order {
 	 * @since	0.6.2
 	 * @since	0.15.13	No longer sort queries that only query non-event post types.
 	 * @since	0.15.15	Use THEATER_ORDER_INDEX_KEY for meta key.
+	 * @since	0.15.16	No longer sort queries that also query non-event post types.
 	 *
 	 * @uses	Theater_Event_Order::get_event_post_types() to get the post types for events and event dates.
 	 *
@@ -200,6 +201,14 @@ class Theater_Event_Order {
 		if ( empty( $event_post_types_in_query ) ) {
 			return;
 		}
+
+		$other_post_types_in_query = array_diff( $post_types, self::get_event_post_types() );
+
+		if ( ! empty( $other_post_types_in_query ) ) {
+			return;
+		}
+
+		// This query is for event post types and event post types only, sort query
 
 		$query->set( 'meta_key',THEATER_ORDER_INDEX_KEY );
 		$query->set( 'orderby','meta_value' );
