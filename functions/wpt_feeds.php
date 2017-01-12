@@ -36,6 +36,14 @@
 			echo $xml->saveXML();
 		}
 		
+		/**
+		 * Gets the XML for upcoming productions.
+		 * 
+		 * @since	0.7
+		 * @since	0.15.16	Added escaping to production title and permalink.
+		 *					Fixes #220.
+		 * @return	string
+		 */
 		function get_upcoming_productions() {
 			global $wp_theatre;
 	
@@ -48,8 +56,8 @@
 			foreach ($productions as $production) {
 				$item = '';
 				$item.= '<item>';
-				$item.= '<title>'.$production->title().'</title>';
-				$item.= '<link>'.get_permalink($production->ID).'</link>';
+				$item.= '<title>'.convert_chars($production->title()).'</title>';
+				$item.= '<link>'.convert_chars(get_permalink($production->ID)).'</link>';
 				$item.= '<description><![CDATA['.$production->summary().']]></description>';
 				$item.= '<content:encoded><![CDATA['.strip_shortcodes($production->post()->post_content).']]></content:encoded>';
 				$item.= '</item>';
@@ -83,6 +91,14 @@
 			echo $xml->saveXML();
 		}
 		
+		/**
+		 * Gets the XML for upcoming events.
+		 * 
+		 * @since	0.7
+		 * @since	0.15.16	Added escaping to production title and permalink.
+		 *					Fixes #220.
+		 * @return	string
+		 */
 		function get_upcoming_events() {
 			global $wp_theatre;
 	
@@ -95,8 +111,8 @@
 			foreach ($events as $event) {
 				$item = '';
 				$item.= '<item>';
-				$item.= '<title>'.$event->production()->title().'</title>';
-				$item.= '<link>'.get_permalink($event->production()->ID).'</link>';
+				$item.= '<title>'.convert_chars($event->production()->title()).'</title>';
+				$item.= '<link>'.convert_chars(get_permalink($event->production()->ID)).'</link>';
 				$item.= '<description><![CDATA['.$event->production()->summary().']]></description>';
 				$item.= '<content:encoded><![CDATA['.strip_shortcodes($event->production()->post()->post_content).']]></content:encoded>';
 				$item.= '</item>';
