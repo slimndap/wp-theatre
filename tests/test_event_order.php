@@ -161,4 +161,35 @@ class WPT_Test_Event_Order extends WPT_UnitTestCase {
 
 	}
 
+	/**
+	 * Tests if the results of a posts query targeting events/productions and other post types is correct.
+	 * Confirms issue #224
+	 * (posts query contains only events/productions when targeting events/productions and other post types)
+	 */
+	function test_is_mixed_posts_query_result_correct() {
+
+		$production_args = array(
+			'post_type' => WPT_Production::post_type_name,
+		);
+
+		$page_args = array(
+			'post_type' => 'page',
+		);
+
+		$production_id = $this->factory->post->create( $production_args );
+		$page_id = $this->factory->post->create( $page_args );
+
+		$query_args = array(
+			'post_type' => array( WPT_Production::post_type_name, 'page' ),
+			'post__in' => array( $production_id, $page_id ),
+		);
+
+		$posts = get_posts( $query_args );
+
+		$actual = count( $posts );
+		$expected = 2;
+
+		$this->assertEquals( $expected, $actual );
+	}
+
 }
