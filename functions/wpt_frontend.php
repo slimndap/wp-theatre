@@ -74,6 +74,13 @@ class WPT_Frontend {
 	}
 
 
+	/**
+	 * wp_head function.
+	 * 
+	 * @since	0.?
+	 * @since	0.15.16	Removed custom CSS.
+	 * @return 	void
+	 */
 	function wp_head() {
 		global $wp_theatre;
 		global $wpt_version;
@@ -81,13 +88,6 @@ class WPT_Frontend {
 		$html = array();
 
 		$html[] = '<meta name="generator" content="Theater '.$wpt_version.'" />';
-
-		if ( ! empty( $wp_theatre->wpt_style_options['custom_css'] ) ) {
-			$html[] .= '<!-- Custom Theater CSS -->';
-			$html[] .= '<style>';
-			$html[] .= $wp_theatre->wpt_style_options['custom_css'];
-			$html[] .= '</style>';
-		}
 
 		echo implode( "\n",$html )."\n";
 	}
