@@ -338,7 +338,8 @@ class WPT_Frontend {
 	 * @since	0.10.9	Improved the unique key for transients.
 	 *					Fixes issue #97.
 	 * @since	0.14.7	Added $shortcode to shortcode_atts().
-	 * @since	0.15.10	Added 'ignored_stikcy_posts' to the shortcode atts.
+	 * @since	0.15.10	Added 'ignored_sticky_posts' to shortcode atts.
+	 * @since	0.15.16	Added 'start_before', 'start_after', 'end_before' and 'end_after' to shortcode atts.
 	 *
 	 * @param 	array 	$atts
 	 * @param 	string 	$content (default: null)
@@ -362,7 +363,11 @@ class WPT_Frontend {
 			'category__not_in' => false,
 			'tag' => false,
 			'start' => false,
+			'start_before' => false,
+			'start_after' => false,
 			'end' => false,
+			'end_after' => false,
+			'end_before' => false,
 			'groupby' => false,
 			'limit' => false,
 			'order' => 'asc',
