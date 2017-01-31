@@ -25,18 +25,20 @@
 		 * @see WPT_Event::datetime()				To collect the dates for upcoming events.
 		 * @see WPT_Production::permalink()			To get the permalink for an event.
 		 *
-		 * @since	 0.8
+		 * @since	0.8
 		 * @since 	0.10.6	Bugfix: calendar was showing months that have historic events.
 		 *					See https://wordpress.org/support/topic/calendar-wrong-month-shown-again.
 		 * @since 	0.10.15	Bugfix: now accounts for timezones.
 		 *					Fixes #117.
 		 * @since	0.13.3	Bugfix: weekdays were showing up as question marks when using 
-		 *					a multibyte languege (eg. Russian).
+		 *					a multibyte language (eg. Russian).
 		 * 					Fixes #174.
+		 * @since	0.15.16	Added support for custom $filters.
 		 *
-		 * @return string The HTML for the calendar.
+		 * @return 	string 	The HTML for the calendar.
 		 */
-		function html() {
+		function html( $filters = array() ) {
+			
 			global $wp_locale;
 			
 			if (!$this->check_dependencies()) {
@@ -46,10 +48,12 @@
 			global $wp_theatre;
 			
 			// Get all months from now to the month of the last event.
-			$filters = array(
+			$default_month_filters = array(
 				'start' => 'now',
 			);
-			$months = $wp_theatre->events->get_months($filters);
+			$month_filters = wp_parse_args( $filters, $default_month_filters );
+			
+			$months = $wp_theatre->events->get_months($month_filters);
 			$months = array_keys($months);			
 						
 			$start_of_week = get_option('start_of_week');
@@ -120,7 +124,9 @@
 					$days[$date] = array();
 				}
 
-				$events_filters = array();
+				
+				$default_events_filters = array();
+				$events_filters = wp_parse_args( $filters, $default_events_filters );
 
 				/**
 				 * Set the start-filter for the events.
