@@ -249,7 +249,7 @@ class WPT_Event {
 		if ( $args['html'] ) {
 			$html = '';
 			$html .= '<div class="'.self::post_type_name.'_duration">';
-			$html .= apply_template_filters( $this->duration, $args['filters'] );
+			$html .= $this->apply_template_filters( $this->duration, $args['filters'] );
 			$html .= '</div>';
 			return $html;
 		} else {
