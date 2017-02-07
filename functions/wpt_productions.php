@@ -795,7 +795,7 @@ class WPT_Productions extends WPT_Listing {
 	 * @access 	private
 	 * @since	0.13
 	 * @since	0.15.16	Added the $end_after argument.
-	 * 					Change behavious of $start_after argument.
+	 * 					Changes behaviour of $start_after argument.
 	 * @param 	string 	$start_after	Select productions that only have events that start after $start_after.
 	 * @param 	string 	$start_before	Select productions that have events that start before $start_before.
 	 * @param 	string 	$end_after		Select productions that have events that start after $end_after.

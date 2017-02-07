@@ -153,6 +153,8 @@ This release focusses on a more streamlined experience when managing your events
 	* Fixed a problem with the event editor in WordPress 4.7 (0.15.15).
 	* Fixed the day-filter in event lists (0.15.16).
 	* Fixed an ecoding problem in the upcoming event feeds (0.15.16).
+	* Fixed a sorting issue on archive/search pages with mixed post types (0.15.16).
+	
 	
 * Deprecations
 	* Deprecated the custom CSS settings in favour of the custom CSS setting that came with WordPress 4.7 (0.15.16).
