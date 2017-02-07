@@ -136,6 +136,9 @@ This release focusses on a more streamlined experience when managing your events
     * Events can now be filtered by tags (0.15.5).
 	* Activated events archive pages (0.15.10).
 	* You can now set until what time events should fall on the previous days using the `Theater/Helpers/Time/Next_Day_Start_Time_Offset` filter (0.15.11).
+	* You can now create event calendars with custom filters (0.15.16).
+	* Added the 'end_after' filter to production lists.
+
 	    
 * Bugfix
     * The translation setting for the header above events on the productions page was also being used in other places (eg. the admin menu) (0.15.2). Thank you [Bob Morris](https://wordpress.org/support/profile/bob-morris)!
@@ -148,6 +151,12 @@ This release focusses on a more streamlined experience when managing your events
 	* Fixed the sort order of events on the admin screen after you changed the status of an event (0.15.13). Thank you [Menno Luitjes](https://www.linkedin.com/in/mennoluitjes)!
 	* Fixed a problem with the changelog of extensions if you're running multiple extensions (0.15.14).
 	* Fixed a problem with the event editor in WordPress 4.7 (0.15.15).
+	* Fixed the day-filter in event lists (0.15.16).
+	* Fixed an ecoding problem in the upcoming event feeds (0.15.16).
+	
+* Deprecations
+	* Deprecated the custom CSS settings in favour of the custom CSS setting that came with WordPress 4.7 (0.15.16).
+	
     
 = 0.14 =
 
