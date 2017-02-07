@@ -223,6 +223,15 @@ class WPT_Event {
 		return $html;
 	}
 
+	/**
+	 * Gets the duration of an event.
+	 * 
+	 * @since	0.?
+	 * @since	0.15.16		Fixed call to apply_template_filters(). '$this->' was missing.
+	 * 						See: https://github.com/slimndap/wp-theatre/pull/231
+	 * @param 	array $args (default: array())
+	 * @return 	string
+	 */
 	function duration( $args = array() ) {
 		global $wp_theatre;
 
@@ -249,7 +258,7 @@ class WPT_Event {
 		if ( $args['html'] ) {
 			$html = '';
 			$html .= '<div class="'.self::post_type_name.'_duration">';
-			$html .= apply_template_filters( $this->duration, $args['filters'] );
+			$html .= $this->apply_template_filters( $this->duration, $args['filters'] );
 			$html .= '</div>';
 			return $html;
 		} else {
