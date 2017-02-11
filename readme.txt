@@ -66,12 +66,12 @@ Theater for WordPress uses _productions_ to group your _events_. Each production
 
 Add your first event:
 
-1. Go to _Theater_ → _Productions_ → _Add new_.
-1. Enter a title and description for your production.
-1. Scroll down and click on _Add a new event_.
+1. Go to _Theater_ → _Events_ → _Add new_.
+1. Enter a title and description for your events.
+1. Scroll down and click on _Add a new date_.
 1. Enter a start time that is in the future.
-1. Enter the other details for your event.
-1. Click on _Save event_.
+1. Enter the other details for your date.
+1. Click on _Save date_.
 1. Add a featured image (if your theme supports it).
 1. Click on _Publish_.
 
