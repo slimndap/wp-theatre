@@ -17,7 +17,7 @@
 		}
 		
 		function get($name, $args) {
-			if ( is_user_logged_in() ) {
+			if ( is_user_logged_in() || WP_DEBUG ) {
 				return false;
 			}
 			$key = 'wpt'.$name.md5(serialize($args));
