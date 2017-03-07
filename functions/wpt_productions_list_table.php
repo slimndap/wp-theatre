@@ -114,7 +114,7 @@ class WPT_Productions_List_Table extends WP_List_Table {
 	             * @param string $which     The location of the extra table nav markup:
 	             *                          'top' or 'bottom'.
 	             */
-	            do_action( 'restrict_manage_posts', $this->screen->post_type, $which );
+	            do_action( 'restrict_manage_productions', $this->screen->post_type, $which );
 	 
 	            $output = ob_get_clean();
 	 
