@@ -147,6 +147,7 @@
 	
 		public function widget( $args, $instance ) {
 			global $wp_theatre;			
+
 			if (!$wp_theatre->cart->is_empty()) {
 
 				echo $args['before_widget'];
