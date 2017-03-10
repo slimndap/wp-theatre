@@ -20,7 +20,7 @@
 			if ( is_user_logged_in() ) {
 				return false;
 			}
-			$key = 'wpt'.$name.md5(serialize($args));
+			$key = 'wpt_'.$name.md5(serialize($args));
 			return get_transient($key);
 		}
 		
@@ -46,7 +46,7 @@
 		}
 
 		function set($name, $args, $value) {
-			$key = 'wpt'.$name.md5(serialize($args));
+			$key = 'wpt_'.$name.md5(serialize($args));
 			set_transient($key, $value, 10 * MINUTE_IN_SECONDS );
 		}
 		
