@@ -138,7 +138,7 @@ This release focusses on a more streamlined experience when managing your events
 	* You can now set until what time events should fall on the previous days using the `Theater/Helpers/Time/Next_Day_Start_Time_Offset` filter (0.15.11).
 	* You can now create event calendars with custom filters (0.15.16).
 	* Added the 'end_after' filter to production lists.
-
+	* You can now add extra filter controls to the events admin screen using the `restrict_manage_productions` and `manage_productions_extra_tablenav` filters.
 	    
 * Bugfix
     * The translation setting for the header above events on the productions page was also being used in other places (eg. the admin menu) (0.15.2). Thank you [Bob Morris](https://wordpress.org/support/profile/bob-morris)!
@@ -236,6 +236,9 @@ Release Date: May 30th, 2015
 
 
 == Upgrade Notice ==
+= 0.15.17 =
+Added two WordPress filters to add extra filter controls to the events admin screen.
+
 = 0.15.15 =
 Fixes several compatibility issues with WordPress 4.7.
 
