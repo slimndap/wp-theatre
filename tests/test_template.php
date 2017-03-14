@@ -315,5 +315,29 @@ class WPT_Test_Template extends WP_UnitTestCase {
 				
 	}
 
+	/**
+	 * Test if datetime doesn't mess up timezone is used in conjunction with 'date' filter.
+	 * See: https://github.com/slimndap/wp-theatre/issues/161
+	 */
+	function test_timezone_with_date_template_filter_on_starttime() {
+		update_option('gmt_offset', - 5 );
+
+		$production_id = $this->create_production();	
+		$event_id = $this->create_event_for_production($production_id);
+
+		$startdate = strtotime('Tomorrow 20:30');
+		$date_format = 'H:i:s';
+
+		add_post_meta($event_id, 'event_date', date('Y-m-d H:i:s', $startdate));
+		
+		$event = new WPT_Event($event_id);
+		$template = new WPT_Event_Template($event, '{{starttime|date(\''.$date_format.'\')}}');
+		
+		$expected = '<div class="wp_theatre_event_time wp_theatre_event_starttime">'.date($date_format,$startdate).'</div>';
+		$actual = $template->get_merged();
+		
+		$this->assertEquals($expected, $actual);			
+	}
+	
 
 }
