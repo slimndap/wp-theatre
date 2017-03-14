@@ -154,6 +154,8 @@ This release focusses on a more streamlined experience when managing your events
 	* Fixed the day-filter in event lists (0.15.16).
 	* Fixed an ecoding problem in the upcoming event feeds (0.15.16).
 	* Fixed a sorting issue on archive/search pages with mixed post types (0.15.16).
+	* Fixed a timezone problem when using something like  `starttime|date('Y-m-d H:i:s')` inside a shortcode.
+
 	
 	
 * Deprecations
@@ -236,6 +238,9 @@ Release Date: May 30th, 2015
 
 
 == Upgrade Notice ==
+= 0.15.18 =
+Fixes a timezone problem when using the 'date' template filter.
+
 = 0.15.17 =
 Added two WordPress filters to add extra filter controls to the events admin screen.
 
