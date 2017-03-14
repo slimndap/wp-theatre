@@ -1326,6 +1326,10 @@ class WPT_Event {
 	 * Gets the HTML for the event starttime.
 	 *
 	 * @since	0.12
+	 * @since	0.15.18	No longer compensates for timezones when applying the 'date' filter,
+	 *					because this already handled by the date filter by itself.
+	 *					Fixes https://github.com/slimndap/wp-theatre/issues/219.
+	 *
 	 * @param 	array 	$filters	The template filters to apply.
 	 * @return 	sring				The HTML for the event starttime.
 	 */
@@ -1337,7 +1341,7 @@ class WPT_Event {
 		$starttime_html = $this->starttime();
 		foreach ( $filters as $filter ) {
 			if ( 'date' == $filter->name ) {
-				$starttime_html = $filter->apply_to( $this->datetime() + get_option( 'gmt_offset' ) * 3600, $this );
+				$starttime_html = $filter->apply_to( $this->datetime(), $this );
 			} else {
 				$starttime_html = $filter->apply_to( $starttime_html, $this );
 			}
