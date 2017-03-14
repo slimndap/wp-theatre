@@ -138,7 +138,7 @@ This release focusses on a more streamlined experience when managing your events
 	* You can now set until what time events should fall on the previous days using the `Theater/Helpers/Time/Next_Day_Start_Time_Offset` filter (0.15.11).
 	* You can now create event calendars with custom filters (0.15.16).
 	* Added the 'end_after' filter to production lists.
-	* You can now add extra filter controls to the events admin screen using the `restrict_manage_productions` and `manage_productions_extra_tablenav` filters.
+	* You can now add extra filter controls to the events admin screen using the `restrict_manage_productions` and `manage_productions_extra_tablenav` filters (0.15.17).
 	    
 * Bugfix
     * The translation setting for the header above events on the productions page was also being used in other places (eg. the admin menu) (0.15.2). Thank you [Bob Morris](https://wordpress.org/support/profile/bob-morris)!
@@ -154,7 +154,7 @@ This release focusses on a more streamlined experience when managing your events
 	* Fixed the day-filter in event lists (0.15.16).
 	* Fixed an ecoding problem in the upcoming event feeds (0.15.16).
 	* Fixed a sorting issue on archive/search pages with mixed post types (0.15.16).
-	* Fixed a timezone problem when using something like  `starttime|date('Y-m-d H:i:s')` inside a shortcode.
+	* Fixed a timezone problem when using something like  `starttime|date('Y-m-d H:i:s')` inside a shortcode (0.15.18).
 
 	
 	
