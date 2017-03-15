@@ -17,6 +17,11 @@
 		 * 
 		 * @since	0.10
 		 * @since	0.15.19	Added a filter to the arguments.
+		 * @since	0.15.20	Removed arguments filter again.
+		 *					Use the WPT_Importer::set() method.
+		 *					
+		 * @uses	WPT_Importer::set() to set the importer properties.
+		 *
 		 * @param	array	$args
 		 * @return void
 		 */
@@ -30,25 +35,14 @@
 			);
 			$args = wp_parse_args($args, $defaults);
 			
-			/**
-			 * Filter the arguments of the importer.
-			 * 
-			 * @since	0.15.19
-			 * 
-			 * @param	array	$args	The current arguments of the importer.
-			 */
-			$args = apply_filters( 'wpt/importer/init/args', $args );
-			$args = apply_filters( 'wpt/importer/init/args/importer='.$args['slug'], $args );
+			$this->set( 'slug', $args['slug'] );
+			$this->set( 'name', $args['name'] );
+			$this->set( 'callbacks', $args['callbacks'] );
+			$this->set( 'options', get_option( $this->get('slug') ) );
+			$this->set( 'marker', '_'.$this->get('slug').'_marker' );
+			$this->set( 'stats', get_option($this->get('slug').'_stats') );
 			
-			$this->slug = $args['slug'];
-			$this->name = $args['name'];
-			$this->options = $args['options'];
-			$this->callbacks = $args['callbacks'];
-			$this->marker = '_'.$this->slug.'_marker';
-			$this->options = get_option($this->slug);
-			$this->stats = get_option($this->slug.'_stats');
-			
-			add_action('update_option_'.$this->slug, array($this,'update_options'), 10 ,2);
+			add_action('update_option_'.$this->get('slug'), array($this,'update_options'), 10 ,2);
 			add_action('wp_loaded', array( $this, 'handle_import_linked' ));
 
 			add_filter('admin_init',array($this,'add_settings_fields'));
@@ -56,7 +50,12 @@
 			add_action($this->slug.'_import', array($this, 'execute' ));
 			
 			add_action( 'add_meta_boxes', array($this, 'add_production_metabox') );
-			add_action('wpt_importer/production/metabox/actions/importer='.$this->slug, array($this, 'add_production_metabox_reimport_button'), 10, 2);
+			add_action(
+				'wpt_importer/production/metabox/actions/importer='.$this->get('slug'), 
+				array($this, 'add_production_metabox_reimport_button'), 
+				10, 
+				2
+			);
 			add_action('wp_loaded', array( $this, 'reimport_production' ));
 			
 		}
@@ -118,7 +117,7 @@
 			 * @param	WP_Post	$post		The post (production).
 			 */
 			$message = apply_filters('wpt/importer/production/metabox/message', $message, $post);
-			$message = apply_filters('wpt/importer/production/metabox/message/importer='.$this->slug, $message, $post);
+			$message = apply_filters('wpt/importer/production/metabox/message/importer='.$this->get('slug'), $message, $post);
 			
 			echo $message;
 			
@@ -144,7 +143,7 @@
 			 * @param	WP_Post	$post		The post (production).
 			 */
 			$actions = apply_filters('wpt_importer/production/metabox/actions', $actions, $post);
-			$actions = apply_filters('wpt_importer/production/metabox/actions/importer='.$this->slug, $actions, $post);
+			$actions = apply_filters('wpt_importer/production/metabox/actions/importer='.$this->get('slug'), $actions, $post);
 			
 			ob_start();
 			?><div class="wpt_importer_production_metabox_actions"><?php
@@ -187,7 +186,7 @@
 			$production_id = intval($_GET['post']);			
 
 			// Show the metabox if the production was imported by this importer.
-			$production_metabox_visible = $this->slug == get_post_meta($production_id, '_wpt_source', true);
+			$production_metabox_visible = $this->get('slug') == get_post_meta($production_id, '_wpt_source', true);
 
 			/**
 			 * Filters the visibility of this metabox.
@@ -199,7 +198,7 @@
 			 * @param	int		$production_id				The production ID.
 			 */
 			$production_metabox_visible = apply_filters('wpt/importer/production/metabox/visible', $production_metabox_visible, $production_id);
-			$production_metabox_visible = apply_filters('wpt/importer/production/metabox/visible/importer='.$this->slug, $production_metabox_visible, $production_id);
+			$production_metabox_visible = apply_filters('wpt/importer/production/metabox/visible/importer='.$this->get('slug'), $production_metabox_visible, $production_id);
 			
 			// Bail if visibility is set to false.
 			if (!$production_metabox_visible) {
@@ -207,8 +206,8 @@
 			}
 
 			add_meta_box(
-                'wpt_importer_'.$this->slug,
-                $this->name,
+                'wpt_importer_'.$this->get('slug'),
+                $this->get('name'),
                 array( $this, 'production_metabox' ),
                 $post_type,
                 'side',
@@ -227,12 +226,14 @@
          */
         function add_production_metabox_reimport_button($actions, $post) {
 	        
+	        $callbacks = $this->get('callbacks');
+	        
 	        // Bail if no re-import callback is defined.
-	        if (empty($this->callbacks['reimport_production'])) {
+	        if (empty($callbacks['reimport_production'])) {
 		        return $actions;
 	        }
 	        
-	        $url = add_query_arg('wpt_reimport', $this->slug);
+	        $url = add_query_arg('wpt_reimport', $this->get('slug'));
 	        $url = wp_nonce_url($url, 'wpt_reimport');
 	        
 	        $actions[] = array(
@@ -293,7 +294,7 @@
 			}			
 
 			if ($post_id = wp_insert_post($post)) {
-				add_post_meta($post_id, '_wpt_source', $this->slug, true);
+				add_post_meta($post_id, '_wpt_source', $this->get('slug'), true);
 				add_post_meta($post_id, '_wpt_source_ref', sanitize_text_field($args['ref']), true);
 				
 				if (false !== $args['production']) {
@@ -356,13 +357,44 @@
 			);
 
 			if ($post_id = wp_insert_post($post)) {
-				add_post_meta($post_id, '_wpt_source', $this->slug, true);
+				add_post_meta($post_id, '_wpt_source', $this->get('slug'), true);
 				add_post_meta($post_id, '_wpt_source_ref', sanitize_text_field($args['ref']), true);
 				$this->stats['productions_created']++;
 				return new WPT_Production($post_id);
 			} else {
 				return false;
 			}		
+		}
+		
+		
+		/**
+		 * Gets a property value of the importer.
+		 * 
+		 * @since	0.15.20
+		 * @param 	string	$key	The property key.
+		 * @return	mixed			The property value.
+		 */
+		function get( $key ) {
+
+			$value = '';
+
+			if ( isset($this->$key) ) {
+				$value = $this->$key;
+			}
+			
+			/**
+			 * Filter the property value of the importer.
+			 * 
+			 * @since	0.15.20
+			 * @param	mixed			$value		The property value.
+			 * @param	mixed			$key		The property key.
+			 * @param	WPT_Importer	$importer	The importer.
+			 * @access public
+			 */
+			$value = apply_filters( 'wpt/importer/get/value', $value, $key, $this);
+			
+			return $value;
+			
 		}
 		
 		/**
@@ -385,7 +417,7 @@
 				'meta_query' => array(
 					array(
 						'key' => '_wpt_source',
-						'value' => $this->slug,
+						'value' => $this->get('slug'),
 					),
 					array(
 						'key' => '_wpt_source_ref',
@@ -421,7 +453,7 @@
 				'meta_query' => array(
 					array(
 						'key' => '_wpt_source',
-						'value' => $this->slug,
+						'value' => $this->get('slug'),
 					),
 					array(
 						'key' => '_wpt_source_ref',
@@ -436,6 +468,18 @@
 			} else {
 				return false;
 			}
+		}
+		
+		/**
+		 * Sets a property value of the importer.
+		 * 
+		 * @since	0.15.20
+		 * @param 	string	$key	The property key.
+		 * @param 	mixed 	$value	The property value.
+		 * @return 	void
+		 */
+		function set( $key, $value ) {
+			$this->$key = $value;
 		}
 		
 		/**
@@ -527,7 +571,7 @@
 				$this->set_event_prices($event->ID, $args['prices']);
 			}
 
-			delete_post_meta($event->ID, $this->marker);
+			delete_post_meta($event->ID, $this->get('marker'));
 
 			$this->stats['events_updated']++;
 			
@@ -638,7 +682,9 @@
 		function execute_reimport($production_id) {
 			$this->mark_production_events($production_id);
 			
-			$reimport_result = call_user_func_array( $this->callbacks['reimport_production'], array( $production_id ) );
+			$callbacks = $this->get( 'callbacks' );	
+			
+			$reimport_result = call_user_func_array( $callbacks['reimport_production'], array( $production_id ) );
 			
 			if ($reimport_result) {
 				$this->remove_marked_events();			
@@ -668,7 +714,7 @@
 				'posts_per_page' => -1,
 				'meta_query' => array(
 					array(
-						'key' => $this->marker,
+						'key' => $this->get('marker'),
 						'value' => 1,
 					),
 				),
@@ -691,11 +737,11 @@
 		function handle_import_linked() {
 			if (
 				!empty($_GET['wpt_import']) && 
-				($this->slug == $_GET['wpt_import']) &&
+				($this->get('slug') == $_GET['wpt_import']) &&
 				check_admin_referer( 'wpt_import' )
 			) {
 				$this->execute();
-				wp_redirect( 'admin.php?page=wpt_admin&tab='.$this->slug );
+				wp_redirect( 'admin.php?page=wpt_admin&tab='.$this->get('slug') );
 				exit;
 			}
 		}
@@ -718,7 +764,7 @@
 				'meta_query' => array(
 					array(
 						'key' => '_wpt_source',
-						'value' => $this->slug,
+						'value' => $this->get('slug'),
 					),
 					array(
 						'key' => THEATER_ORDER_INDEX_KEY,
@@ -736,7 +782,7 @@
 			$events = get_posts($args);
 			
 			foreach($events as $event) {
-				add_post_meta($event->ID, $this->marker, 1, true);
+				add_post_meta($event->ID, $this->get('marker'), 1, true);
 			}			
 		}
 		
@@ -763,7 +809,7 @@
 				'meta_query' => array(
 					array(
 						'key' => '_wpt_source',
-						'value' => $this->slug,
+						'value' => $this->get('slug'),
 					),
 					array(
 						'key' => THEATER_ORDER_INDEX_KEY,
@@ -776,7 +822,7 @@
 			$events = get_posts($args);
 			
 			foreach($events as $event) {
-				add_post_meta($event->ID, $this->marker, 1, true);
+				add_post_meta($event->ID, $this->get('marker'), 1, true);
 			}
 			
 		}
@@ -808,7 +854,8 @@
 				return false;
 			}
 			
-			if (empty($this->callbacks['reimport_production'])) {
+			$callbacks = $this->get( 'callbacks' );			
+			if (empty($callbacks['reimport_production'])) {
 				return false;
 			}
 			
@@ -851,7 +898,7 @@
 		 * @return void
 		 */
 		private function save_stats() {
-			update_option($this->slug.'_stats', $this->stats);
+			update_option($this->get('slug').'_stats', $this->get('stats') );
 		}
 		
 		/**
@@ -875,12 +922,12 @@
 		protected function schedule_import($schedule) {
 			
 			// remove previously scheduled imports
-			wp_clear_scheduled_hook($this->slug.'_import');
+			wp_clear_scheduled_hook($this->get('slug').'_import');
 			
 			// schedule import
 			$schedules = wp_get_schedules();
 			if (in_array($schedule,array_keys($schedules))) {
-				return (false !== wp_schedule_event( time(), $schedule, $this->slug.'_import'));
+				return (false !== wp_schedule_event( time(), $schedule, $this->get('slug').'_import'));
 			} else {
 				return false;
 			}
@@ -898,7 +945,7 @@
 		 */
 		private function unmark_events() {
 			foreach($this->get_marked_events() as $event) {
-				delete_post_meta($event->ID, $this->marker);
+				delete_post_meta($event->ID, $this->get('marker'));
 			}
 		}
 		
@@ -934,7 +981,7 @@
 		 * @return array The tabs, with a new tab added to the end.
 		 */
 		function add_settings_tab($tabs) {
-			$tabs[$this->slug] = $this->name;		
+			$tabs[$this->get('slug')] = $this->get('name');		
 			return $tabs;
 		}
 
@@ -956,7 +1003,7 @@
 			 * Register a new setting for your importer.
 			 * Use the slug of your importer for the name.
 			 */
-	        register_setting($this->slug, $this->slug);
+	        register_setting($this->get('slug'), $this->get('slug'));
 	
 			/*
 			 * Create an 'Import' section.
@@ -965,18 +1012,18 @@
 			 */
 	
 	        add_settings_section(
-	            $this->slug.'_settings', // ID
+	            $this->get('slug').'_settings', // ID
 	            __('Import','theatre'), // Title
 	            '', // Callback
-	            $this->slug // Page
+	            $this->get('slug') // Page
 	        );  
 
 	        add_settings_field(
 	            'schedule', // ID
 	            __('Schedule','theatre'), // Title 
 	            array( $this, 'settings_field_schedule' ), // Callback
-	            $this->slug, // Page
-	            $this->slug.'_settings' // Section           
+	            $this->get('slug'), // Page
+	            $this->get('slug').'_settings' // Section           
 	        );      
 	        
 			/*
@@ -986,34 +1033,34 @@
 			 */
 	
 	        add_settings_section(
-	            $this->slug.'_status', // ID
+	            $this->get('slug').'_status', // ID
 	            __('Status','theatre'), // Title
 	            '', // Callback
-	            $this->slug // Page
+	            $this->get('slug') // Page
 	        );  
 
 	        add_settings_field(
 	            'status', // ID
 	            __('Ready for import','theatre'), // Title 
 	            array( $this, 'settings_field_status' ), // Callback
-	            $this->slug, // Page
-	            $this->slug.'_status' // Section           
+	            $this->get('slug'), // Page
+	            $this->get('slug').'_status' // Section           
 	        );      
 	        
 	        add_settings_field(
 	            'next import', // ID
 	            __('Next import','theatre'), // Title 
 	            array( $this, 'settings_field_next_import' ), // Callback
-	            $this->slug, // Page
-	            $this->slug.'_status' // Section           
+	            $this->get('slug'), // Page
+	            $this->get('slug').'_status' // Section           
 	        );      
 	        
 	        add_settings_field(
 	            'last import', // ID
 	            __('Last import','theatre'), // Title 
 	            array( $this, 'settings_field_last_import' ), // Callback
-	            $this->slug, // Page
-	            $this->slug.'_status' // Section           
+	            $this->get('slug'), // Page
+	            $this->get('slug').'_status' // Section           
 	        );      
 	        
 		}
@@ -1035,14 +1082,16 @@
 
 			$schedules = wp_get_schedules();
 
-			echo '<select id="schedule" name="'.$this->slug.'[schedule]">';
+			echo '<select id="schedule" name="'.$this->get('slug').'[schedule]">';
 			
 			echo '<option value="manual">'.__('Manually','theatre').'</option>';
+
+			$options = $this->get('options');
 
 			foreach($schedules as $name => $value) {
 
 				echo '<option value="'.$name.'"';
-				if ($name==$this->options['schedule']) {
+				if ($name == $options['schedule']) {
 					echo ' selected="selected"';
 				}
 				echo '>'.$value['display'].'</option>';
@@ -1053,7 +1102,7 @@
 			
 			if ($this->ready_for_import()) {
 			
-				$import_url = add_query_arg('wpt_import', $this->slug);
+				$import_url = add_query_arg('wpt_import', $this->get('slug'));
 				$import_url = wp_nonce_url( $import_url, 'wpt_import' );
 	
 				echo '<p><a href="'.esc_url($import_url).'">'.__('Run import now','theatre').'</a></>';				
@@ -1096,7 +1145,7 @@
 		 */
 		function settings_field_next_import() {
 			
-			if ($timestamp = wp_next_scheduled( $this->slug.'_import' )) {
+			if ($timestamp = wp_next_scheduled( $this->get('slug').'_import' )) {
 				echo sprintf(__('In %s.','theatre'),human_time_diff($timestamp));
 			}
 		}
@@ -1112,26 +1161,28 @@
 		 */
 		function settings_field_last_import() {
 			
+			$stats = $this->get('stats');
+			
 			echo '<table>';
 			
 			echo '<tbody>';
 			
-			if (!empty($this->stats['start'])) {
+			if (!empty($stats['start'])) {
 				echo '<tr>';
 				echo '<th><strong>'.__('Start','theatre').'</strong></th>';
 
 				echo '<td>'.
-					date_i18n(get_option('date_format'), $this->stats['start']).
+					date_i18n(get_option('date_format'), $stats['start']).
 					'<br />'.
-					date_i18n(get_option('time_format'), $this->stats['start']).
+					date_i18n(get_option('time_format'), $stats['start']).
 					'</td>';
 
 				echo '</tr>';
 
-				if (!empty($this->stats['end'])) {
+				if (!empty($stats['end'])) {
 					echo '<tr>';
 					echo '<th>'.__('Duration','theatre').'</th>';
-					echo '<td>'.human_time_diff($this->stats['start'], $this->stats['end']).'</td>';				
+					echo '<td>'.human_time_diff($stats['start'], $stats['end']).'</td>';				
 					echo '</tr>';
 				}
 
@@ -1141,10 +1192,10 @@
 				 * @since ?
 				 */
 
-				if (!empty($this->stats['errors'])) {
+				if (!empty($stats['errors'])) {
 					$msg = '<p><strong>'.__('Import failed. Please try again, or contact your help desk if the problem persists.','theatre'). '</strong></p>';
 					if (defined('WP_DEBUG') && WP_DEBUG === true) {
-						foreach ($this->stats['errors'] as $error) {
+						foreach ($stats['errors'] as $error) {
 							$msg .= '<p>'.$error.'</p>';
 						}
 					}

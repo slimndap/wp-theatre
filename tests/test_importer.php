@@ -455,11 +455,11 @@ class WPT_Test_Importer extends WP_UnitTestCase {
 	function test_reimport_production_with_alternate_callback() {
 		
 		$func = create_function(
-			'$args',
-			'$args["callbacks"]["reimport_production"] = array( "WPT_Demo_Importer", "process_alternate_reimport_production"); return $args;'
+			'$value, $key, $importer',
+			'if ( "callbacks" == $key ) { $value["reimport_production"] = array( "WPT_Demo_Importer", "process_alternate_reimport_production"); } return $value;'
 		);
 		
-		add_filter('wpt/importer/init/args/importer=wpt_demoimporter', $func );		
+		add_filter('wpt/importer/get/value', $func, 10 , 3 );		
 		
 		global $wp_theatre;
 
