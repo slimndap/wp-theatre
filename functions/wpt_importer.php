@@ -12,6 +12,14 @@
 	 */
 	class WPT_Importer {
 		
+		/**
+		 * Inits the importer.
+		 * 
+		 * @since	0.10
+		 * @since	0.15.19	Added a filter to the arguments.
+		 * @param	array	$args
+		 * @return void
+		 */
 		function init($args) {
 			
 			$defaults = array(
@@ -21,6 +29,16 @@
 				'callbacks' => array(),
 			);
 			$args = wp_parse_args($args, $defaults);
+			
+			/**
+			 * Filter the arguments of the importer.
+			 * 
+			 * @since	0.15.19
+			 * 
+			 * @param	array	$args	The current arguments of the importer.
+			 */
+			$args = apply_filters( 'wpt/importer/init/args', $args );
+			$args = apply_filters( 'wpt/importer/init/args/importer='.$args['slug'], $args );
 			
 			$this->slug = $args['slug'];
 			$this->name = $args['name'];

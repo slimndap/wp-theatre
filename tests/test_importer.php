@@ -1,3 +1,4 @@
+
 <?php
 
 class WPT_Demo_Importer extends WPT_Importer {
@@ -109,6 +110,15 @@ class WPT_Demo_Importer extends WPT_Importer {
 		return true;
 		
 
+	}
+
+	static function process_alternate_reimport_production( $production_id ) {
+		$production_post = array(
+			'ID' => $production_id,
+			'post_title' => 'Boring show 123',
+			'post_content' => 'Supercool stuff',
+		);
+		wp_update_post($production_post);		
 	}
 
 	function ready_for_import() {
@@ -442,4 +452,63 @@ class WPT_Test_Importer extends WP_UnitTestCase {
 
 	}
 
+	function test_reimport_production_with_alternate_callback() {
+		
+		$func = create_function(
+			'$args',
+			'$args["callbacks"]["reimport_production"] = array( "WPT_Demo_Importer", "process_alternate_reimport_production"); return $args;'
+		);
+		
+		add_filter('wpt/importer/init/args/importer=wpt_demoimporter', $func );		
+		
+		global $wp_theatre;
+
+		$importer = new WPT_Demo_Importer();
+
+		$importer->execute();
+		$this->publish_all();
+
+		$productions = $wp_theatre->productions->get();
+		
+		// Pick 'Production 0'.
+		$production_id = $productions[0]->ID;
+		
+		$production_args = array(
+			'ID' => $production_id,
+			'post_title' => 'A changed title',
+			'post_content' => 'Changed content',
+		);
+		wp_update_post($production_args);
+		
+
+		$production_html_args = array(
+			'template' => '{{title}}{{content}}',	
+		);
+		
+		// Make sure the content was updated.
+		$production = new WPT_Production($production_id);
+		$actual = $production->html($production_html_args);
+		$expected = 'Changed content';
+		$this->assertContains($expected, $actual);
+		
+		$importer->execute_reimport($production_id);
+
+		// Reload production to refresh 'title' and 'content' values.
+		$production = new WPT_Production($production_id);
+
+		$actual = $production->html($production_html_args);
+
+		// Test if original content title is back.
+		$expected = 'Supercool stuff';
+		$this->assertContains($expected, $actual);
+
+		// Test if alternate production title is set.
+		$expected = 'Boring show 123';
+		$this->assertContains($expected, $actual);
+		
+	}
+
 }
+
+
+
