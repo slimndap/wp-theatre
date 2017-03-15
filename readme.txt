@@ -139,6 +139,8 @@ This release focusses on a more streamlined experience when managing your events
 	* You can now create event calendars with custom filters (0.15.16).
 	* Added the 'end_after' filter to production lists.
 	* You can now add extra filter controls to the events admin screen using the `restrict_manage_productions` and `manage_productions_extra_tablenav` filters (0.15.17).
+	* Added the `wpt/importer/init/args` filter to alter the default behaviour of an importer (0.15.19).
+
 	    
 * Bugfix
     * The translation setting for the header above events on the productions page was also being used in other places (eg. the admin menu) (0.15.2). Thank you [Bob Morris](https://wordpress.org/support/profile/bob-morris)!
@@ -238,8 +240,8 @@ Release Date: May 30th, 2015
 
 
 == Upgrade Notice ==
-= 0.15.18 =
-Fixes a timezone problem when using the 'date' template filter.
+= 0.15.19 =
+Added a filter to alter the default behaviour of an importer.
 
 = 0.15.17 =
 Added two WordPress filters to add extra filter controls to the events admin screen.
