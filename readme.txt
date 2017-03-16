@@ -139,7 +139,7 @@ This release focusses on a more streamlined experience when managing your events
 	* You can now create event calendars with custom filters (0.15.16).
 	* Added the 'end_after' filter to production lists.
 	* You can now add extra filter controls to the events admin screen using the `restrict_manage_productions` and `manage_productions_extra_tablenav` filters (0.15.17).
-	* Added the `wpt/importer/init/args` filter to alter the default behaviour of an importer (0.15.19).
+	* Added the `wpt/importer/get/value` filter to alter the default behaviour of an importer (0.15.20).
 
 	    
 * Bugfix
@@ -240,7 +240,7 @@ Release Date: May 30th, 2015
 
 
 == Upgrade Notice ==
-= 0.15.19 =
+= 0.15.20 =
 Added a filter to alter the default behaviour of an importer.
 
 = 0.15.17 =
