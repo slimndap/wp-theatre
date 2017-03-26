@@ -97,7 +97,7 @@ The page that you created now shows your upcoming events.
 
 1. Manage events in the WordPress admin.
 2. The event editor.
-3. Manage events in the WordPress admin.
+3. Select how your events appear on your website.
 4. Your upcoming events listed on your website.
 5. Event details.
 
@@ -240,6 +240,9 @@ Release Date: May 30th, 2015
 
 
 == Upgrade Notice ==
+= 0.15.21 =
+Tiny internal improvement to the events admin screen.
+
 = 0.15.20 =
 Added a filter to alter the default behaviour of an importer.
 
