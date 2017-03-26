@@ -266,12 +266,13 @@ if ( empty( $_REQUEST['s'] ) ) {
 	 *
 	 * @since	0.15
 	 * @since	0.15.2	Added a context for the productions.
+	 * @since	0.15.21	Items per page now uses WP_List_Table::get_items_per_page() from WordPress core.
 	 * @return 	void
 	 */
 	function prepare_items() {
 	    global $wp_theatre;
 
-	    $per_page = 20;
+	    $per_page = $this->get_items_per_page( 'edit_' . WPT_Production::post_type_name . '_per_page' );
 
 	    $columns = $this->get_columns();
 		$hidden = array();
