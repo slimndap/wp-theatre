@@ -19,6 +19,8 @@ class WPT_Cart {
 	 */
 	function init() {
 
+		session_name('theater_cart');
+
 		/**
 		 * Bail if no session has started yet to avoid unnecessary session_start().
 		 * See: https://github.com/slimndap/wp-theatre/issues/238
@@ -27,76 +29,17 @@ class WPT_Cart {
 		if ( !isset( $_COOKIE[ session_name() ] ) ) {
 			return;
 		}
-	
+		
 		// Start a new session.
 		$this->session_start();
         
         // Import cart contents from session.
-		if (isset($_SESSION['wpt_cart'])) {
-			$this->items = $_SESSION['wpt_cart']['items'];
-			$this->amount = $_SESSION['wpt_cart']['amount'];
+		if (isset($_SESSION['items'])) {
+			$this->items = $_SESSION['items'];
+			$this->amount = $_SESSION['amount'];
 		}
 	}
-	
-	/**
-	 * Saves the cart contents to the session.
-	 * 
-	 * @since	0.?
-	 *
-	 * @uses	WPT_Cart::session_start() to start a new session.
-	 * @return 	void
-	 */
-	function save() {
-
-		$this->session_start();
-
-		$_SESSION['wpt_cart'] = array(
-			'items' => $this->items,
-			'amount' => $this->amount
-		);	
 		
-	}
-	
-	
-	/**
-	 * Resets the cart by emptying the cart contents and destroying the session.
-	 * 
-	 * @since	0.?
-	 *
-	 * @return void
-	 */
-	function reset() {
-
-		$this->session_start();
-		
-		// Empty the cart contents.
-		$this->items = array();
-		$this->amount = 0;
-
-		// If it's desired to kill the session, also delete the session cookie.
-		// Note: This will destroy the session, and not just the session data!
-		if (ini_get("session.use_cookies")) {
-		    $params = session_get_cookie_params();
-		    setcookie(session_name(), '', time() - 42000,
-		        $params["path"], $params["domain"],
-		        $params["secure"], $params["httponly"]
-		    );
-		}
-		
-	}
-	
-	
-	/**
-	 * Checks if the cart is emtpy.
-	 * 
-	 * @since	0.?
-	 *
-	 * @return 	bool
-	 */
-	function is_empty() {		
-		return empty($this->items);
-	}
-	
 	/**
 	 * Adds a production item to the cart.
 	 * 
@@ -121,6 +64,33 @@ class WPT_Cart {
 			'production'=>$production
 		);
 		
+	}
+	
+	/**
+	 * Empties the cart.
+	 * 
+	 * @since	0.?
+	 * @since	0.15.22	Renamed from 'reset()'.
+	 *
+	 * @return void
+	 */
+	function empty() {
+
+		// Empty the cart contents.
+		$this->items = array();
+		$this->amount = 0;
+		
+	}
+	
+	/**
+	 * Checks if the cart is emtpy.
+	 * 
+	 * @since	0.?
+	 *
+	 * @return 	bool
+	 */
+	function is_empty() {		
+		return empty($this->items);
 	}
 	
 	/**
@@ -154,6 +124,32 @@ class WPT_Cart {
 	}
 	
 	/**
+	 * @deprecated	0.15.22.
+	 */
+	function reset() {
+		$this->empty();
+	}
+	
+	/**
+	 * Saves the cart contents to the session.
+	 * 
+	 * @since	0.?
+	 *
+	 * @uses	WPT_Cart::session_start() to start a new session.
+	 * @return 	void
+	 */
+	function save() {
+
+		$this->session_start();
+
+		$_SESSION = array(
+			'items' => $this->items,
+			'amount' => $this->amount
+		);
+				
+	}
+
+	/**
 	 * Starts a new session if no session has started yet.
 	 * 
 	 * @since	0.15.22
@@ -161,7 +157,6 @@ class WPT_Cart {
 	 */
 	function session_start() {
 		if ( PHP_SESSION_NONE === session_status() ) {
-			//session_name('Theater_Cart');
 	        session_start();				    
 	    }
 		
