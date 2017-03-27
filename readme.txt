@@ -157,6 +157,8 @@ This release focusses on a more streamlined experience when managing your events
 	* Fixed an ecoding problem in the upcoming event feeds (0.15.16).
 	* Fixed a sorting issue on archive/search pages with mixed post types (0.15.16).
 	* Fixed a timezone problem when using something like  `starttime|date('Y-m-d H:i:s')` inside a shortcode (0.15.18).
+	* Fixed performance issues with some websites that use full page caching plugins and services (0.15.22).
+
 
 	
 	
@@ -240,6 +242,10 @@ Release Date: May 30th, 2015
 
 
 == Upgrade Notice ==
+
+= 0.15.22 =
+Fixes performance issues with some websites that use full page caching plugins and services.
+
 = 0.15.21 =
 Tiny internal improvement to the events admin screen.
 
