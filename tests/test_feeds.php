@@ -41,7 +41,7 @@ class WPT_Test_Feeds extends WPT_UnitTestCase {
 
 		$xml = new DomDocument();
 		$xml->loadXML( $wp_theatre->feeds->get_upcoming_productions() );
-		echo $xml->saveXML();
+
 		$actual = substr_count($xml->saveXML(), '<item');
 		$expected = 1;
 		

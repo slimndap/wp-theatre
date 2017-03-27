@@ -92,12 +92,56 @@ class WPT_Productions_List_Table extends WP_List_Table {
 	 * Outputs extra controls to be displayed between bulk actions and pagination.
 	 *
 	 * @since	0.15.4
-	 * @param 	string	$which	 Location of table nav ('top' or 'bottom').
+	 * @since	0.15.17 		Added two filters to add extra controls.
+	 * @param 	string	$which	Location of table nav ('top' or 'bottom').
 	 */
 	function extra_tablenav( $which ) {
-		if ( isset( $_REQUEST['post_status'] ) && $_REQUEST['post_status'] === 'trash' ) {
-			submit_button( __( 'Empty Trash' ), 'apply', 'delete_all', false );
-		}
+		
+		?><div class="alignleft actions"><?php
+			
+	        if ( 'top' === $which && !is_singular() ) {
+		        
+	            ob_start();
+	 
+	            /**
+	             * Fires before the Filter button on the Productions list table.
+	             *
+	             * Syntax resembles 'restrict_manage_posts' filter in 'wp-admin/includes/class-wp-posts-list-table.php'.
+	             *
+	             * @since 0.15.17
+	             *
+	             * @param string $post_type The post type slug.
+	             * @param string $which     The location of the extra table nav markup:
+	             *                          'top' or 'bottom'.
+	             */
+	            do_action( 'restrict_manage_productions', $this->screen->post_type, $which );
+	 
+	            $output = ob_get_clean();
+	 
+	            if ( ! empty( $output ) ) {
+	                echo $output;
+	                submit_button( __( 'Filter' ), '', 'filter_action', false, array( 'id' => 'post-query-submit' ) );
+	            }
+	            
+	        }
+        
+        	if ( isset( $_REQUEST['post_status'] ) && $_REQUEST['post_status'] === 'trash' ) {
+				submit_button( __( 'Empty Trash' ), 'apply', 'delete_all', false );
+			}
+			
+		?></div><?php
+		
+        /**
+         * Fires immediately following the closing "actions" div in the tablenav for the productions
+         * list table.
+         *
+         * Syntax resembles 'manage_posts_extra_tablenav' in 'wp-admin/includes/class-wp-posts-list-table.php'.
+         *
+         * @since 0.15.17
+         *
+         * @param 	string 	$which 	The location of the extra table nav markup: 'top' or 'bottom'.
+         */
+        do_action( 'manage_productions_extra_tablenav', $which );		
 	}
 
 	/**
@@ -222,12 +266,13 @@ if ( empty( $_REQUEST['s'] ) ) {
 	 *
 	 * @since	0.15
 	 * @since	0.15.2	Added a context for the productions.
+	 * @since	0.15.21	Items per page now uses WP_List_Table::get_items_per_page() from WordPress core.
 	 * @return 	void
 	 */
 	function prepare_items() {
 	    global $wp_theatre;
 
-	    $per_page = 20;
+	    $per_page = $this->get_items_per_page( 'edit_' . WPT_Production::post_type_name . '_per_page' );
 
 	    $columns = $this->get_columns();
 		$hidden = array();
