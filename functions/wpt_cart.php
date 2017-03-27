@@ -68,13 +68,15 @@ class WPT_Cart {
 	
 	/**
 	 * Empties the cart.
+	 *
+	 * Using 'empty_cart' because you can't use 'empty' as a function name in PHP5.
 	 * 
 	 * @since	0.?
 	 * @since	0.15.22	Renamed from 'reset()'.
 	 *
 	 * @return void
 	 */
-	function empty() {
+	function empty_cart() {
 
 		// Empty the cart contents.
 		$this->items = array();
@@ -127,7 +129,7 @@ class WPT_Cart {
 	 * @deprecated	0.15.22.
 	 */
 	function reset() {
-		$this->empty();
+		$this->empty_cart();
 	}
 	
 	/**
