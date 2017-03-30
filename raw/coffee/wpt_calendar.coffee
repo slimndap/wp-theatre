@@ -2,14 +2,15 @@ class wpt_calendar
 
 	###
 	Manage the navigation of all WPT_Calendar blocks.
-	@since 0.8
+	@since 	0.8
+	@since	0.15.23	No longer sets the initial active month.
+					@see WPT_Calendar::html().
 	###
 
 	constructor: (@calendar) ->
 		@calendar = jQuery @calendar
 		
 		@calendar.addClass 'navigate'
-		@calendar.children().first().addClass 'active'
 		
 		jQuery(@calendar).find('tfoot a').click (e) =>
 			@.navigate e.currentTarget

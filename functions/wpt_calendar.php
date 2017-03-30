@@ -7,12 +7,71 @@
 	class WPT_Calendar {
 	
 		/**
+		 * Months for this calendar.
+		 * 
+		 * @access	private
+		 * @since	0.15.23
+		 */
+		private $months = false;
+	
+		/**
 		 * Add hooks to init the [wpt_calendar] shortcode and the Theater Calendar widget.
 		 */
 	
 		function __construct() {
 			add_shortcode('wpt_calendar', array($this,'shortcode'));
 			add_action( 'widgets_init', array($this,'widgets_init'));
+		}
+		
+		/**
+		 * Gets the active month, based on the current main query.
+		 * 
+		 * @since	0.15.23
+		 * @param	$filters		The filters used for the calendar.
+		 * @return 	string|bool		The active month or <false> if there are no months at all.
+		 */
+		function get_active_month( $filters ) {
+			
+			global $wp_query;
+				
+			if ( !empty( $wp_query->query_vars['wpt_month'] ) ) {
+				return $wp_query->query_vars['wpt_month'];
+			}
+				
+			if ( !empty( $wp_query->query_vars['wpt_day'] ) ) {
+				return substr( $wp_query->query_vars['wpt_day'], 0, 7 );
+			}
+			
+			$months = $this->get_months( $filters );
+			
+			if (empty($months)) {
+				return false;
+			}
+			
+			return $months[0];
+			
+		}
+		
+		/**
+		 * Get the months for this calendar.
+		 * 
+		 * @since	0.15.23
+		 * @param 	array	$filters	The filters used for the calendar.
+		 * @return	array				The months for this calendar.
+		 */
+		function get_months( $filters ) {
+			
+			global $wp_theatre;
+
+			$defaults = array(
+				'start' => 'now',
+			);
+			$filters = wp_parse_args( $filters, $defaults );
+
+			$months = $wp_theatre->events->get_months( $filters );				
+			$months = array_keys($months);			
+			return $months;
+			
 		}
 		
 		/**
@@ -34,8 +93,10 @@
 		 *					a multibyte language (eg. Russian).
 		 * 					Fixes #174.
 		 * @since	0.15.16	Added support for custom $filters.
+		 * @since	0.15.23	Sets the active month class.
 		 *
-		 * @return 	string 	The HTML for the calendar.
+		 * @param 	array	$filters	The filters used for the calendar.
+		 * @return 	string 				The HTML for the calendar.
 		 */
 		function html( $filters = array() ) {
 			
@@ -47,15 +108,7 @@
 		
 			global $wp_theatre;
 			
-			// Get all months from now to the month of the last event.
-			$default_month_filters = array(
-				'start' => 'now',
-			);
-			$month_filters = wp_parse_args( $filters, $default_month_filters );
-			
-			$months = $wp_theatre->events->get_months($month_filters);
-			$months = array_keys($months);			
-						
+			$months = $this->get_months( $filters );						
 			$start_of_week = get_option('start_of_week');
 	
 			$thead_html = '<thead><tr>';
@@ -230,7 +283,14 @@
 	
 				$month_html.= '</tbody>';
 				
-				$month_html = '<table class="wpt_month">'.$month_html.'</table>';
+				// Set the month classes.
+				$month_classes = array( 'wpt_month' );				
+				if ($this->is_active_month( $month, $filters )) {
+					// Add an 'active' class to the active month.
+					$month_classes[] = 'active';
+				}
+				
+				$month_html = '<table class="'.implode(' ', $month_classes).'">'.$month_html.'</table>';
 
 				/**
 				 * Filter the HTML output for the full month.
@@ -255,6 +315,20 @@
 			$html = apply_filters('wpt_calendar_html', $html);
 			
 			return $html;
+		}
+		
+		/**
+		 * Checks if a months is the active month.
+		 * 
+		 * @since	0.15.23
+		 * @param 	string	$month	The month.
+		 * @param	$filters		The filters used for the calendar.
+		 * @return 	bool
+		 */
+		function is_active_month( $month, $filters ) {
+			
+			return $month == $this->get_active_month( $filters );
+			
 		}
 		
 		/**
