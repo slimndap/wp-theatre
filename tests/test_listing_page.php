@@ -727,7 +727,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		$production = $this->factory->post->create($production_args);
 		$event = $this->factory->post->create($event_args);
 		add_post_meta($event, WPT_Production::post_type_name, $production);
-		add_post_meta($event, 'event_date', date('Y-m-d H:i:s', time() + (2 * MONTH_IN_SECONDS)));
+		add_post_meta($event, 'event_date', date('Y-m-d H:i:s', time() + (2 * 30* DAY_IN_SECONDS)));
 
 		// Go to listing page with filetr set to the last day (= in 2 months).
 		$days = $this->wp_theatre->events->get_days(array('upcoming' => true));
