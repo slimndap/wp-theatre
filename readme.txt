@@ -140,6 +140,7 @@ This release focusses on a more streamlined experience when managing your events
 	* Added the 'end_after' filter to production lists.
 	* You can now add extra filter controls to the events admin screen using the `restrict_manage_productions` and `manage_productions_extra_tablenav` filters (0.15.17).
 	* Added the `wpt/importer/get/value` filter to alter the default behaviour of an importer (0.15.20).
+	* The calendar widget now jumps to the active month if you show the widget on you events page (0.15.23).
 
 	    
 * Bugfix
@@ -242,6 +243,8 @@ Release Date: May 30th, 2015
 
 
 == Upgrade Notice ==
+= 0.15.23 =
+The calendar widget now jumps to the active month if you show the widget on you events page.
 
 = 0.15.22 =
 Fixes performance issues with some websites that use full page caching plugins and services.
