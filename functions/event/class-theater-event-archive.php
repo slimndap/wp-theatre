@@ -26,11 +26,6 @@ class Theater_Event_Archive {
 			add_filter( 'post_type_link', array( __CLASS__, 'set_event_date_permalink' ), 10, 2 );
 			add_filter( 'get_post_metadata', array( __CLASS__, 'set_event_date_post_thumbnail' ), 10, 4 );
 
-			add_filter( 'the_title', array( __CLASS__, 'add_title_actions' ), 10, 2 );
-			add_filter( 'the_content', array( __CLASS__, 'add_content_actions' ), 10, 2 );
-
-			add_action( 'theater/event/archive/content/before', array( __CLASS__, 'event_details' ) );
-
 			add_filter( 'get_the_archive_title', array( __CLASS__, 'set_archive_title' ), 10, 1 );
 			add_filter( 'get_the_archive_description', array( __CLASS__, 'set_archive_description' ), 10, 1 );
 
@@ -50,62 +45,6 @@ class Theater_Event_Archive {
 			$queried_object_id = $wp_query->queried_object_id;
 
 			return $event_archive_page->ID == $queried_object_id;
-	}
-
-	static function add_content_actions( $content ) {
-
-		if ( ! in_the_loop() ) {
-			return $content;
-		}
-
-		if ( ! is_post_type_archive( self::get_event_archive_post_type() ) ) {
-			return $content;
-		}
-
-		ob_start();
-
-		do_action( 'theater/event/archive/content/before', $content );
-
-		echo $content;
-
-		do_action( 'theater/event/archive/content/after', $content );
-
-		return ob_get_clean();
-	}
-
-	static function add_title_actions( $title, $post_id ) {
-
-		if ( ! in_the_loop() ) {
-			return $title;
-		}
-
-		if ( ! is_post_type_archive( self::get_event_archive_post_type() ) ) {
-			return $title;
-		}
-
-		ob_start();
-
-		do_action( 'theater/event/archive/title/before', $title, $post_id );
-
-		echo $title;
-
-		do_action( 'theater/event/archive/title/after', $title, $post_id );
-
-		return ob_get_clean();
-	}
-
-	static function event_details( $content ) {
-
-		if ( WPT_Event::post_type_name == self::get_event_archive_post_type() ) {
-			$event_date = new WPT_Event( get_the_id() );
-			$template = '{{remark}}{{datetime}}{{location}}{{tickets}}';
-			echo $event_date->html( $template );
-		} else {
-			$event = new WPT_Production( get_the_id() );
-			$template = '{{dates}}{{cities}}';
-			echo $event->html( $template );
-		}
-
 	}
 
 	static function get_event_archive_page() {
@@ -315,7 +254,7 @@ class Theater_Event_Archive {
 	}
 
 	static function set_is_post_type_archive( $query ) {
-			global $wp_theatre;
+		global $wp_theatre;
 
 		if ( ! $query->is_main_query() ) {
 			return;
