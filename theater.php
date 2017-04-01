@@ -5,7 +5,7 @@
 	Plugin URI: https://wp.theater/
 	Description: Turn your Wordpress website into a theater website.
 	Author: Jeroen Schmit
-	Version: 0.15.13.1
+	Version: 0.15.23
 	Author URI: http://slimndap.com/
 	Text Domain: theatre
 	Domain Path: /lang
@@ -28,7 +28,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	
-$wpt_version = '0.15.13.1';
+$wpt_version = '0.15.23';
 
 class WP_Theatre {
 	function __construct() {
@@ -74,6 +74,7 @@ class WP_Theatre {
 		
 		// Deprecated properties
 		$this->order = new WPT_Order();
+		Theater_Custom_CSS::init();
 		
 		
 		// Options
@@ -162,6 +163,7 @@ class WP_Theatre {
 		require_once(dirname(__FILE__) . '/integrations/jetpack-featured-content.php');
 		
 		require_once(dirname(__FILE__) . '/functions/deprecated/class-wpt-order.php');
+		require_once(dirname(__FILE__) . '/functions/deprecated/class-theater-custom-css.php');
 		
 	}
 	

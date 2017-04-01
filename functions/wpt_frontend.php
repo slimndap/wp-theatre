@@ -74,6 +74,13 @@ class WPT_Frontend {
 	}
 
 
+	/**
+	 * wp_head function.
+	 * 
+	 * @since	0.?
+	 * @since	0.15.16	Removed custom CSS.
+	 * @return 	void
+	 */
 	function wp_head() {
 		global $wp_theatre;
 		global $wpt_version;
@@ -81,13 +88,6 @@ class WPT_Frontend {
 		$html = array();
 
 		$html[] = '<meta name="generator" content="Theater '.$wpt_version.'" />';
-
-		if ( ! empty( $wp_theatre->wpt_style_options['custom_css'] ) ) {
-			$html[] .= '<!-- Custom Theater CSS -->';
-			$html[] .= '<style>';
-			$html[] .= $wp_theatre->wpt_style_options['custom_css'];
-			$html[] .= '</style>';
-		}
 
 		echo implode( "\n",$html )."\n";
 	}
@@ -338,7 +338,8 @@ class WPT_Frontend {
 	 * @since	0.10.9	Improved the unique key for transients.
 	 *					Fixes issue #97.
 	 * @since	0.14.7	Added $shortcode to shortcode_atts().
-	 * @since	0.15.10	Added 'ignored_stikcy_posts' to the shortcode atts.
+	 * @since	0.15.10	Added 'ignored_sticky_posts' to shortcode atts.
+	 * @since	0.15.16	Added 'start_before', 'start_after', 'end_before' and 'end_after' to shortcode atts.
 	 *
 	 * @param 	array 	$atts
 	 * @param 	string 	$content (default: null)
@@ -362,7 +363,11 @@ class WPT_Frontend {
 			'category__not_in' => false,
 			'tag' => false,
 			'start' => false,
+			'start_before' => false,
+			'start_after' => false,
 			'end' => false,
+			'end_after' => false,
+			'end_before' => false,
 			'groupby' => false,
 			'limit' => false,
 			'order' => 'asc',

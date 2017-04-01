@@ -1093,7 +1093,7 @@ class WPT_Test extends WP_UnitTestCase {
 			'return 4 * HOUR_IN_SECONDS;'
 		);
 		
-		add_filter('Theater/Helpers/Time/Next_Day_Start_Time_Offset', $func);
+		add_filter('theater/helpers/time/next_day_start_time_offset', $func);
 		
 		// Prepare an event that starts on 1 Jan 03:59 AM.
 		$production_args = array(
@@ -1126,7 +1126,7 @@ class WPT_Test extends WP_UnitTestCase {
 			'return 4 * HOUR_IN_SECONDS;'
 		);
 		
-		add_filter('Theater/Helpers/Time/Next_Day_Start_Time_Offset', $func);
+		add_filter('theater/helpers/time/next_day_start_time_offset', $func);
 		
 		// Prepare an event that starts on 1 Jan 03:59 AM.
 		$production_args = array(
@@ -1159,7 +1159,7 @@ class WPT_Test extends WP_UnitTestCase {
 			'return 4 * HOUR_IN_SECONDS;'
 		);
 		
-		add_filter('Theater/Helpers/Time/Next_Day_Start_Time_Offset', $func);
+		add_filter('theater/helpers/time/next_day_start_time_offset', $func);
 		
 		// Prepare an event that starts on 1 Jan 03:59 AM.
 		$production_args = array(
@@ -1193,7 +1193,7 @@ class WPT_Test extends WP_UnitTestCase {
 			'return 4 * HOUR_IN_SECONDS;'
 		);
 		
-		add_filter('Theater/Helpers/Time/Next_Day_Start_Time_Offset', $func);
+		add_filter('theater/helpers/time/next_day_start_time_offset', $func);
 		
 		// Prepare an event that starts on 1 Jan 03:59 AM.
 		$production_args = array(
@@ -1226,7 +1226,7 @@ class WPT_Test extends WP_UnitTestCase {
 			'return 4 * HOUR_IN_SECONDS;'
 		);
 		
-		add_filter('Theater/Helpers/Time/Next_Day_Start_Time_Offset', $func);
+		add_filter('theater/helpers/time/next_day_start_time_offset', $func);
 		
 		// Prepare an event that starts on 1 Jan 03:59 AM.
 		$production_args = array(
@@ -1259,7 +1259,7 @@ class WPT_Test extends WP_UnitTestCase {
 			'return 4 * HOUR_IN_SECONDS;'
 		);
 		
-		add_filter('Theater/Helpers/Time/Next_Day_Start_Time_Offset', $func);
+		add_filter('theater/helpers/time/next_day_start_time_offset', $func);
 		
 		// Prepare an event that starts on 1 Jan 03:59 AM.
 		$production_args = array(
@@ -1290,7 +1290,7 @@ class WPT_Test extends WP_UnitTestCase {
 			'return 4 * HOUR_IN_SECONDS;'
 		);
 		
-		add_filter('Theater/Helpers/Time/Next_Day_Start_Time_Offset', $func);
+		add_filter('theater/helpers/time/next_day_start_time_offset', $func);
 		
 		// Prepare an event that starts on 1 Jan 03:59 AM.
 		$production_args = array(
@@ -1323,7 +1323,7 @@ class WPT_Test extends WP_UnitTestCase {
 			'return 4 * HOUR_IN_SECONDS;'
 		);
 		
-		add_filter('Theater/Helpers/Time/Next_Day_Start_Time_Offset', $func);
+		add_filter('theater/helpers/time/next_day_start_time_offset', $func);
 		
 		// Prepare an event that starts on 1 Jan 03:59 AM.
 		$production_args = array(
@@ -1357,7 +1357,7 @@ class WPT_Test extends WP_UnitTestCase {
 			'return 4 * HOUR_IN_SECONDS;'
 		);
 		
-		add_filter('Theater/Helpers/Time/Next_Day_Start_Time_Offset', $func);
+		add_filter('theater/helpers/time/next_day_start_time_offset', $func);
 		
 		// Prepare an event that starts on 1 Jan 03:59 AM.
 		$production_args = array(
@@ -1383,6 +1383,46 @@ class WPT_Test extends WP_UnitTestCase {
 
 	}
 	
+	/**
+	 * Test 'start_before' attribute in 'wpt_productions' shortcode.
+	 * @since	0.15.16
+	 */
+	function test_shortcode_wpt_productions_start_before() {
+		$actual = substr_count( do_shortcode('[wpt_productions start_before="2 days - 1 hour"]'), '<div class="wp_theatre_prod">');
+		$expected = 4;  // All productions except 'production_with_upcoming_event'.
+		$this->assertEquals($expected, $actual);
+	}
+	
+	/**
+	 * Test 'start_after' attribute in 'wpt_productions' shortcode.
+	 * @since	0.15.16
+	 */
+	function test_shortcode_wpt_productions_start_after() {
+		$actual = substr_count( do_shortcode('[wpt_productions start_after="2 days - 1 minute"]'), '<div class="wp_theatre_prod">');
+		$expected = 3;  // All productions except 'production_with_upcoming_events' and 'production_with_historic_event_sticky'.
+		$this->assertEquals($expected, $actual);
+		
+	}
+	
+	/**
+	 * Test 'end_before' attribute in 'wpt_productions' shortcode.
+	 * @since	0.15.16
+	 */
+	function test_shortcode_wpt_productions_end_before() {
+		$actual = substr_count( do_shortcode('[wpt_productions end_before="2 days + 1 minute"]'), '<div class="wp_theatre_prod">');
+		$expected = 4;  // All productions except 'production_with_upcoming_events'.
+		$this->assertEquals($expected, $actual);		
+	}
+
+	/**
+	 * Test 'end_after' attribute in 'wpt_productions' shortcode.
+	 * @since	0.15.16
+	 */
+	function test_shortcode_wpt_productions_end_after() {
+		$actual = substr_count( do_shortcode('[wpt_productions end_after="2 days + 1 minute"]'), '<div class="wp_theatre_prod">');
+		$expected = 3;  // All productions except 'production_with_upcoming_event' and 'production_with_historic_event'.
+		$this->assertEquals($expected, $actual);				
+	}
 
 	
 }

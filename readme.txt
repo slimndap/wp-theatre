@@ -2,7 +2,7 @@
 Contributors: slimndap
 Tags: theatre, stage, venue, events, shows, concerts, tickets, ticketing, sports, performances, calendar, festival, workshops, theater, cinema
 Requires at least: 4.0
-Tested up to: 4.6
+Tested up to: 4.7
 Stable tag: 0.15
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -66,12 +66,12 @@ Theater for WordPress uses _productions_ to group your _events_. Each production
 
 Add your first event:
 
-1. Go to _Theater_ → _Productions_ → _Add new_.
-1. Enter a title and description for your production.
-1. Scroll down and click on _Add a new event_.
+1. Go to _Theater_ → _Events_ → _Add new_.
+1. Enter a title and description for your events.
+1. Scroll down and click on _Add a new date_.
 1. Enter a start time that is in the future.
-1. Enter the other details for your event.
-1. Click on _Save event_.
+1. Enter the other details for your date.
+1. Click on _Save date_.
 1. Add a featured image (if your theme supports it).
 1. Click on _Publish_.
 
@@ -97,7 +97,7 @@ The page that you created now shows your upcoming events.
 
 1. Manage events in the WordPress admin.
 2. The event editor.
-3. Manage events in the WordPress admin.
+3. Select how your events appear on your website.
 4. Your upcoming events listed on your website.
 5. Event details.
 
@@ -136,6 +136,12 @@ This release focusses on a more streamlined experience when managing your events
     * Events can now be filtered by tags (0.15.5).
 	* Activated events archive pages (0.15.10).
 	* You can now set until what time events should fall on the previous days using the `Theater/Helpers/Time/Next_Day_Start_Time_Offset` filter (0.15.11).
+	* You can now create event calendars with custom filters (0.15.16).
+	* Added the 'end_after' filter to production lists.
+	* You can now add extra filter controls to the events admin screen using the `restrict_manage_productions` and `manage_productions_extra_tablenav` filters (0.15.17).
+	* Added the `wpt/importer/get/value` filter to alter the default behaviour of an importer (0.15.20).
+	* The calendar widget now jumps to the active month if you show the widget on you events page (0.15.23).
+
 	    
 * Bugfix
     * The translation setting for the header above events on the productions page was also being used in other places (eg. the admin menu) (0.15.2). Thank you [Bob Morris](https://wordpress.org/support/profile/bob-morris)!
@@ -146,6 +152,20 @@ This release focusses on a more streamlined experience when managing your events
 	* Search results no longer get lost when navigating on the Events page in the WordPress admin (0.15.9).
 	* Fixed an issue with the 'end' filter for events (0.15.10).
 	* Fixed the sort order of events on the admin screen after you changed the status of an event (0.15.13). Thank you [Menno Luitjes](https://www.linkedin.com/in/mennoluitjes)!
+	* Fixed a problem with the changelog of extensions if you're running multiple extensions (0.15.14).
+	* Fixed a problem with the event editor in WordPress 4.7 (0.15.15).
+	* Fixed the day-filter in event lists (0.15.16).
+	* Fixed an ecoding problem in the upcoming event feeds (0.15.16).
+	* Fixed a sorting issue on archive/search pages with mixed post types (0.15.16).
+	* Fixed a timezone problem when using something like  `starttime|date('Y-m-d H:i:s')` inside a shortcode (0.15.18).
+	* Fixed performance issues with some websites that use full page caching plugins and services (0.15.22).
+
+
+	
+	
+* Deprecations
+	* Deprecated the custom CSS settings in favour of the custom CSS setting that came with WordPress 4.7 (0.15.16).
+	
     
 = 0.14 =
 
@@ -223,6 +243,26 @@ Release Date: May 30th, 2015
 
 
 == Upgrade Notice ==
+= 0.15.23 =
+The calendar widget now jumps to the active month if you show the widget on you events page.
+
+= 0.15.22 =
+Fixes performance issues with some websites that use full page caching plugins and services.
+
+= 0.15.21 =
+Tiny internal improvement to the events admin screen.
+
+= 0.15.20 =
+Added a filter to alter the default behaviour of an importer.
+
+= 0.15.17 =
+Added two WordPress filters to add extra filter controls to the events admin screen.
+
+= 0.15.15 =
+Fixes several compatibility issues with WordPress 4.7.
+
+= 0.15.14 =
+Fixes a problem with the changelog of extensions if you're running multiple extensions.
 
 = 0.15.13 =
 Fixes a problem with the sort order of events on the admin screen.

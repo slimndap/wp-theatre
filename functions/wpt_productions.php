@@ -227,6 +227,7 @@ class WPT_Productions extends WPT_Listing {
 	 *
 	 * @since 	0.13
 	 * @since	0.15.11	Added support for next day start time offset.
+	 * @since	0.15.16	Changed 'start_after' to 'end_after'.
 	 *
 	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
 	 * @uses 	WPT_Productions::get_html_grouped();
@@ -243,10 +244,10 @@ class WPT_Productions extends WPT_Listing {
 		 * Except when the active `start`-filter is set to a later date.
 		 */
 		if (
-			empty( $args['start_after'] ) ||
-			(strtotime( $args['start_after'] ) < strtotime( $day ))
+			empty( $args['end_after'] ) ||
+			(strtotime( $args['end_after'] ) < strtotime( $day ))
 		) {
-			$args['start_after'] = $day.' +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
+			$args['end_after'] = $day.' +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
 
 		/*
@@ -271,6 +272,7 @@ class WPT_Productions extends WPT_Listing {
 	 *
 	 * @since 	0.13
 	 * @since	0.15.11	Added support for next day start time offset.
+	 * @since	0.15.16	Changed 'start_after' to 'end_after'.
 	 *
 	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
 	 * @uses	WPT_Productions::get_html_grouped();
@@ -287,10 +289,10 @@ class WPT_Productions extends WPT_Listing {
 		 * Except when the active `start`-filter is set to a later date.
 		 */
 		if (
-			empty( $args['start_after'] ) ||
-			(strtotime( $args['start_after'] ) < strtotime( $month ))
+			empty( $args['end_after'] ) ||
+			(strtotime( $args['end_after'] ) < strtotime( $month ))
 		) {
-			$args['start_after'] = $month.' +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
+			$args['end_after'] = $month.' +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
 
 		/*
@@ -315,6 +317,7 @@ class WPT_Productions extends WPT_Listing {
 	 *
 	 * @since 	0.13
 	 * @since	0.15.11	Added support for next day start time offset.
+	 * @since	0.15.16	Changed 'start_after' to 'end_after'.
 	 *
 	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
 	 * @uses	WPT_Productions::get_html_grouped();
@@ -331,10 +334,10 @@ class WPT_Productions extends WPT_Listing {
 		 * Except when the active `start`-filter is set to a later date.
 		 */
 		if (
-			empty( $args['start_after'] ) ||
-			(strtotime( $args['start_after'] ) < strtotime( $year.'-01-01' ))
+			empty( $args['end_after'] ) ||
+			(strtotime( $args['end_after'] ) < strtotime( $year.'-01-01' ))
 		) {
-			$args['start_after'] = $year.'-01-01 +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
+			$args['end_after'] = $year.'-01-01 +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
 
 		/*
@@ -433,6 +436,7 @@ class WPT_Productions extends WPT_Listing {
 	 * @since 	0.10
 	 * @since	0.13	Added support for days, months and years.
 	 * @since	0.14.7	Added $args to $production->html().
+	 * @since	0.15.14	Added $args to all header filters.
 	 *
 	 * @see WPT_Production::html();
 	 * @see WPT_Productions::get_html_for_season();
@@ -461,7 +465,18 @@ class WPT_Productions extends WPT_Listing {
 				foreach ( $days as $day => $name ) {
 					if ( $day_html = $this->get_html_for_day( $day, $args ) ) {
 						$html .= '<h3 class="wpt_listing_group day">';
-						$html .= apply_filters( 'wpt_listing_group_day',date_i18n( 'l d F',strtotime( $day ) ),$day );
+												
+						/**
+						 * Filter the day header in a productions list.
+						 * 
+						 * @since 	0.13
+						 * @since	0.15.14	Added the $args param.
+						 * @param	string	$header	The header.
+						 * @param	string	$day	The day.
+						 * @param	array	$args	The arguments for the HTML of this list.
+						 */
+						$html .= apply_filters( 'wpt_listing_group_day',date_i18n( 'l d F',strtotime( $day ) ), $day, $args );
+						
 						$html .= '</h3>';
 						$html .= $day_html;
 					}
@@ -472,7 +487,18 @@ class WPT_Productions extends WPT_Listing {
 				foreach ( $months as $month => $name ) {
 					if ( $month_html = $this->get_html_for_month( $month, $args ) ) {
 						$html .= '<h3 class="wpt_listing_group month">';
-						$html .= apply_filters( 'wpt_listing_group_month',date_i18n( 'F',strtotime( $month ) ),$month );
+
+						/**
+						 * Filter the month header in a productions list.
+						 * 
+						 * @since 	0.13
+						 * @since	0.15.14	Added the $args param.
+						 * @param	string	$header	The header.
+						 * @param	string	$month	The month.
+						 * @param	array	$args	The arguments for the HTML of this list.
+						 */
+						$html .= apply_filters( 'wpt_listing_group_month',date_i18n( 'F',strtotime( $month ) ), $month, $args );
+
 						$html .= '</h3>';
 						$html .= $month_html;
 					}
@@ -482,8 +508,18 @@ class WPT_Productions extends WPT_Listing {
 				$years = $this->get_years( $args );
 				foreach ( $years as $year => $name ) {
 					if ( $year_html = $this->get_html_for_year( $year, $args ) ) {
+						
+						/**
+						 * Filter the year header in a productions list.
+						 * 
+						 * @since 	0.13
+						 * @since	0.15.14	Added the $args param.
+						 * @param	string	$header	The header.
+						 * @param	int		$year	The year.
+						 * @param	array	$args	The arguments for the HTML of this list.
+						 */						
 						$html .= '<h3 class="wpt_listing_group year">';
-						$html .= apply_filters( 'wpt_listing_group_year',date_i18n( 'Y',strtotime( $year.'-01-01' ) ),$year );
+						$html .= apply_filters( 'wpt_listing_group_year',date_i18n( 'Y',strtotime( $year.'-01-01' ) ), $year, $args );
 						$html .= '</h3>';
 						$html .= $year_html;
 					}
@@ -494,7 +530,18 @@ class WPT_Productions extends WPT_Listing {
 				foreach ( $seasons as $season_id => $season_title ) {
 					if ( $season_html = $this->get_html_for_season( $season_id, $args ) ) {
 						$html .= '<h3 class="wpt_listing_group season">';
-						$html .= apply_filters( 'wpt_listing_group_season',$season_title,$season_id );
+
+						/**
+						 * Filter the season header in a productions list.
+						 * 
+						 * @since 	0.13
+						 * @since	0.15.14	Added the $args param.
+						 * @param	string	$season_title	The header.
+						 * @param	string	$season_id		The season ID.
+						 * @param	array	$args			The arguments for the HTML of this list.
+						 */
+						$html .= apply_filters( 'wpt_listing_group_season', $season_title, $season_id, $args );
+
 						$html .= '</h3>';
 						$html .= $season_html;
 					}
@@ -505,7 +552,17 @@ class WPT_Productions extends WPT_Listing {
 				foreach ( $categories as $cat_id => $name ) {
 					if ( $cat_html = $this->get_html_for_category( $cat_id, $args ) ) {
 						$html .= '<h3 class="wpt_listing_group category">';
-						$html .= apply_filters( 'wpt_listing_group_category',$name,$cat_id );
+						
+						/**
+						 * Filter the category header in a productions list.
+						 * 
+						 * @since 	0.13
+						 * @since	0.15.14	Added the $args param.
+						 * @param	string	$name	The header.
+						 * @param	string	$cat_id	The category ID.
+						 * @param	array	$args	The arguments for the HTML of this list.
+						 */						
+						$html .= apply_filters( 'wpt_listing_group_category',$name, $cat_id, $args );
 						$html .= '</h3>';
 						$html .= $cat_html;
 					}
@@ -733,24 +790,41 @@ class WPT_Productions extends WPT_Listing {
 	}
 
 	/**
-	 * Gets all productions between 'start' and 'end'.
+	 * Gets all productions between 'start' and 'end' dates.
 	 *
 	 * @access 	private
 	 * @since	0.13
-	 * @param 	string 	$start	The start time. Can be anything that strtotime understands.
-	 * @param 	string 	$end	The end time. Can be anything that strtotime understands.
-	 * @return 	array			The productions.
+	 * @since	0.15.16	Added the $end_after argument.
+	 * 					Changes behaviour of $start_after argument.
+	 * @param 	string 	$start_after	Select productions that only have events that start after $start_after.
+	 * @param 	string 	$start_before	Select productions that have events that start before $start_before.
+	 * @param 	string 	$end_after		Select productions that have events that start after $end_after.
+	 * @param 	string 	$end_before		Select productions that only have event that start before $end_before.
+	 * @return 	array					The productions.
 	 */
-	private function get_productions_by_date( $start_after = false, $start_before = false, $end_before = false ) {
+	private function get_productions_by_date( $start_after = false, $start_before = false, $end_after = false, $end_before = false ) {
 		global $wp_theatre;
 		$productions = array();
-		if ( $start_after || $start_before || $end_before ) {
+
+		if ( $start_after || $start_before || $end_after || $end_before ) {
 			$events_args = array(
-				'start' => $start_after,
+				'start' => $end_after,
 				'end' => $start_before,
 			);
 			$events = $wp_theatre->events->get( $events_args );
 
+			// Filter out productions that have events that start before $start_after.
+			$productions_before_start = array();
+			if ($start_after) {
+				foreach ( $events as $event ) {
+					$end_datetime = strtotime( $start_after, current_time( 'timestamp' ) ) - get_option( 'gmt_offset' ) * 3600;
+					if ( $event->datetime() < $end_datetime) {	
+						$productions_before_start[] = $event->production()->ID;
+					}
+				}				
+			}
+
+			// Filter out productions that have events that start after $end_before.
 			$productions_after_end = array();
 			if ($end_before) {
 				foreach ( $events as $event ) {
@@ -761,9 +835,11 @@ class WPT_Productions extends WPT_Listing {
 				}				
 			}
 
+			$productions_excluded = array_merge( $productions_before_start, $productions_after_end );
+
 			foreach ( $events as $event ) {
 				$production_id = $event->production()->ID;
-				if (!in_array($production_id, $productions_after_end)) {
+				if (!in_array($production_id, $productions_excluded)) {
 					$productions[] = $production_id;				
 				}
 			}
@@ -807,6 +883,7 @@ class WPT_Productions extends WPT_Listing {
 	 * @since	0.15	Added support for 's' (keyword search).
 	 * @since	0.15.10	Introduced new 'start_before', 'start_after' and 'end_before' filters.
 	 *					Deprecated the 'start' and 'end' filters.
+	 * @since	0.15.16	Added the 'end_after' filter.
 	 *
 	 * @param array $args {
 	 *		string $order. 			See WP_Query.
@@ -838,6 +915,7 @@ class WPT_Productions extends WPT_Listing {
 			'category__and' => false,
 			'category__in' => false,
 			'category__not_in' => false,
+			'end_after' => false,
 			'end_before' => false,
 			'tag' => false,
 			'season' => false,
@@ -910,8 +988,8 @@ class WPT_Productions extends WPT_Listing {
 		}
 
 		// Rewrite deprecated filters to proper filters.
-		if ($filters['start'] && ! $filters['start_after']) {
-			$filters['start_after'] = $filters['start'];
+		if ($filters['start'] && ! $filters['end_after']) {
+			$filters['end_after'] = $filters['start'];
 		}
 
 		if ($filters['end'] && ! $filters['end_before']) {
@@ -920,10 +998,10 @@ class WPT_Productions extends WPT_Listing {
 
 		if (
 			$filters['upcoming'] &&
-			! $filters['start_after'] &&
+			! $filters['end_after'] &&
 			! $filters['end_before']
 		) {
-			$filters['start_after'] = 'now';
+			$filters['end_after'] = 'now';
 		}
 
 		$filters['start'] = false;
@@ -944,8 +1022,13 @@ class WPT_Productions extends WPT_Listing {
 		 * If this results in an empty list of production IDs then further execution is
 		 * halted and an empty array is returned, because there are no matching productions.
 		 */
-		if ( $filters['start_after'] || $filters['end_before'] ) {
-			$productions_by_date = $this->get_productions_by_date( $filters['start_after'], $filters['start_before'],$filters['end_before'] );
+		if ( $filters['start_after'] || $filters['start_before'] || $filters['end_after'] || $filters['end_before'] ) {
+			$productions_by_date = $this->get_productions_by_date( 
+				$filters['start_after'], 
+				$filters['start_before'], 
+				$filters['end_after'], 
+				$filters['end_before'] 
+			);
 			if ( empty( $args['post__in'] ) ) {
 				$args['post__in'] = $productions_by_date;
 			} else {
@@ -963,12 +1046,14 @@ class WPT_Productions extends WPT_Listing {
 		/**
 		 * Filter the $args before doing get_posts().
 		 *
-		 * @since 0.9.2
+		 * @since 	0.9.2
+		 * @since	0.15.14	Added $filters to the params.
 		 *
-		 * @param array $args The arguments to use in get_posts to retrieve productions.
+		 * @param 	array 	$args 		The arguments to use in get_posts to retrieve productions.
+		 * @param	array	$filters	The filters for this list.
 		 */
-		$args = apply_filters( 'wpt_productions_load_args',$args );
-		$args = apply_filters( 'wpt_productions_get_args',$args );
+		$args = apply_filters( 'wpt_productions_load_args', $args, $filters );
+		$args = apply_filters( 'wpt_productions_get_args', $args, $filters );
 
 		$posts = array();
 

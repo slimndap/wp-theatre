@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Test the listings page (and calendar).
+ *
+ * @group 	listing_page
+ * @since	0.?
+ */
 class WPT_Test_Listing_Page extends WP_UnitTestCase {
 
 	function setUp() {
@@ -658,6 +664,92 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		$this->assertEquals(4, substr_count($html, '<td><a'), $html);		
 	}
 	
+	function test_shortcode_wpt_calendar_default_active_month() {
+		$actual = do_shortcode('[wpt_calendar]');
+		$expected = '<div class="wpt_calendar"><table class="wpt_month active">';
+		$this->assertContains($expected, $actual);
+
+	}
+
+	function test_shortcode_wpt_calendar_active_month_when_filtered_by_month() {
+	
+		$this->options['listing_page_type'] = WPT_Event::post_type_name;
+		update_option('wpt_listing_page', $this->options);
+
+		// create production with event in two months
+		$production_args = array(
+			'post_type'=>WPT_Production::post_type_name
+		);
+		
+		$event_args = array(
+			'post_type'=>WPT_Event::post_type_name
+		);
+		$production = $this->factory->post->create($production_args);
+		$event = $this->factory->post->create($event_args);
+		add_post_meta($event, WPT_Production::post_type_name, $production);
+		add_post_meta($event, 'event_date', date('Y-m-d H:i:s', time() + (2 * 30* DAY_IN_SECONDS)));
+
+		// Go to listing page with filetr set to the last day (= in 2 months).
+		$months = $this->wp_theatre->events->get_months(array('upcoming' => true));
+		$months = array_keys($months);
+		$url = add_query_arg(
+			'wpt_month',
+			$months[ count($months) - 1],
+			get_permalink( $this->wp_theatre->listing_page->page() )
+		);		
+		$this->go_to($url);
+
+		$actual = do_shortcode('[wpt_calendar]');
+
+		// Check if first month is no active.
+		$expected = '<div class="wpt_calendar"><table class="wpt_month">';
+		$this->assertContains($expected, $actual);
+		
+		// Check if another month is active.
+		$expected = '<table class="wpt_month active">';
+		$this->assertContains($expected, $actual);
+		
+	}
+	
+	function test_shortcode_wpt_calendar_active_month_when_filtered_by_day() {
+	
+		$this->options['listing_page_type'] = WPT_Event::post_type_name;
+		update_option('wpt_listing_page', $this->options);
+
+		// create production with event in two months
+		$production_args = array(
+			'post_type'=>WPT_Production::post_type_name
+		);
+		
+		$event_args = array(
+			'post_type'=>WPT_Event::post_type_name
+		);
+		$production = $this->factory->post->create($production_args);
+		$event = $this->factory->post->create($event_args);
+		add_post_meta($event, WPT_Production::post_type_name, $production);
+		add_post_meta($event, 'event_date', date('Y-m-d H:i:s', time() + (2 * 30* DAY_IN_SECONDS)));
+
+		// Go to listing page with filetr set to the last day (= in 2 months).
+		$days = $this->wp_theatre->events->get_days(array('upcoming' => true));
+		$days = array_keys($days);
+		$url = add_query_arg(
+			'wpt_day',
+			$days[ count($days) - 1],
+			get_permalink( $this->wp_theatre->listing_page->page() )
+		);		
+		$this->go_to($url);
+
+		$actual = do_shortcode('[wpt_calendar]');
+
+		// Check if first month is no active.
+		$expected = '<div class="wpt_calendar"><table class="wpt_month">';
+		$this->assertContains($expected, $actual);
+		
+		// Check if another month is active.
+		$expected = '<table class="wpt_month active">';
+		$this->assertContains($expected, $actual);
+		
+	}
 	/* 
 	 * Test backwards compatibility
 	 */

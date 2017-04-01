@@ -99,7 +99,7 @@
 		        
 		        add_settings_section(
 		            'wpt_listing_production_page', // ID
-		            __('Events on production pages','theatre'), // Title
+		            __('Dates on event pages','theatre'), // Title
 		            '', // Callback
 		            'wpt_listing_page' // Page
 		        );  

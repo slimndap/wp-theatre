@@ -49,6 +49,9 @@ class Theater_Event_Order {
 	 * @since	0.15.13	Renamed to `calculate_event_order_index`.
 	 *					Events with only past event dates now use the last event for the
 	 *					`_wpt_order` value.
+	 * @since	0.15.15	Explicitly set post_status when retrieving event dates.
+	 *					Fixes a problem with WP 4.7+.
+	 * 					WP was no longer returning the proper event dates when post_status was not set.
 	 * @param 	int		$event_id
 	 * @return	int					The order index for an event.
 	 */
@@ -56,20 +59,43 @@ class Theater_Event_Order {
 		global $wp_theatre;
 
 		$event = new WPT_Production( $event_id );
-		$event_dates = $wp_theatre->events->get( array( 'start' => 'now', 'production' => $event_id ) );
+		$event_dates = $wp_theatre->events->get(
+			array(
+				'start' => 'now',
+				'production' => $event_id,
+				'status' => get_post_status( $event_id ),
+			)
+		);
 
 		// Use the last event if no upcoming events are found.
 		if ( empty( $event_dates ) ) {
-			$event_dates = $wp_theatre->events->get( array( 'production' => $event_id ) );
+			$event_dates = $wp_theatre->events->get(
+				array(
+					'production' => $event_id,
+					'status' => get_post_status( $event_id ),
+				)
+			);
 			$event_dates = array_reverse( $event_dates );
 		}
 
 		// Bail if event doesn't have any event dates at all.
 		if ( empty( $event_dates ) ) {
-			return -1;
+			$order_index = -1;
+		} else {
+			$order_index = $event_dates[0]->datetime();
 		}
 
-		return $event_dates[0]->datetime();
+		/**
+		 * Filters the calculated order index of an event.
+		 *
+		 * @since	0.15.14
+		 * @param	int	$order_index	The current calculated order index.
+		 * @param	WPT_Production		The event.
+		 * @param	WPT_Event[]			The event dates of the event.
+		 */
+		$order_index = apply_filters('theater/event/order/index/calculate', $order_index, $event, $event_dates);
+
+		return $order_index;
 	}
 
 	/**
@@ -93,12 +119,13 @@ class Theater_Event_Order {
 	 * Gets the current event order index of an event.
 	 *
 	 * @since	0.15.13
+	 * @since	0.15.15			Use THEATER_ORDER_INDEX_KEY for meta key.
 	 * @param	int	$event_id
 	 * @return	int				The event order index of an event
 	 */
 	static function get_event_order_index( $event_id ) {
 
-		return get_post_meta( $event_id, '_wpt_order', true );
+		return get_post_meta( $event_id, THEATER_ORDER_INDEX_KEY, true );
 
 	}
 
@@ -120,6 +147,7 @@ class Theater_Event_Order {
 	 *					Fixes #117.
 	 * @since	0.15.13	Moved the calculation of order indexes to seperate methods.
 	 *					No longer adds order indexes to non-event post types.
+	 * @since	0.15.15	Use THEATER_ORDER_INDEX_KEY for meta key.
 	 *
 	 * @uses	Theater_Event_Order::get_event_post_types() to get the post types for events and event dates.
 	 * @uses	Theater_Event_Order::calculate_event_order_index() to calculate the order index of events.
@@ -137,11 +165,11 @@ class Theater_Event_Order {
 		}
 
 		if ( WPT_Production::post_type_name == $post_type ) {
-			update_post_meta( $post_id, '_wpt_order', self::calculate_event_order_index( $post_id ) );
+			update_post_meta( $post_id, THEATER_ORDER_INDEX_KEY, self::calculate_event_order_index( $post_id ) );
 		}
 
 		if ( WPT_Event::post_type_name == $post_type ) {
-			update_post_meta( $post_id, '_wpt_order', self::calculate_event_date_order_index( $post_id ) );
+			update_post_meta( $post_id, THEATER_ORDER_INDEX_KEY, self::calculate_event_date_order_index( $post_id ) );
 		}
 
 	}
@@ -151,6 +179,9 @@ class Theater_Event_Order {
 	 *
 	 * @since	0.6.2
 	 * @since	0.15.13	No longer sort queries that only query non-event post types.
+	 * @since	0.15.15	Use THEATER_ORDER_INDEX_KEY for meta key.
+	 * @since	0.15.16	No longer sort queries that also query non-event post types.
+	 *
 	 * @uses	Theater_Event_Order::get_event_post_types() to get the post types for events and event dates.
 	 *
 	 * @param 	WP_Query	$query
@@ -171,7 +202,15 @@ class Theater_Event_Order {
 			return;
 		}
 
-		$query->set( 'meta_key','_wpt_order' );
+		$other_post_types_in_query = array_diff( $post_types, self::get_event_post_types() );
+
+		if ( ! empty( $other_post_types_in_query ) ) {
+			return;
+		}
+
+		// This query is for event post types and event post types only, sort query
+
+		$query->set( 'meta_key',THEATER_ORDER_INDEX_KEY );
 		$query->set( 'orderby','meta_value' );
 	}
 

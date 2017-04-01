@@ -223,6 +223,15 @@ class WPT_Event {
 		return $html;
 	}
 
+	/**
+	 * Gets the duration of an event.
+	 * 
+	 * @since	0.?
+	 * @since	0.15.16		Fixed call to apply_template_filters(). '$this->' was missing.
+	 * 						See: https://github.com/slimndap/wp-theatre/pull/231
+	 * @param 	array $args (default: array())
+	 * @return 	string
+	 */
 	function duration( $args = array() ) {
 		global $wp_theatre;
 
@@ -249,7 +258,7 @@ class WPT_Event {
 		if ( $args['html'] ) {
 			$html = '';
 			$html .= '<div class="'.self::post_type_name.'_duration">';
-			$html .= apply_template_filters( $this->duration, $args['filters'] );
+			$html .= $this->apply_template_filters( $this->duration, $args['filters'] );
 			$html .= '</div>';
 			return $html;
 		} else {
@@ -1317,6 +1326,10 @@ class WPT_Event {
 	 * Gets the HTML for the event starttime.
 	 *
 	 * @since	0.12
+	 * @since	0.15.18	No longer compensates for timezones when applying the 'date' filter,
+	 *					because this already handled by the date filter by itself.
+	 *					Fixes https://github.com/slimndap/wp-theatre/issues/219.
+	 *
 	 * @param 	array 	$filters	The template filters to apply.
 	 * @return 	sring				The HTML for the event starttime.
 	 */
@@ -1328,7 +1341,7 @@ class WPT_Event {
 		$starttime_html = $this->starttime();
 		foreach ( $filters as $filter ) {
 			if ( 'date' == $filter->name ) {
-				$starttime_html = $filter->apply_to( $this->datetime() + get_option( 'gmt_offset' ) * 3600, $this );
+				$starttime_html = $filter->apply_to( $this->datetime(), $this );
 			} else {
 				$starttime_html = $filter->apply_to( $starttime_html, $this );
 			}
