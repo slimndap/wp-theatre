@@ -164,6 +164,9 @@ class Theater_Event_Order {
 			return;
 		}
 
+		remove_action( 'added_post_meta', array( __CLASS__, 'update_order_index_when_event_date_is_updated' ), 20 ,4 );
+		remove_action( 'updated_post_meta', array( __CLASS__, 'update_order_index_when_event_date_is_updated' ), 20 ,4 );
+
 		if ( WPT_Production::post_type_name == $post_type ) {
 			update_post_meta( $post_id, THEATER_ORDER_INDEX_KEY, self::calculate_event_order_index( $post_id ) );
 		}
@@ -171,6 +174,9 @@ class Theater_Event_Order {
 		if ( WPT_Event::post_type_name == $post_type ) {
 			update_post_meta( $post_id, THEATER_ORDER_INDEX_KEY, self::calculate_event_date_order_index( $post_id ) );
 		}
+
+		add_action( 'added_post_meta', array( __CLASS__, 'update_order_index_when_event_date_is_updated' ), 20 ,4 );
+		add_action( 'updated_post_meta', array( __CLASS__, 'update_order_index_when_event_date_is_updated' ), 20 ,4 );
 
 	}
 
