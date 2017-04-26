@@ -104,8 +104,6 @@ class WPT_Event {
 	 * @return string.
 	 */
 	function custom( $field, $args = array(), $fallback_to_production = true ) {
-		global $wp_theatre;
-
 		$defaults = array(
 			'html' => false,
 			'filters' => array(),
@@ -113,28 +111,28 @@ class WPT_Event {
 		$args = wp_parse_args( $args, $defaults );
 
 		if ( ! isset( $this->{$field} ) ) {
-			$custom_value = get_post_meta( $this->ID, $field, true );
-	        if ( empty($custom_value) && $production = $this->production() ) {
-	            $custom_value = $production->custom( $field );
-	        }
-
 			$this->{$field} = apply_filters(
 				'wpt_event_'.$field,
-				$custom_value,
+				get_post_meta( $this->ID, $field, true ),
 				$field,
 				$this
 			);
 		}
 
+		$value = $this->{$field};
+		if ( empty($value) && $fallback_to_production && $production = $this->production() ) {
+			$value = $production->custom( $field );
+		}
+
 		if ( $args['html'] ) {
 			$html = '';
 			$html .= '<div class="'.self::post_type_name.'_'.$field.'">';
-			$html .= $this->apply_template_filters( $this->{$field}, $args['filters'] );
+			$html .= $this->apply_template_filters( $value, $args['filters'] );
 			$html .= '</div>';
 
 			return apply_filters( 'wpt_event_'.$field.'_html', $html, $field, $this );
 		} else {
-			return $this->{$field};
+			return $value;
 		}
 	}
 
