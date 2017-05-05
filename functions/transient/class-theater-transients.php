@@ -30,6 +30,7 @@ class Theater_Transients {
 		// Disable transient resets during imports.
 		add_action( 'wpt/importer/execute/before', array( __CLASS__, 'disable_reset_hooks' ) );
 		add_action( 'wpt/importer/execute/after', array( __CLASS__, 'enable_reset_hooks' ) );
+		add_action( 'wpt/importer/execute/after', array( __CLASS__, 'reset' ) );
 	}
 
 	/**

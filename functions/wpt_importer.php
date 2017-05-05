@@ -572,7 +572,7 @@
 				$this->set_event_prices($event->ID, $args['prices']);
 			}
 
-			$this->marked_events = array_diff( $this->marked_events, array( $event->ID ) );
+			$this->set('marked_events', array_diff( $this->get('marked_events'), array( $event->ID ) ) );
 
 			delete_post_meta($event->ID, $this->get('marker'));
 
@@ -787,12 +787,7 @@
 			
 			$events = get_posts($args);
 
-			$this->marked_events = wp_list_pluck( $events, 'ID');
-			return;
-			
-			foreach($events as $event) {
-				add_post_meta($event->ID, $this->get('marker'), 1, true);
-			}			
+			$this->set('marked_events', wp_list_pluck( $events, 'ID') );
 		}
 		
 		/**
@@ -830,11 +825,7 @@
 			
 			$events = get_posts($args);
 			
-			$this->marked_events = wp_list_pluck( $events, 'ID');
-			return;
-			foreach($events as $event) {
-				add_post_meta($event->ID, $this->get('marker'), 1, true);
-			}
+			$this->set('marked_events', wp_list_pluck( $events, 'ID') );
 			
 		}
 		
@@ -890,7 +881,7 @@
 		 * @return void
 		 */
 		private function remove_marked_events() {
-			foreach($this->marked_events as $event_id) {
+			foreach($this->get('marked_events') as $event_id) {
 				wp_delete_post($event_id, true);
 			}
 		}

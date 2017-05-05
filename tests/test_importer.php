@@ -513,19 +513,20 @@ class WPT_Test_Importer extends WP_UnitTestCase {
 		
 	}
 	
-	function test_transient_resets_are_off_during_import() {
-		
-	}
-	
 	function test_transients_are_reset_after_import() {
-		$actual = do_shortcode('[wpt_events]');
 		
 		$importer = new WPT_Demo_Importer();
-
 		$importer->execute();
 		$this->publish_all();
 
-		$expected = do_shortcode('[wpt_events]');
+		$actual = do_shortcode('[wpt_events]');
+
+		$importer->feed = array(
+			array( 'tomorrow', 'tomorrow + 1 day' ),
+			array( 'next year' ),
+		);
+		$importer->execute();
+
 		$expected = do_shortcode('[wpt_events]');
 		
 		$this->assertNotEquals($expected, $actual);		
