@@ -12,6 +12,8 @@
 	 */
 	class WPT_Importer {
 		
+		private $marked_events = array();
+		
 		/**
 		 * Inits the importer.
 		 * 
@@ -270,7 +272,6 @@
 		 * @return WPT_Event				The new event or <false> if there was a problem.
 		 */
 		function create_event($args) {
-			
 			$defaults = array(
 				'production' => false,
 				'venue' => false,
@@ -571,6 +572,8 @@
 				$this->set_event_prices($event->ID, $args['prices']);
 			}
 
+			$this->marked_events = array_diff( $this->marked_events, array( $event->ID ) );
+
 			delete_post_meta($event->ID, $this->get('marker'));
 
 			$this->stats['events_updated']++;
@@ -653,18 +656,23 @@
 			$this->stats['productions_created'] = 0;
 			$this->stats['productions_updated'] = 0;
 			$this->stats['errors'] = array();
-			
+
+			do_action( 'wpt/importer/execute/before', $this );
+			do_action( 'wpt/importer/execute/before/importer='.$this->get( 'slug' ), $this );
+
 			$this->mark_upcoming_events();
 			
 			if ($this->process_feed()) {
 				$this->remove_marked_events();			
-			} else {
-				$this->unmark_events();
 			}
 			
 			$this->stats['end'] = current_time( 'timestamp' );
 			
 			$this->save_stats();
+
+			do_action( 'wpt/importer/execute/after', $this );
+			do_action( 'wpt/importer/execute/after/importer='.$this->get( 'slug' ), $this );
+
 		}
 		
 		/**
@@ -688,8 +696,6 @@
 			
 			if ($reimport_result) {
 				$this->remove_marked_events();			
-			} else {
-				$this->unmark_events();
 			}			
 		}
 
@@ -780,6 +786,9 @@
 			);
 			
 			$events = get_posts($args);
+
+			$this->marked_events = wp_list_pluck( $events, 'ID');
+			return;
 			
 			foreach($events as $event) {
 				add_post_meta($event->ID, $this->get('marker'), 1, true);
@@ -821,6 +830,8 @@
 			
 			$events = get_posts($args);
 			
+			$this->marked_events = wp_list_pluck( $events, 'ID');
+			return;
 			foreach($events as $event) {
 				add_post_meta($event->ID, $this->get('marker'), 1, true);
 			}
@@ -879,8 +890,8 @@
 		 * @return void
 		 */
 		private function remove_marked_events() {
-			foreach($this->get_marked_events() as $event) {
-				wp_delete_post($event->ID, true);
+			foreach($this->marked_events as $event_id) {
+				wp_delete_post($event_id, true);
 			}
 		}
 		

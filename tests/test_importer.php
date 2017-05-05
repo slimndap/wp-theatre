@@ -127,6 +127,11 @@ class WPT_Demo_Importer extends WPT_Importer {
 
 }
 
+/**
+ * WPT_Test_Importer class.
+ * 
+ * @group	importer
+ */
 class WPT_Test_Importer extends WP_UnitTestCase {
 
 	function setUp() {
@@ -332,7 +337,7 @@ class WPT_Test_Importer extends WP_UnitTestCase {
 	
 	
 	/**
-	 * Test if previously imported event are properly removed after the next import.
+	 * Test if previously imported events are properly removed after the next import.
 	 * See: https://github.com/slimndap/wp-theatre/issues/182
 	 */
 	function test_import_events_cleanup() {
@@ -506,6 +511,24 @@ class WPT_Test_Importer extends WP_UnitTestCase {
 		$expected = 'Boring show 123';
 		$this->assertContains($expected, $actual);
 		
+	}
+	
+	function test_transient_resets_are_off_during_import() {
+		
+	}
+	
+	function test_transients_are_reset_after_import() {
+		$actual = do_shortcode('[wpt_events]');
+		
+		$importer = new WPT_Demo_Importer();
+
+		$importer->execute();
+		$this->publish_all();
+
+		$expected = do_shortcode('[wpt_events]');
+		$expected = do_shortcode('[wpt_events]');
+		
+		$this->assertNotEquals($expected, $actual);		
 	}
 
 }
