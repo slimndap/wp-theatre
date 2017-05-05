@@ -284,74 +284,7 @@
 		$this->assertEquals($expected,$actual);
 	}
 	 
-	// Test transients
-	function test_wpt_transient_productions() {
-		global $wp_query;
-		
-		do_shortcode('[wpt_productions]');
-		
-		$args = array(
-			'paginateby' => array(),
-			'post__in' => false,
-			'post__not_in' => false,
-			'upcoming' => false,
-			'season' => false,
-			'category' => false, // deprecated since v0.9.
-			'cat' => false,
-			'category_name' => false,
-			'category__and' => false,
-			'category__in' => false,
-			'category__not_in' => false,
-			'tag' => false,
-			'start' => false,
-			'start_before' => false,
-			'start_after' => false,
-			'end' => false,
-			'end_after' => false,
-			'end_before' => false,
-			'groupby' => false,
-			'limit' => false,
-			'order' => 'asc',
-			'ignore_sticky_posts' => false,
-		);
-		$unique_args = array_merge(
-			array( 'atts' => $args ), 
-			array( 'wp_query' => $wp_query->query_vars )
-		);
-		
-		$this->assertEquals(5, substr_count($this->wp_theatre->transient->get('p',$unique_args), '"wp_theatre_prod"'));
-		
-		/* 
-		 * Test if transients are off for logged in users 
-		 */
-		 
-		$user = new WP_User( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
-		wp_set_current_user( $user->ID );		
-        $this->assertFalse($this->wp_theatre->transient->get('p',$args));		
-		wp_set_current_user(0);		
-	}
-	
-	/*
-	 * Tests if the transients don't mess up paginated views.
-	 * See: https://github.com/slimndap/wp-theatre/issues/88
-	 */
-	function test_wpt_transient_productions_with_pagination() {
-		global $wp_query;
-		
-		/*
-		 * Test if the film tab is active.
-		 */
-		$wp_query->query_vars['wpt_category'] = 'film';
-		$html = do_shortcode('[wpt_productions paginateby=category]');
-		$this->assertContains('category-film wpt_listing_filter_active',$html);
 
-		/*
-		 * Test if the muziek tab is active.
-		 */
-		$wp_query->query_vars['wpt_category'] = 'muziek';
-		$html = do_shortcode('[wpt_productions paginateby=category]');
-		$this->assertContains('category-muziek wpt_listing_filter_active',$html);
-	}
 	/**
 	 * Tests if the events are hidden from listings if you set the post_date of 
 	 * a production to a date in the future.

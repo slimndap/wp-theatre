@@ -187,6 +187,10 @@ class WPT_Frontend {
 	 * @since 	0.11.8	Support for 'post__in' and 'post__not_in'.
 	 *					Fixes #128.
 	 * @since	0.14.4	Support for 'production'.
+	 * @since	0.15.24	Now uses the new Theater_Transient object.
+	 *
+	 * @uses	Theater_Transient::get() to get the transient value of the [wpt_events] shortcode.
+	 * @uses	Theater_Transient::set() to set the transient value of the [wpt_events] shortcode.
 	 *
 	 * @param 	array 	$atts
 	 * @param 	string 	$content (default: null)
@@ -323,11 +327,16 @@ class WPT_Frontend {
 			array( 'atts' => $atts ),
 			array( 'wp_query' => $wp_query->query_vars )
 		);
+		
+		$transient = new Theater_Transient( 'e', $unique_args );
+		
+		if ( ! ( $html = $transient->get() ) ) {
 
-		if ( ! ( $html = $wp_theatre->transient->get( 'e', $unique_args ) ) ) {
 			$html = $wp_theatre->events->get_html( $atts );
-			$wp_theatre->transient->set( 'e', $unique_args, $html );
+			$transient->set( $html );
+			
 		}
+		
 		return $html;
 	}
 
@@ -442,9 +451,13 @@ class WPT_Frontend {
 			array( 'wp_query' => $wp_query->query_vars )
 		);
 
-		if ( ! ( $html = $wp_theatre->transient->get( 'p', $unique_args ) ) ) {
+		$transient = new Theater_Transient( 'p', $unique_args );
+
+		if ( ! ( $html = $transient->get() ) ) {
+
 			$html = $wp_theatre->productions->get_html( $atts );
-			$wp_theatre->transient->set( 'p', $unique_args, $html );
+			$transient->set( $html );
+			
 		}
 
 		return $html;
