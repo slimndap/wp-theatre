@@ -46,7 +46,8 @@ class WP_Theatre {
 		Theater_Event_Order::init();
 		$this->status = new WPT_Status();
 		$this->feeds = new WPT_Feeds();
-		$this->transient = new WPT_Transient();
+		Theater_Transients::init();
+		
 		$this->listing_page = new WPT_Listing_Page();
 		Theater_Event_Archive::init();
 		$this->calendar = new WPT_Calendar();
@@ -141,7 +142,10 @@ class WP_Theatre {
 		require_once(dirname(__FILE__) . '/functions/wpt_admin.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_status.php');
 		require_once(dirname(__FILE__) . '/functions/wpt_feeds.php');	
-		require_once(dirname(__FILE__) . '/functions/wpt_transient.php');	
+		
+		require_once(dirname(__FILE__) . '/functions/transient/class-theater-transient.php');	
+		require_once(dirname(__FILE__) . '/functions/transient/class-theater-transients.php');	
+			
 		require_once(dirname(__FILE__) . '/functions/wpt_listing_page.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_calendar.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_context.php');	

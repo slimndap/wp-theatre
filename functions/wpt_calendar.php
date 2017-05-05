@@ -353,23 +353,29 @@
 		}
 		
 		/**
-		 * Handle the [wpt_calendar] shortcode.
-		 * @see WPT_Calendar::check_dependencies()	To check if all dependencies are set.
-		 * @see WPT_Calendar::html()				To generate the HTML output.
-		 * @see WPT_Transients::get()				To retrieve a cached version of the output.
-		 * @see WPT_Transients::set()				To store a cached version of the output.
-		 * @since 0.8
+		 * Gets the output for the [wpt_calendar] shortcode.
+		 *
+		 * @uses 	WPT_Calendar::check_dependencies()	To check if all dependencies are set.
+		 * @uses 	WPT_Calendar::html()				To generate the HTML output.
+		 * @uses 	Theater_Transient::get()			To retrieve a cached version of the output.
+		 * @uses 	Theater_Transient::set()			To store a cached version of the output.
+		 *
+		 * @since 	0.8
+		 * @since	0.15.24		Now uses the new Theater_Transient object.
+		 *
+		 * @return	string
 		 */
-		
 		function shortcode() {
 			$html = '';
 			
 			if ($this->check_dependencies()) {
 				global $wp_theatre;
 	
-				if ( ! ( $html = $wp_theatre->transient->get('c', array()) ) ) {
+				$transient = new Theater_Transient( 'c' );
+	
+				if ( ! ( $html = $transient->get() ) ) {
 					$html = $wp_theatre->calendar->html();
-					$wp_theatre->transient->set('c', array(), $html);
+					$transient->set( $html );
 				}
 			}
 			

@@ -323,11 +323,16 @@ class WPT_Frontend {
 			array( 'atts' => $atts ),
 			array( 'wp_query' => $wp_query->query_vars )
 		);
+		
+		$transient = new Theater_Transient( 'e', $unique_args );
+		
+		if ( ! ( $html = $transient->get() ) ) {
 
-		if ( ! ( $html = $wp_theatre->transient->get( 'e', $unique_args ) ) ) {
 			$html = $wp_theatre->events->get_html( $atts );
-			$wp_theatre->transient->set( 'e', $unique_args, $html );
+			$transient->set( $html );
+			
 		}
+		
 		return $html;
 	}
 
@@ -442,9 +447,13 @@ class WPT_Frontend {
 			array( 'wp_query' => $wp_query->query_vars )
 		);
 
-		if ( ! ( $html = $wp_theatre->transient->get( 'p', $unique_args ) ) ) {
+		$transient = new Theater_Transient( 'p', $unique_args );
+
+		if ( ! ( $html = $transient->get() ) ) {
+
 			$html = $wp_theatre->productions->get_html( $atts );
-			$wp_theatre->transient->set( 'p', $unique_args, $html );
+			$transient->set( $html );
+			
 		}
 
 		return $html;
