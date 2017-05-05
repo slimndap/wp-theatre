@@ -1,15 +1,24 @@
 <?php
 /**
- * Handle all transients.
+ * Manages the use of transients in Theater.
  *
- * WPT_Transient handles all setting and getting of transients.
- * All Theater transients are reset everytime a (custom) post or post_meta is saved.
+ * All Theater transients are reset every time a (custom) post or post_meta is saved.
  *
  * @since 	0.7
+ * @since	0.15.24	Renamed from WPT_Transients to Theater_Transients.
  *
  */	
 class Theater_Transients {
 
+	/**
+	 * Inits all transient hooks.
+	 * 
+	 * @since	0.7
+	 * @since	0.15.24	Renamed from __construct() to init().
+	 *
+	 * @uses	Theater_Transients::enable_reset_hooks() to enable all hooks that should reset all Theate transients.
+	 * @return 	void
+	 */
 	static function init() {
 		
 		if (! defined('THEATER_TRANSIENTS_OPTION') ) {
@@ -18,24 +27,48 @@ class Theater_Transients {
 		
 		self::enable_reset_hooks();
 		
-		// Hooks to disable transient reset hooks during imports.
+		// Disable transient resets during imports.
 		add_action('wpt/importer/execute/before', array( __CLASS__, 'disable_reset_hooks') );
 		add_action('wpt/importer/execute/after', array( __CLASS__, 'enable_reset_hooks') );
 	}
 	
+	/**
+	 * Enables all hooks that should reset all Theater transients.
+	 *
+	 * All Theater transients should be reset every time a (custom) post or post_meta is saved.
+	 * 
+	 * @since	0.15.24
+	 *
+	 * @todo	Make this a bit smarter. 
+	 *			Eg. only reset if an event or event date is saved.
+	 *
+	 * @return 	void
+	 */
 	static function enable_reset_hooks() {
 		add_action('save_post', array(__CLASS__,'reset'), 10 );
 		add_action('added_post_meta', array(__CLASS__,'reset'), 20 );
 		add_action('updated_post_meta', array(__CLASS__,'reset'), 20 );			
 	}
 	
+	/**
+	 * Disables all hooks that should reset all Theater transients.
+	 * 
+	 * @since	0.15.24
+	 * @return 	void
+	 */
 	static function disable_reset_hooks() {
 		remove_action('save_post', array(__CLASS__,'reset'), 10 );
 		remove_action('added_post_meta', array(__CLASS__,'reset'), 20);
 		remove_action('updated_post_meta', array(__CLASS__,'reset'), 20);			
 	}
-	
-	
+		
+	/**
+	 * Gets a list of all Theater transients that are in use.
+	 * 
+	 * @since	0.15.24
+	 *
+	 * @return	array	A list of all Theater transients that are in use.
+	 */
 	static function get_transient_keys() {
 		$transient_keys = get_option( THEATER_TRANSIENTS_OPTION );
 		
@@ -47,23 +80,22 @@ class Theater_Transients {
 	}
 	
 	/**
-	 * Empty all Theatre transients.
+	 * Resets all Theater transients in use.
 	 *
-	 * Empty all Theatre transients by removing them from the DB.
-	 * Major flaw: this is useless if transients are not stored in the DB (eg. with memcached).
-	 * See: http://wordpress.org/ideas/topic/transient-api-should-allow-delete-by-prefix
+	 * @since 	0.7
+	 * @since	0.15.24	Now uses the Theater_Transient object.
 	 *
-	 * @since 0.7
-	 *
+	 * @uses	Theater_Transients::get_transient_keys() to get a list of all Theater transients that are in use.
+	 * @uses	Theater_Transient::load_by_key() to load transients by their keys.
+	 * @uses	Theater_Transient::reset() to reset transients.
 	 */	
 	static function reset() {
 		$transients_keys = self::get_transient_keys();
 		foreach ($transients_keys as $transient_key ) {
 			$transient = new Theater_Transient();
 			$transient->load_by_key( $transient_key);
-			$transient->delete();
+			$transient->reset();
 		}
-		return;
 	}
 	
 }

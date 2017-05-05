@@ -171,7 +171,7 @@ class WPT_Test_Transients extends WPT_UnitTestCase {
 		
 		$actual = Theater_Transients::get_transient_keys();
 		$transient = new Theater_Transient();
-		$expected = $transient->get_key('e', $this->get_events_args() );
+		$expected = $transient->calculate_key('e', $this->get_events_args() );
 		$this->assertContains( $expected, $actual );
 	}
 	

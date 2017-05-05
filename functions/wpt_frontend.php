@@ -187,6 +187,10 @@ class WPT_Frontend {
 	 * @since 	0.11.8	Support for 'post__in' and 'post__not_in'.
 	 *					Fixes #128.
 	 * @since	0.14.4	Support for 'production'.
+	 * @since	0.15.24	Now uses the new Theater_Transient object.
+	 *
+	 * @uses	Theater_Transient::get() to get the transient value of the [wpt_events] shortcode.
+	 * @uses	Theater_Transient::set() to set the transient value of the [wpt_events] shortcode.
 	 *
 	 * @param 	array 	$atts
 	 * @param 	string 	$content (default: null)
