@@ -135,14 +135,14 @@ This release focusses on a more streamlined experience when managing your events
     * Added a new `{{prices}}` placeholder for productions (0.15.3).
     * Events can now be filtered by tags (0.15.5).
 	* Activated events archive pages (0.15.10).
-	* You can now set until what time events should fall on the previous days using the `Theater/Helpers/Time/Next_Day_Start_Time_Offset` filter (0.15.11).
+	* You can now set until what time events should fall on the previous days using the `theater/helpers/time/next_day_start_time_offset` filter (0.15.11).
 	* You can now create event calendars with custom filters (0.15.16).
 	* Added the 'end_after' filter to production lists.
 	* You can now add extra filter controls to the events admin screen using the `restrict_manage_productions` and `manage_productions_extra_tablenav` filters (0.15.17).
 	* Added the `wpt/importer/get/value` filter to alter the default behaviour of an importer (0.15.20).
 	* The calendar widget now jumps to the active month if you show the widget on you events page (0.15.23).
+	* The use of transients for event lists and calendar can now be switched off using the `theater/transient/active` filter (0.15.24). Thank you [joost de keijzer](https://dekeijzer.org/)!
 
-	    
 * Bugfix
     * The translation setting for the header above events on the productions page was also being used in other places (eg. the admin menu) (0.15.2). Thank you [Bob Morris](https://wordpress.org/support/profile/bob-morris)!
 	* Seasons are now hidden from search results (0.15.3).
@@ -155,13 +155,11 @@ This release focusses on a more streamlined experience when managing your events
 	* Fixed a problem with the changelog of extensions if you're running multiple extensions (0.15.14).
 	* Fixed a problem with the event editor in WordPress 4.7 (0.15.15).
 	* Fixed the day-filter in event lists (0.15.16).
-	* Fixed an ecoding problem in the upcoming event feeds (0.15.16).
+	* Fixed an encoding problem in the upcoming event feeds (0.15.16).
 	* Fixed a sorting issue on archive/search pages with mixed post types (0.15.16).
 	* Fixed a timezone problem when using something like  `starttime|date('Y-m-d H:i:s')` inside a shortcode (0.15.18).
 	* Fixed performance issues with some websites that use full page caching plugins and services (0.15.22).
-
-
-	
+	* Fixed several performance issues of during imports (0.15.24).
 	
 * Deprecations
 	* Deprecated the custom CSS settings in favour of the custom CSS setting that came with WordPress 4.7 (0.15.16).
@@ -243,6 +241,10 @@ Release Date: May 30th, 2015
 
 
 == Upgrade Notice ==
+
+= 0.15.24 = 
+Performance improvements, especially noticeable during imports.
+
 = 0.15.23 =
 The calendar widget now jumps to the active month if you show the widget on you events page.
 
