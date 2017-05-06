@@ -8,10 +8,18 @@
 	 * Play with it, but don't use it on your production site.
 	 * Always make backups!
 	 *
-	 * @since 0.10
+	 * @since 	0.10
+	 * @since	0.15.24	Events are no longer marked in the database during import.
 	 */
 	class WPT_Importer {
 		
+		/**
+		 * Marked events tracker.
+		 * 
+		 * @since	0.15.24
+		 * @var		array
+		 * @access 	private
+		 */
 		private $marked_events = array();
 		
 		/**
@@ -640,6 +648,9 @@
 		 *
 		 * @since 	0.10
 		 * @since	0.15.15	Fixed missing timezone support for import start and end times.
+		 * @since	0.15.24	No longer unmarks events after an unsuccessful import.
+		 *					This is no longer neccessary because events are no longer marked in the database.
+		 *					Added action hooks right before and after imports.
 		 *
 		 * @uses 	WPT_Importer::mark_upcoming_events()
 		 * @uses 	WPT_Importer::process_feed()
@@ -656,7 +667,14 @@
 			$this->stats['productions_created'] = 0;
 			$this->stats['productions_updated'] = 0;
 			$this->stats['errors'] = array();
-
+			
+			/**
+			 * Fires right before an import starts.
+			 *
+			 * @since 0.15.24
+			 *
+			 * @param	WPT_Importer	$importer	The importer object.
+			 */
 			do_action( 'wpt/importer/execute/before', $this );
 			do_action( 'wpt/importer/execute/before/importer='.$this->get( 'slug' ), $this );
 
@@ -670,6 +688,13 @@
 			
 			$this->save_stats();
 
+			/**
+			 * Fires right after an import ends.
+			 *
+			 * @since 0.15.24
+			 *
+			 * @param	WPT_Importer	$importer	The importer object.
+			 */
 			do_action( 'wpt/importer/execute/after', $this );
 			do_action( 'wpt/importer/execute/after/importer='.$this->get( 'slug' ), $this );
 
@@ -685,6 +710,9 @@
 		 *    If unsuccesful: Clean up, unmark all previously imported events for this production.
 		 *
 		 * @since	0.14.5
+		 * @since	0.15.24	No longer unmarks production events after an unsuccessful import.
+		 *					This is no longer neccessary because events are no longer marked in the database.
+		 *
 		 * @param 	int	$production_id	The production ID.
 		 */
 		function execute_reimport($production_id) {
@@ -697,35 +725,6 @@
 			if ($reimport_result) {
 				$this->remove_marked_events();			
 			}			
-		}
-
-		/**
-		 * Gets all events that are marked.
-		 *
- 		 * @since 	0.10
- 		 * @since	0.14.3	Bugfix: Added 'posts_per_page' argument to ensure that all marked events are returned.
- 		 *					Fixes #182.
-		 *
-		 * @see WPT_Importer::mark_upcoming_events()
-		 * @see WPT_Importer::unmark_events()
-		 * @see WPT_Importer::remove_marked_events()
-		 * 
-		 * @access private
-		 * @return void
-		 */
-		private function get_marked_events() {
-			$args = array(
-				'post_type' => WPT_Event::post_type_name,
-				'post_status' => 'any',
-				'posts_per_page' => -1,
-				'meta_query' => array(
-					array(
-						'key' => $this->get('marker'),
-						'value' => 1,
-					),
-				),
-			);
-			return get_posts($args);
 		}
 
 		/**
@@ -755,9 +754,12 @@
 		/**
 		 * Marks all upcoming events of a production.
 		 * 
-		 * @see 	WPT_Importer::execute_reimport()
-		 * @access  private
 		 * @since	0.14.5
+		 * @since	0.15.24 Now uses the new internal marked events tracker.
+		 *
+		 * @uses	WPT_Importer::set() to add events to the marked events tracker.
+		 *
+		 * @access  private
 		 * @param 	int		$production_id	The production ID.
 		 */
 		private function mark_production_events($production_id) {
@@ -796,8 +798,9 @@
 		 * @since 	0.10
  		 * @since	0.14.3	Bugfix: Added 'posts_per_page' argument to ensure that all events are marked.
  		 *					Fixes #182.
+		 * @since	0.15.24 Now uses the new internal marked events tracker.
 		 *
-		 * @see WPT_Importer::execute()
+		 * @uses	WPT_Importer::set() to add events to the marked events tracker.
 		 * 
 		 * @access private
 		 * @return void
@@ -874,11 +877,12 @@
 		/**
 		 * Removes all previously imported events that are still marked.
 		 * 
-		 * @see WPT_Importer::execute()
-		 * @see WPT_Importer::get_marked_events()
+		 * @since	0.?
+		 * @since	0.15.24 Now uses the new internal marked events tracker.
 		 *
-		 * @access private
-		 * @return void
+		 * @access 	private
+		 * @uses	WPT_Importer::get() to get all remaining marked events.
+		 * @return 	void
 		 */
 		private function remove_marked_events() {
 			foreach($this->get('marked_events') as $event_id) {
@@ -936,21 +940,6 @@
 			
 		}
 
-		/**
-		 * Cleans up, unmarks all previously imported events that are still marked.
-		 * 
-		 * @see WPT_Importer::execute()
-		 * @see WPT_Importer::get_marked_events()
-		 *
-		 * @access private
-		 * @return void
-		 */
-		private function unmark_events() {
-			foreach($this->get_marked_events() as $event) {
-				delete_post_meta($event->ID, $this->get('marker'));
-			}
-		}
-		
 		/**
 		 * Runs after the settings are updated.
 		 *
