@@ -270,7 +270,12 @@ class WP_Theatre {
 
 /**
  * Init WP_Theatre class
+ *
+ * @since	0.?
+ * @since	0.15.24	Explicitly register $wp_theatre as a global variable.
+ *					See: https://github.com/slimndap/wp-theatre/issues/245 
  */
+global $wp_theatre;
 $wp_theatre = new WP_Theatre();
 
 
