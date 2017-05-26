@@ -160,6 +160,7 @@ This release focusses on a more streamlined experience when managing your events
 	* Fixed a timezone problem when using something like  `starttime|date('Y-m-d H:i:s')` inside a shortcode (0.15.18).
 	* Fixed performance issues with some websites that use full page caching plugins and services (0.15.22).
 	* Fixed several performance issues of during imports (0.15.24).
+	* Fixed a conflict with WP-CLI. (0.15.24).
 	
 * Deprecations
 	* Deprecated the custom CSS settings in favour of the custom CSS setting that came with WordPress 4.7 (0.15.16).
