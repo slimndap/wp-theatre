@@ -16,6 +16,16 @@
 			);
 		}
 	
+		/**
+		 * Outputs the production events widget HTML.
+		 * 
+		 * @since	0.8.3
+		 * @since	0.15.26	Now uses the [wpt_events] shortcode.
+		 *
+		 * @param 	array	$args
+		 * @param	array	$instance
+		 * @return 	void
+		 */
 		public function widget( $args, $instance ) {
 			global $wp_theatre;
 			global $post;
@@ -28,20 +38,12 @@
 					echo $args['before_title'] . $title . $args['after_title'];
 				}
 								
-				$filters = array();
+				$shortcode = '[wpt_events production="'.$post->ID.']';
 				if (!empty($instance['template'])) {
-					$filters['template'] = $instance['template'];
+					$shortcode.= $instance['template'].'[/wpt_events]';
 				}
-	
-				$filters['production'] = $post->ID;
-				
-				if ( ! ( $html = $wp_theatre->transient->get('e', array_merge($filters)) ) ) {
-					$html = $wp_theatre->events->get_html($filters);
-					$wp_theatre->transient->set('e', array_merge($filters), $html);
-				}
-	
-				echo $html;
-	
+				echo do_shortcode( $shortcode );
+
 				echo $args['after_widget'];
 			}
 			
@@ -81,6 +83,16 @@
 			);
 		}
 	
+		/**
+		 * Outputs the productions widget HTML.
+		 * 
+		 * @since	0.8.3
+		 * @since	0.15.26	Now uses the [wpt_events] shortcode.
+		 *
+		 * @param 	array	$args
+		 * @param	array	$instance
+		 * @return 	void
+		 */
 		public function widget( $args, $instance ) {
 			global $wp_theatre;
 
@@ -93,19 +105,19 @@
 								
 			$filters = array(
 				'limit' => $instance['limit'],
-				'upcoming' => true
+				'end_after' => 'now',
 			);
 
 			if (!empty($instance['template'])) {
 				$filters['template'] = $instance['template'];
 			}
 
-			$transient_key = 'wpt_prods_'.md5(serialize($filters));
-			if ( ! ( $html = get_transient($transient_key) ) ) {
-				$html = $wp_theatre->productions->html($filters);
-				set_transient($transient_key, $html, 4 * MINUTE_IN_SECONDS );
+			$shortcode = '[wpt_productions end_after="now" limit="'.$instance['limit'].'"]';
+			if (!empty($instance['template'])) {
+				$shortcode.= $instance['template'].'[/wpt_productions]';
 			}
-			echo $html;
+			echo do_shortcode( $shortcode );
+
 			echo $args['after_widget'];
 
 		}
