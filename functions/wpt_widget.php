@@ -38,10 +38,11 @@
 					echo $args['before_title'] . $title . $args['after_title'];
 				}
 								
-				$shortcode = '[wpt_events production="'.$post->ID.']';
+				$shortcode = '[wpt_events production="'.$post->ID.'"]';
 				if (!empty($instance['template'])) {
 					$shortcode.= $instance['template'].'[/wpt_events]';
 				}
+
 				echo do_shortcode( $shortcode );
 
 				echo $args['after_widget'];
@@ -87,7 +88,7 @@
 		 * Outputs the productions widget HTML.
 		 * 
 		 * @since	0.8.3
-		 * @since	0.15.26	Now uses the [wpt_events] shortcode.
+		 * @since	0.15.26	Now uses the [wpt_productions] shortcode.
 		 *
 		 * @param 	array	$args
 		 * @param	array	$instance

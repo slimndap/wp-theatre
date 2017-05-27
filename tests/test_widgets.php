@@ -58,10 +58,16 @@ class WPT_Test_Widgets extends WPT_UnitTestCase {
 		$widget->widget( $args, $instance );
 		$html = ob_get_clean();
 		
-		$actual = substr_count($html, '<div class="wp_theatre_event_title"><a href="'.$production_permalink.'">'.$production_title.'</a></div>');		
-		$expected = 2;
-		
+		// Only two events.
+		$actual = substr_count($html, '"wp_theatre_event"');
+		$expected = 2;		
 		$this->assertEquals($expected, $actual, $html );
+
+		// Only events from the current production.
+		$actual = substr_count($html, '<div class="wp_theatre_event_title"><a href="'.$production_permalink.'">'.$production_title.'</a></div>');
+		$expected = 2;		
+		$this->assertEquals($expected, $actual, $html );
+
 	}
 	
 
