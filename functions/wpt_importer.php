@@ -22,6 +22,9 @@
 		 */
 		private $marked_events = array();
 		
+		private $productions_by_ref = array();
+		private $events_by_ref = array();
+		
 		/**
 		 * Inits the importer.
 		 * 
@@ -82,6 +85,56 @@
 		 */
 		protected function ready_for_import() {
 			return false;
+		}
+		
+		function preload_events_by_ref( $refs = array() ) {
+			$args = array(
+				'post_type' => WPT_Event::post_type_name,
+				'post_status' => 'any',
+				'nopaging' => true,
+				'meta_query' => array(
+					array(
+						'key' => '_wpt_source',
+						'value' => $this->get('slug'),
+					),
+					array(
+						'key' => '_wpt_source_ref',
+						'value' => $refs,
+						'compare' => 'IN',
+					),
+				),				
+			);			
+
+			$posts = get_posts( $args );
+
+			foreach ($posts as $post) {
+				$this->events_by_ref[ get_post_meta( $post->ID, '_wpt_source_ref', true) ] = new WPT_Event( $post->ID );
+			}
+		}
+
+		function preload_productions_by_ref( $refs = array() ) {
+			$args = array(
+				'post_type' => WPT_Production::post_type_name,
+				'post_status' => 'any',
+				'nopaging' => true,
+				'meta_query' => array(
+					array(
+						'key' => '_wpt_source',
+						'value' => $this->get('slug'),
+					),
+					array(
+						'key' => '_wpt_source_ref',
+						'value' => $refs,
+						'compare' => 'IN',
+					),
+				),				
+			);			
+
+			$posts = get_posts( $args );
+
+			foreach ($posts as $post ) {
+				$this->productions_by_ref[ get_post_meta( $post->ID, '_wpt_source_ref', true) ] = new WPT_Production( $post ->ID );
+			}
 		}
 		
 		/**
@@ -420,6 +473,11 @@
 		 * @return WPT_Event The event. Returns `false` if no previously imported event was found.
 		 */
 		function get_event_by_ref($ref) {
+			
+			if ( isset( $this->events_by_ref[ $ref ] ) ) {
+				return $this->events_by_ref[ $ref ];
+			}
+			
 			$args = array(
 				'post_type' => WPT_Event::post_type_name,
 				'post_status' => 'any',
@@ -437,7 +495,9 @@
 			$events = get_posts($args);
 	
 			if (!empty($events[0])) {
-				return new WPT_Event($events[0]);
+				$event = new WPT_Event( $events[0] );
+				$this->events_by_ref[ $ref ] = $event;
+				return $event;
 			} else {
 				return false;
 			}
@@ -456,6 +516,11 @@
 		 * @return WPT_Production The production. Returns `false` if no previously imported production was found.
 		 */
 		protected function get_production_by_ref($ref) {
+
+			if ( isset( $this->productions_by_ref[ $ref ] ) ) {
+				return $this->productions_by_ref[ $ref ];
+			}
+			
 			$args = array(
 				'post_type' => WPT_Production::post_type_name,
 				'post_status' => 'any',
@@ -473,7 +538,9 @@
 			$productions = get_posts($args);
 
 			if (!empty($productions[0])) {
-				return new WPT_Production($productions[0]);
+				$production = new WPT_Production( $productions[0]->ID );
+				$this->productions_by_ref[ $ref ] = $production;
+				return $production;
 			} else {
 				return false;
 			}
@@ -503,10 +570,18 @@
 		 */
 		private function set_event_prices($event_id, $prices) {
 			
-			delete_post_meta($event_id, '_wpt_event_tickets_price');
+			$current_prices = get_post_meta( $event_id, '_wpt_event_tickets_price');
 	
 			foreach($prices as $price) {
-				add_post_meta($event_id,'_wpt_event_tickets_price', $price);							
+				if ( !in_array($price, $current_prices)) {
+					add_post_meta($event_id,'_wpt_event_tickets_price', $price);											
+				}
+			}
+			
+			foreach( $current_prices as $current_price) {
+				if (!in_array($current_price, $prices)) {
+					delete_post_meta($event_id, '_wpt_event_tickets_price', $current_price);
+				}
 			}
 			
 		}
@@ -559,7 +634,7 @@
 				return $this->create_event($args);
 			}
 			
-			update_post_meta($event->ID, WPT_Production::post_type_name, $args['production']);
+			update_post_meta($event->ID, WPT_Production::post_type_name, (string) $args['production']);			
 			
 			if ($args['venue']!==false) {
 				update_post_meta($event->ID, 'venue', $args['venue']);			
@@ -581,8 +656,6 @@
 			}
 
 			$this->set('marked_events', array_diff( $this->get('marked_events'), array( $event->ID ) ) );
-
-			delete_post_meta($event->ID, $this->get('marker'));
 
 			$this->stats['events_updated']++;
 			
@@ -746,6 +819,7 @@
 				check_admin_referer( 'wpt_import' )
 			) {
 				$this->execute();
+				return;
 				wp_redirect( 'admin.php?page=wpt_admin&tab='.$this->get('slug') );
 				exit;
 			}
