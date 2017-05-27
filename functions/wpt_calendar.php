@@ -411,6 +411,16 @@
 			);
 		}
 		
+		/**
+		 * Outputs the calendar widget HTML.
+		 * 
+		 * @since	0.8
+		 * @since	0.15.25	Now uses the new Theater_Transient object.
+		 *
+		 * @param 	array	$args
+		 * @param	array	$instance
+		 * @return 	void
+		 */
 		public function widget($args,$instance) {
 			global $wp_theatre;
 			
@@ -421,9 +431,13 @@
 				echo $args['before_title'] . $title . $args['after_title'];
 			}
 							
-			if ( ! ( $html = $wp_theatre->transient->get('c', array()) ) ) {
+			$transient = new Theater_Transient( 'c' );
+			
+			if ( ! ( $html = $transient->get() ) ) {
+	
 				$html = $wp_theatre->calendar->html();
-				$wp_theatre->transient->set('c', array(), $html);
+				$transient->set( $html );
+				
 			}
 
 			echo $html;
