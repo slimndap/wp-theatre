@@ -243,6 +243,9 @@ Release Date: May 30th, 2015
 
 == Upgrade Notice ==
 
+= 0.15.25 = 
+Fixes a problem with the Calendar widget that was introduced in the previous update.
+
 = 0.15.24 = 
 Performance improvements, especially noticeable during imports.
 
