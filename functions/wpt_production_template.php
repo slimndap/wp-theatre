@@ -72,6 +72,9 @@ class WPT_Production_Template extends WPT_Template {
 			case 'categories':
 				$value = $this->object->{$field}($value_args);
 				break;
+			case 'tags':
+				$value = $this->object->{$field}($value_args);
+				break;
 			default:
 				$value = $this->object->custom( $field,$value_args );
 		}
