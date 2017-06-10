@@ -576,20 +576,20 @@ class WPT_Test_Importer extends WP_UnitTestCase {
 		$expected = 'WPT_Event';
 		$this->assertInstanceOf( $expected, $actual );
 		
-		$importer->clear_preloaded_productions();
+		$importer->clear_preloaded_events();
 		
 		// Production should no longer be preloaded after clearing.
-		$actual = $importer->get_preloaded_production_by_ref( 'demo_1');
+		$actual = $importer->get_preloaded_event_by_ref( 'demo_1_0');
 		$this->assertFalse( $actual );
 		
 		$event_refs = array();
 		for ( $p = 0; $p < count( $importer->feed );$p++ ) {
 			$production_ref = 'demo_'.$p;
-			for ( $e = 0;$e < count( $this->feed[ $p ] );$e++ ) {
+			for ( $e = 0;$e < count( $importer->feed[ $p ] );$e++ ) {
 				$event_refs[] = $production_ref.'_'.$e;
 			}
 		}
-		
+
 		$importer->preload_events_by_ref( $event_refs );		
 
 		// Event should be preloaded again from the database.
