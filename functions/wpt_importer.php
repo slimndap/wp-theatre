@@ -10,6 +10,7 @@
 	 *
 	 * @since 	0.10
 	 * @since	0.15.24	Events are no longer marked in the database during import.
+	 * @since	0.15.26	Added support for preloading previously imported productions and events.
 	 */
 	class WPT_Importer {
 		
@@ -22,7 +23,22 @@
 		 */
 		private $marked_events = array();
 		
+		/**
+		 * Preloaded productions tracker.
+		 * 
+		 * @since	0.15.27
+		 * @var 	WPT_Production[]
+		 * @access 	private
+		 */
 		private $productions_by_ref = array();
+		
+		/**
+		 * Preloaded events tracker.
+		 * 
+		 * @since	0.15.24
+		 * @var		WPT_Event[]
+		 * @access 	private
+		 */
 		private $events_by_ref = array();
 		
 		/**
@@ -87,7 +103,24 @@
 			return false;
 		}
 		
+		/**
+		 * Preloads events by source ref.
+		 * 
+		 * Use this method to preload all previously imported events during an import.
+		 * Doing this directly after reading a feed will add all events that were imported during
+		 * previous imports to the @uses WPT_Importer::productions_by_ref property and put all corresponding
+		 * meta fields in he WordPress cache.
+		 *
+		 * @since	0.15.26
+		 * @param 	array	$refs	The source refs of events to preload.
+		 * @return 	void
+		 */
 		function preload_events_by_ref( $refs = array() ) {
+			
+			if ( empty( $refs ) ) {
+				return;
+			}
+			
 			$args = array(
 				'post_type' => WPT_Event::post_type_name,
 				'post_status' => 'any',
@@ -112,7 +145,24 @@
 			}
 		}
 
+		/**
+		 * Preloads productions by source ref.
+		 * 
+		 * Use this method to preload all previously imported productions during an import.
+		 * Doing this directly after reading a feed will add all productions that were imported during
+		 * previous imports to the @uses WPT_Importer::productions_by_ref property and put all corresponding
+		 * meta fields in he WordPress cache.
+		 *
+		 * @since	0.15.26
+		 * @param 	array	$refs	The source refs of productions to preload.
+		 * @return 	void
+		 */
 		function preload_productions_by_ref( $refs = array() ) {
+			
+			if ( empty( $refs ) ) {
+				return;
+			}
+			
 			$args = array(
 				'post_type' => WPT_Production::post_type_name,
 				'post_status' => 'any',
@@ -135,6 +185,7 @@
 			foreach ($posts as $post ) {
 				$this->productions_by_ref[ get_post_meta( $post->ID, '_wpt_source_ref', true) ] = new WPT_Production( $post ->ID );
 			}
+			
 		}
 		
 		/**
@@ -312,13 +363,14 @@
 		 *
 		 * Use this helper function to create a new event while processing your feed.
 		 * 
-		 * @since 0.10
-		 * @since 0.11 		Added support for event prices.
-		 * @since 0.11.7	Events now inherit the post_status from the production.
+		 * @since 	0.10
+		 * @since 	0.11 	Added support for event prices.
+		 * @since 	0.11.7	Events now inherit the post_status from the production.
 		 *					Fixes https://github.com/slimndap/wp-theatre/issues/129.
+		 * @since	0.15.26	The event is now added to @uses WPT_Importer::$events_by_ref after creation.
 		 *
-		 * @see WPT_Importer::get_event_by_ref()
-		 * @see WPT_Importer::update_event()
+		 * @uses	WPT_Importer::get_event_by_ref()
+		 * @uses	WPT_Importer::update_event()
 		 *
 		 * @access protected
 		 * @param array $args {
@@ -333,6 +385,7 @@
 		 * @return WPT_Event				The new event or <false> if there was a problem.
 		 */
 		function create_event($args) {
+			
 			$defaults = array(
 				'production' => false,
 				'venue' => false,
@@ -381,7 +434,13 @@
 
 				$this->stats['events_created']++;
 				
-				return new WPT_Event($post_id);
+				$event = new WPT_Event($post_id);
+
+				// Add the event to the preloaded events.
+				$this->events_by_ref[ $args['ref'] ] = $event;
+				
+				return $event;
+				
 			} else {
 				return false;
 			}
@@ -419,10 +478,14 @@
 			);
 
 			if ($post_id = wp_insert_post($post)) {
+				$ref = sanitize_text_field($args['ref']);
 				add_post_meta($post_id, '_wpt_source', $this->get('slug'), true);
-				add_post_meta($post_id, '_wpt_source_ref', sanitize_text_field($args['ref']), true);
+				add_post_meta($post_id, '_wpt_source_ref', $ref, true);
 				$this->stats['productions_created']++;
-				return new WPT_Production($post_id);
+
+				$production = new WPT_Production($post_id);
+				$this->productions_by_ref[ $ref ] = $production;
+				return $production;
 			} else {
 				return false;
 			}		
@@ -464,18 +527,19 @@
 		 * 
 		 * Use this helper function to find a previously imported event while processing your feed.
 		 * 
-		 * @since 0.10
+		 * @since 	0.10
+		 * @since	0.15.26	Added support for preloaded events.
 		 *
-		 * @see WPT_Importer::update_event()
+		 * @uses WPT_Importer::get_preloaded_event_by_ref() to get a preloaded event.
+		 * @uses WPT_Importer::events_by_ref to add an event to the preloaded events.
 		 *
-		 * @access protected
-		 * @param string $ref A unique identifier for the event.
-		 * @return WPT_Event The event. Returns `false` if no previously imported event was found.
+		 * @param 	string 		$ref 	A unique identifier for the event.
+		 * @return 	WPT_Event 			The event. Returns `false` if no previously imported event was found.
 		 */
 		function get_event_by_ref($ref) {
 			
-			if ( isset( $this->events_by_ref[ $ref ] ) ) {
-				return $this->events_by_ref[ $ref ];
+			if ( $preloaded_event = $this->get_preloaded_event_by_ref( $ref ) ) {
+				return $preloaded_event;
 			}
 			
 			$args = array(
@@ -505,20 +569,57 @@
 		}
 		
 		/**
+		 * Gets a preloaded event by source ref.
+		 * 
+		 * @since	0.15.26
+		 * @uses 	WPT_Importer::events_by_ref to retrieve a preloaded event.
+		 * @param	string	$ref	The source ref.
+		 * @return 	WPT_Event|bool	The preloaded event or <false> if no event was found.
+		 */
+		function get_preloaded_event_by_ref( $ref ) {
+
+			if ( !isset( $this->events_by_ref[ $ref ] ) ) {
+				return false;
+			}
+			
+			return $this->events_by_ref[ $ref ];
+		}
+		
+		/**
+		 * Gets a preloaded production by source ref.
+		 * 
+		 * @since	0.15.26
+		 * @uses 	WPT_Importer::productions_by_ref to retrieve a preloaded production.
+		 * @param	string				$ref	The source ref.
+		 * @return 	WPT_Production|bool			The preloaded production or <false> if no production was found.
+		 */
+		function get_preloaded_production_by_ref( $ref ) {
+
+			if ( !isset( $this->productions_by_ref[ $ref ] ) ) {
+				return false;
+			}
+			
+			return $this->productions_by_ref[ $ref ];
+		}
+		
+		/**
 		 * Gets a production based on the unique identifier.
 		 * 
 		 * Use this helper function to find a previously imported production while processing your feed.
 		 * 
-		 * @since 0.10
+		 * @since 	0.10
+		 * @since	0.15.26	Added support for preloaded events.
 		 *
-		 * @access protected
-		 * @param string $ref A unique identifier for the production.
-		 * @return WPT_Production The production. Returns `false` if no previously imported production was found.
+		 * @uses WPT_Importer::get_preloaded_production_by_ref() to get a preloaded production.
+		 * @uses WPT_Importer::productions_by_ref to add a production to the preloaded productions.
+		 *
+		 * @param 	string 			$ref 	A unique identifier for the production.
+		 * @return 	WPT_Production 			The production. Returns `false` if no previously imported production was found.
 		 */
-		protected function get_production_by_ref($ref) {
+		function get_production_by_ref($ref) {
 
-			if ( isset( $this->productions_by_ref[ $ref ] ) ) {
-				return $this->productions_by_ref[ $ref ];
+			if ( $preloaded_production = $this->get_preloaded_production_by_ref( $ref ) ) {
+				return $preloaded_production;
 			}
 			
 			$args = array(
@@ -659,7 +760,11 @@
 
 			$this->stats['events_updated']++;
 			
-			return new WPT_Event($event->ID);
+			$event = new WPT_Event($event->ID);
+			
+			$this->events_by_ref[ $args['ref'] ] = $event;
+			
+			return $event;
 			
 		}
 
@@ -756,7 +861,7 @@
 			if ($this->process_feed()) {
 				$this->remove_marked_events();			
 			}
-			
+
 			$this->stats['end'] = current_time( 'timestamp' );
 			
 			$this->save_stats();
@@ -797,7 +902,8 @@
 			
 			if ($reimport_result) {
 				$this->remove_marked_events();			
-			}			
+			}
+			
 		}
 
 		/**
@@ -963,7 +1069,33 @@
 				wp_delete_post($event_id, true);
 			}
 		}
+
+		/**
+		 * Clear all preloaded events.
+		 * 
+		 * Used by unit tests to clear preloaded events in between tests.
+		 *
+		 * @since	0.15.26
+		 * @uses 	WPT_Importer::events_by_ref to clear all preloaded events.
+		 * @return 	void
+		 */
+		function clear_preloaded_events() {
+			$this->events_by_ref = array();
+		}
 		
+		/**
+		 * Clear all preloaded productions.
+		 * 
+		 * Used by unit tests to clear preloaded productions in between tests.
+		 *
+		 * @since	0.15.26
+		 * @uses 	WPT_Importer::productions_by_ref to clear all preloaded productions.
+		 * @return 	void
+		 */
+		function clear_preloaded_productions() {
+			$this->productions_by_ref = array();			
+		}
+
 		/**
 		 * Saves the import stats.
 		 *

@@ -428,14 +428,13 @@ class WPT_Test_Importer extends WP_UnitTestCase {
 		$importer = new WPT_Demo_Importer();
 
 		$importer->execute();
+
 		$this->publish_all();
 
 		$productions = $wp_theatre->productions->get();
 		
 		// Pick 'Production 0'.
-		$production_id = $productions[0]->ID;
-		
-		
+		$production_id = $productions[0]->ID;		
 		$events = $productions[0]->events();
 		
 		// Delete the first event.
@@ -446,7 +445,11 @@ class WPT_Test_Importer extends WP_UnitTestCase {
 		$actual = $production->events();
 		$expected = 1;
 		$this->assertCount($expected, $actual);
-				
+		
+		// Prepare for a clean re-import by clearing all preloaded productiosn and events.
+		$importer->clear_preloaded_productions();
+		$importer->clear_preloaded_events();				
+		
 		$importer->execute_reimport($production_id);
 
 		// Test if the deleted event is back.
@@ -531,7 +534,72 @@ class WPT_Test_Importer extends WP_UnitTestCase {
 		
 		$this->assertNotEquals($expected, $actual);		
 	}
+	
+	function test_productions_are_preloaded_during_import() {
 
+		$importer = new WPT_Demo_Importer();
+		$importer->execute();
+		
+		// Production should be preloaded after import.
+		$actual = $importer->get_preloaded_production_by_ref( 'demo_1');
+		$expected = 'WPT_Production';
+		$this->assertInstanceOf( $expected, $actual );
+		
+		$importer->clear_preloaded_productions();
+		
+		// Production should no longer be preloaded after clearing.
+		$actual = $importer->get_preloaded_production_by_ref( 'demo_1');
+		$this->assertFalse( $actual );
+		
+		$production_refs = array();
+		for ( $p = 0; $p < count( $importer->feed );$p++ ) {
+			$production_refs[] = 'demo_'.$p;
+		}
+		
+		$importer->preload_productions_by_ref( $production_refs );		
+
+		// Production should be preloaded again from the database.
+		$actual = $importer->get_preloaded_production_by_ref( 'demo_1');
+		$expected = 'WPT_Production';
+		
+		$this->assertInstanceOf( $expected, $actual );
+		
+	}
+	
+	function test_events_are_preloaded_during_import() {
+
+		$importer = new WPT_Demo_Importer();
+		$importer->execute();
+		
+		// Event should be preloaded after import.
+		$actual = $importer->get_preloaded_event_by_ref( 'demo_1_0');
+		$expected = 'WPT_Event';
+		$this->assertInstanceOf( $expected, $actual );
+		
+		$importer->clear_preloaded_productions();
+		
+		// Production should no longer be preloaded after clearing.
+		$actual = $importer->get_preloaded_production_by_ref( 'demo_1');
+		$this->assertFalse( $actual );
+		
+		$event_refs = array();
+		for ( $p = 0; $p < count( $importer->feed );$p++ ) {
+			$production_ref = 'demo_'.$p;
+			for ( $e = 0;$e < count( $this->feed[ $p ] );$e++ ) {
+				$event_refs[] = $production_ref.'_'.$e;
+			}
+		}
+		
+		$importer->preload_events_by_ref( $event_refs );		
+
+		// Event should be preloaded again from the database.
+		$actual = $importer->get_preloaded_event_by_ref( 'demo_1_0');
+		$expected = 'WPT_Event';
+		
+		$this->assertInstanceOf( $expected, $actual );
+				
+		
+	}
 }
 
 
