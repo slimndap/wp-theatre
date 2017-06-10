@@ -60,6 +60,33 @@ class WPT_Production {
 		}
 	}
 
+	function tags( $args = array() ) {
+		$defaults = array(
+			'html' => false,
+		);
+
+		$args = wp_parse_args( $args, $defaults );
+
+		if ( ! isset( $this->tags ) ) {
+			$this->tags = apply_filters( 'wpt_production_tags',wp_get_post_tags( $this->ID ),$this );
+		}
+
+		if ( $args['html'] ) {
+			if ( ! empty( $this->tags ) ) {
+				$html = '';
+				$html .= '<ul class="wpt_production_tags">';
+				foreach ( $this->tags as $tag_id ) {
+					$tag = get_tag( $tag_id );
+					$html .= '<li class="wpt_production_tag wpt_production_tag_'.$tag->slug.'">'.$tag->name.'</li>';
+				}
+				$html .= '</ul>';
+				return apply_filters( 'wpt_production_tags_html', $html, $this );
+			}
+		} else {
+			return $this->tags;
+		}
+	}
+
 	/**
 	 * Production cites.
 	 *
@@ -298,9 +325,8 @@ class WPT_Production {
 	 * @since	0.?
 	 * @since	0.15.15	Use get_post_status() instead of $this->post()->post_status to
 	 *					make sure that we're not using a locally cached value.
-	 * @param 	array 	$filters	The filters for the events.
-	 *								See WPT_Events::get() for possible values.
-	 * @return	WPT_Event[]
+	 * @param array $filters (default: array())
+	 * @return void
 	 */
 	function events( $filters = array() ) {
 		global $wp_theatre;
