@@ -37,6 +37,37 @@ class WPT_Test_Tags extends WPT_UnitTestCase {
 		
 		$this->assertEquals($expected, $actual);
 	}
+	
+	function test_are_tags_in_productions_list() {
+		
+		$this->setup_test_data();
+		
+		$actual = do_shortcode( '[wpt_productions]{{tags}}[/wpt_productions]' );
+
+		$expected = '<ul class="wp_theatre_prod_tags">';		
+		$this->assertContains( $expected, $actual );
+		
+		$expected = '<li class="wp_theatre_prod_tag wp_theatre_prod_tag_upcoming">upcoming';		
+		$this->assertContains( $expected, $actual );
+		
+		$expected = '<li class="wp_theatre_prod_tag wp_theatre_prod_tag_historic">historic';		
+		$this->assertContains( $expected, $actual );
+		
+	}
+	
+	function test_are_tags_in_events_list() {
+
+		$this->setup_test_data();
+		
+		$actual = do_shortcode( '[wpt_events]{{title}}{{tags}}[/wpt_events]' );
+
+		$expected = '<ul class="wp_theatre_prod_tags">';		
+		$this->assertContains( $expected, $actual );
+		
+		$expected = '<li class="wp_theatre_prod_tag wp_theatre_prod_tag_upcoming">upcoming';		
+		$this->assertContains( $expected, $actual );
+		
+	}
 
 
 }

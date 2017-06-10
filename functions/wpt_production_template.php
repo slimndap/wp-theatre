@@ -33,6 +33,8 @@ class WPT_Production_Template extends WPT_Template {
 	 * Gets the value for a field from a production.
 	 *
 	 * @since 	0.12.1
+	 * @since	0.15.26	Added the 'tags' field.
+	 *
 	 * @access 	protected
 	 * @param 	string	$field		The field.
 	 * @param 	array 	$args		Arguments for the field (optional).
@@ -63,6 +65,9 @@ class WPT_Production_Template extends WPT_Template {
 			case 'prices' :
 				$value = $this->object->prices_html();
 				break;
+			case 'tags' :
+				$value = $this->object->tags_html();
+				break;
 			case 'title':
 			case 'dates':
 			case 'cities':
@@ -72,11 +77,8 @@ class WPT_Production_Template extends WPT_Template {
 			case 'categories':
 				$value = $this->object->{$field}($value_args);
 				break;
-			case 'tags':
-				$value = $this->object->{$field}($value_args);
-				break;
 			default:
-				$value = $this->object->custom( $field,$value_args );
+				$value = $this->object->custom( $field, $value_args );
 		}
 
 		/**
