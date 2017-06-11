@@ -70,10 +70,6 @@ class WPT_Test_Template extends WP_UnitTestCase {
 		$this->assertEquals($expected, $actual);		
 	}
 	
-	function test_template_placeholder() {
-		
-	}
-	
 	function test_template_placeholder_thumbnail() {
 		add_theme_support( 'post-thumbnails' );	
 	    $this->assume_role( 'author' );

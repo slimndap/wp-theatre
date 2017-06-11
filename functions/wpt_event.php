@@ -91,49 +91,88 @@ class WPT_Event {
 
 	/**
 	 * Returns value of a custom field.
-	 * Fallback to production is custom field doesn't exist for event.
 	 *
 	 * @since 	0.8.3
 	 * @since	0.15	Fixed an error when no production is set for the event.
+	 * @since	0.15.26	Fix: $fallback_to_production was not doing anything.
+	 *					Deprecated the $args argument.
+	 *					Moved HTML output to WPT_Event::custom_html().
 	 *
-	 * @param string $field
-	 * @param array $args {
-	 *     @type bool $html Return HTML? Default <false>.
-	 * }
-	 * @param bool $fallback_to_production
-	 * @return string.
+	 * @uses 	WPT_Event::custom_html() to get the HTM for a custom field.
+	 * @uses	WPT_Event::production() to get the production of an event.
+	 *
+	 * @param 	string 	$field					The custom field.
+	 * @param	bool	$fallback_to_production	Use the value of the production if the value of the event is empty?
+	 *											Defaults to <true>.
+	 * @return  string							The value of a custom field.
 	 */
-	function custom( $field, $args = array(), $fallback_to_production = true ) {
-		$defaults = array(
-			'html' => false,
-			'filters' => array(),
-		);
-		$args = wp_parse_args( $args, $defaults );
-
-		if ( ! isset( $this->{$field} ) ) {
-			$this->{$field} = apply_filters(
-				'wpt_event_'.$field,
-				get_post_meta( $this->ID, $field, true ),
-				$field,
-				$this
-			);
+	function custom( $field, $fallback_to_production = true ) {
+		
+		// Add backwards compatibility for the deprecated $args argument.
+		if ( is_array( $fallback_to_production ) && !empty( $fallback_to_production['html'] ) ) {
+			$filters = array();
+			if ( !empty( $fallback_to_production['filters'] ) ) {
+				$filters = $fallback_to_production['filters'];
+			}
+			return $this->custom_html( $field, $filters );
 		}
-
-		$value = $this->{$field};
+		
+		$value = get_post_meta( $this->ID, $field, true );
+		
+		/**
+		 * Filter the value of a custom field.
+		 * 
+		 * @since	0.8.3
+		 * @param	string		$value	The value of a custom field.
+		 * @param	string		$field	The custom field.
+		 * @param	WPT_Event	$event	The event.
+		 */
+		$value = apply_filters( 'wpt_event_'.$field, $value, $field, $this );
+		
 		if ( empty($value) && $fallback_to_production && $production = $this->production() ) {
 			$value = $production->custom( $field );
 		}
 
-		if ( $args['html'] ) {
-			$html = '';
-			$html .= '<div class="'.self::post_type_name.'_'.$field.'">';
-			$html .= $this->apply_template_filters( $value, $args['filters'] );
-			$html .= '</div>';
-
-			return apply_filters( 'wpt_event_'.$field.'_html', $html, $field, $this );
-		} else {
-			return $value;
-		}
+		return $value;
+	}
+	
+	/**
+	 * Gets the HTML for a custom field.
+	 * 
+	 * @since	0.15.26
+	 *
+	 * @uses	WPT_Event::custom() to get the value of a custom field.
+	 * @uses	WPT_Event::apply_template_filters() to apply template filters to the custom field value.
+	 *
+	 * @param 	string 	$field					The custom field.
+	 * @param 	array 	$filters				The template filters to apply.
+	 * @param	bool	$fallback_to_production	Use the value of the production if the value of the event is empty?
+	 * @return 	string	The HTML for a custom field.
+	 */
+	function custom_html( $field, $filters = array(), $fallback_to_production = true ) {
+		
+		$value = $this->custom( $field, $fallback_to_production );
+		
+		ob_start();
+		
+		?><div class="<?php echo self::post_type_name; ?>_<?php echo $field; ?>"><?php
+			echo $this->apply_template_filters( $value, $filters );
+		?></div><?php
+		
+		$html = ob_get_clean();
+		
+		/**
+		 * Filter the HTML for a custom field.
+		 * 
+		 * @since	0.8.3
+		 *
+		 * @param	string		$html	The HTML for a custom field.
+		 * @param	string		$field	The custom field.
+		 * @param	WPT_Event	$event	The event.
+		 */
+		$html = apply_filters( 'wpt_event_'.$field.'_html', $html, $field, $this );
+		
+		return $html;
 	}
 
 	/**

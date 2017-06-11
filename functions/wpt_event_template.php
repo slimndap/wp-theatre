@@ -28,6 +28,7 @@ class WPT_Event_Template extends WPT_Template {
 	 *
 	 * @since 	0.12.1
 	 * @since	0.15	Fixed an error when no production is set for the event.
+	 * @since	0.15.26	Custom fields now use WPT_Event::custom_html().
 	 *
 	 * @access 	protected
 	 * @param 	string	$field		The field.
@@ -89,7 +90,7 @@ class WPT_Event_Template extends WPT_Template {
 				$value = $this->object->{$field.'_html'}($filters);
 				break;
 			default:
-				$value = $this->object->custom( $field,$value_args );
+				$value = $this->object->custom_html( $field, $filters, true );
 		}
 
 		/**
