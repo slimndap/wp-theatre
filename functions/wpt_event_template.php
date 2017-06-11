@@ -28,7 +28,7 @@ class WPT_Event_Template extends WPT_Template {
 	 *
 	 * @since 	0.12.1
 	 * @since	0.15	Fixed an error when no production is set for the event.
-	 * @since	0.15.26	Added the 'tags' field.
+	 * @since	0.15.27	Added the 'tags' field.
 	 * 					Custom fields now use WPT_Event::custom_html().
 	 *
 	 * @access 	protected

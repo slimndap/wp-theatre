@@ -132,7 +132,7 @@ This release focusses on a more streamlined experience when managing your events
 * Enhancements
     * Renamed 'productions' to 'events'.
     * Simplified the events admin screen.
-    * Added a new `{{prices}}` placeholder for productions (0.15.3).
+    * Added a new `{{prices}}` placeholder for events (0.15.3).
     * Events can now be filtered by tags (0.15.5).
 	* Activated events archive pages (0.15.10).
 	* You can now set until what time events should fall on the previous days using the `theater/helpers/time/next_day_start_time_offset` filter (0.15.11).
@@ -142,6 +142,8 @@ This release focusses on a more streamlined experience when managing your events
 	* Added the `wpt/importer/get/value` filter to alter the default behaviour of an importer (0.15.20).
 	* The calendar widget now jumps to the active month if you show the widget on you events page (0.15.23).
 	* The use of transients for event lists and calendar can now be switched off using the `theater/transient/active` filter (0.15.24). Thank you [joost de keijzer](https://dekeijzer.org/)!
+    * Added a new `{{tags}}` placeholder for events (0.15.27). See the updated [docs](https://github.com/slimndap/wp-theatre/wiki/Shortcodes). Thank you [Raymond van Melzen](https://www.vanmelzen.com/)!
+    * Internal changes to improve performance of importers (0.15.27).
 
 * Bugfix
     * The translation setting for the header above events on the productions page was also being used in other places (eg. the admin menu) (0.15.2). Thank you [Bob Morris](https://wordpress.org/support/profile/bob-morris)!
@@ -161,6 +163,8 @@ This release focusses on a more streamlined experience when managing your events
 	* Fixed performance issues with some websites that use full page caching plugins and services (0.15.22).
 	* Fixed several performance issues of during imports (0.15.24).
 	* Fixed a conflict with WP-CLI. (0.15.24).
+	* Fixed an [issue](https://github.com/slimndap/wp-theatre/pull/242) with the fallback of custom field values of events. Thank you [joost de keijzer](https://dekeijzer.org/)!
+	
 	
 * Deprecations
 	* Deprecated the custom CSS settings in favour of the custom CSS setting that came with WordPress 4.7 (0.15.16).
@@ -243,6 +247,9 @@ Release Date: May 30th, 2015
 
 == Upgrade Notice ==
 
+= 0.15.27 =
+Added a new `{{tags}}` placeholder for events.
+
 = 0.15.26 = 
 Fixes a problem with the Production events widget that was introduced in a previous update.
 
@@ -304,7 +311,7 @@ Adds support for a 'tag' filter in event lists. Fixes a problem when bulk publis
 Small bugfixes and improvements to the events admin screen.
 
 = 0.15.3 =
-Added a new `{{prices}}` placeholder for productions.
+Added a new `{{prices}}` placeholder for events.
 
 = 0.15.2 =
 Adds context information to fields in listings, useful for styling and context-aware hooks.

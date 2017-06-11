@@ -94,7 +94,7 @@ class WPT_Event {
 	 *
 	 * @since 	0.8.3
 	 * @since	0.15	Fixed an error when no production is set for the event.
-	 * @since	0.15.26	Fix: $fallback_to_production was not doing anything.
+	 * @since	0.15.27	Fix: $fallback_to_production was not doing anything.
 	 *					Deprecated the $args argument.
 	 *					Moved HTML output to WPT_Event::custom_html().
 	 *
@@ -139,7 +139,7 @@ class WPT_Event {
 	/**
 	 * Gets the HTML for a custom field.
 	 * 
-	 * @since	0.15.26
+	 * @since	0.15.27
 	 *
 	 * @uses	WPT_Event::custom() to get the value of a custom field.
 	 * @uses	WPT_Event::apply_template_filters() to apply template filters to the custom field value.

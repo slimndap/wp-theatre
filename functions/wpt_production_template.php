@@ -33,7 +33,7 @@ class WPT_Production_Template extends WPT_Template {
 	 * Gets the value for a field from a production.
 	 *
 	 * @since 	0.12.1
-	 * @since	0.15.26	Added the 'tags' field.
+	 * @since	0.15.27	Added the 'tags' field.
 	 *
 	 * @access 	protected
 	 * @param 	string	$field		The field.

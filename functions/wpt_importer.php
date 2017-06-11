@@ -10,7 +10,7 @@
 	 *
 	 * @since 	0.10
 	 * @since	0.15.24	Events are no longer marked in the database during import.
-	 * @since	0.15.26	Added support for preloading previously imported productions and events.
+	 * @since	0.15.27	Added support for preloading previously imported productions and events.
 	 */
 	class WPT_Importer {
 		
@@ -35,7 +35,7 @@
 		/**
 		 * Preloaded events tracker.
 		 * 
-		 * @since	0.15.24
+		 * @since	0.15.27
 		 * @var		WPT_Event[]
 		 * @access 	private
 		 */
@@ -111,7 +111,7 @@
 		 * previous imports to the @uses WPT_Importer::productions_by_ref property and put all corresponding
 		 * meta fields in he WordPress cache.
 		 *
-		 * @since	0.15.26
+		 * @since	0.15.27
 		 * @param 	array	$refs	The source refs of events to preload.
 		 * @return 	void
 		 */
@@ -153,7 +153,7 @@
 		 * previous imports to the @uses WPT_Importer::productions_by_ref property and put all corresponding
 		 * meta fields in he WordPress cache.
 		 *
-		 * @since	0.15.26
+		 * @since	0.15.27
 		 * @param 	array	$refs	The source refs of productions to preload.
 		 * @return 	void
 		 */
@@ -367,7 +367,7 @@
 		 * @since 	0.11 	Added support for event prices.
 		 * @since 	0.11.7	Events now inherit the post_status from the production.
 		 *					Fixes https://github.com/slimndap/wp-theatre/issues/129.
-		 * @since	0.15.26	The event is now added to @uses WPT_Importer::$events_by_ref after creation.
+		 * @since	0.15.27	The event is now added to @uses WPT_Importer::$events_by_ref after creation.
 		 *
 		 * @uses	WPT_Importer::get_event_by_ref()
 		 * @uses	WPT_Importer::update_event()
@@ -528,7 +528,7 @@
 		 * Use this helper function to find a previously imported event while processing your feed.
 		 * 
 		 * @since 	0.10
-		 * @since	0.15.26	Added support for preloaded events.
+		 * @since	0.15.27	Added support for preloaded events.
 		 *
 		 * @uses WPT_Importer::get_preloaded_event_by_ref() to get a preloaded event.
 		 * @uses WPT_Importer::events_by_ref to add an event to the preloaded events.
@@ -571,7 +571,7 @@
 		/**
 		 * Gets a preloaded event by source ref.
 		 * 
-		 * @since	0.15.26
+		 * @since	0.15.27
 		 * @uses 	WPT_Importer::events_by_ref to retrieve a preloaded event.
 		 * @param	string	$ref	The source ref.
 		 * @return 	WPT_Event|bool	The preloaded event or <false> if no event was found.
@@ -588,7 +588,7 @@
 		/**
 		 * Gets a preloaded production by source ref.
 		 * 
-		 * @since	0.15.26
+		 * @since	0.15.27
 		 * @uses 	WPT_Importer::productions_by_ref to retrieve a preloaded production.
 		 * @param	string				$ref	The source ref.
 		 * @return 	WPT_Production|bool			The preloaded production or <false> if no production was found.
@@ -608,7 +608,7 @@
 		 * Use this helper function to find a previously imported production while processing your feed.
 		 * 
 		 * @since 	0.10
-		 * @since	0.15.26	Added support for preloaded events.
+		 * @since	0.15.27	Added support for preloaded events.
 		 *
 		 * @uses WPT_Importer::get_preloaded_production_by_ref() to get a preloaded production.
 		 * @uses WPT_Importer::productions_by_ref to add a production to the preloaded productions.
@@ -1075,7 +1075,7 @@
 		 * 
 		 * Used by unit tests to clear preloaded events in between tests.
 		 *
-		 * @since	0.15.26
+		 * @since	0.15.27
 		 * @uses 	WPT_Importer::events_by_ref to clear all preloaded events.
 		 * @return 	void
 		 */
@@ -1088,7 +1088,7 @@
 		 * 
 		 * Used by unit tests to clear preloaded productions in between tests.
 		 *
-		 * @since	0.15.26
+		 * @since	0.15.27
 		 * @uses 	WPT_Importer::productions_by_ref to clear all preloaded productions.
 		 * @return 	void
 		 */
