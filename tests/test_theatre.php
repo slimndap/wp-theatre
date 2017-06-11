@@ -413,6 +413,43 @@ class WPT_Test extends WP_UnitTestCase {
 		$this->assertEquals(1, substr_count($html, 'George Lucas'), $html);		
 	}
 	
+	function test_event_custom_field_production_fallback() {
+		
+		$event = new WPT_Event( $this->upcoming_event_with_prices );
+
+		// No director for event or production.
+		$actual = $event->custom( 'director' );
+		$expected = '';
+		$this->assertEquals( $expected, $actual );
+
+		update_post_meta(
+			$this->production_with_upcoming_event, 
+			'director', 
+			'George Lucas'
+		);	
+				
+		// No director for event, fallback to production.
+		$actual = $event->custom( 'director' );
+		$expected = 'George Lucas';
+		$this->assertEquals( $expected, $actual );
+
+		// No director for event, but don't fallback to production.		
+		$actual = $event->custom( 'director', false );
+		$expected = '';
+		$this->assertEquals( $expected, $actual );
+
+		update_post_meta(
+			$this->production_with_upcoming_event, 
+			'director', 
+			'Steven Spielberg'
+		);	
+		
+		// Director is set for event. Don't fallback to production.
+		$actual = $event->custom( 'director' );
+		$expected = 'Steven Spielberg';
+		$this->assertEquals( $expected, $actual );
+	}
+	
 	// Test event features
 	function test_wpt_event_tickets_status_cancelled() {
 		$this->assertEquals(1, substr_count(do_shortcode('[wpt_events]'), 'wp_theatre_event_tickets_status_cancelled'));		
