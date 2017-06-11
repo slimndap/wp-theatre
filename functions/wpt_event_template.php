@@ -28,6 +28,7 @@ class WPT_Event_Template extends WPT_Template {
 	 *
 	 * @since 	0.12.1
 	 * @since	0.15	Fixed an error when no production is set for the event.
+	 * @since	0.15.26	Added the 'tags' field.
 	 *
 	 * @access 	protected
 	 * @param 	string	$field		The field.
@@ -64,6 +65,11 @@ class WPT_Event_Template extends WPT_Template {
 				}
 				if ($production = $this->object->production()) {
 					$value = $production->thumbnail_html($size, $filters);				
+				}
+				break;
+			case 'tags':
+				if ($production = $this->object->production()) {
+					$value = $production->tags_html( );				
 				}
 				break;
 			case 'categories':

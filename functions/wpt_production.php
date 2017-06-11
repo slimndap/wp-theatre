@@ -61,6 +61,62 @@ class WPT_Production {
 	}
 
 	/**
+	 * Gets the production tags.
+	 * 
+	 * @since	0.15.26
+	 * @return	WP_Term[]	The production tags.
+	 */
+	function tags( ) {
+		
+		$tags = wp_get_post_tags( $this->ID );
+				
+		/**
+		 * Filter the production tags.
+		 * 
+		 * @since	0.15.26
+		 * @param	WP_Term[]		$tags		The production tags.
+		 * @param	WPT_Production	$production	The production.
+		 */
+		$tags = apply_filters( 'wpt/production/tags', $tags, $this );
+		
+		return $tags;
+	}
+	
+	/**
+	 * Gets the HTML for the production tags.
+	 * 
+	 * @since	0.15.26
+	 * @return	string	The HTML for the production tags.
+	 */
+	function tags_html( ) {
+		
+		ob_start();
+
+		?><ul class="<?php echo self::post_type_name; ?>_tags"><?php
+			
+			$tags = $this->tags();
+			foreach( $tags as $tag ) {
+				?><li class="<?php echo self::post_type_name; ?>_tag <?php echo self::post_type_name; ?>_tag_<?php echo $tag->slug; ?>"><?php 
+					echo $tag->name; 
+				?></li><?php
+			}
+		?></ul><?php
+
+		$html = ob_get_clean();
+
+		/**
+		 * Filter the HTML for the production tags.
+		 * @since	0.15.26
+		 * @param	string			$html		The HTML for the upcoming production dates.
+		 * @param	WPT_Production	$production	The production.
+		 */
+		$html = apply_filters( 'wpt/production/tags/html', $html, $this );
+
+		return $html;
+		
+	}
+
+	/**
 	 * Production cites.
 	 *
 	 * Returns a summary of the cities of the production events as plain text or as an HTML element.
@@ -298,9 +354,8 @@ class WPT_Production {
 	 * @since	0.?
 	 * @since	0.15.15	Use get_post_status() instead of $this->post()->post_status to
 	 *					make sure that we're not using a locally cached value.
-	 * @param 	array 	$filters	The filters for the events.
-	 *								See WPT_Events::get() for possible values.
-	 * @return	WPT_Event[]
+	 * @param array $filters (default: array())
+	 * @return void
 	 */
 	function events( $filters = array() ) {
 		global $wp_theatre;
