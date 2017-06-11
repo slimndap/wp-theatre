@@ -143,7 +143,7 @@ This release focusses on a more streamlined experience when managing your events
 	* The calendar widget now jumps to the active month if you show the widget on you events page (0.15.23).
 	* The use of transients for event lists and calendar can now be switched off using the `theater/transient/active` filter (0.15.24). Thank you [joost de keijzer](https://dekeijzer.org/)!
     * Added a new `{{tags}}` placeholder for events (0.15.27). See the updated [docs](https://github.com/slimndap/wp-theatre/wiki/Shortcodes). Thank you [Raymond van Melzen](https://www.vanmelzen.com/)!
-    * Internal changes to improve performance of importers (0.15.27).
+    * Internal changes to further improve performance of importers (0.15.27).
 
 * Bugfix
     * The translation setting for the header above events on the productions page was also being used in other places (eg. the admin menu) (0.15.2). Thank you [Bob Morris](https://wordpress.org/support/profile/bob-morris)!
