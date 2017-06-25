@@ -247,6 +247,9 @@ Release Date: May 30th, 2015
 
 == Upgrade Notice ==
 
+= 0.15.28 =
+Fixes a problem with the Categories widget that was introduced in a previous update.
+
 = 0.15.27 =
 Added a new `{{tags}}` placeholder for events.
 
