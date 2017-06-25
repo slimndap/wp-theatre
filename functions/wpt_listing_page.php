@@ -891,6 +891,10 @@
 		 * 
 		 * @since	0.8
 		 * @since	0.15.8	Fixed a typo in the closing <ul>.
+		 * @since	0.15.28	Use the new Theater_Transient class.
+		 *
+		 * @uses 	Theater_Transient() to store the widget output in a transient.
+		 *
 		 * @param 	mixed 	$args
 		 * @param 	mixed 	$instance
 		 */
@@ -908,7 +912,10 @@
 				'upcoming' => true
 			);
 			
-			if ( ! ( $html = $wp_theatre->transient->get('cat', $cat_args) ) ) {
+			$transient = new Theater_Transient( 'cat', $cat_args );
+			
+			if ( ! ( $html = $transient->get() ) ) {
+	
 				$categories = $wp_theatre->events->get_categories($cat_args);
 				
 				$html = '';
@@ -923,7 +930,8 @@
 				}
 				$html = '<ul class="wpt_categories">'.$html.'</ul>';
 
-				$wp_theatre->transient->set('cat', array(), $html);
+				$transient->set( $html );
+				
 			}
 
 			echo $html;

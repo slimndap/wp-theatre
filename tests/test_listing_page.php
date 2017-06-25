@@ -658,7 +658,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 	}
 	
 	/**
-	 * Tests the Thetaer Catageories widget output.
+	 * Tests the Theater Categories widget output.
 	 * 
 	 * @since	0.15.28
 	 */
@@ -679,9 +679,9 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		$widget->widget( $args, $instance );
 
 		$actual = ob_get_clean();
-		$expected = '';
+		$expected = '<ul class="wpt_categories"><li class="film">';
 		
-		$this->assertEquals( $expected, $actual );
+		$this->assertContains( $expected, $actual );
 		
 	}
 	
