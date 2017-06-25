@@ -657,6 +657,33 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		
 	}
 	
+	/**
+	 * Tests the Thetaer Catageories widget output.
+	 * 
+	 * @since	0.15.28
+	 */
+	function test_widget_categories() {
+		$widget = new WPT_Categories_Widget();
+
+		$args = array(
+			'before_title'  => '<h2>',
+			'after_title'   => "</h2>\n",
+			'before_widget' => '<section>',
+			'after_widget'  => "</section>\n",			
+		);
+		$instance = array(
+			'title' => 'Theater Categories',	
+		);
+
+		ob_start();
+		$widget->widget( $args, $instance );
+
+		$actual = ob_get_clean();
+		$expected = '';
+		
+		$this->assertEquals( $expected, $actual );
+		
+	}
 	
 	/* 
 	 * Test backwards compatibility
