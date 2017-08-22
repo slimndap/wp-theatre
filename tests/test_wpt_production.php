@@ -54,6 +54,7 @@ class WPT_Test_WPT_Production extends WPT_UnitTestCase {
 		$wp_theatre->wpt_tickets_options = array(
 			'currencysymbol' => '$',
 		);
+		
 	}
 
 	function filter_value( $value, $production ) {
@@ -236,7 +237,11 @@ class WPT_Test_WPT_Production extends WPT_UnitTestCase {
 		$this->assertEquals( $expected, $actual );
 	}
 
+	/**
+	 * @expectedDeprecated Theater_Event::custom()	 
+	 */
 	function test_wpt_production_custom() {
+		
 		$expected = 'Spielberg';
 		$actual = $this->production->custom( 'director' );
 		$this->assertEquals( $expected, $actual );
@@ -448,6 +453,9 @@ class WPT_Test_WPT_Production extends WPT_UnitTestCase {
 
 	}
 
+	/**
+	 * @expectedDeprecated Theater_Event::custom()	 
+	 */
 	function test_wpt_production_custom_filter() {
 		add_filter( 'wpt_production_director', array( $this, 'filter_value' ), 10, 2 );
 		$expected = 'Filtered value';
