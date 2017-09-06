@@ -249,6 +249,10 @@ class WPT_Event_Admin {
 			return $post_id;
 		}
 
+		if ( WPT_Event::post_type_name != get_post_type( $production_id )) {
+			return $post_id;
+		}
+
 		// Unhook to avoid loops and make sure it only runs once.
 		remove_action( 'save_post', array( $this, 'save_event' ) );
 
