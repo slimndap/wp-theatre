@@ -240,7 +240,7 @@ class WPT_Event_Admin {
 			return $post_id;
 
 		// If this is an autosave, our form has not been submitted,
-        //     so we don't want to do anything.
+		// so we don't want to do anything.
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) 
 			return $post_id;
 
