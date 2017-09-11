@@ -253,17 +253,11 @@ class WPT_Event_Admin {
 			return $post_id;
 		}
 
-		// Unhook to avoid loops and make sure it only runs once.
-		remove_action( 'save_post', array( $this, 'save_event' ) );
-
 		/* OK, its safe for us to save the data now. */
 
 		foreach ($wp_theatre->event_editor->get_fields( $post_id ) as $field) {
 			$wp_theatre->event_editor->save_field($field, $post_id, $_POST);
 		}
-			
-		// Re-hook.
-		add_action( 'save_post', array( $this, 'save_event' ) );
 	}
 	
 }
