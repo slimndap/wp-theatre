@@ -218,6 +218,8 @@ class WPT_Event_Admin {
 	 * @since 	0.11	Use WPT_Event_Editor::save_field() to save all field values.
 	 * @since 	0.11.5	Added the new $data param to WPT_Event_Editor::save_field().
 	 * @since	0.13	Moved from WPT_Admin to WPT_Event_Admin.
+	 * @since	0.15.29	Added an extra check to make sure we are saving the data of an event.
+	 *
 	 * @param 	int 	$post_id	The event_id.
 	 * @return void
 	 */
@@ -240,7 +242,7 @@ class WPT_Event_Admin {
 			return $post_id;
 
 		// If this is an autosave, our form has not been submitted,
-        //     so we don't want to do anything.
+		// so we don't want to do anything.
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) 
 			return $post_id;
 
@@ -249,12 +251,16 @@ class WPT_Event_Admin {
 			return $post_id;
 		}
 
+		// Check if this is an event.
+		if ( WPT_Event::post_type_name != get_post_type( $post_id ) ) {
+			return $post_id;
+		}
+
 		/* OK, its safe for us to save the data now. */
 
 		foreach ($wp_theatre->event_editor->get_fields( $post_id ) as $field) {
 			$wp_theatre->event_editor->save_field($field, $post_id, $_POST);
 		}
-			
 	}
 	
 }
