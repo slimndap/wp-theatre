@@ -755,7 +755,7 @@ class WPT_Event_Editor {
 		$html .= '<table class="wpt_meta_box_form wpt_event_editor_form">';
 
 		foreach ( $this->get_fields( $event_id ) as $field ) {
-			$html .= '<tr>';
+			$html .= sprintf('<tr class="wpt_event_editor_row_%s">', $field['id']);
 			$html .= '<th>'.$this->get_control_label_html( $field ).'</th>';
 			$html .= '<td>'.$this->get_control_html( $field, $event_id ).'</td>';
 			$html .= '</tr>';
