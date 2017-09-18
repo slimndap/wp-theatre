@@ -3,6 +3,7 @@ Contributors: slimndap
 Tags: theatre, stage, venue, events, shows, concerts, tickets, ticketing, sports, performances, calendar, festival, workshops, theater, cinema
 Requires at least: 4.0
 Tested up to: 4.8
+Requires PHP: 5.3
 Stable tag: 0.15
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
