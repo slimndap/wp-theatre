@@ -61,9 +61,11 @@ class WPT_Event {
 	/**
 	 * Event city.
 	 *
-	 * @since 0.4
+	 * @since 	0.4
+	 * @since	0.15.29	Added a filter for the event city value.
+	 *					See: https://github.com/slimndap/wp-theatre/issues/254
 	 *
-	 * @return string City.
+	 * @return 	string 	City.
 	 */
 	function city( $args = array() ) {
 
@@ -76,7 +78,15 @@ class WPT_Event {
 		$args = wp_parse_args( $args, $defaults );
 
 		if ( ! isset( $this->city ) ) {
-			$this->city = apply_filters( 'wpt_event_venue',get_post_meta( $this->ID,'city',true ),$this );
+			
+			/**
+			 * Filter the value of the event city.
+			 * 
+			 * @since	0.15.29
+			 * @param	string		$city	The value of the event city.
+			 * @param	WPT_Event	$event	The event.
+			 */
+			$this->city = apply_filters( 'wpt_event_city', get_post_meta( $this->ID, 'city', true ), $this );
 		}
 
 		if ( $args['html'] ) {
