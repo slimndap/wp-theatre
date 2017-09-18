@@ -742,6 +742,8 @@ class WPT_Event_Editor {
 	 * Gets the HTML for the event editor form of an event.
 	 *
 	 * @since 	0.11
+	 * @since	0.15.29	Added classes to fields inside the event editor.
+	 *
 	 * @param 	int 	$production_id	The production that the event belongs to.
 	 * @param 	int     $event_id       The event that is being edited.
 	 * 									Leave blank (or <false>) if you want to create a new event.
@@ -750,18 +752,38 @@ class WPT_Event_Editor {
 	 */
 	public function get_form_html( $production_id, $event_id = false ) {
 
-		$html = '';
+		ob_start();
 
-		$html .= '<table class="wpt_meta_box_form wpt_event_editor_form">';
+		?><table class="wpt_meta_box_form wpt_event_editor_form"><?php
 
-		foreach ( $this->get_fields( $event_id ) as $field ) {
-			$html .= sprintf('<tr class="wpt_event_editor_row_%s">', $field['id']);
-			$html .= '<th>'.$this->get_control_label_html( $field ).'</th>';
-			$html .= '<td>'.$this->get_control_html( $field, $event_id ).'</td>';
-			$html .= '</tr>';
-		}
+			foreach ( $this->get_fields( $event_id ) as $field ) {
+				
+				$field_classes = array(
+					'wpt_event_editor_field',
+					'wpt_event_editor_field_'.$field['id'],	
+				);
+				
+				/**
+				 * Filter the classes of a field in the event editor.
+				 * 
+				 * @since	0.15.29
+				 *
+				 * @param	array	$field_classes	The current classes.
+				 * @param	array	$field			The field.
+				 * @param	int		$event_id		The event ID.
+				 */
+				$field_classes = apply_filters( 'wpt/event_editor/form/field/classes', $field_classes, $field, $event_id );
+				$field_classes = apply_filters( 'wpt/event_editor/form/field/classes/field='.$field['id'], $field_classes, $field, $event_id );
+				
+				?><tr class="<?php echo implode( ' ', $field_classes ); ?>">
+					<th><?php echo $this->get_control_label_html( $field ); ?></th>
+					<td><?php echo $this->get_control_html( $field, $event_id ); ?></td>
+				</tr><?php
+			}
 
-		$html .= '</table>';
+		?></table><?php
+			
+		$html = ob_get_clean();
 
 		/**
 		 * Filter the HTML for the event editor form of an event.
