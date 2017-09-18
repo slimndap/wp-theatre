@@ -1,4 +1,9 @@
 <?php
+/**
+ * WPT_Test_Event_Editor class.
+ * 
+ * @group	wpt_event_editor
+ */
 class WPT_Test_Event_Editor extends WP_UnitTestCase {
 
 	function setUp() {
@@ -265,6 +270,31 @@ class WPT_Test_Event_Editor extends WP_UnitTestCase {
 		$this->assertContains( '<tr data-event_id="'.$event_id.'">', $html );
 
 	}
+	/**
+	 * Tests if the field ID is added to the classes of the field row inside the event editor.
+	 * See: https://github.com/slimndap/wp-theatre/pull/260
+	 */
+	function test_field_id_is_added_to_event_editor_row() {
+		global $wp_theatre;
+
+		$production_id = $this->create_production();
+		$event_id = $this->create_event_for_production( $production_id );
+
+		$this->assume_role( 'author' );
+		set_current_screen( WPT_Event::post_type_name );
+
+		$expected = 'class="wpt_event_editor_field wpt_event_editor_field_event_date"';
+
+		do_action( 'add_meta_boxes', WPT_Event::post_type_name, get_post( $event_id ) );
+
+		ob_start();
+		do_meta_boxes( WPT_Event::post_type_name, 'normal', get_post( $event_id ) );
+		$actual = ob_get_contents();
+		ob_end_clean();
+
+		$this->assertContains( $expected, $actual );
+		
+	}
 }
 
 /**
@@ -436,4 +466,6 @@ class WPT_Test_Event_Editor_Ajax extends WP_Ajax_UnitTestCase {
 		
 		$this->assertCount( 1, $events );
 	}
+	
+
 }
