@@ -3,7 +3,7 @@ Contributors: slimndap
 Tags: theatre, stage, venue, events, shows, concerts, tickets, ticketing, sports, performances, calendar, festival, workshops, theater, cinema
 Requires at least: 4.0
 Tested up to: 4.8
-Requires PHP: 5.3
+Requires PHP: 5.4
 Stable tag: 0.15
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -145,6 +145,7 @@ This release focusses on a more streamlined experience when managing your events
 	* The use of transients for event lists and calendar can now be switched off using the `theater/transient/active` filter (0.15.24). Thank you [joost de keijzer](https://dekeijzer.org/)!
     * Added a new `{{tags}}` placeholder for events (0.15.27). See the updated [docs](https://github.com/slimndap/wp-theatre/wiki/Shortcodes). Thank you [Raymond van Melzen](https://www.vanmelzen.com/)!
     * Internal changes to further improve performance of importers (0.15.27).
+    * Added CSS classes to the event editor to make it easier for developer to customize (0.15.29). Thank you [joost de keijzer](https://dekeijzer.org/)!
 
 * Bugfix
     * The translation setting for the header above events on the productions page was also being used in other places (eg. the admin menu) (0.15.2). Thank you [Bob Morris](https://wordpress.org/support/profile/bob-morris)!
@@ -247,6 +248,9 @@ Release Date: May 30th, 2015
 
 
 == Upgrade Notice ==
+
+= 0.15.29 =
+Made it easier for developers to customize the event editor.
 
 = 0.15.28 =
 Fixes a problem with the Categories widget that was introduced in a previous update.
