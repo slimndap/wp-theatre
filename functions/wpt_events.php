@@ -394,6 +394,7 @@ class WPT_Events extends WPT_Listing {
 	 *
 	 * @since 	0.10
 	 * @since	0.14.7	Added $args to $event->html().
+	 * @since	0.15.29	Added $args to all header filters.
 	 *
 	 * @see WPT_Event::html();
 	 * @see WPT_Events::get_html_for_month();
@@ -423,7 +424,19 @@ class WPT_Events extends WPT_Listing {
 				foreach ( $days as $day => $name ) {
 					if ( $day_html = $this->get_html_for_day( $day, $args ) ) {
 						$html .= '<h3 class="wpt_listing_group day">';
-						$html .= apply_filters( 'wpt_listing_group_day',date_i18n( 'l d F',strtotime( $day ) ),$day );
+
+						/**
+						 * Filter the day header in an events list.
+						 * 
+						 * @since 	0.?
+						 * @since	0.15.29	Added the $args param.
+						 *
+						 * @param	string	$header	The header.
+						 * @param	string	$day	The day.
+						 * @param	array	$args	The arguments for the HTML of this list.
+						 */
+						$html .= apply_filters( 'wpt_listing_group_day', date_i18n( 'l d F',strtotime( $day ) ), $day, $args );
+						
 						$html .= '</h3>';
 						$html .= $day_html;
 					}
@@ -434,7 +447,19 @@ class WPT_Events extends WPT_Listing {
 				foreach ( $months as $month => $name ) {
 					if ( $month_html = $this->get_html_for_month( $month, $args ) ) {
 						$html .= '<h3 class="wpt_listing_group month">';
-						$html .= apply_filters( 'wpt_listing_group_month',date_i18n( 'F',strtotime( $month ) ),$month );
+						
+						/**
+						 * Filter the month header in an events list.
+						 * 
+						 * @since 	0.?
+						 * @since	0.15.29	Added the $args param.
+						 *
+						 * @param	string	$header	The header.
+						 * @param	string	$day	The month.
+						 * @param	array	$args	The arguments for the HTML of this list.
+						 */
+						$html .= apply_filters( 'wpt_listing_group_month', date_i18n( 'F',strtotime( $month ) ), $month, $args );
+						
 						$html .= '</h3>';
 						$html .= $month_html;
 					}
@@ -445,7 +470,19 @@ class WPT_Events extends WPT_Listing {
 				foreach ( $years as $year => $name ) {
 					if ( $year_html = $this->get_html_for_year( $year, $args ) ) {
 						$html .= '<h3 class="wpt_listing_group year">';
-						$html .= apply_filters( 'wpt_listing_group_year',date_i18n( 'Y',strtotime( $year.'-01-01' ) ),$year );
+						
+						/**
+						 * Filter the year header in an events list.
+						 * 
+						 * @since 	0.?
+						 * @since	0.15.29	Added the $args param.
+						 *
+						 * @param	string	$header	The header.
+						 * @param	string	$day	The year.
+						 * @param	array	$args	The arguments for the HTML of this list.
+						 */
+						$html .= apply_filters( 'wpt_listing_group_year', date_i18n( 'Y',strtotime( $year.'-01-01' ) ), $year, $args );
+						
 						$html .= '</h3>';
 						$html .= $year_html;
 					}
@@ -456,7 +493,19 @@ class WPT_Events extends WPT_Listing {
 				foreach ( $categories as $cat_id => $name ) {
 					if ( $cat_html = $this->get_html_for_category( $cat_id, $args ) ) {
 						$html .= '<h3 class="wpt_listing_group category">';
-						$html .= apply_filters( 'wpt_listing_group_category',$name,$cat_id );
+						
+						/**
+						 * Filter the category header in an events list.
+						 * 
+						 * @since 	0.?
+						 * @since	0.15.29	Added the $args param.
+						 *
+						 * @param	string	$header	The header.
+						 * @param	string	$day	The category.
+						 * @param	array	$args	The arguments for the HTML of this list.
+						 */
+						$html .= apply_filters( 'wpt_listing_group_category', $name, $cat_id, $args );
+						
 						$html .= '</h3>';
 						$html .= $cat_html;
 					}
