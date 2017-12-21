@@ -39,11 +39,6 @@ class WP_Theatre {
 	
 		// Includes
 		$this->includes();
-	
-		// All event classes.
-		require_once(dirname(__FILE__) . '/functions/event/class-theater-event.php');
-		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-field.php');
-		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-date.php');
 
 		// Setup
 		$this->setup = new WPT_Setup();
@@ -121,6 +116,7 @@ class WP_Theatre {
 
 		require_once(dirname(__FILE__) . '/functions/wpt_listing.php');
 		require_once(dirname(__FILE__) . '/functions/event/class-theater-event.php');
+		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-field.php');
 		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-list.php');
 		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-date.php');
 		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-date-list.php');

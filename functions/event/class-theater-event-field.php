@@ -29,6 +29,11 @@ class Theater_Event_Field {
 	}
 	
 	protected function apply_template_filters( $value, $filters ) {
+		
+		if ( !is_array( $filters ) ) {
+			return $value;
+		}
+		
 		foreach ( $filters as $filter ) {
 			$value = $filter->apply_to( $value, $this->item );
 		}
@@ -36,7 +41,10 @@ class Theater_Event_Field {
 	}
 
 	function get() {
-		if (method_exists($this->item, 'get_'.$this->name)) {
+		if ( $callback = $this->get_callback('get') ) {
+			$value = call_user_func( $callback );
+		}
+		else if (method_exists($this->item, 'get_'.$this->name)) {
 			$value = $this->item->{'get_'.$this->name}();			
 		} else {
 			$value = get_post_meta($this->item->ID, $this->name, true);
@@ -74,7 +82,10 @@ class Theater_Event_Field {
 	
 	function get_html() {
 		
-		if (method_exists($this->item, 'get_'.$this->name.'_html')) {
+		if ( $callback = $this->get_callback('get_html') ) {
+			$html = call_user_func( $callback );
+		}
+		else if (method_exists($this->item, 'get_'.$this->name.'_html')) {
 			$html = $this->item->{'get_'.$this->name.'_html'}( $this->filters, $this->data );			
 		} else {
 			$value = (string) $this->get();

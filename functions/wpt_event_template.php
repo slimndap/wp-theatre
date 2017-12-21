@@ -57,7 +57,20 @@ class WPT_Event_Template extends WPT_Template {
 			case 'location':
 			case 'remark':
 			case 'title':
-				$value = $this->object->{$field}($value_args);
+			case 'tags':
+			case 'startdate':
+			case 'date':
+			case 'starttime':
+			case 'time':
+			case 'enddate':
+			case 'endtime':
+			case 'prices':
+			case 'tickets':
+			case 'tickets_url':
+			case 'categories':
+			case 'content':
+			case 'excerpt':
+				$value = $this->object->get_field_html( $field, $filters );
 				break;
 			case 'thumbnail':
 				$size = 'thumbnail';
@@ -67,33 +80,6 @@ class WPT_Event_Template extends WPT_Template {
 				if ($production = $this->object->production()) {
 					$value = $production->thumbnail_html($size, $filters);				
 				}
-				break;
-			case 'tags':
-				if ($production = $this->object->production()) {
-					$value = $production->tags_html( );				
-				}
-				break;
-			case 'categories':
-			case 'content':
-			case 'excerpt':
-				if ($production = $this->object->production()) {
-					$value = $production->{$field}($value_args);
-				}
-				break;
-			case 'startdate':
-			case 'date':
-				$value = $this->object->startdate_html( $filters );
-				break;
-			case 'starttime':
-			case 'time':
-				$value = $this->object->starttime_html( $filters );
-				break;
-			case 'enddate':
-			case 'endtime':
-			case 'prices':
-			case 'tickets':
-			case 'tickets_url':
-				$value = $this->object->{$field.'_html'}($filters);
 				break;
 			default:
 				$value = $this->object->custom_html( $field, $filters, true );

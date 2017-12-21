@@ -2,7 +2,7 @@
 /**
  * WPT_Event class.
  * 
- * @extends 	Theater_Date
+ * @extends 	Theater_Event_Date
  * @deprecated	0.16
  * @package		Theater/Deprecated
  */
@@ -30,8 +30,7 @@ class WPT_Event extends Theater_Event_Date {
 	 *							Returns <false> if no production is set.
 	 */
 	function production() {
-		$production = $this->get_event();	
-		return new WPT_Production( $production->ID, $this->PostClass );
+		return $this->get_event();
 	}
 
 	/**
@@ -69,7 +68,7 @@ class WPT_Event extends Theater_Event_Date {
 	 */
 	function custom( $name, $args = array(), $fallback_to_production = true ) {
 
-		_deprecated_function( 'Theater_Date::custom()', '0.16', 'Theater_Date::get_field()' );
+		_deprecated_function( 'Theater_Event_Date::custom()', '0.16', 'Theater_Event_Date::get_field()' );
 
 		$defaults = array(
 			'html' => false,
@@ -140,30 +139,6 @@ class WPT_Event extends Theater_Event_Date {
 		return $this->summary;
 	}
 
-	/**
-	 * @deprecated	0.16
-	 * @internal
-	 */
-	function datetime( $enddate = false ) {
-
-		if ( true === $enddate ) {
-			$value = $this->enddatetime();
-		} else {
-			$value = $this->startdatetime( $enddate );
-		}
-
-		return $value;
-	}
-
-	/**
-	 * @deprecated	0.16
-	 * @internal
-	 */
-	function datetime_html( $filters = array() ) {
-		$html = $this->get_field_html( 'startdatetime', $filters );
-
-		return $html;
-	}
 }
 	
 
@@ -194,15 +169,13 @@ function deprecated_wpt_event_field_html_filter( $html, $field, $filters, $date)
 		case 'city' :
 		case 'location' :
 		case 'remark' :
+		case 'prices' :
 		case 'tickets_prices' :
 		case 'tickets' :
 		case 'tickets_url' :
 		case 'title' :
 		case 'venue' :
 			$html = apply_filters( 'wpt_event_'.$field.'_html', $html, $date );
-			break;
-		case 'prices' :
-			$html = apply_filters( 'wpt_event_tickets_prices_html', $html, $date );
 			break;
 		default :
 			$html = apply_filters( 'wpt_event_'.$field.'_html', $html, $field, $date );

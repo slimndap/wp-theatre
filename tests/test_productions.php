@@ -172,6 +172,9 @@
 		
 	}
 	
+	/**
+	 * @expectedDeprecated Theater_Event::custom()	 
+	 */
 	function test_shortcode_wpt_productions_with_custom_field() {
 		$director = 'Steven Spielberg';
 	
@@ -188,6 +191,9 @@
 		$this->assertEquals(5, substr_count($html, 'wp_theatre_prod_director'));		
 	}
 	
+	/**
+	 * @expectedDeprecated Theater_Event::custom()	 
+	 */
 	function test_shortcode_wpt_productions_with_custom_field_and_filter() {
 		$director = 'Steven Spielberg';
 	

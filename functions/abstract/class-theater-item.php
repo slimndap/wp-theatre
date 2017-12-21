@@ -139,6 +139,10 @@ abstract class Theater_Item {
 		return $value;
 	}
 	
+	function get_additional_fields() {
+		return array();
+	}
+	
 	/**
 	 * Gets the value for a field.
 	 * 

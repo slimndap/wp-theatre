@@ -605,6 +605,28 @@ class Theater_Event extends Theater_Item {
 
 		return $summary;
 	}
+	
+	function get_tags() {
+		
+		return wp_get_post_tags( $this->ID );
+		
+	}
+	
+	function get_tags_html() {
+
+		ob_start();
+		?><ul class="<?php echo $this->get_post_type(); ?>_tags"><?php
+			
+			foreach( $this->get_tags() as $tag ) {
+				?><li class="<?php echo $this->get_post_type(); ?>_tag <?php echo $this->get_post_type(); ?>_tag_<?php echo $tag->slug; ?>"><?php 
+					echo $tag->name; 
+				?></li><?php
+			}
+		?></ul><?php
+		
+		return ob_get_clean();
+				
+	}
 
 	/**
 	 * Gets the production thumbnail ID.

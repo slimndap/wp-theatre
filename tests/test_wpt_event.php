@@ -85,7 +85,7 @@ class WPT_Test_WPT_Event extends WPT_UnitTestCase {
 	}
 
 	function test_wpt_event_html() {
-		$expected = '<div class="wp_theatre_event"> <div class="wp_theatre_event_title"><a href="' . get_permalink( $this->production->ID ) . '">Test production</a></div> <div class="wp_theatre_event_remark">Premiere</div> <div class="wp_theatre_event_datetime"><div class="wp_theatre_event_date wp_theatre_event_startdate">' . date_i18n( get_option( 'date_format' ), $this->event_date ) . '</div><div class="wp_theatre_event_time wp_theatre_event_starttime">' . date_i18n( get_option( 'time_format' ), $this->event_date ) . '</div></div> <div class="wp_theatre_event_location"><div class="wp_theatre_event_venue">Cafe Pan</div><div class="wp_theatre_event_city">Den Haag</div></div> <div class="wp_theatre_event_tickets"><a href="https://slimndap.com" rel="nofollow" class="wp_theatre_event_tickets_url">Tickets</a><div class="wp_theatre_event_prices">from&nbsp;$&nbsp;8.50</div></div></div>';
+		$expected = '<div class="wp_theatre_event"> <div class="wp_theatre_event_title"><a href="' . get_permalink( $this->production->ID ) . '">Test production</a></div> <div class="wp_theatre_event_remark">Premiere</div> <div class="wp_theatre_event_datetime wp_theatre_event_startdatetime"><div class="wp_theatre_event_date wp_theatre_event_startdate">' . date_i18n( get_option( 'date_format' ), $this->event_date ) . '</div><div class="wp_theatre_event_time wp_theatre_event_starttime">' . date_i18n( get_option( 'time_format' ), $this->event_date ) . '</div></div> <div class="wp_theatre_event_location"><div class="wp_theatre_event_venue">Cafe Pan</div><div class="wp_theatre_event_city">Den Haag</div></div> <div class="wp_theatre_event_tickets"><a href="https://slimndap.com" rel="nofollow" class="wp_theatre_event_tickets_url">Tickets</a><div class="wp_theatre_event_prices">from&nbsp;$&nbsp;8.50</div></div></div>';
 		$actual = $this->event->html();
 		$this->assertEquals( $expected, $actual );
 	}
@@ -113,7 +113,7 @@ class WPT_Test_WPT_Event extends WPT_UnitTestCase {
 		$actual = date( 'Y-m-d H:i', $this->event->datetime() );
 		$this->assertEquals( $expected, $actual );
 
-		$expected = '<div class="wp_theatre_event_datetime"><div class="wp_theatre_event_date wp_theatre_event_startdate">' . date_i18n( get_option( 'date_format' ), $this->event_date ) . '</div><div class="wp_theatre_event_time wp_theatre_event_starttime">' . date_i18n( get_option( 'time_format' ), $this->event_date ) . '</div></div>';
+		$expected = '<div class="wp_theatre_event_datetime wp_theatre_event_startdatetime"><div class="wp_theatre_event_date wp_theatre_event_startdate">' . date_i18n( get_option( 'date_format' ), $this->event_date ) . '</div><div class="wp_theatre_event_time wp_theatre_event_starttime">' . date_i18n( get_option( 'time_format' ), $this->event_date ) . '</div></div>';
 		$actual = $this->event->datetime( array(
 			'html' => true,
 		) );
@@ -302,6 +302,9 @@ class WPT_Test_WPT_Event extends WPT_UnitTestCase {
 		$this->assertEquals( $expected, $actual );
 	}
 
+	/**
+	 * @expectedDeprecated Theater_Event_Date::custom()	 
+	 */
 	function test_wpt_event_custom() {
 		$expected = 'https://wp.theater';
 		$actual = $this->event->custom( 'more_info' );
@@ -600,6 +603,9 @@ class WPT_Test_WPT_Event extends WPT_UnitTestCase {
 
 	}
 
+	/**
+	 * @expectedDeprecated Theater_Event_Date::custom()	 
+	 */
 	function test_wpt_event_custom_filter() {
 		add_filter( 'wpt_event_more_info', array( $this, 'filter_value' ), 10, 2 );
 		$expected = 'Filtered value';
@@ -620,7 +626,7 @@ class WPT_Test_WPT_Event extends WPT_UnitTestCase {
 
 	function test_wpt_event_classes_filter() {
 		add_filter( 'wpt_event_classes', array( $this, 'filter_classes' ), 10, 2 );
-		$expected = '<div class="filtered-classes"> <div class="wp_theatre_event_title"><a href="' . get_permalink( $this->production_post_id ) . '">Test production</a></div> <div class="wp_theatre_event_remark">Premiere</div> <div class="wp_theatre_event_datetime"><div class="wp_theatre_event_date wp_theatre_event_startdate">' . date_i18n( get_option( 'date_format' ), $this->event_date ) . '</div><div class="wp_theatre_event_time wp_theatre_event_starttime">' . date_i18n( get_option( 'time_format' ), $this->event_date ) . '</div></div> <div class="wp_theatre_event_location"><div class="wp_theatre_event_venue">Cafe Pan</div><div class="wp_theatre_event_city">Den Haag</div></div> <div class="wp_theatre_event_tickets"><a href="https://slimndap.com" rel="nofollow" class="wp_theatre_event_tickets_url">Tickets</a><div class="wp_theatre_event_prices">from&nbsp;$&nbsp;8.50</div></div></div>';
+		$expected = '<div class="filtered-classes"> <div class="wp_theatre_event_title"><a href="' . get_permalink( $this->production_post_id ) . '">Test production</a></div> <div class="wp_theatre_event_remark">Premiere</div> <div class="wp_theatre_event_datetime wp_theatre_event_startdatetime"><div class="wp_theatre_event_date wp_theatre_event_startdate">' . date_i18n( get_option( 'date_format' ), $this->event_date ) . '</div><div class="wp_theatre_event_time wp_theatre_event_starttime">' . date_i18n( get_option( 'time_format' ), $this->event_date ) . '</div></div> <div class="wp_theatre_event_location"><div class="wp_theatre_event_venue">Cafe Pan</div><div class="wp_theatre_event_city">Den Haag</div></div> <div class="wp_theatre_event_tickets"><a href="https://slimndap.com" rel="nofollow" class="wp_theatre_event_tickets_url">Tickets</a><div class="wp_theatre_event_prices">from&nbsp;$&nbsp;8.50</div></div></div>';
 		$actual = $this->event->html();
 		$this->assertEquals( $expected, $actual );
 

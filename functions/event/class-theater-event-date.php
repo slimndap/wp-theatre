@@ -109,6 +109,53 @@ class Theater_Event_Date extends Theater_Item {
 
 		return $fields;
 	}
+	
+	function get_additional_fields() {
+		
+		$additional_fields = parent::get_additional_fields();
+		
+		if ( $event = $this->get_event() ) {
+			$additional_fields = array(
+				array(
+					'id' => 'title',
+					'callbacks' => array(
+						'get' => array( $event, 'title' ),
+					),
+				),
+				array(
+					'id' => 'excerpt',
+					'callbacks' => array(
+						'get' => array( $event, 'excerpt' ),
+						'get_html' => array( $event, 'get_excerpt_html' ),
+					),
+				),
+				array(
+					'id' => 'content',
+					'callbacks' => array(
+						'get' => array( $event, 'content' ),
+						'get_html' => array( $event, 'get_content_html' ),
+					),
+				),
+				array(
+					'id' => 'categories',
+					'callbacks' => array(
+						'get' => array( $event, 'get_categories' ),
+						'get_html' => array( $event, 'get_categories_html' )
+					),
+				),
+				array(
+					'id' => 'tags',
+					'callbacks' => array(
+						'get' => array( $event, 'get_tags' ),
+						'get_html' => array( $event, 'get_tags_html' )
+					),
+				),
+			);			
+		}
+		
+		return $additional_fields;
+		
+	}
 
 	/**
 	 * Gets the duration of an event date.
@@ -567,7 +614,7 @@ if ( $value = $this->get_field( 'endtime' ) ) {
 	 * @return  string|bool     The event tickets iframe URL or
 	 *							<false> if no iframe page is set.
 	 */
-	public function tickets_url_iframe() {
+	public function get_tickets_url_iframe() {
 
 		global $wp_theatre;
 
@@ -583,7 +630,7 @@ if ( $value = $this->get_field( 'endtime' ) ) {
 
 		$tickets_url_iframe = get_permalink( $tickets_iframe_page );
 		if ( get_option( 'permalink_structure' ) && $event = $this->get_event() ) {
-			$tickets_url_iframe = trailingslashit( $tickets_url_iframe ).$this->get_post_type().'/'.$this->ID;
+			$tickets_url_iframe = trailingslashit( $tickets_url_iframe ).$event->post()->post_name.'/'.$this->ID;
 		} else {
 			$tickets_url_iframe = add_query_arg( 'wpt_event_tickets', $this->ID, $tickets_url_iframe );
 		}
@@ -900,13 +947,13 @@ foreach ( $filters as $filter ) {
 
 		$value = $this->get_field( 'startdate' );
 
-foreach ( $filters as $filter ) {
-	if ( 'date' == $filter->name ) {
-		$value = $filter->apply_to( $this->get_field( 'startdatetime' ), $this );
-	} else {
-		$value = $filter->apply_to( $value, $this );
-	}
-}
+		foreach ( $filters as $filter ) {
+			if ( 'date' == $filter->name ) {
+				$value = $filter->apply_to( $this->get_field( 'startdatetime' ), $this );
+			} else {
+				$value = $filter->apply_to( $value, $this );
+			}
+		}
 
 		echo $value;
 
@@ -955,13 +1002,13 @@ foreach ( $filters as $filter ) {
 		?><div class="<?php echo $this->get_post_type(); ?>_datetime <?php echo $this->get_post_type(); ?>_startdatetime"><?php
 
 			$value = $this->get_field_html( 'startdate' ).$this->get_field_html( 'starttime' );
-foreach ( $filters as $filter ) {
-	if ( 'date' == $filter->name ) {
-		$value = $filter->apply_to( $this->get_field( 'startdatetime' ), $this );
-	} else {
-		$value = $filter->apply_to( $value, $this );
-	}
-}
+			foreach ( $filters as $filter ) {
+				if ( 'date' == $filter->name ) {
+					$value = $filter->apply_to( $this->get_field( 'startdatetime' ), $this );
+				} else {
+					$value = $filter->apply_to( $value, $this );
+				}
+			}
 			echo $value;
 
 		?></div><?php
@@ -1064,7 +1111,7 @@ foreach ( $filters as $filter ) {
 	 * @deprecated	0.16
 	 * @internal
 	 */
-	function datetime( $enddate = false ) {
+	function get_datetime( $enddate = false ) {
 
 		if ( true === $enddate ) {
 			$value = $this->enddatetime();
@@ -1079,7 +1126,7 @@ foreach ( $filters as $filter ) {
 	 * @deprecated	0.16
 	 * @internal
 	 */
-	function datetime_html( $filters = array() ) {
+	function get_datetime_html( $filters = array() ) {
 		$html = $this->get_field_html( 'startdatetime', $filters );
 
 		return $html;
