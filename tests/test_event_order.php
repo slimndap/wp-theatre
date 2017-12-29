@@ -230,7 +230,7 @@ class WPT_Test_Event_Order extends WPT_UnitTestCase {
 	function test_is_expired_event_since_last_order_index_update_updated() {
 
 		// Last event order completed 5 minutes ago.
-		update_option( 'theatre_event_order_completed', time() - MINUTE_IN_SECONDS * 5 );
+		update_option( 'theater_last_succesful_update_order_indexes_timestamp', time() - MINUTE_IN_SECONDS * 5 );
 
 		// Create event that expired < 5 minutes ago.
 		$production_id = $this->factory->post->create( array( 'post_type' => WPT_Production::post_type_name ) );
