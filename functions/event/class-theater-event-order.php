@@ -211,7 +211,7 @@ class Theater_Event_Order {
 		// This query is for event post types and event post types only, sort query
 
 		$query->set( 'meta_key',THEATER_ORDER_INDEX_KEY );
-		$query->set( 'orderby','meta_value' );
+		$query->set( 'orderby','meta_value_num' );
 	}
 
 	/**
