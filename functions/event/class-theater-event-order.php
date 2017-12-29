@@ -36,6 +36,7 @@ class Theater_Event_Order {
 		add_action( 'save_post', array( __CLASS__, 'set_order_index' ), 90 );
 		add_action( 'updated_post_meta', array( __CLASS__, 'update_order_index_when_event_date_is_updated' ), 20 ,4 );
 		add_action( 'added_post_meta', array( __CLASS__, 'update_order_index_when_event_date_is_updated' ), 20 ,4 );
+		add_action( 'deleted_post_meta', array( __CLASS__, 'update_order_index_when_event_date_is_unlinked' ), 20, 4 );
 		add_filter( 'pre_get_posts', array( __CLASS__, 'sort_events' ) );
 		add_action( 'wpt_cron', array( __CLASS__, 'update_order_indexes' ) );
 	}
@@ -224,6 +225,33 @@ class Theater_Event_Order {
 
 		$query->set( 'meta_key',THEATER_ORDER_INDEX_KEY );
 		$query->set( 'orderby','meta_value_num' );
+	}
+
+	/**
+	 * Updates the order index of an event whenever one of it's event dates is unlinked from it.
+	 *
+	 * Eg. when an event date is deleted.
+	 * 
+	 * @since	0.15.30
+	 * @uses	Theater_Event_Order::set_order_index() to set the order index of events.
+	 * @param 	int 	$meta_id	ID of updated metadata entry.
+	 * @param 	int 	$object_id	Object ID.
+	 * @param 	string 	$meta_key	Meta key.
+	 * @param 	mixed 	$meta_value	Meta value.
+	 * @return 	void
+	 */
+	static function update_order_index_when_event_date_is_unlinked( $meta_id, $object_id, $meta_key, $meta_value ) {
+		
+		if ( WPT_Event::post_type_name != get_post_type( $object_id ) ) {
+			return;
+		}
+		
+		if ( WPT_Production::post_type_name != $meta_key ) {			
+			return;
+		}
+		
+		self::set_order_index( $meta_value );	
+				
 	}
 
 	/**
