@@ -36,6 +36,7 @@ class Theater_Event_Order {
 		add_action( 'save_post', array( __CLASS__, 'set_order_index' ), 90 );
 		add_action( 'updated_post_meta', array( __CLASS__, 'update_order_index_when_event_date_is_updated' ), 20 ,4 );
 		add_action( 'added_post_meta', array( __CLASS__, 'update_order_index_when_event_date_is_updated' ), 20 ,4 );
+		add_action( 'deleted_post_meta', array( __CLASS__, 'update_order_index_when_event_date_is_unlinked' ), 20, 4 );
 		add_filter( 'pre_get_posts', array( __CLASS__, 'sort_events' ) );
 		add_action( 'wpt_cron', array( __CLASS__, 'update_order_indexes' ) );
 	}
@@ -140,6 +141,17 @@ class Theater_Event_Order {
 	}
 
 	/**
+	 * Gets the timestamp of the last successful update of the order indexes.
+	 * 
+	 * @since	0.15.30
+	 * @return	int		The timestamp of the last successful update of the order indexes.
+	 */
+	static function get_last_succesful_update_order_indexes_timestamp() {
+		$last_succesful_update_order_indexes_timestamp = get_option( 'theater_last_succesful_update_order_indexes_timestamp', -1 );
+		return $last_succesful_update_order_indexes_timestamp;
+	}
+
+	/**
 	 * Sets the order index of events and events dates.
 	 *
 	 * @since 	0.6.2
@@ -181,6 +193,7 @@ class Theater_Event_Order {
 	 * @since	0.15.13	No longer sort queries that only query non-event post types.
 	 * @since	0.15.15	Use THEATER_ORDER_INDEX_KEY for meta key.
 	 * @since	0.15.16	No longer sort queries that also query non-event post types.
+	 * @since	0.15.30	Set 'orderby' to 'meta_value_num'. Fixes #265.
 	 *
 	 * @uses	Theater_Event_Order::get_event_post_types() to get the post types for events and event dates.
 	 *
@@ -211,7 +224,34 @@ class Theater_Event_Order {
 		// This query is for event post types and event post types only, sort query
 
 		$query->set( 'meta_key',THEATER_ORDER_INDEX_KEY );
-		$query->set( 'orderby','meta_value' );
+		$query->set( 'orderby','meta_value_num' );
+	}
+
+	/**
+	 * Updates the order index of an event whenever one of it's event dates is unlinked from it.
+	 *
+	 * Eg. when an event date is deleted.
+	 * 
+	 * @since	0.15.30
+	 * @uses	Theater_Event_Order::set_order_index() to set the order index of events.
+	 * @param 	int 	$meta_id	ID of updated metadata entry.
+	 * @param 	int 	$object_id	Object ID.
+	 * @param 	string 	$meta_key	Meta key.
+	 * @param 	mixed 	$meta_value	Meta value.
+	 * @return 	void
+	 */
+	static function update_order_index_when_event_date_is_unlinked( $meta_id, $object_id, $meta_key, $meta_value ) {
+		
+		if ( WPT_Event::post_type_name != get_post_type( $object_id ) ) {
+			return;
+		}
+		
+		if ( WPT_Production::post_type_name != $meta_key ) {			
+			return;
+		}
+		
+		self::set_order_index( $meta_value );	
+				
 	}
 
 	/**
@@ -246,9 +286,12 @@ class Theater_Event_Order {
 	 *
 	 * @since 	0.6.2
 	 * @since	0.15.13	No longer updates the order index of non-event post types.
+	 *			0.15.30	Only update the order index of events that expire after the last time that the update ran.
 	 *
 	 * @uses	Theater_Event_Order::get_event_post_types() to get the post types for events and event dates.
 	 * @uses	Theater_Event_Order::set_order_index() to set the order index for events and event dates.
+	 * @uses	Theater_Event_Order::get_last_succesful_update_order_indexes_timestamp() to get the timestamp of 
+	 *			the last successful update of the order indexes.
 	 *
 	 */
 	static function update_order_indexes() {
@@ -262,12 +305,23 @@ class Theater_Event_Order {
 			'post_type' => self::get_event_post_types(),
 			'post_status' => 'any',
 			'nopaging' => true,
+			'meta_query' => array(
+				array(
+					
+					'key' => THEATER_ORDER_INDEX_KEY,
+					'value' => self::get_last_succesful_update_order_indexes_timestamp(),
+					'compare' => '>=',
+				),
+			),
 		);
 		$posts = get_posts( $args );
 
 		foreach ( $posts as $post ) {
 			self::set_order_index( $post->ID );
 		}
+
+		// Update was successfull, update the timestamp.
+		update_option( 'theater_last_succesful_update_order_indexes_timestamp', time() );
 
 		/**
 		 * Re-activate pre_get_posts filter.
