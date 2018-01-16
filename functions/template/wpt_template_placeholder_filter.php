@@ -115,9 +115,17 @@ class WPT_Template_Placeholder_Filter {
 			} else {
 				$timestamp = strtotime( $content );
 			}
+			
+			$day = date( 
+				'Y-m-d', 
+				$timestamp + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS - Theater_Helpers_Time::get_next_day_start_time_offset()
+			);
+			
+			$time = date( 'H:i:s', $timestamp + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+			
 			$content = date_i18n(
 				$format,
-				$timestamp + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS - Theater_Helpers_Time::get_next_day_start_time_offset()
+				strtotime( $day.' '.$time )
 			);
 		}
 		return $content;
