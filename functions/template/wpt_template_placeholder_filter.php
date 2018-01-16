@@ -100,6 +100,8 @@ class WPT_Template_Placeholder_Filter {
 	 *
 	 * @since 	0.12.1
 	 * @since	0.15.11.1	Added support for next day start time offset.
+	 * @since	0.15.30		Don't use next day start time offset to determine time.
+	 *						Fixes #266.
 	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
 	 *
 	 * @access 	protected
@@ -110,23 +112,31 @@ class WPT_Template_Placeholder_Filter {
 	 */
 	protected function callback_date($content, $object, $format = '') {
 		if ( ! empty($format) ) {
+			
 			if ( is_numeric( $content ) ) {
 				$timestamp = $content;
 			} else {
 				$timestamp = strtotime( $content );
 			}
 			
+			/**
+			 * Use next day start time offset to determine day.
+			 */
 			$day = date( 
 				'Y-m-d', 
 				$timestamp + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS - Theater_Helpers_Time::get_next_day_start_time_offset()
 			);
 			
+			/**
+			 * Don't use next day start time offset to determine time.
+			 */
 			$time = date( 'H:i:s', $timestamp + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
 			
 			$content = date_i18n(
 				$format,
 				strtotime( $day.' '.$time )
 			);
+			
 		}
 		return $content;
 	}
