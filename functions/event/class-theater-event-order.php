@@ -246,6 +246,8 @@ class Theater_Event_Order {
 	 *
 	 * @since 	0.6.2
 	 * @since	0.15.13	No longer updates the order index of non-event post types.
+	 * @since	0.15.30	'pre_get_posts'-hook is now re-activated before Theater_Event_Order::set_order_index() is called.
+	 *					Fixes #269.
 	 *
 	 * @uses	Theater_Event_Order::get_event_post_types() to get the post types for events and event dates.
 	 * @uses	Theater_Event_Order::set_order_index() to set the order index for events and event dates.
