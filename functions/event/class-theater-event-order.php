@@ -265,14 +265,15 @@ class Theater_Event_Order {
 		);
 		$posts = get_posts( $args );
 
-		foreach ( $posts as $post ) {
-			self::set_order_index( $post->ID );
-		}
-
 		/**
 		 * Re-activate pre_get_posts filter.
 		 */
 		add_filter( 'pre_get_posts', array( __CLASS__, 'sort_events' ) );
+
+		foreach ( $posts as $post ) {
+			self::set_order_index( $post->ID );
+		}
+
 	}
 
 
