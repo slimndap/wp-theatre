@@ -145,7 +145,8 @@ This release focusses on a more streamlined experience when managing your events
 	* The use of transients for event lists and calendar can now be switched off using the `theater/transient/active` filter (0.15.24). Thank you [joost de keijzer](https://dekeijzer.org/)!
     * Added a new `{{tags}}` placeholder for events (0.15.27). See the updated [docs](https://github.com/slimndap/wp-theatre/wiki/Shortcodes). Thank you [Raymond van Melzen](https://www.vanmelzen.com/)!
     * Internal changes to further improve performance of importers (0.15.27).
-    * Added CSS classes to the event editor to make it easier for developer to customize (0.15.29). Thank you [joost de keijzer](https://dekeijzer.org/)!
+    * Added CSS classes to the event editor to make it easier for developer to customise (0.15.29). Thank you [joost de keijzer](https://dekeijzer.org/)!
+    * Performance improvements when ordering events on websites with _a lot_ of events (0.15.30).
 
 * Bugfix
     * The translation setting for the header above events on the productions page was also being used in other places (eg. the admin menu) (0.15.2). Thank you [Bob Morris](https://wordpress.org/support/profile/bob-morris)!
@@ -166,6 +167,7 @@ This release focusses on a more streamlined experience when managing your events
 	* Fixed several performance issues of during imports (0.15.24).
 	* Fixed a conflict with WP-CLI. (0.15.24).
 	* Fixed an [issue](https://github.com/slimndap/wp-theatre/pull/242) with the fallback of custom field values of events. Thank you [joost de keijzer](https://dekeijzer.org/)!
+	* Fixed an [issue](https://github.com/slimndap/wp-theatre/issues/269) where sometimes events are shown in the wrong order.
 	
 	
 * Deprecations
@@ -248,6 +250,9 @@ Release Date: May 30th, 2015
 
 
 == Upgrade Notice ==
+
+= 0.15.30 =
+Fixed an issue where sometimes events are shown in the wrong order.
 
 = 0.15.29 =
 Made it easier for developers to customize the event editor.
