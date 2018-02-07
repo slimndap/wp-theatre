@@ -287,6 +287,8 @@ class Theater_Event_Order {
 	 * @since 	0.6.2
 	 * @since	0.15.13	No longer updates the order index of non-event post types.
 	 *			0.15.30	Only update the order index of events that expire after the last time that the update ran.
+	 *					'pre_get_posts'-hook is now re-activated before Theater_Event_Order::set_order_index() is called.
+	 *					Fixes #269.
 	 *
 	 * @uses	Theater_Event_Order::get_event_post_types() to get the post types for events and event dates.
 	 * @uses	Theater_Event_Order::set_order_index() to set the order index for events and event dates.
@@ -316,6 +318,11 @@ class Theater_Event_Order {
 		);
 		$posts = get_posts( $args );
 
+		/**
+		 * Re-activate pre_get_posts filter.
+		 */
+		add_filter( 'pre_get_posts', array( __CLASS__, 'sort_events' ) );
+
 		foreach ( $posts as $post ) {
 			self::set_order_index( $post->ID );
 		}
@@ -323,10 +330,6 @@ class Theater_Event_Order {
 		// Update was successfull, update the timestamp.
 		update_option( 'theater_last_succesful_update_order_indexes_timestamp', time() );
 
-		/**
-		 * Re-activate pre_get_posts filter.
-		 */
-		add_filter( 'pre_get_posts', array( __CLASS__, 'sort_events' ) );
 	}
 
 

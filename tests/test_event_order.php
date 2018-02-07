@@ -292,7 +292,38 @@ class WPT_Test_Event_Order extends WPT_UnitTestCase {
 		);
 
 		$this->assertEquals( $expected, $actual );
+	}
 
+	/**
+	 * Tests if the order index of a production is corrects if its events are not entered chronologically.
+	 * Confirms issue #269
+	 * (Order index miscalculated for production with events that were not added chronolologicaly)
+	 */
+	function test_test_is_production_order_inder_correct_if_events_not_entered_chronologically() {
+		global $wp_theatre;
+
+		$this->setup_test_data();
+
+		$event_args = array(
+			'post_type' => WPT_Event::post_type_name,
+		);
+		$upcoming_event = $this->factory->post->create( $event_args );
+		
+		$in_5_minutes = time() + MINUTE_IN_SECONDS * 5;
+		
+		add_post_meta( $upcoming_event, WPT_Production::post_type_name, $this->production_with_upcoming_events );
+		add_post_meta( $upcoming_event, 'event_date', date( 'Y-m-d H:i:s', $in_5_minutes ) );
+		add_post_meta( $upcoming_event, 'tickets_status', 'other tickets status' );
+
+		Theater_Event_Order::update_order_indexes();
+		
+		$order_index = get_post_meta( $this->production_with_upcoming_events, THEATER_ORDER_INDEX_KEY, true );
+		
+		$actual = date( 'Y-m-d H:i', $order_index );
+		$expected = date( 'Y-m-d H:i', $in_5_minutes);
+		
+		$this->assertEquals( $expected, $actual );
+		
 	}
 
 }
