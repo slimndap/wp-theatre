@@ -161,7 +161,7 @@ class Theater_Event_Order {
 	 *					No longer adds order indexes to non-event post types.
 	 * @since	0.15.15	Use THEATER_ORDER_INDEX_KEY for meta key.
 	 * @since	0.15.31	Update event order index every time the order index of an event date is updated.
-	 *					Fiex #270.
+	 *					Fixes #270.
 	 *
 	 * @uses	Theater_Event_Order::get_event_post_types() to get the post types for events and event dates.
 	 * @uses	Theater_Event_Order::calculate_event_order_index() to calculate the order index of events.

@@ -167,7 +167,8 @@ This release focusses on a more streamlined experience when managing your events
 	* Fixed several performance issues of during imports (0.15.24).
 	* Fixed a conflict with WP-CLI. (0.15.24).
 	* Fixed an [issue](https://github.com/slimndap/wp-theatre/pull/242) with the fallback of custom field values of events. Thank you [joost de keijzer](https://dekeijzer.org/)!
-	* Fixed an [issue](https://github.com/slimndap/wp-theatre/issues/269) where sometimes events are shown in the wrong order.
+	* Fixed an [issue](https://github.com/slimndap/wp-theatre/issues/269) where sometimes events are shown in the wrong order (0.15.30).
+	* Fixed another [issue](https://github.com/slimndap/wp-theatre/issues/270) where sometimes events are shown in the wrong order (0.15.31).
 	
 	
 * Deprecations
@@ -250,6 +251,9 @@ Release Date: May 30th, 2015
 
 
 == Upgrade Notice ==
+
+= 0.15.31 =
+Fixed another issue where sometimes events are shown in the wrong order.
 
 = 0.15.30 =
 Fixed an issue where sometimes events are shown in the wrong order.
