@@ -299,7 +299,7 @@ class WPT_Test_Event_Order extends WPT_UnitTestCase {
 	 * Confirms issue #269
 	 * (Order index miscalculated for production with events that were not added chronolologicaly)
 	 */
-	function test_test_is_production_order_inder_correct_if_events_not_entered_chronologically() {
+	function test_test_is_production_order_index_correct_if_events_not_entered_chronologically() {
 		global $wp_theatre;
 
 		$this->setup_test_data();
@@ -326,4 +326,51 @@ class WPT_Test_Event_Order extends WPT_UnitTestCase {
 		
 	}
 
+	/**
+	 * Tests if the order index for a production is corrected if for some reason the order index for 
+	 * the production and its events are out-of-sync. If the order index for the production lies in the past, then it never
+	 * gets updated if Theater_Event_Order::update_order_indexes() runs. Not even if one of the events lies in the future.
+	 * 
+	 * This is an extraordinary situation, since the order index of productions is updated everytime the start date of
+	 * one of its events is updated. So something else has to have gone wrong before. 
+	 *
+	 * Confirms #270.
+	 */
+	function test_test_is_production_order_index_correct_if_past_production_gets_new_upcoming_events() {
+		
+		global $wp_theatre;
+
+		// Last event order completed 5 minutes ago.
+		update_option( 'theater_last_succesful_update_order_indexes_timestamp', time() - MINUTE_IN_SECONDS * 5 );
+
+		$this->setup_test_data();
+
+		$event_args = array(
+			'post_type' => WPT_Event::post_type_name,
+		);
+		$upcoming_event = $this->factory->post->create( $event_args );
+		
+		$in_5_minutes = time() + MINUTE_IN_SECONDS * 5;
+		
+		// Fake a problem where the order index of the production is not updated at the time that the event date is stored.
+		remove_action( 'added_post_meta', array( 'Theater_Event_Order', 'update_order_index_when_event_date_is_updated' ), 20 );
+		
+		add_post_meta( $upcoming_event, WPT_Production::post_type_name, $this->production_with_historic_event );
+		add_post_meta( $upcoming_event, 'event_date', date( 'Y-m-d H:i:s', $in_5_minutes ) );
+		add_post_meta( $upcoming_event, 'tickets_status', 'other tickets status' );
+		add_post_meta( $upcoming_event, THEATER_ORDER_INDEX_KEY, $in_5_minutes );
+
+		// Remove fake problem.
+		add_action( 'added_post_meta', array( 'Theater_Event_Order', 'update_order_index_when_event_date_is_updated' ), 20, 4 );
+
+		Theater_Event_Order::update_order_indexes();
+		
+		$order_index = get_post_meta( $this->production_with_historic_event, THEATER_ORDER_INDEX_KEY, true );
+		
+		$actual = date( 'Y-m-d H:i', $order_index );
+		$expected = date( 'Y-m-d H:i', $in_5_minutes);
+		
+		$this->assertEquals( $expected, $actual );
+		
+	}
 }
