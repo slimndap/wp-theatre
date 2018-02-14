@@ -160,6 +160,8 @@ class Theater_Event_Order {
 	 * @since	0.15.13	Moved the calculation of order indexes to seperate methods.
 	 *					No longer adds order indexes to non-event post types.
 	 * @since	0.15.15	Use THEATER_ORDER_INDEX_KEY for meta key.
+	 * @since	0.15.31	Update event order index every time the order index of an event date is updated.
+	 *					Fiex #270.
 	 *
 	 * @uses	Theater_Event_Order::get_event_post_types() to get the post types for events and event dates.
 	 * @uses	Theater_Event_Order::calculate_event_order_index() to calculate the order index of events.
@@ -181,7 +183,25 @@ class Theater_Event_Order {
 		}
 
 		if ( WPT_Event::post_type_name == $post_type ) {
-			update_post_meta( $post_id, THEATER_ORDER_INDEX_KEY, self::calculate_event_date_order_index( $post_id ) );
+			$order_index_updated = update_post_meta( $post_id, THEATER_ORDER_INDEX_KEY, self::calculate_event_date_order_index( $post_id ) );
+
+			if ( $order_index_updated ) {
+
+				/**
+				 * Order index of event date is different than value that is already in the database.
+				 * Update order index of parent event, just to be sure.
+				 * See #270: Order index not updated after past event gets a new date
+				 */
+				 
+				$event_date = new WPT_Event( $post_id );
+				$event = $event_date->production();
+	
+				if ( ! empty( $event ) ) {
+					self::set_order_index( $event->ID );
+				}
+				
+			}
+
 		}
 
 	}
