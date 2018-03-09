@@ -779,8 +779,10 @@ class WPT_Events extends WPT_Listing {
 	 * @since	0.13.1	'Start' and 'end' filter explicitly set to 'NUMERIC'.
 	 *					Fixes #168.
 	 * @since	0.15	Added support for 's' (keyword search).
+	 * @since	0.15.32 's' now actually works.
+	 *					Fixes #272.
 	 *
-		 * @return array Events.
+	 * @return array Events.
 	 */
 
 	public function get( $filters = array() ) {
@@ -889,12 +891,13 @@ class WPT_Events extends WPT_Listing {
 			$productions_by_keyword_args = array(
 				's' => $filters['s'],
 				'status' => $filters['status'],
+				'ignore_sticky_posts' => true,
 			);
 			$productions_by_keyword = $wp_theatre->productions->get($productions_by_keyword_args);
 						
 			$args['meta_query'][] = array(
 				'key' => WPT_Production::post_type_name,
-				'value' => $productions_by_keyword,
+				'value' => wp_list_pluck( $productions_by_keyword, 'ID' ),
 				'compare' => 'IN',				
 			);
 		}

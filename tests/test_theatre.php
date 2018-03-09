@@ -1413,7 +1413,7 @@ class WPT_Test extends WP_UnitTestCase {
 	/**
 	 * Test 's' attribute when getting events.
 	 * Confirms #272.
-	 * @since	0.15.16
+	 * @since	0.15.32
 	 */
 	function test_s_in_events() {
 
@@ -1432,10 +1432,10 @@ class WPT_Test extends WP_UnitTestCase {
 		$events = $wp_theatre->events->get( $args );
 
 		$actual = $events;
-		$expected = 1;
+		$expected = 2;
 		$this->assertCount( $expected, $actual );
 
-		$actual = $events[0]->ID;
+		$actual = $events[0]->production()->ID;
 		$expected = $this->production_with_upcoming_events;
 		$this->assertEquals( $expected, $actual );
 
