@@ -288,12 +288,19 @@
 		 * Adds a metabox for this importer to the production edit form.
 		 * 
 		 * @since	0.14.5
+		 * @since	0.15.33	Check if we're actually editing an existing production.
+		 *					Fixes #276. 
 		 * @param 	string	$post_type	The post type of the current post.
 		 */
 		function add_production_metabox($post_type) {
 
 			// Bail if the current post is not a production.
 			if (WPT_Production::post_type_name!=$post_type) {
+				return;
+			}
+
+			// Bail when not editing an existing production, but adding a new production.
+			if ( empty( $_GET['post'] ) ) {
 				return;
 			}
 
