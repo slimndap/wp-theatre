@@ -93,6 +93,13 @@ class WPT_Test_CSS extends WPT_UnitTestCase {
 		 */
 		remove_action( 'admin_init', 'wp_admin_headers' );
 
+		/**
+		 * Fake being in an admin screen.
+		 * Needed because wp_add_privacy_policy_content() triggers _doing_it_wrong() when
+		 * 'admin_init' is triggered outside of the admin as of WordPress 4.9.7.
+		 */
+		set_current_screen( 'edit-post' );
+		
 		do_action('admin_init');
 		
 		ob_start();
