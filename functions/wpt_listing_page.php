@@ -125,6 +125,14 @@
 	 	}
 	 	
 
+	 	/**
+	 	 * init function.
+	 	 * 
+	 	 * @since	0.?
+	 	 * @since	0.15.33		Added support for a listing page with a parent page.
+	 	 *						Fixes #237.
+	 	 * @return void
+	 	 */
 	 	function init() {
 		 	
 			/*
@@ -143,41 +151,42 @@
 		 	 * {listing_page}/yesterday
 		 	 */
 
-			if ($page = $this->page()) {
-				$post_name = $page->post_name;
-			
+			if ( $path = wp_parse_url( $this->url(), PHP_URL_PATH ) ) {
+				
+				$path = untrailingslashit( substr( $path, 1 ) );
+
 				// <listing_page>/2014/05
 				add_rewrite_rule(
-					$post_name.'/([0-9]{4})/([0-9]{2})$', 
-					'index.php?pagename='.$post_name.'&wpt_month=$matches[1]-$matches[2]',
+					$path.'/([0-9]{4})/([0-9]{2})$', 
+					'index.php?pagename='.$path.'&wpt_month=$matches[1]-$matches[2]',
 					'top'
 				);
 				
 				// <listing_page>/2014/05/06
 				add_rewrite_rule(
-					$post_name.'/([0-9]{4})/([0-9]{2})/([0-9]{2})$', 
-					'index.php?pagename='.$post_name.'&wpt_day=$matches[1]-$matches[2]-$matches[3]',
+					$path.'/([0-9]{4})/([0-9]{2})/([0-9]{2})$', 
+					'index.php?pagename='.$path.'&wpt_day=$matches[1]-$matches[2]-$matches[3]',
 					'top'
 				);	 	 
 
 				// <listing_page>/comedy
 				add_rewrite_rule(
-					$post_name.'/([a-z0-9-]+)$', 
-					'index.php?pagename='.$post_name.'&wpt_category=$matches[1]',
+					$path.'/([a-z0-9-]+)$', 
+					'index.php?pagename='.$path.'&wpt_category=$matches[1]',
 					'top'
 				);	 	 
 
 				// <listing_page>/comedy/2014/05
 				add_rewrite_rule(
-					$post_name.'/([a-z0-9-]+)/([0-9]{4})/([0-9]{2})$', 
-					'index.php?pagename='.$post_name.'&wpt_category=$matches[1]&wpt_month=$matches[2]-$matches[3]',
+					$path.'/([a-z0-9-]+)/([0-9]{4})/([0-9]{2})$', 
+					'index.php?pagename='.$path.'&wpt_category=$matches[1]&wpt_month=$matches[2]-$matches[3]',
 					'top'
 				);
 
 				// <listing_page>/comedy/2014/05/06
 				add_rewrite_rule(
-					$post_name.'/([a-z0-9-]+)/([0-9]{4})/([0-9]{2})/([0-9]{2})$', 
-					'index.php?pagename='.$post_name.'&wpt_category=$matches[1]&wpt_day=$matches[2]-$matches[3]-$matches[4]',
+					$path.'/([a-z0-9-]+)/([0-9]{4})/([0-9]{2})/([0-9]{2})$', 
+					'index.php?pagename='.$path.'&wpt_category=$matches[1]&wpt_day=$matches[2]-$matches[3]-$matches[4]',
 					'top'
 				);	 	 
 
