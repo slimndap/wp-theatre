@@ -6,7 +6,7 @@ class WPT_Test extends WP_UnitTestCase {
 		global $wp_theatre;
 		
 		parent::setUp();
-		
+
 		$this->wp_theatre = new WP_Theatre();
 		
 		$season_args = array(
@@ -84,6 +84,8 @@ class WPT_Test extends WP_UnitTestCase {
 		stick_post($this->production_with_upcoming_and_historic_events);
 		add_post_meta($this->upcoming_event_with_prices, '_wpt_event_tickets_price', 12);
 		add_post_meta($upcoming_event, 'tickets_status', WPT_Event::tickets_status_hidden );
+		
+
 		
 	}
 
@@ -543,6 +545,47 @@ class WPT_Test extends WP_UnitTestCase {
 		
 		$this->assertEquals(1, substr_count($html, 'wp_theatre_integrationtype_iframe'));			
 		$this->assertNotContains('http://slimndap.com', $html);
+	}
+	
+	function test_tickets_iframe_is_on_ticket_page() {
+		global $wp_theatre;
+
+		// Create tickets page.
+		$args = array(
+			'post_title' => 'Tickets page',
+			'post_type' => 'page',
+			'post_content' => '[wp_theatre_iframe]',	
+		);
+		$page_id = $this->factory->post->create( $args );
+
+		// Enable iframe.
+		$wp_theatre->wpt_tickets_options = 	array(
+			'integrationtype' => 'iframe',
+			'iframepage' => $page_id,
+			'currencysymbol' => '$',
+		);
+		
+		add_post_meta($this->upcoming_event_with_prices, 'tickets_url', 'http://slimndap.com');
+
+		$url = add_query_arg( 'wpt_event_tickets', $this->upcoming_event_with_prices, get_permalink( $page_id ) );
+
+		$this->go_to( $url );
+
+		the_post();		
+		$actual = get_echo( 'the_content' );
+		
+		$expected = '<iframe src="http://slimndap.com" class="wp_theatre_iframe"></iframe>';
+		
+		$this->assertContains( $expected, $actual );
+		
+	}
+		
+	function test_tickets_iframe_is_on_ticket_page_with_pretty_permalinks() {
+		
+	}
+		
+	function test_tickets_iframe_is_on_ticket_page_with_pretty_permalinks_and_parent_page() {
+		
 	}
 		
 	function test_wpt_event_tickets_for_past_events_are_hiddedn() {
