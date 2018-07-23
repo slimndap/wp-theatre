@@ -60,7 +60,7 @@
 				return;
 			}
 			
-			if ( $path = wp_parse_url( get_permalink( $iframe_page ), PHP_URL_PATH ) ) {
+			if ( $path = parse_url( get_permalink( $iframe_page ), PHP_URL_PATH ) ) {
 			
 				add_rewrite_tag('%wpt_event_tickets%', '.*');
 	

@@ -2,7 +2,7 @@
 Contributors: slimndap
 Tags: theatre, stage, venue, events, shows, concerts, tickets, ticketing, sports, performances, calendar, festival, workshops, theater, cinema
 Requires at least: 4.0
-Tested up to: 4.8
+Tested up to: 4.9.7
 Requires PHP: 5.4
 Stable tag: 0.15
 License: GPLv2
@@ -170,6 +170,10 @@ This release focusses on a more streamlined experience when managing your events
 	* Fixed an [issue](https://github.com/slimndap/wp-theatre/issues/269) where sometimes events are shown in the wrong order (0.15.30).
 	* Fixed another [issue](https://github.com/slimndap/wp-theatre/issues/270) where sometimes events are shown in the wrong order (0.15.31).
 	* Fixed an [issue](https://github.com/slimndap/wp-theatre/issues/272) with the keyword filter for events (0.15.32).
+	* Fixed an [issue](https://github.com/slimndap/wp-theatre/issues/237) with event lists on a page with a parent page (0.15.33).
+	* Fixed an [issue](https://github.com/slimndap/wp-theatre/issues/262) with the tickets iframe when the tickets page is a page with a parent page (0.15.33).
+	* Fixed an [issue](https://github.com/slimndap/wp-theatre/issues/274) where events are gone after you deactivate en reactivate the plugin.
+	
 	
 	
 * Deprecations
@@ -252,6 +256,9 @@ Release Date: May 30th, 2015
 
 
 == Upgrade Notice ==
+
+= 0.15.33 =
+Maintenance release fixing several long-standing minor issues.
 
 = 0.15.32 =
 Fixed an issue with the keyword filter for events.

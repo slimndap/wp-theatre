@@ -151,7 +151,7 @@
 		 	 * {listing_page}/yesterday
 		 	 */
 
-			if ( $path = wp_parse_url( $this->url(), PHP_URL_PATH ) ) {
+			if ( $path = parse_url( $this->url(), PHP_URL_PATH ) ) {
 				
 				$path = untrailingslashit( substr( $path, 1 ) );
 
