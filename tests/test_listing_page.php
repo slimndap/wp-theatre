@@ -124,7 +124,7 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 	function get_matching_rewrite_rule( $path ) {
 		$rewrite_rules = get_option( 'rewrite_rules' );
 
-		$match_path = parse_url( esc_url( $path ), PHP_URL_PATH );
+		$match_path = untrailingslashit( parse_url( esc_url( $path ), PHP_URL_PATH ) );
 		$wordpress_subdir_for_site = parse_url( home_url(), PHP_URL_PATH );
 		if ( ! empty( $wordpress_subdir_for_site ) ) {
 			$match_path = str_replace( $wordpress_subdir_for_site, '', $match_path );
