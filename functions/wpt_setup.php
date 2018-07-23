@@ -43,6 +43,8 @@
 		 *
 		 * @see		WPT_Setup::add_tickets_url_iframe_query_vars()
 		 * @since	0.12
+		 * @since	0.15.33	Added support for tickets pages with a parent page.
+		 *			Fixes #262.
 		 * @return	void
 		 */
 		public function add_tickets_url_iframe_rewrites() {
@@ -52,19 +54,24 @@
 				return;
 			}
 			
-			$iframe_page = get_post($wp_theatre->wpt_tickets_options['iframepage']);
+			$iframe_page = get_post( $wp_theatre->wpt_tickets_options[ 'iframepage' ] );
 			
-			if (is_null($iframe_page)) {
+			if ( is_null( $iframe_page ) ) {
 				return;
 			}
 			
-			add_rewrite_tag('%wpt_event_tickets%', '.*');
-
-			add_rewrite_rule(
-				$iframe_page->post_name.'/([a-z0-9-]+)/([0-9]+)$', 
-				'index.php?pagename='.$iframe_page->post_name.'&wpt_event_tickets=$matches[2]',
-				'top'
-			);
+			if ( $path = wp_parse_url( get_permalink( $iframe_page ), PHP_URL_PATH ) ) {
+			
+				add_rewrite_tag('%wpt_event_tickets%', '.*');
+	
+				$path = untrailingslashit( substr( $path, 1 ) );
+				add_rewrite_rule(
+					$path.'/([a-z0-9-]+)/([0-9]+)$', 
+					'index.php?pagename='.$path.'&wpt_event_tickets=$matches[2]',
+					'top'
+				);
+				
+			}
 			
 		}
 		

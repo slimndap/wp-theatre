@@ -39,7 +39,7 @@ class WP_Theatre {
 	
 		// Includes
 		$this->includes();
-	
+
 		// Setup
 		$this->setup = new WPT_Setup();
 		$this->admin = new WPT_Admin();
