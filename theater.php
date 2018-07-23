@@ -185,9 +185,16 @@ class WP_Theatre {
 		flush_rewrite_rules();		
 	}
 	
+	/**
+	 * Cleans up after plugin deactivation.
+	 * 
+	 * @since 	0.?
+	 * @since	0.15.33	No longer removes all order indexes.
+	 *			Fixes #274.
+	 * @return 	void
+	 */
 	function deactivate() {
 		wp_clear_scheduled_hook('wpt_cron');
-		delete_post_meta_by_key($this->order->meta_key);
 		flush_rewrite_rules();		
 	}
 
