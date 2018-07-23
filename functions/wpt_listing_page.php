@@ -148,35 +148,35 @@
 			
 				// <listing_page>/2014/05
 				add_rewrite_rule(
-					$post_name.'/([0-9]{4})/([0-9]{2})$', 
+					$post_name.'/([0-9]{4})/([0-9]{2})/$', 
 					'index.php?pagename='.$post_name.'&wpt_month=$matches[1]-$matches[2]',
 					'top'
 				);
 				
 				// <listing_page>/2014/05/06
 				add_rewrite_rule(
-					$post_name.'/([0-9]{4})/([0-9]{2})/([0-9]{2})$', 
+					$post_name.'/([0-9]{4})/([0-9]{2})/([0-9]{2})/$', 
 					'index.php?pagename='.$post_name.'&wpt_day=$matches[1]-$matches[2]-$matches[3]',
 					'top'
 				);	 	 
 
 				// <listing_page>/comedy
 				add_rewrite_rule(
-					$post_name.'/([a-z0-9-]+)$', 
+					$post_name.'/([a-z0-9-]+)/$', 
 					'index.php?pagename='.$post_name.'&wpt_category=$matches[1]',
 					'top'
 				);	 	 
 
 				// <listing_page>/comedy/2014/05
 				add_rewrite_rule(
-					$post_name.'/([a-z0-9-]+)/([0-9]{4})/([0-9]{2})$', 
+					$post_name.'/([a-z0-9-]+)/([0-9]{4})/([0-9]{2})/$', 
 					'index.php?pagename='.$post_name.'&wpt_category=$matches[1]&wpt_month=$matches[2]-$matches[3]',
 					'top'
 				);
 
 				// <listing_page>/comedy/2014/05/06
 				add_rewrite_rule(
-					$post_name.'/([a-z0-9-]+)/([0-9]{4})/([0-9]{2})/([0-9]{2})$', 
+					$post_name.'/([a-z0-9-]+)/([0-9]{4})/([0-9]{2})/([0-9]{2})/$', 
 					'index.php?pagename='.$post_name.'&wpt_category=$matches[1]&wpt_day=$matches[2]-$matches[3]-$matches[4]',
 					'top'
 				);	 	 
