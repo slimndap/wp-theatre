@@ -373,4 +373,24 @@ class WPT_Test_Event_Order extends WPT_UnitTestCase {
 		$this->assertEquals( $expected, $actual );
 		
 	}
+	
+	/**
+	 * Test if events are still visible after deactivating and reactivating the Theater plugin.
+	 * Confirms #274.
+	 */
+	function test_events_visible_after_plugin_reactivation() {
+		global $wp_theatre;
+		
+		$this->setup_test_data();
+		
+		$actual = $wp_theatre->events->get();
+		$expected = 7;
+		$this->assertCount( $expected, $actual );
+		
+		$wp_theatre->deactivate();
+		$wp_theatre->activate();
+		
+		$actual = $wp_theatre->events->get();
+		$this->assertCount( $expected, $actual );
+	}
 }
