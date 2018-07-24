@@ -205,13 +205,13 @@
 				'has_archive' => true,
 				'show_in_menu'  => false,
 				'show_in_admin_bar' => true,
-					'supports' => array('title', 'editor', 'excerpt', 'thumbnail','comments'),
-					'taxonomies' => array('category','post_tag'),
-					'rewrite' => array( 
-						'slug' => $wp_theatre->production_permalink->get_base(), 
-						'with_front' => false, 
-						'feeds' => true 
-					),
+				'supports' => array('title', 'editor', 'excerpt', 'thumbnail','comments'),
+				'taxonomies' => array('category','post_tag'),
+				'rewrite' => array( 
+					'slug' => $wp_theatre->production_permalink->get_base(), 
+					'with_front' => false, 
+					'feeds' => true 
+				),
 			);
 
 			/**
