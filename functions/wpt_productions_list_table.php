@@ -25,6 +25,11 @@ class WPT_Productions_List_Table extends WP_List_Table {
 		);
 	}
 
+	/**
+	 * Displays a categories drop-down for filtering on the Events list table.
+	 *
+	 * @since 0.16
+	 */
 	function categories_dropdown( ) {
 
 		$dropdown_options = array(
@@ -40,6 +45,11 @@ class WPT_Productions_List_Table extends WP_List_Table {
 		
 	}
 
+	/**
+	 * Displays a dates drop-down for filtering on the Events list table.
+	 *
+	 * @since 0.16
+	 */
 	function dates_dropdown( ) {
 
 		$options = array (
@@ -63,8 +73,7 @@ class WPT_Productions_List_Table extends WP_List_Table {
 				?></option><?php				
 			}
 		?></select><?php
-			
-		
+					
 	}
 
 	/**
@@ -135,6 +144,7 @@ class WPT_Productions_List_Table extends WP_List_Table {
 	 *
 	 * @since	0.15.4
 	 * @since	0.15.17 		Added two filters to add extra controls.
+	 * @since	0.16			Added dates and categories filters.
 	 * @param 	string	$which	Location of table nav ('top' or 'bottom').
 	 */
 	function extra_tablenav( $which ) {
@@ -337,6 +347,7 @@ if ( empty( $_REQUEST['s'] ) ) {
 	 * @since	0.15
 	 * @since	0.15.2	Added a context for the productions.
 	 * @since	0.15.21	Items per page now uses WP_List_Table::get_items_per_page() from WordPress core.
+	 * @since	0.16	Added dates and categories filters.
 	 * @return 	void
 	 */
 	function prepare_items() {
