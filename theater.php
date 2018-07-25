@@ -114,6 +114,7 @@ class WP_Theatre {
 		require_once(dirname(__FILE__) . '/functions/wpt_listing.php');
 		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-archive.php');
 		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-order.php');
+		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-embed.php');
 
 		require_once(dirname(__FILE__) . '/functions/template/wpt_template.php');	
 		require_once(dirname(__FILE__) . '/functions/template/wpt_template_placeholder.php');	
