@@ -310,6 +310,14 @@ class WPT_Test extends WP_UnitTestCase {
 
 
 	}
+
+	function test_shortcode_wpt_events_filter_tag() {
+
+		$result = do_shortcode('[wpt_events tag="upcoming"]');
+		$this->assertEquals(1, substr_count($result, '"wp_theatre_event"'), $result);
+
+	}
+
 	
 	function test_shortcode_wpt_events_filter_category_deprecated() {
 		$this->assertEquals(3, substr_count(do_shortcode('[wpt_events category="muziek"]'), '"wp_theatre_event"'));
