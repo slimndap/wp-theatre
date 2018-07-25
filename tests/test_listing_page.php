@@ -304,6 +304,25 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		
 	}
 
+	function test_productions_are_paginated_by_tag_on_listing_page() {
+		$this->options['listing_page_nav'] = 'paginated';
+		$this->options['listing_page_groupby'] = 'tag';
+		update_option('wpt_listing_page', $this->options);
+
+		$url = add_query_arg(
+			'wpt_tag',
+			'upcoming',
+			get_permalink( $this->wp_theatre->listing_page->page() )
+		);
+
+		$this->go_to($url);
+		
+		$html= get_echo( 'the_content' );
+		$this->assertEquals(1, substr_count($html, '"wpt_listing_filter_pagination tag"'), $html);
+		$this->assertEquals(1, substr_count($html, '"wp_theatre_prod"'), $html);
+		
+	}
+
 	function test_events_are_paginated_by_category_on_listing_page() {
 		$this->options['listing_page_type'] = WPT_Event::post_type_name;
 		$this->options['listing_page_nav'] = 'paginated';
@@ -321,6 +340,26 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		$html= get_echo( 'the_content' );
 		$this->assertEquals(1, substr_count($html, '"wpt_listing_filter_pagination category"'), $html);
 		$this->assertEquals(2, substr_count($html, '"wp_theatre_event"'), $html);
+		
+	}
+
+	function test_events_are_paginated_by_tag_on_listing_page() {
+		$this->options['listing_page_type'] = WPT_Event::post_type_name;
+		$this->options['listing_page_nav'] = 'paginated';
+		$this->options['listing_page_groupby'] = 'tag';
+		update_option('wpt_listing_page', $this->options);
+
+		$url = add_query_arg(
+			'wpt_tag',
+			'upcoming',
+			get_permalink( $this->wp_theatre->listing_page->page() )
+		);
+
+		$this->go_to($url);
+		
+		$html= get_echo( 'the_content' );
+		$this->assertEquals(1, substr_count($html, '"wpt_listing_filter_pagination tag"'), $html);
+		$this->assertEquals(1, substr_count($html, '"wp_theatre_event"'), $html);
 		
 	}
 
@@ -385,6 +424,18 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		$html= get_echo( 'the_content' );
 		$this->assertEquals(2, substr_count($html, '"wpt_listing_group category"'), $html);
 	}
+		
+	function test_productions_are_grouped_by_tag_on_listing_page() {
+		$this->options['listing_page_nav'] = 'grouped';
+		$this->options['listing_page_groupby'] = 'tag';
+		update_option('wpt_listing_page', $this->options);
+
+		$this->go_to(
+			get_permalink($this->wp_theatre->listing_page->page())
+		);
+		$html= get_echo( 'the_content' );
+		$this->assertEquals(1, substr_count($html, '"wpt_listing_group tag"'), $html);
+	}
 	
 	function test_events_are_grouped_by_category_on_listing_page() {
 		$this->options['listing_page_type'] = WPT_Event::post_type_name;
@@ -398,6 +449,21 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 
 		$html= get_echo( 'the_content' );
 		$this->assertEquals(2, substr_count($html, '"wpt_listing_group category"'), $html);
+
+	}
+	
+	function test_events_are_grouped_by_tag_on_listing_page() {
+		$this->options['listing_page_type'] = WPT_Event::post_type_name;
+		$this->options['listing_page_nav'] = 'grouped';
+		$this->options['listing_page_groupby'] = 'tag';
+		update_option('wpt_listing_page', $this->options);
+
+		$this->go_to(
+			get_permalink($this->wp_theatre->listing_page->page())
+		);
+
+		$html= get_echo( 'the_content' );
+		$this->assertEquals(1, substr_count($html, '"wpt_listing_group tag"'), $html);
 
 	}
 	
@@ -496,6 +562,27 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		
 	}
 	
+	function test_productions_are_filtered_by_tag_on_listing_page() {
+		update_option('wpt_listing_page', $this->options);
+
+		$url = add_query_arg(
+			'wpt_tag',
+			'upcoming',
+			get_permalink( $this->wp_theatre->listing_page->page() )
+		);
+
+		$this->go_to($url);
+		
+		$html= get_echo( 'the_content' );
+
+		// Is the active filter shown?
+		$this->assertEquals(1, substr_count($html, 'tag-upcoming wpt_listing_filter_active"><a'), $html);
+
+		// Are the filtered events shown?
+		$this->assertEquals(1, substr_count($html, '"wp_theatre_prod"'), $html);
+		
+	}
+	
 	function test_events_are_filtered_by_category_on_listing_page() {
 		$this->options['listing_page_type'] = WPT_Event::post_type_name;
 		update_option('wpt_listing_page', $this->options);
@@ -517,6 +604,28 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		$this->assertEquals(2, substr_count($html, '"wp_theatre_event"'), $html);
 		
 	}
+	
+	function test_events_are_filtered_by_tag_on_listing_page() {
+		$this->options['listing_page_type'] = WPT_Event::post_type_name;
+		update_option('wpt_listing_page', $this->options);
+
+		$url = add_query_arg(
+			'wpt_tag',
+			'upcoming',
+			get_permalink( $this->wp_theatre->listing_page->page() )
+		);
+
+		$this->go_to($url);
+		
+		$html= get_echo( 'the_content' );
+
+		// Is the active filter shown?
+		$this->assertEquals(1, substr_count($html, 'tag-upcoming wpt_listing_filter_active"><a'), $html);
+
+		// Are the filtered events shown?
+		$this->assertEquals(1, substr_count($html, '"wp_theatre_event"'), $html);
+		
+	}
 
 	
 	function test_events_are_filtered_by_category_on_listing_page_with_pretty_permalinks() {
@@ -529,6 +638,21 @@ class WPT_Test_Listing_Page extends WP_UnitTestCase {
 		$url = $wp_theatre->listing_page->url(array('wpt_category'=>'film'));
 		$listing_page = get_post( $this->options['listing_page_post_id'] );
 		$expected = 'index.php?pagename='.$listing_page->post_name.'&wpt_category=$matches[1]';
+		$actual = $this->get_matching_rewrite_rule( $url );
+		$this->assertEquals( $expected, $actual );
+		
+	}
+
+	function test_events_are_filtered_by_tag_on_listing_page_with_pretty_permalinks() {
+		
+		global $wp_theatre;
+
+		$this->options['listing_page_type'] = WPT_Event::post_type_name;
+		update_option('wpt_listing_page', $this->options);
+
+		$url = $wp_theatre->listing_page->url(array('wpt_tag'=>'upcoming'));
+		$listing_page = get_post( $this->options['listing_page_post_id'] );
+		$expected = 'index.php?pagename='.$listing_page->post_name.'&wpt_tag=$matches[1]';
 		$actual = $this->get_matching_rewrite_rule( $url );
 		$this->assertEquals( $expected, $actual );
 		
