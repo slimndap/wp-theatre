@@ -104,6 +104,26 @@ class WPT_Productions_List_Table extends WP_List_Table {
 			$production->ID
 		);
 	}
+	
+	/**
+	 * Handles the default column output.
+	 *
+	 * @since 0.16
+	 *
+	 * @param WP_Post $post        The current WP_Post object.
+	 * @param string  $column_name The current column name.
+	 */
+	 function column_default( $post, $column_name ) {
+		/**
+		 * Fires for each custom column of a specific post type in the Posts list table.
+		 *
+		 * @since 0.16
+		 *
+		 * @param string $column_name The name of the column to display.
+		 * @param int    $post_id     The current post ID.
+		 */
+		 do_action( 'manage_'.WPT_Production::post_type_name.'_posts_custom_column', $column_name, $post->ID );
+	}
 
 	/**
 	 * Gets the HTML of the production title and action for use in the title column.
@@ -236,7 +256,15 @@ class WPT_Productions_List_Table extends WP_List_Table {
 			'title' => __( 'Event', 'theatre' ),
 			'categories' => __( 'Categories', 'theatre' ),
 		);
-		return $columns;
+		
+		/**
+		 * Filters the columns displayed in the Events list table.
+		 *
+		 * @since 0.16
+		 *
+		 * @param string[] $post_columns An associative array of column headings.
+		 */
+		return apply_filters( 'manage_'.WPT_Production::post_type_name.'_posts_columns', $columns );
 	}
 
 	/**
@@ -249,7 +277,15 @@ class WPT_Productions_List_Table extends WP_List_Table {
 		$sortable_columns = array(
 			'title' => array( 'title',false ),
 		);
-		return $sortable_columns;
+
+		/**
+		 * Filters the sortable columns displayed in the Events list table.
+		 *
+		 * @since 0.16
+		 *
+		 * @param string[] $post_columns An associative array of column headings.
+		 */
+		return apply_filters( 'manage_'.WPT_Production::post_type_name.'_sortable_columns', $sortable_columns );
 	}
 	
 	function get_productions_args_from_dates_dropdown() {
