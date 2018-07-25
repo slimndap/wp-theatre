@@ -131,7 +131,8 @@
 	 	 * @since	0.?
 	 	 * @since	0.15.33		Added support for a listing page with a parent page.
 	 	 *						Fixes #237.
-	 	 * @return void
+	 	 * @since	0.16		Added support for tags.
+	 	 * @return 	void
 	 	 */
 	 	function init() {
 		 	
@@ -187,6 +188,13 @@
 				add_rewrite_rule(
 					$path.'/([a-z0-9-]+)/([0-9]{4})/([0-9]{2})/([0-9]{2})$', 
 					'index.php?pagename='.$path.'&wpt_category=$matches[1]&wpt_day=$matches[2]-$matches[3]-$matches[4]',
+					'top'
+				);	 	 
+
+				// <listing_page>/tag/circus
+				add_rewrite_rule(
+					$path.'/tag/([a-z0-9-]+)$', 
+					'index.php?pagename='.$path.'&wpt_tag=$matches[1]',
 					'top'
 				);	 	 
 
@@ -655,6 +663,7 @@
 	 	 * @since	0.12.1	Trailingslashit to avoid an extra redirect.
 	 	 * @since	0.13.1	Pagination now work when listing page is same as front page.
 	 	 *					Fixes #98.
+	 	 * @since	0.16	Added support for tags.
 	 	 * 
 	     * @param array $args {
 	     *     An array of arguments. Optional.
@@ -676,7 +685,8 @@
 		 		$defaults = array(
 		 			'wpt_month' => false,
 		 			'wpt_day' => false,
-		 			'wpt_category' => false
+		 			'wpt_category' => false,
+		 			'wpt_tag' => false
 		 		);
 		 		$args = wp_parse_args($args, $defaults);
 
@@ -693,6 +703,11 @@
 			 		if ($args['wpt_day']) {
 				 		$url.= substr($args['wpt_day'],0,4).'/'.substr($args['wpt_day'],5,2).'/'.substr($args['wpt_day'],8,2);
 			 		}
+			 		if ($args['wpt_tag']) {
+			 			if ( $tag = get_term_by( 'slug', $args['wpt_tag'], 'post_tag' ) ) {
+					 		$url.= 'tag/'.$tag->slug.'/';
+			 			}
+			 		}
 			 		$url = trailingslashit($url);
 	 			} else {
 		 			if (get_option('page_on_front') == $page->ID) {
@@ -706,6 +721,9 @@
 			 		}
 			 		if ($args['wpt_day']) {
 			 			$url = add_query_arg('wpt_day', $args['wpt_day'], $url);
+			 		}
+			 		if ($args['wpt_tag']) {
+			 			$url = add_query_arg('wpt_tag', $args['wpt_tag'], $url);
 			 		}
 	 			}
 	 			return $url;

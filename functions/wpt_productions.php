@@ -17,6 +17,7 @@ class WPT_Productions extends WPT_Listing {
 	 *
 	 * @since 	0.10
 	 * @since	0.13	Added new query vars for days, months and years.
+	 * @since	0.16	Added 'wpt_tag' to the query args.
 	 *
 	 * @param 	array 	$vars	The current public query vars.
 	 * @return 	array			The new public query vars.
@@ -27,6 +28,7 @@ class WPT_Productions extends WPT_Listing {
 		$vars[] = 'wpt_year';
 		$vars[] = 'wpt_season';
 		$vars[] = 'wpt_category';
+		$vars[] = 'wpt_tag';
 		return $vars;
 	}
 
@@ -188,6 +190,30 @@ class WPT_Productions extends WPT_Listing {
 	}
 
 	/**
+	 * Gets all tags with productions.
+	 *
+	 * @since 0.16
+	 *
+	 * @param 	array 	$filters	See WPT_Events::get() for possible values.
+	 * @return 	array 				Tags.
+	 */
+	 function get_tags( $filters = array() ) {
+		
+		$filters['tag'] = false;
+		$productions = $this->get( $filters );
+		$production_ids = wp_list_pluck( $productions, 'ID' );
+		$terms = wp_get_object_terms( $production_ids, 'post_tag' );
+		$tags = array();
+
+		foreach ( $terms as $term ) {
+			$tags[ $term->slug ] = $term->name;
+		}
+
+		asort( $tags );
+		return $tags;
+	}
+
+	/**
 	 * Gets all years with productions.
 	 *
 	 * @since 0.13
@@ -313,6 +339,25 @@ class WPT_Productions extends WPT_Listing {
 	}
 
 	/**
+	 * Gets a list of productions in HTML for a single tag.
+	 *
+	 * @since 0.16
+	 *
+	 * @see WPT_Productions::get_html_grouped();
+	 *
+	 * @access 	private
+	 * @param 	string 	$tag_slug		Slug of the category.
+	 * @param 	array 	$args 			See WPT_Productions::get_html() for possible values.
+	 * @return 	string					The HTML.
+	 */
+	private function get_html_for_tag( $tag_slug, $args = array() ) {
+		if ( $tag = get_term_by( 'slug', $tag_slug, 'post_tag' ) ) {
+			$args['tag'] = $tag->slug;
+		}
+		return $this->get_html_grouped( $args );
+	}
+	
+	/**
 	 * Gets a list of productions in HTML for a single year.
 	 *
 	 * @since 	0.13
@@ -362,6 +407,7 @@ class WPT_Productions extends WPT_Listing {
 	 *
 	 * @since 	0.10
 	 * @since	0.13	Added support for days, months and years.
+	 * @since	0.16	Added support for tags.
 	 *
 	 * @see WPT_Productions::get_html_grouped();
 	 * @see WPT_Productions::get_html_for_season();
@@ -390,6 +436,8 @@ class WPT_Productions extends WPT_Listing {
 			$html = $this->get_html_for_month( $wp_query->query_vars['wpt_month'], $args );
 		} elseif ( ! empty( $wp_query->query_vars['wpt_day'] ) ) {
 			$html = $this->get_html_for_day( $wp_query->query_vars['wpt_day'], $args );
+		} elseif ( ! empty( $wp_query->query_vars['wpt_tag'] ) ) {
+			$html = $this->get_html_for_tag( $wp_query->query_vars['wpt_tag'], $args );
 		} else {
 			/*
 			 * The user didn't select a page.
@@ -437,6 +485,7 @@ class WPT_Productions extends WPT_Listing {
 	 * @since	0.13	Added support for days, months and years.
 	 * @since	0.14.7	Added $args to $production->html().
 	 * @since	0.15.14	Added $args to all header filters.
+	 * @since	0.16	Added support for tags.
 	 *
 	 * @see WPT_Production::html();
 	 * @see WPT_Productions::get_html_for_season();
@@ -568,6 +617,28 @@ class WPT_Productions extends WPT_Listing {
 					}
 				}
 				break;
+			case 'tag':
+				$tags = $this->get_tags( $args );
+				foreach ( $tags as $slug => $name ) {
+					if ( $tag_html = $this->get_html_for_tag( $slug, $args ) ) {
+						$html .= '<h3 class="wpt_listing_group tag">';
+						
+						/**
+						 * Filter the tag header in an events list.
+						 * 
+						 * @since 	0.16
+						 *
+						 * @param	string	$header	The header.
+						 * @param	string	$slug	The tag slug.
+						 * @param	array	$args	The arguments for the HTML of this list.
+						 */
+						$html .= apply_filters( 'wpt_listing_group_tag', $name, $slug, $args );
+						
+						$html .= '</h3>';
+						$html .= $tag_html;
+					}
+				}
+				break;
 			default:
 				/*
 				 * No stickies in paginated or grouped views
@@ -680,6 +751,7 @@ class WPT_Productions extends WPT_Listing {
 	 * Gets the pagination filters for a production listing.
 	 *
 	 * @since	0.13.4
+	 * @since	0.16	Added support for tags.
 	 * @return 	array	The pagination filters for a production listing.
 	 */
 	public function get_pagination_filters() {
@@ -714,6 +786,12 @@ class WPT_Productions extends WPT_Listing {
 			'title' => __( 'Seasons', 'theatre' ),
 			'query_arg' => 'wpt_season',
 			'callback' => array( $this, 'get_seasons' ),
+		);
+
+		$filters['tag'] = array(
+			'title' => __( 'Tags', 'theatre' ),
+			'query_arg' => 'wpt_tag',
+			'callback' => array( $this, 'get_tags' ),
 		);
 
 		/**

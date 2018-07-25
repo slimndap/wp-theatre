@@ -16,7 +16,8 @@ class WPT_Events extends WPT_Listing {
 	 *
 	 * This is needed to make `$wp_query->query_vars['wpt_category']` work.
 	 *
-	 * @since 0.10
+	 * @since 	0.10
+	 * @since	0.16	Added 'wpt_tag' to the query args.
 	 *
 	 * @param array $vars	The current public query vars.
 	 * @return array		The new public query vars.
@@ -26,6 +27,7 @@ class WPT_Events extends WPT_Listing {
 		$vars[] = 'wpt_month';
 		$vars[] = 'wpt_year';
 		$vars[] = 'wpt_category';
+		$vars[] = 'wpt_tag';
 		return $vars;
 	}
 
@@ -336,6 +338,7 @@ class WPT_Events extends WPT_Listing {
 	 *						Fixes #217.
 	 *						Maybe this is caused by wp_resolve_numeric_slug_conflicts(), which was
 	 *						added in WP 4.3.
+	 * @since	0.16		Added support for tags.
 	 *
 	 * @see WPT_Events::get_html_grouped()
 	 * @see WPT_Events::get_html_for_year()
@@ -366,6 +369,8 @@ class WPT_Events extends WPT_Listing {
 			$html = $this->get_html_for_day( $wp_query->query['wpt_day'], $args );
 		} elseif ( ! empty( $wp_query->query_vars['wpt_category'] ) ) {
 			$html = $this->get_html_for_category( $wp_query->query_vars['wpt_category'], $args );
+		} elseif ( ! empty( $wp_query->query_vars['wpt_tag'] ) ) {
+			$html = $this->get_html_for_tag( $wp_query->query_vars['wpt_tag'], $args );
 		} else {
 			/*
 			 * The user didn't select a page.
@@ -387,6 +392,25 @@ class WPT_Events extends WPT_Listing {
 	}
 
 	/**
+	 * Gets a list of events in HTML for a single tag.
+	 *
+	 * @since 0.16
+	 *
+	 * @see WPT_Events::get_html_grouped();
+	 *
+	 * @access	private
+	 * @param	string	$tag_slug		Slug of the category.
+	 * @param	array	$args 			See WPT_Events::get_html() for possible values.
+	 * @return	string					The HTML.
+	 */
+	private function get_html_for_tag( $tag_slug, $args = array() ) {
+		if ( $tag = get_term_by( 'slug', $tag_slug, 'post_tag' ) ) {
+			$args['tag'] = $tag->slug;
+		}
+		return $this->get_html_grouped( $args );
+	}
+
+	/**
 	 * Gets a list of events in HTML.
 	 *
 	 * The events can be grouped inside a page by setting $groupby.
@@ -395,6 +419,7 @@ class WPT_Events extends WPT_Listing {
 	 * @since 	0.10
 	 * @since	0.14.7	Added $args to $event->html().
 	 * @since	0.15.29	Added $args to all header filters.
+	 * @since	0.16	Added support for tags.
 	 *
 	 * @see WPT_Event::html();
 	 * @see WPT_Events::get_html_for_month();
@@ -510,6 +535,28 @@ class WPT_Events extends WPT_Listing {
 						$html .= $cat_html;
 					}
 				}
+				break;			
+			case 'tag':
+				$tags = $this->get_tags( $args );
+				foreach ( $tags as $slug => $name ) {
+					if ( $tag_html = $this->get_html_for_tag( $slug, $args ) ) {
+						$html .= '<h3 class="wpt_listing_group tag">';
+						
+						/**
+						 * Filter the tag header in an events list.
+						 * 
+						 * @since 	0.16
+						 *
+						 * @param	string	$header	The header.
+						 * @param	string	$slug	The tag slug.
+						 * @param	array	$args	The arguments for the HTML of this list.
+						 */
+						$html .= apply_filters( 'wpt_listing_group_tag', $name, $slug, $args );
+						
+						$html .= '</h3>';
+						$html .= $tag_html;
+					}
+				}
 				break;
 			default:
 				$events = $this->get( $args );
@@ -568,6 +615,7 @@ class WPT_Events extends WPT_Listing {
 	 * Gets the pagination filters for an event listing.
 	 *
 	 * @since	0.13.4
+	 * @since	0.16	Added the tag filter.
 	 * @return 	array	The pagination filters for an event listing.
 	 */
 	public function get_pagination_filters() {
@@ -598,6 +646,12 @@ class WPT_Events extends WPT_Listing {
 			'callback' => array( $this, 'get_categories' ),
 		);
 
+		$filters['tag'] = array(
+			'title' => __( 'Tags', 'theatre' ),
+			'query_arg' => 'wpt_tag',
+			'callback' => array( $this, 'get_tags' ),
+		);
+
 		/**
 		 * Filter the pagination filters for an event listing.
 		 *
@@ -607,6 +661,30 @@ class WPT_Events extends WPT_Listing {
 		$filters = apply_filters( 'wpt/events/pagination/filters', $filters );
 
 		return $filters;
+	}
+
+	/**
+	 * Gets all tags for events.
+	 *
+	 * @since 0.16
+	 *
+	 * @param 	array 	$filters	See WPT_Events::get() for possible values.
+	 * @return 	array 				Tags.
+	 */
+	 function get_tags( $filters = array() ) {
+		
+		$filters['tag'] = false;
+		$events = $this->get( $filters );
+		$event_ids = wp_list_pluck( $events, 'ID' );
+		$terms = wp_get_object_terms( $event_ids, 'post_tag' );
+		$tags = array();
+
+		foreach ( $terms as $term ) {
+			$tags[ $term->slug ] = $term->name;
+		}
+
+		asort( $tags );
+		return $tags;
 	}
 
 	/**
