@@ -3,9 +3,9 @@
 	
 	Plugin Name: Theater
 	Plugin URI: https://wp.theater/
-	Description: Turn your Wordpress website into a theater website.
+	Description: Manage and publish events for your theater, live venue, cinema, club or festival.
 	Author: Jeroen Schmit
-	Version: 0.15.33
+	Version: 0.16
 	Author URI: http://slimndap.com/
 	Text Domain: theatre
 	Domain Path: /lang
@@ -28,7 +28,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	
-$wpt_version = '0.15.33';
+$wpt_version = '0.16';
 
 class WP_Theatre {
 	function __construct() {

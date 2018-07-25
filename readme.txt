@@ -9,10 +9,10 @@ License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CZERCBG5SUGQW
 
-A free plugin to publish your events on a WordPress website. Perfect for theaters, live venues, cinemas and festivals.
+Manage and publish events for your theater, live venue, cinema, club or festival.
 
 == Description ==
-A WordPress plugin to manage events with all necessary shortcodes and widgets for your theater.
+A WordPress plugin to manage and publish events for your theater, live venue, cinema, club or festival.
 
 
 __Shortcodes__
@@ -123,6 +123,17 @@ If you are missing a feature that you really need for your website you can:
 The new feature may be added directly to the Theater plugin or as an extension so that others may benefit from this as well.
 
 == Changelog ==
+
+= 0.16 =
+
+Release Date: July 25, 2018
+
+* Enhancements
+    * Added date and category filter to the events admin screen.
+    * Added a custom excerpt to embedded events (using oEmbed).
+    * Made it possible to paginate events by tag. See the updated [docs](https://github.com/slimndap/wp-theatre/wiki/Shortcodes).  
+    * Made it possible to group events by tag. See the updated [docs](https://github.com/slimndap/wp-theatre/wiki/Shortcodes). 
+
 
 = 0.15 =
 
@@ -256,6 +267,9 @@ Release Date: May 30th, 2015
 
 
 == Upgrade Notice ==
+
+= 0.16 =
+New date and category filters on the events admin screen. New grouping by tag options for the front end.
 
 = 0.15.33 =
 Maintenance release fixing several long-standing minor issues.
