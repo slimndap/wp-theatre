@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/slimndap/wp-theatre.svg?branch=master)](https://travis-ci.org/slimndap/wp-theatre)
-
 #Theater for WordPress
 
 
@@ -64,3 +62,14 @@ Theatre integrates nicely with existing Ticketing solutions. Available integrati
 * [Ticketmatic](http://slimndap.com/product/ticketmatic-voor-wordpress/)
 
 Need integration with another ticketing system? Drop me an [email](mailto:jeroen@slimndap.com) and I will look into it.
+
+## Testing
+
+The product is continiously tested using [Travis CI](https://travis-ci.org/slimndap/wp-theatre) and BrowserStack.
+
+[![Build Status](https://travis-ci.org/slimndap/wp-theatre.svg?branch=master)](https://travis-ci.org/slimndap/wp-theatre)
+
+<a href="https://www.browserstack.com/open-source?ref=pricing"><img src="https://wp.theater/browserstack/Browserstack-logo.svg" width="100" /></a>
+
+
+
