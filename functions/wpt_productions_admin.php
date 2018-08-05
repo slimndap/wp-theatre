@@ -123,24 +123,57 @@ class WPT_Productions_Admin {
 		ob_start();
 
 		?><div class="wrap">
-			<h1><?php _e( 'Events','theatre' ); ?>
-				<a href="<?php echo admin_url( 'post-new.php?post_type='.WPT_Production::post_type_name );?>" class="page-title-action">
-					<?php _e( 'Add new event', 'theatre' ); ?>
-				</a>
-				<?php echo $this->get_search_request_summary_html(); ?>
-			</h1><?php
-
-			$list_table->views();
-
-			?><form method="get">
-				<input type="hidden" name="page" value="theater-events" /><?php
-
-				$list_table->prepare_items();
-				$list_table->search_box( __( 'Search events', 'theatre' ), WPT_Production::post_type_name );
-				$list_table->display();
-
-			?></form>
-		</div><?php
+			<h2 class="nav-tab-wrapper"><?php
+				
+				$tabs = $this->get_tabs();
+				$active_tab = isset( $_GET['tab'] ) ? $_GET['tab'] : 'events';
+				
+				foreach ( $tabs as $tab_id => $tab_name ) {
+					
+					$url = add_query_arg( 'tab', $tab_id, admin_url( 'admin.php?page=theater-events' ) );
+					
+					?><a href="<?php echo $url; ?>" class="nav-tab<?php
+						if ( $tab_id == $active_tab ) {
+							?> nav-tab-active<?php
+						} 
+					?>"><?php
+						echo esc_html( $tab_name );
+					?></a><?php
+				}
+				
+				if ( 'events' == $active_tab ) {
+					?><a href="<?php echo admin_url( 'post-new.php?post_type='.WPT_Production::post_type_name );?>" class="page-title-action">
+						<?php _e( 'Add new event', 'theatre' ); ?>
+					</a><?php 
+					
+					echo $this->get_search_request_summary_html(); 
+				} else {
+					do_action( 'wpt/productions/admin/tab/actions', $active_tab );
+					do_action( 'wpt/productions/admin/tab/actions?tab='. $active_tab, $active_tab );					
+				}
+				
+			?></h2><?php
+				
+			if ( 'events' == $active_tab ) {
+				
+				$list_table->views();
+	
+				?><form method="get">
+					<input type="hidden" name="page" value="theater-events" /><?php
+	
+					$list_table->prepare_items();
+					$list_table->search_box( __( 'Search events', 'theatre' ), WPT_Production::post_type_name );
+					$list_table->display();
+	
+				?></form><?php
+					
+			} else {
+				
+				do_action( 'wpt/productions/admin/tab', $active_tab );
+				do_action( 'wpt/productions/admin/tab?tab='. $active_tab, $active_tab );
+				
+			}
+		?></div><?php
 
 		ob_end_flush();
 	}
@@ -282,5 +315,17 @@ class WPT_Productions_Admin {
 			printf( __( 'Search results for &#8220;%s&#8221;' ),sanitize_text_field( $_REQUEST['s'] ) );
 		?></span><?php
 		return ob_get_clean();
+	}
+	
+	function get_tabs() {
+		
+		$tabs = array(
+			'events' => __( 'Events', 'theatre' ),
+		);
+		
+		$tabs = apply_filters( 'wpt/productions/admin/tabs', $tabs );
+		
+		return $tabs;
+		
 	}
 }
