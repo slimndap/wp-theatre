@@ -55,7 +55,12 @@ class Theater_Sync_Data {
 	}
 
 	static function get_🤖🤖🤖() {
-		return get_option( 'theater_🤖🤖🤖', array() );			
+		$🤖🤖🤖 = get_option( 'theater_🤖🤖🤖', array() );
+		foreach( $🤖🤖🤖 as $🤖) {
+			$🤖->load_license();
+			$🤖->load_status();			
+		}
+		return $🤖🤖🤖;			
 	}
 	
 	static function save_🤖( $🤖 ) {

@@ -13,6 +13,7 @@ class Theater_Sync_Admin {
 		
 		add_filter ( 'admin_init', array( __CLASS__, 'create_🤖' ) );
 		add_filter ( 'admin_init', array( __CLASS__, 'activate_license' ) );
+		
 	}
 	
 	
@@ -69,7 +70,7 @@ class Theater_Sync_Admin {
 		
 		$action = empty( $_GET[ 'action' ] ) ? '' : $_GET[ 'action' ];
 
-		switch( $_GET[ 'action' ] ) {
+		switch( $action ) {
 			
 			case 'add🤖' :
 				echo self::get_addnew_html();
@@ -187,6 +188,7 @@ class Theater_Sync_Admin {
 				);
 				
 				$provider = Theater_Sync_Data::get_provider( $🤖->get('provider') );
+				$status = $🤖->get_status();
 				
 				?>
 				
@@ -203,7 +205,9 @@ class Theater_Sync_Admin {
 							echo $provider->title; 
 						?></a>
 					</td>
-					<td>Please enter activation key</td>
+					<td><?php
+						echo $status[ 'description' ];
+					?></td>
 				</tr><?php
 			}			
 		?></table><?php
@@ -218,12 +222,10 @@ class Theater_Sync_Admin {
 		}
 		
 		$🤖 = new Theater_Sync_🤖( $_GET[ '🤖' ] );
-		print_r($🤖);
 		$provider = Theater_sync_Data::get_provider( $🤖->get( 'provider' ) );
 		
 		ob_start();
-		?>
-		<div class="theater-sync-edit">
+		?><div class="theater-sync-edit">
 			<h3>
 				<img src="data:image/svg+xml;base64,<?php echo base64_encode( $provider->logo ); ?>" alt="<?php printf( __( '%s logo', 'theatre' ), $provider->title ); ?>"> <?php 
 				printf( __( 'Setup %s sync', 'theatre' ), $provider->title ); ?>
@@ -242,32 +244,56 @@ class Theater_Sync_Admin {
 					_e( 'Ready', 'theatre' );				
 				?></li>
 			</ul>
-			<div class="activate"><?php
-				if ( THEATER_SYNC_BOT_STATUS_ACTIVATED > $🤖->get( 'status' ) ) {
-					
-					?><a href="<?php echo $provider->add_to_cart; ?>" class="button-primary"><?php 
-						_e('Purchase activation key', 'theatre'); 
-					?></a>
-					<button class="button"><?php _e( 'Enter activation key', 'theatre' ); ?></button>
-					<p>&euro; 40/month. You will be billed monthly and can cancel at any time. </p>
-					
-	
-					<form method="post"><?php
-						wp_nonce_field( 'activate_license', 'nonce', true, true );
-						?><label><?php _e( 'Enter the activation key from the confirmation e-mail:', 'theatre' ); ?></label>
-						<input type="text" name="license_key" class="regular-text" value="<?php echo $🤖->get('license_key' ); ?>" required />
-						<input type="submit" value="Activate" class="button" diisabled />
-					</form><?php
-				}
-					
-			?></div>
-			<div class="install">
-				Please wait while we are installing your sync. This can take up to two minutes.
-			</div>
-			<div class="configure">
-			</div>
-			<div class="ready">
-			</div>
+			<table class="form-table">
+				<tbody>
+					<tr>
+						<th><?php _e( 'Activation', 'theatre' ); ?></th>
+						<td><?php
+							if ( THEATER_SYNC_BOT_STATUS_ACTIVATED > $🤖->get( 'status' ) ) {
+								
+								?><p>
+									<a href="<?php echo $provider->add_to_cart; ?>" class="button-primary button-large"><?php 
+										_e('Purchase activation key', 'theatre'); 
+									?> <span class="dashicons dashicons-external"></span></a>
+									<button class="button"><?php _e( 'Enter activation key', 'theatre' ); ?></button>
+								<p class="description">&euro; 40/month. You will be billed monthly and can cancel at any time. </p>
+								
+				
+								<form method="post"><?php
+									wp_nonce_field( 'activate_license', 'nonce', true, true );
+									?><label><?php _e( 'Enter the activation key from the confirmation e-mail:', 'theatre' ); ?></label>
+									<input type="text" name="license_key" class="regular-text" value="<?php echo $🤖->get('license_key' ); ?>" required />
+									<input type="submit" value="Activate" class="button" diisabled />
+								</form><?php
+							} else {
+								
+								$license = $🤖->get( 'license' );
+								
+								?><p><?php echo $license->customer_name; ?></p>
+								<p class="description"><?php
+									printf( __( 'Paid for until %s', 'theatre' ), date_i18n( 'j F Y', strtotime( $license->expires ) ) );
+								?></p><?php
+			
+							}
+								
+						?></td>
+					</tr><?php
+					if ( THEATER_SYNC_BOT_STATUS_NEW < $🤖->get( 'status' ) ) {
+						?><tr>
+							<th><?php _e( 'Installation', 'theatre' ); ?></th>
+							<td>
+								<p><span class="spinner is-active"></span><?php
+									printf( 
+										__( 'Please wait while we are installing your %s sync. This can take up to two minutes.', 'theatre' ), 
+										$provider->title 
+									); 
+								?></p>
+							</td>
+						</tr><?php
+					}
+				?></tbody>
+			</table>
+
 		</div><?php
 		return ob_get_clean();
 	}

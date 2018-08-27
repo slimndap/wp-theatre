@@ -18,6 +18,24 @@ class Theater_Sync_Mother {
 		);
 		
 		$response = wp_remote_post( THEATER_SYNC_MOTHER_URL, array( 'timeout' => 15, 'sslverify' => false, 'body' => $api_params ) );
+
+		if ( is_wp_error( $response ) ) {
+			return false; 
+		}
+		
+		return json_decode( wp_remote_retrieve_body( $response ) );
+		
+	}
+	
+	static function check_license(  $license_key, $provider ) {
+
+		$api_params = array(
+			'edd_action' => 'check_license',
+			'license' 	=> $license_key,
+			'item_name' => urlencode( $provider->title ),
+		);
+		
+		$response = wp_remote_post( THEATER_SYNC_MOTHER_URL, array( 'timeout' => 15, 'sslverify' => false, 'body' => $api_params ) );
 		
 		if ( is_wp_error( $response ) ) {
 			return false; 

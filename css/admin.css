@@ -728,6 +728,11 @@ body.toplevel_page_theater-events .wp-list-table tbody tr td .row-actions {
   height: 32px;
   width: auto;
 }
+.theater-sync-edit .spinner {
+  float: none;
+  margin-top: 0;
+  margin-left: 0;
+}
 .theater-sync-edit .steps {
   display: flex;
   font-size: small;
