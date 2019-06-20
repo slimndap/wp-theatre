@@ -2,7 +2,7 @@
 Contributors: slimndap
 Tags: theatre, stage, venue, events, shows, concerts, tickets, ticketing, sports, performances, calendar, festival, workshops, theater, cinema
 Requires at least: 4.0
-Tested up to: 4.9.7
+Tested up to: 5.2
 Requires PHP: 5.4
 Stable tag: 0.15
 License: GPLv2
@@ -133,6 +133,7 @@ Release Date: July 25, 2018
     * Added a custom excerpt to embedded events (using oEmbed).
     * Made it possible to paginate events by tag. See the updated [docs](https://github.com/slimndap/wp-theatre/wiki/Shortcodes).  
     * Made it possible to group events by tag. See the updated [docs](https://github.com/slimndap/wp-theatre/wiki/Shortcodes). 
+    * Fixed a performance issue if your site uses a lot of transients (0.16.1).
 
 
 = 0.15 =

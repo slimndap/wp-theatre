@@ -235,5 +235,17 @@ class WPT_Test_Transients extends WPT_UnitTestCase {
 		$html = do_shortcode('[wpt_productions paginateby=category]');
 		$this->assertContains('category-muziek wpt_listing_filter_active',$html);
 	}
+	
+	function test_if_corrupted_list_of_transients_is_emptied() {
+		
+		$this->setup_test_data();
+		update_option( THEATER_TRANSIENTS_OPTION, 'not a valid json object' );
+		
+		$actual = Theater_Transients::get_transient_keys();
+		$expected = array();
+		$this->assertEquals( $expected, $actual );
+		
+		
+	}
 
 }

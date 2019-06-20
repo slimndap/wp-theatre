@@ -67,6 +67,7 @@ class Theater_Transients {
 	 * Gets a list of all Theater transients that are in use.
 	 *
 	 * @since	0.15.24
+	 * @since	0.16.1	Reset list if transients is list is corrupted.
 	 *
 	 * @return	array	A list of all Theater transients that are in use.
 	 */
@@ -75,6 +76,12 @@ class Theater_Transients {
 
 		if ( ! $transient_keys ) {
 			$transient_keys = array();
+		}
+		
+		// The list of transients is corrupted. Throw them away.
+		if ( !is_array( $transient_keys ) ) {
+			delete_option( THEATER_TRANSIENTS_OPTION );
+			$transient_keys = array();			
 		}
 
 		return $transient_keys;
