@@ -43,8 +43,9 @@
 		 *
 		 * @see		WPT_Setup::add_tickets_url_iframe_query_vars()
 		 * @since	0.12
-		 * @since	0.15.33	Added support for tickets pages with a parent page.
-		 *			Fixes #262.
+		 * @since	0.15.33		Added support for tickets pages with a parent page.
+		 *						Fixes #262.
+		 * @since	0.15.??		Added support for multisite with subfolders.
 		 * @return	void
 		 */
 		public function add_tickets_url_iframe_rewrites() {
@@ -59,12 +60,11 @@
 			if ( is_null( $iframe_page ) ) {
 				return;
 			}
-			
-			if ( $path = parse_url( get_permalink( $iframe_page ), PHP_URL_PATH ) ) {
-			
+
+			if ( $path = get_page_uri( $wp_theatre->wpt_tickets_options[ 'iframepage' ] ) ) {
+
 				add_rewrite_tag('%wpt_event_tickets%', '.*');
 	
-				$path = untrailingslashit( substr( $path, 1 ) );
 				add_rewrite_rule(
 					$path.'/([a-z0-9-]+)/([0-9]+)$', 
 					'index.php?pagename='.$path.'&wpt_event_tickets=$matches[2]',
