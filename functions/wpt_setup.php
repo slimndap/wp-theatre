@@ -194,12 +194,12 @@
 
 			$post_type_args = array(
 				'labels' => array(
-					'name' => __( 'Events','theatre'),
-					'singular_name' => __( 'Event','theatre'),
+					'name' => __( 'Productions','theatre'),
+					'singular_name' => __( 'Production','theatre'),
 					'add_new' =>  _x('Add New', 'production','theatre'),
-					'new_item' => __('New event','theatre'),
-					'add_new_item' => __('Add new event','theatre'),
-					'edit_item' => __('Edit event','theatre')
+					'new_item' => __('New production','theatre'),
+					'add_new_item' => __('Add new production','theatre'),
+					'edit_item' => __('Edit production','theatre')
 				),
 				'public' => true,
 				'has_archive' => true,
