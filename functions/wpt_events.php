@@ -212,6 +212,9 @@ class WPT_Events extends WPT_Listing {
 	 *
 	 * @since 	0.10
 	 * @since	0.15.11	Added support for next day start time offset.
+	 * @since	0.16.2	Fixed issue #296. 
+	 *					Start and end args were set improperly if WP timezone and server timezone 
+	 *					did not match.
 	 *
 	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
 	 * @uses 	WPT_Events::get_html_grouped();
@@ -222,14 +225,14 @@ class WPT_Events extends WPT_Listing {
 	 * @return 	string			The HTML.
 	 */
 	private function get_html_for_day( $day, $args = array() ) {
-
+				
 		/*
 		 * Set the `start`-filter to today.
 		 * Except when the active `start`-filter is set to a later date.
 		 */
 		if (
 			empty( $args['start'] ) ||
-			(strtotime( $args['start'] ) < strtotime( $day ))
+			( strtotime( $args['start'] ) < ( strtotime( $day ) - get_option( 'gmt_offset' ) * 3600 ) )
 		) {
 			$args['start'] = $day.' +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
@@ -240,11 +243,11 @@ class WPT_Events extends WPT_Listing {
 		 */
 		if (
 			empty( $args['end'] ) ||
-			(strtotime( $args['end'] ) > strtotime( $day.' +1 day' ))
+			( strtotime( $args['end'] ) > ( strtotime( $day.' +1 day' ) - get_option( 'gmt_offset' ) * 3600 ) )
 		) {
 			$args['end'] = $day.' +1 day +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
-
+		
 		return $this->get_html_grouped( $args );
 	}
 
@@ -270,7 +273,7 @@ class WPT_Events extends WPT_Listing {
 		 */
 		if (
 			empty( $args['start'] ) ||
-			(strtotime( $args['start'] ) < strtotime( $month ))
+			( strtotime( $args['start'] ) < ( strtotime( $month ) - get_option( 'gmt_offset' ) * 3600 ) )
 		) {
 			$args['start'] = $month.' +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
@@ -281,7 +284,7 @@ class WPT_Events extends WPT_Listing {
 		 */
 		if (
 			empty( $args['end'] ) ||
-			(strtotime( $args['end'] ) > strtotime( $month.' +1 month' ))
+			(strtotime( $args['end'] ) > ( strtotime( $month.' +1 month' ) - get_option( 'gmt_offset' ) * 3600 ) )
 		) {
 			$args['end'] = $month.' +1 month +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
@@ -311,7 +314,7 @@ class WPT_Events extends WPT_Listing {
 		 */
 		if (
 			empty( $args['start'] ) ||
-			(strtotime( $args['start'] ) < strtotime( $year.'-01-01' ))
+			(strtotime( $args['start'] ) < ( strtotime( $year.'-01-01' ) - get_option( 'gmt_offset' ) * 3600 ) )
 		) {
 			$args['start'] = $year.'-01-01 +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
@@ -322,7 +325,7 @@ class WPT_Events extends WPT_Listing {
 		 */
 		if (
 			empty( $args['end'] ) ||
-			(strtotime( $args['end'] ) > strtotime( $year.'-01-01 +1 year' ))
+			(strtotime( $args['end'] ) > ( strtotime( $year.'-01-01 +1 year' ) - get_option( 'gmt_offset' ) * 3600 ) )
 		) {
 			$args['end'] = $year.'-01-01 +1 year +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
 		}
