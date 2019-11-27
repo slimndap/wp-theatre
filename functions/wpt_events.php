@@ -208,132 +208,6 @@ class WPT_Events extends WPT_Listing {
 	}
 
 	/**
-	 * Gets a list of events in HTML for a single day.
-	 *
-	 * @since 	0.10
-	 * @since	0.15.11	Added support for next day start time offset.
-	 * @since	0.16.2	Fixed issue #296. 
-	 *					Start and end args were set improperly if WP timezone and server timezone 
-	 *					did not match.
-	 *
-	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
-	 * @uses 	WPT_Events::get_html_grouped();
-	 *
-	 * @access 	private
-	 * @param 	string $day		The day in `YYYY-MM-DD` format.
-	 * @param 	array $args 	See WPT_Events::get_html() for possible values.
-	 * @return 	string			The HTML.
-	 */
-	private function get_html_for_day( $day, $args = array() ) {
-				
-		/*
-		 * Set the `start`-filter to today.
-		 * Except when the active `start`-filter is set to a later date.
-		 */
-		if (
-			empty( $args['start'] ) ||
-			( strtotime( $args['start'] ) < ( strtotime( $day ) - get_option( 'gmt_offset' ) * 3600 ) )
-		) {
-			$args['start'] = $day.' +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
-		}
-
-		/*
-		 * Set the `end`-filter to the next day.
-		 * Except when the active `end`-filter is set to an earlier date.
-		 */
-		if (
-			empty( $args['end'] ) ||
-			( strtotime( $args['end'] ) > ( strtotime( $day.' +1 day' ) - get_option( 'gmt_offset' ) * 3600 ) )
-		) {
-			$args['end'] = $day.' +1 day +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
-		}
-		
-		return $this->get_html_grouped( $args );
-	}
-
-	/**
-	 * Gets a list of events in HTML for a single month.
-	 *
-	 * @since 	0.10
-	 * @since	0.15.11	Added support for next day start time offset.
-	 *
-	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
-	 * @uses 	WPT_Events::get_html_grouped();
-	 *
-	 * @access 	private
-	 * @param 	string $day		The month in `YYYY-MM` format.
-	 * @param 	array $args 	See WPT_Events::get_html() for possible values.
-	 * @return 	string			The HTML.
-	 */
-	private function get_html_for_month( $month, $args = array() ) {
-
-		/*
-		 * Set the `start`-filter to the first day of the month.
-		 * Except when the active `start`-filter is set to a later date.
-		 */
-		if (
-			empty( $args['start'] ) ||
-			( strtotime( $args['start'] ) < ( strtotime( $month ) - get_option( 'gmt_offset' ) * 3600 ) )
-		) {
-			$args['start'] = $month.' +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
-		}
-
-		/*
-		 * Set the `end`-filter to the first day of the next month.
-		 * Except when the active `end`-filter is set to an earlier date.
-		 */
-		if (
-			empty( $args['end'] ) ||
-			(strtotime( $args['end'] ) > ( strtotime( $month.' +1 month' ) - get_option( 'gmt_offset' ) * 3600 ) )
-		) {
-			$args['end'] = $month.' +1 month +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
-		}
-
-		return $this->get_html_grouped( $args );
-	}
-
-	/**
-	 * Gets a list of events in HTML for a single year.
-	 *
-	 * @since 	0.10
-	 * @since	0.15.11	Added support for next day start time offset.
-	 *
-	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
-	 * @uses 	WPT_Events::get_html_grouped();
-	 *
-	 * @access 	private
-	 * @param 	string $day		The year in `YYYY` format.
-	 * @param 	array $args 	See WPT_Events::get_html() for possible values.
-	 * @return 	string			The HTML.
-	 */
-	private function get_html_for_year( $year, $args = array() ) {
-
-		/*
-		 * Set the `start`-filter to the first day of the year.
-		 * Except when the active `start`-filter is set to a later date.
-		 */
-		if (
-			empty( $args['start'] ) ||
-			(strtotime( $args['start'] ) < ( strtotime( $year.'-01-01' ) - get_option( 'gmt_offset' ) * 3600 ) )
-		) {
-			$args['start'] = $year.'-01-01 +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
-		}
-
-		/*
-		 * Set the `end`-filter to the first day of the next year.
-		 * Except when the active `end`-filter is set to an earlier date.
-		 */
-		if (
-			empty( $args['end'] ) ||
-			(strtotime( $args['end'] ) > ( strtotime( $year.'-01-01 +1 year' ) - get_option( 'gmt_offset' ) * 3600 ) )
-		) {
-			$args['end'] = $year.'-01-01 +1 year +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
-		}
-
-		return $this->get_html_grouped( $args );
-	}
-
-	/**
 	 * Gets a list of events in HTML for a page.
 	 *
 	 * @since	0.10
@@ -433,7 +307,7 @@ class WPT_Events extends WPT_Listing {
 	 * @param 	array $args 	See WPT_Events::get_html() for possible values.
 	 * @return 	string			The HTML.
 	 */
-	private function get_html_grouped( $args = array() ) {
+	protected function get_html_grouped( $args = array() ) {
 
 		$args = wp_parse_args( $args, $this->default_args_for_html );
 

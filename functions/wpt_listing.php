@@ -323,7 +323,7 @@ class WPT_Listing {
 	protected function get_html_page_navigation( $args = array() ) {
 		return '';
 	}
-
+	
 	/**
 	 * Gets a list of events in HTML for a page.
 	 *
@@ -336,6 +336,153 @@ class WPT_Listing {
 	 * @return 	string			The HTML.
 	 */
 	protected function get_html_for_page( $args = array() ) {
+		return '';
+	}
+	
+	/**
+	 * Gets a list of events in HTML for a single day.
+	 *
+	 * @since 	0.10
+	 * @since	0.15.11	Added support for next day start time offset.
+	 * @since	0.16.2	Moved from child classes to parent class.
+	 *					Use WPT_Listing::get_html_for_period() to handle `start` and `end`.
+	 *					Fixes issue #296. 
+	 *
+	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
+	 * @uses 	WPT_Listing::get_html_for_period();
+	 *
+	 * @access 	protected
+	 * @param 	string $day		The day in `YYYY-MM-DD` format.
+	 * @param 	array $args 	See WPT_Events::get_html() for possible values.
+	 * @return 	string			The HTML.
+	 */
+	protected function get_html_for_day( $day, $args = array() ) {
+		
+		return $this->get_html_for_period( 
+			$day.' +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds', 
+			$day.' +1 day +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds',
+			$args
+		);
+
+	}
+
+	/**
+	 * Gets a list of events in HTML for a single month.
+	 *
+	 * @since 	0.10
+	 * @since	0.15.11	Added support for next day start time offset.
+	 * @since	0.16.2	Moved from child classes to parent class.
+	 *					Use WPT_Listing::get_html_for_period() to handle `start` and `end`.
+	 *					Fixes issue #296. 
+	 *
+	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
+	 * @uses 	WPT_Listing::get_html_for_period();
+	 *
+	 * @access 	protected
+	 * @param 	string $day		The month in `YYYY-MM` format.
+	 * @param 	array $args 	See WPT_Events::get_html() for possible values.
+	 * @return 	string			The HTML.
+	 */
+	protected function get_html_for_month( $month, $args = array() ) {
+
+		return $this->get_html_for_period( 
+			$month.' +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds', 
+			$month.' +1 month +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds',
+			$args
+		);
+
+	}
+
+	/**
+	 * Gets a list of events in HTML for a single year.
+	 *
+	 * @since 	0.10
+	 * @since	0.15.11	Added support for next day start time offset.
+	 * @since	0.16.2	Moved from child classes to parent class.
+	 *					Use WPT_Listing::get_html_for_period() to handle `start` and `end`.
+	 *					Fixes issue #296. 
+	 *
+	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
+	 * @uses 	WPT_Listing::get_html_for_period();
+	 *
+	 * @access 	protected
+	 * @param 	string $day		The year in `YYYY` format.
+	 * @param 	array $args 	See WPT_Events::get_html() for possible values.
+	 * @return 	string			The HTML.
+	 */
+	protected function get_html_for_year( $year, $args = array() ) {
+
+		return $this->get_html_for_period( 
+			$year.'-01-01 +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds', 
+			$year.'-01-01 +1 year +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds',
+			$args
+		);
+
+	}
+
+	/**
+	 * Gets a list of events in HTML for a period.
+	 *
+	 * @since 0.16.2
+	 *
+	 * @access 	protected
+	 * @param 	string	$start	A time string that can be interpreted by strtotime().
+	 * @param	string	$end	A time string that can be interpreted by strtotime().
+	 * @param 	array 	$args 	See WPT_Listing::get_html() for possible values.
+	 * @return 	string			The HTML.
+	 */
+	protected function get_html_for_period( $start, $end, $args, $start_arg = 'start', $end_arg = 'end' ) {
+		
+		/*
+		 * Make sure the timestamps for start and end are in UTC before comparing it to 
+		 * the `start` and 'end' args.
+		 */
+		$start_in_utc = strtotime( $start ) - get_option( 'gmt_offset' ) * 3600;
+		$end_in_utc = strtotime( $end ) - get_option( 'gmt_offset' ) * 3600;
+
+		/*
+		 * Set the `start`-filter to the value of start.
+		 * Except when the active `start`-arg is set to a later date.
+		 */
+		if (
+			empty( $args[ $start_arg ] ) ||
+			( strtotime( $args[ $start_arg ] ) < $start_in_utc )
+		) {
+			$args[ $start_arg ] = $start;
+		}		
+		
+		/*
+		 * Set the `end`-filter to the first day of end.
+		 * Except when the active `end`-arg is set to an earlier date.
+		 */
+		if (
+			empty( $args[ $end_arg ] ) ||
+			(strtotime( $args[ $end_arg ] ) > $end_in_utc )
+		) {
+			$args[ $end_arg ] = $end;
+		}
+
+		// No sticky events in a period view.
+		$args[ 'ignore_sticky_posts' ] = true;
+		
+		return $this->get_html_grouped( $args );
+
+	}
+
+	/**
+	 * Gets a list of events in HTML.
+	 *
+	 * The events can be grouped inside a page by setting $groupby.
+	 * If $groupby is not set then all events are show in a single, ungrouped list.
+	 *
+	 * Override this method to assemble your own page content.
+	 *
+	 * @access 	protected
+	 * @since	0.16.2
+	 * @param 	array $args 	See WPT_Events::get_html() for possible values.
+	 * @return 	string			The HTML.
+	 */
+	protected function get_html_grouped( $args = array() ) {
 		return '';
 	}
 

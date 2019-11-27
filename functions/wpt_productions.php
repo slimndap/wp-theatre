@@ -249,95 +249,21 @@ class WPT_Productions extends WPT_Listing {
 	}
 
 	/**
-	 * Gets a list of productions in HTML for a single day.
+	 * Gets a list of events in HTML for a period.
 	 *
-	 * @since 	0.13
-	 * @since	0.15.11	Added support for next day start time offset.
-	 * @since	0.15.16	Changed 'start_after' to 'end_after'.
+	 * @since 0.16.2
 	 *
-	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
-	 * @uses 	WPT_Productions::get_html_grouped();
-	 *
-	 * @access 	private
-	 * @param 	string $day		The day in `YYYY-MM-DD` format.
-	 * @param 	array $args 	See WPT_Productions::get_html() for possible values.
+	 * @access 	protected
+	 * @uses	WPT_Listing::get_html_for_period()
+	 * @param 	string	$start	A time string that can be interpreted by strtotime().
+	 * @param	string	$end	A time string that can be interpreted by strtotime().
+	 * @param 	array 	$args 	See WPT_Listing::get_html() for possible values.
 	 * @return 	string			The HTML.
 	 */
-	private function get_html_for_day( $day, $args = array() ) {
-
-		/*
-		 * Set the `start`-filter to today.
-		 * Except when the active `start`-filter is set to a later date.
-		 */
-		if (
-			empty( $args['end_after'] ) ||
-			(strtotime( $args['end_after'] ) < strtotime( $day ))
-		) {
-			$args['end_after'] = $day.' +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
-		}
-
-		/*
-		 * Set the `end`-filter to the next day.
-		 * Except when the active `end`-filter is set to an earlier date.
-		 */
-		if (
-			empty( $args['start_before'] ) ||
-			(strtotime( $args['start_before'] ) > strtotime( $day.' +1 day' ))
-		) {
-			$args['start_before'] = $day.' +1 day +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
-		}
-
-		// No sticky productions in a day view.
-		$args['ignore_sticky_posts'] = true;
-
-		return $this->get_html_grouped( $args );
+	protected function get_html_for_period( $start, $end, $args, $start_arg = 'start', $end_arg = 'end' ) {
+		return parent::get_html_for_period( $start, $end, $args, 'end_after', 'start_before' );
 	}
-
-	/**
-	 * Gets a list of productions in HTML for a single month.
-	 *
-	 * @since 	0.13
-	 * @since	0.15.11	Added support for next day start time offset.
-	 * @since	0.15.16	Changed 'start_after' to 'end_after'.
-	 *
-	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
-	 * @uses	WPT_Productions::get_html_grouped();
-	 *
-	 * @access 	private
-	 * @param 	string 	$month	The month in `YYYY-MM` format.
-	 * @param 	array 	$args 	See WPT_Productions::get_html() for possible values.
-	 * @return 	string			The HTML.
-	 */
-	private function get_html_for_month( $month, $args = array() ) {
-
-		/*
-		 * Set the `start`-filter to the first day of the month.
-		 * Except when the active `start`-filter is set to a later date.
-		 */
-		if (
-			empty( $args['end_after'] ) ||
-			(strtotime( $args['end_after'] ) < strtotime( $month ))
-		) {
-			$args['end_after'] = $month.' +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
-		}
-
-		/*
-		 * Set the `end`-filter to the first day of the next month.
-		 * Except when the active `end`-filter is set to an earlier date.
-		 */
-		if (
-			empty( $args['start_before'] ) ||
-			(strtotime( $args['start_before'] ) > strtotime( $month.' +1 month' ))
-		) {
-			$args['start_before'] = $month.' +1 month +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
-		}
-
-		// No sticky productions in a month view.
-		$args['ignore_sticky_posts'] = true;
-
-		return $this->get_html_grouped( $args );
-	}
-
+	
 	/**
 	 * Gets a list of productions in HTML for a single tag.
 	 *
@@ -354,51 +280,6 @@ class WPT_Productions extends WPT_Listing {
 		if ( $tag = get_term_by( 'slug', $tag_slug, 'post_tag' ) ) {
 			$args['tag'] = $tag->slug;
 		}
-		return $this->get_html_grouped( $args );
-	}
-	
-	/**
-	 * Gets a list of productions in HTML for a single year.
-	 *
-	 * @since 	0.13
-	 * @since	0.15.11	Added support for next day start time offset.
-	 * @since	0.15.16	Changed 'start_after' to 'end_after'.
-	 *
-	 * @uses	Theater_Helpers_Time::get_next_day_start_time_offset() to get the next day start time offset.
-	 * @uses	WPT_Productions::get_html_grouped();
-	 *
-	 * @access 	private
-	 * @param 	string 	$year	The year in `YYYY` format.
-	 * @param 	array 	$args 	See WPT_Productions::get_html() for possible values.
-	 * @return 	string			The HTML.
-	 */
-	private function get_html_for_year( $year, $args = array() ) {
-
-		/*
-		 * Set the `start`-filter to the first day of the year.
-		 * Except when the active `start`-filter is set to a later date.
-		 */
-		if (
-			empty( $args['end_after'] ) ||
-			(strtotime( $args['end_after'] ) < strtotime( $year.'-01-01' ))
-		) {
-			$args['end_after'] = $year.'-01-01 +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
-		}
-
-		/*
-		 * Set the `end`-filter to the first day of the next year.
-		 * Except when the active `end`-filter is set to an earlier date.
-		 */
-		if (
-			empty( $args['start_before'] ) ||
-			(strtotime( $args['start_before'] ) > strtotime( $year.'-01-01 +1 year' ))
-		) {
-			$args['start_before'] = $year.'-01-01 +1 year +'.Theater_Helpers_Time::get_next_day_start_time_offset().' seconds';
-		}
-
-		// No sticky productions in a year view.
-		$args['ignore_sticky_posts'] = true;
-
 		return $this->get_html_grouped( $args );
 	}
 
@@ -495,7 +376,7 @@ class WPT_Productions extends WPT_Listing {
 	 * @param 	array $args 	See WPT_Productions::get_html() for possible values.
 	 * @return 	string			The HTML.
 	 */
-	private function get_html_grouped( $args = array() ) {
+	protected function get_html_grouped( $args = array() ) {
 
 		$args = wp_parse_args( $args, $this->default_args_for_html );
 
