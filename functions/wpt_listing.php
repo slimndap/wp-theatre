@@ -344,7 +344,7 @@ class WPT_Listing {
 	 *
 	 * @since 	0.10
 	 * @since	0.15.11	Added support for next day start time offset.
-	 * @since	0.16.2	Moved from child classes to parent class.
+	 * @since	0.16.1	Moved from child classes to parent class.
 	 *					Use WPT_Listing::get_html_for_period() to handle `start` and `end`.
 	 *					Fixes issue #296. 
 	 *
@@ -371,7 +371,7 @@ class WPT_Listing {
 	 *
 	 * @since 	0.10
 	 * @since	0.15.11	Added support for next day start time offset.
-	 * @since	0.16.2	Moved from child classes to parent class.
+	 * @since	0.16.1	Moved from child classes to parent class.
 	 *					Use WPT_Listing::get_html_for_period() to handle `start` and `end`.
 	 *					Fixes issue #296. 
 	 *
@@ -398,7 +398,7 @@ class WPT_Listing {
 	 *
 	 * @since 	0.10
 	 * @since	0.15.11	Added support for next day start time offset.
-	 * @since	0.16.2	Moved from child classes to parent class.
+	 * @since	0.16.1	Moved from child classes to parent class.
 	 *					Use WPT_Listing::get_html_for_period() to handle `start` and `end`.
 	 *					Fixes issue #296. 
 	 *
@@ -423,7 +423,7 @@ class WPT_Listing {
 	/**
 	 * Gets a list of events in HTML for a period.
 	 *
-	 * @since 0.16.2
+	 * @since 0.16.1
 	 *
 	 * @access 	protected
 	 * @param 	string	$start	A time string that can be interpreted by strtotime().
@@ -478,7 +478,7 @@ class WPT_Listing {
 	 * Override this method to assemble your own page content.
 	 *
 	 * @access 	protected
-	 * @since	0.16.2
+	 * @since	0.16.1
 	 * @param 	array $args 	See WPT_Events::get_html() for possible values.
 	 * @return 	string			The HTML.
 	 */

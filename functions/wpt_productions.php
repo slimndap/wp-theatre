@@ -251,7 +251,7 @@ class WPT_Productions extends WPT_Listing {
 	/**
 	 * Gets a list of events in HTML for a period.
 	 *
-	 * @since 0.16.2
+	 * @since 0.16.1
 	 *
 	 * @access 	protected
 	 * @uses	WPT_Listing::get_html_for_period()

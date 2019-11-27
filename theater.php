@@ -28,7 +28,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	
-$wpt_version = '0.16';
+$wpt_version = '0.16.1';
 
 class WP_Theatre {
 	function __construct() {
