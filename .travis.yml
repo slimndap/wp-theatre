@@ -2,26 +2,37 @@ sudo: false
 
 language: php
 
+services:
+  - mysql
+
 matrix:
-    include:
+  include:
     - php: "7.0"
       env: WP_VERSION=latest WP_MULTISITE=0
+      dist: xenial
     - php: "7.0"
       env: WP_VERSION=latest WP_MULTISITE=1
+      dist: xenial
     - php: "5.4"
       env: WP_VERSION=4.0
+      dist: trusty
     - php: "5.4"
       env: WP_VERSION=4.5
+      dist: trusty
+
+env:
+  global:
+    - COMPOSER_BIN_DIR=$(composer global config bin-dir --absolute)
 
 before_script:
-    - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION 
-    - export PATH="$HOME/.composer/vendor/bin:$PATH"
-    - |
-      if [[ ${TRAVIS_PHP_VERSION:0:2} == "7." ]]; then
-        composer global require "phpunit/phpunit=5.7.*"
-      elif [[ ${TRAVIS_PHP_VERSION:0:3} != "5.2" ]]; then
-        composer global require "phpunit/phpunit=4.8.*"
-      fi
-    - phpunit --version
+  - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
+  - export PATH="$HOME/.composer/vendor/bin:$PATH"
+  - |
+    if [[ ${TRAVIS_PHP_VERSION:0:2} == "7." ]]; then
+      composer global require "phpunit/phpunit=5.7.*"
+    elif [[ ${TRAVIS_PHP_VERSION:0:3} != "5.2" ]]; then
+      composer global require "phpunit/phpunit=4.8.*"
+    fi
+  - $COMPOSER_BIN_DIR/phpunit --version
 
-script: phpunit && phpunit --group ajax
+script: $COMPOSER_BIN_DIR/phpunit && $COMPOSER_BIN_DIR/phpunit --group ajax
