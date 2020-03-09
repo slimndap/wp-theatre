@@ -173,8 +173,8 @@ class WPT_Admin {
 	 */
 	function add_theater_menu() {
 		add_menu_page( 
-			__('Theater','theatre'), 
-			__('Theater','theatre'), 
+			__('Theater','wp_theatre'), 
+			__('Theater','wp_theatre'), 
 			'edit_posts', 
 			'theater-events', 
 			array(), 
@@ -192,7 +192,7 @@ class WPT_Admin {
 	function add_settings_menu() {
 		add_submenu_page( 
 			'theater-events',
-			__('Theater','theatre').' '.__('Settings'), 
+			__('Theater','wp_theatre').' '.__('Settings'), 
 			__('Settings'), 
 			'manage_options', 
 			'wpt_admin', 
