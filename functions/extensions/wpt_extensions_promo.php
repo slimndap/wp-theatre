@@ -11,6 +11,9 @@ class WPT_Extensions_Promo {
 		
 		// Add the 'extensions' submenu with priority 40 to move it below the 'settings' submenu.
 		add_action( 'admin_menu', array( $this, 'add_menu' ), 40 );
+
+		// Add hard-coded CSS class until WP issue 18857 fixed
+		add_filter( 'admin_body_class', array( $this, 'add_admin_body_class'));
 	}
 
 	/**
@@ -54,6 +57,20 @@ class WPT_Extensions_Promo {
 		$links[] = '<a href="' . esc_url( $extensions_link ) . '">' . esc_html__( 'Extensions', 'theatre' ) . '</a>';
 
 		return $links;
+	}
+
+	/**
+	 * Adds a hard-coded CSS class to the admin body tag, workaround for WP issue 18857.
+	 *
+	 * @since	0.XXX
+	 * @param	string	$classes	A space-separated string of CSS class names.
+	 * @return	string	A space-separated string of CSS class names with dditional classes added.
+	 */
+	function add_admin_body_class($classes) {
+
+		$classes .= " theater_page_wpt_extensions";
+
+		return $classes;
 	}
 
 	/**
