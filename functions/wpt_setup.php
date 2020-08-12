@@ -45,7 +45,7 @@
 		 * @since	0.12
 		 * @since	0.15.33		Added support for tickets pages with a parent page.
 		 *						Fixes #262.
-		 * @since	0.15.??		Added support for multisite with subfolders.
+		 * @since	0.16.2		Added support for multisite with subfolders.
 		 * @return	void
 		 */
 		public function add_tickets_url_iframe_rewrites() {
