@@ -92,6 +92,7 @@ class WPT_Test_CSS extends WPT_UnitTestCase {
 		 * See: https://travis-ci.org/slimndap/wp-theatre/jobs/276840117
 		 */
 		remove_action( 'admin_init', 'wp_admin_headers' );
+		remove_action( 'login_init', 'wp_admin_headers' );
 
 		/**
 		 * Fake being in an admin screen.
