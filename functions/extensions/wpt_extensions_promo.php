@@ -121,7 +121,7 @@ class WPT_Extensions_Promo {
 	 * @return 	void
 	 */
 	function get_page() {
-		?><div class="wrap">
+		?><div class="wrap wrap_wpt_extensions">
 			<h1><?php esc_html_e( 'Theater for WordPress extensions','theatre' ); ?></h1>
 			<p><?php _e( 'Extensions are plugins that <strong><em>add functionality</em></strong> to the Theater for WordPress plugin.', 'theatre' ); ?></p><?php
 
