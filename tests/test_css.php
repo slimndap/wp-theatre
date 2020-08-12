@@ -92,6 +92,12 @@ class WPT_Test_CSS extends WPT_UnitTestCase {
 		 * See: https://travis-ci.org/slimndap/wp-theatre/jobs/276840117
 		 */
 		remove_action( 'admin_init', 'wp_admin_headers' );
+
+		/** 
+		 * Prevent output of frame options header when 'admin_init' is fired.
+		 * This triggered a 'Cannot modify header information - headers already sent' error
+		 * when running unit tests.
+		 */
 		remove_action( 'admin_init', 'send_frame_options_header' );
 		
 		/**
