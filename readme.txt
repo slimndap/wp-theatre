@@ -31,12 +31,12 @@ __Extensions__
 
 __Integrate with your existing ticketing solution__
 
-* [ActiveTickets](https://wp.theater/downloads/activetickets-for-wordpress/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) - Automatically import your ActiveTickets events and sell them through your website.
-* [SRO4](https://wp.theater/downloads/sro4-for-wordpress/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) - Automatically import your SRO4 events and sell them on your website.
-* [Stager](https://wp.theater/downloads/stager-for-wordpress/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) - Automatically import your Stager concerts and sell them on your website.
-* [Ticketlab](https://wp.theater/downloads/ticketlab-for-wordpress/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) - Automatically import your Ticketlab films and sell them on your website.
-* [Ticketmatic](https://wp.theater/downloads/ticketmatic-for-wordpress/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) - Automatically import your Ticketmatic events and sell them on your website.
-* [Veezi](https://wp.theater/downloads/veezi-for-wordpress/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description) - Automatically import your Veezi films and sell them on your website.
+* [ActiveTickets](https://wp.theater/downloads/activetickets-for-wordpress/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description)
+* [Seatgeek Entreprise/SRO4](https://wp.theater/downloads/sro4-for-wordpress/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description)
+* [Stager](https://jeero.ooo/publish-stager-events-on-wordpress/)
+* [Ticketlab](https://wp.theater/downloads/ticketlab-for-wordpress/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description)
+* [Ticketmatic](https://jeero.ooo/publish-ticketmatic-events-on-wordpress/)
+* [Veezi](https://jeero.ooo/publish-veezi-films-on-wordpress/)
 
 __Missing features?__
 
@@ -136,6 +136,8 @@ Release Date: July 25, 2018
 * Bugfix
     * Fixed a performance issue if your site uses a lot of transients (0.16.1).
 	* Fixed a timezone [issue](https://github.com/slimndap/wp-theatre/issues/296) with groupby/paginateby inside listings (0.16.1).
+	* Fixed a problem with jQuery in WordPress 5.5 (0.16.2).
+	* Fixed a [problem](https://github.com/slimndap/wp-theatre/issues/291) with the tickets url inside an iframe on subfolder based multisite installs (0.16.2).
 
 = 0.15 =
 
