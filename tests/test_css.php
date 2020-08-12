@@ -92,8 +92,8 @@ class WPT_Test_CSS extends WPT_UnitTestCase {
 		 * See: https://travis-ci.org/slimndap/wp-theatre/jobs/276840117
 		 */
 		remove_action( 'admin_init', 'wp_admin_headers' );
-		remove_action( 'login_init', 'wp_admin_headers' );
-
+		remove_action( 'admin_init', 'send_frame_options_header' );
+		
 		/**
 		 * Fake being in an admin screen.
 		 * Needed because wp_add_privacy_policy_content() triggers _doing_it_wrong() when
