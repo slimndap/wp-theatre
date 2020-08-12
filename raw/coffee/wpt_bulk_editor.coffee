@@ -3,7 +3,8 @@ jQuery ->
 	Update all connected events when bulk updating productions.
 	See: http://codex.wordpress.org/Plugin_API/Action_Reference/bulk_edit_custom_box
 	###
-	jQuery( '#bulk_edit' ).live 'click', () ->
+	
+	jQuery( document ).on 'click', '#bulk_edit', () ->
 		bulk_row = jQuery '#bulk-edit'
 		# get the selected post ids that are being edited
 		post_ids = new Array()
