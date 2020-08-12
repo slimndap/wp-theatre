@@ -193,7 +193,7 @@
   text-decoration: underline;
 }
 .xdsoft_datetimepicker .xdsoft_label:hover i {
-  opacity: 1.0;
+  opacity: 1;
 }
 .xdsoft_datetimepicker .xdsoft_label > .xdsoft_select {
   border: 1px solid #ccc;
@@ -616,25 +616,25 @@ body.wp-admin.post-type-wp_theatre_event #wpt_event_publish .inside .submit {
   padding: 0;
   text-align: right;
 }
-.theater_page_wpt_extensions .plugin-card .name,
-.theater_page_wpt_extensions .plugin-card .desc {
+.wrap_wpt_extensions .plugin-card .name,
+.wrap_wpt_extensions .plugin-card .desc {
   margin-right: 148px;
 }
-.theater_page_wpt_extensions .plugin-card .action-links {
+.wrap_wpt_extensions .plugin-card .action-links {
   width: auto;
 }
 @media screen and (max-width: 1100px) and (min-width: 782px), (max-width: 480px) {
-  .theater_page_wpt_extensions .plugin-card .name,
-  .theater_page_wpt_extensions .plugin-card .desc {
+  .wrap_wpt_extensions .plugin-card .name,
+  .wrap_wpt_extensions .plugin-card .desc {
     margin-right: 0;
   }
 }
-.theater_page_wpt_extensions .plugin-icon {
+.wrap_wpt_extensions .plugin-icon {
   line-height: 128px;
   background-color: rgba(6, 156, 136, 0.75);
   border-radius: 2px;
 }
-.theater_page_wpt_extensions .plugin-icon img {
+.wrap_wpt_extensions .plugin-icon img {
   width: 100%;
   height: auto;
   vertical-align: middle;
@@ -755,3 +755,4 @@ textarea#wpt_custom_css {
 #poststuff .wp_theatre_event > * {
   margin: 0;
 }
+/*# sourceMappingURL=admin.css.map */
