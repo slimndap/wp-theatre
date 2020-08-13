@@ -33,10 +33,13 @@ __Integrate with your existing ticketing solution__
 
 * [ActiveTickets](https://wp.theater/downloads/activetickets-for-wordpress/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description)
 * [Seatgeek Entreprise/SRO4](https://wp.theater/downloads/sro4-for-wordpress/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description)
-* [Stager](https://jeero.ooo/publish-stager-events-on-wordpress/)
+* [RTS](https://jeero.ooo/import-rts-into-theater-for-wordpress/)
+* [Stager](https://jeero.ooo/import-stager-into-theater-for-wordpress/)
+* [TicketingCiné](https://jeero.ooo/publish-ticketingcine-movies-on-wordpress/)
 * [Ticketlab](https://wp.theater/downloads/ticketlab-for-wordpress/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description)
-* [Ticketmatic](https://jeero.ooo/publish-ticketmatic-events-on-wordpress/)
-* [Veezi](https://jeero.ooo/publish-veezi-films-on-wordpress/)
+* [Ticketmaster](https://jeero.ooo/publish-ticketmaster-events-on-wordpress/)
+* [Ticketmatic](https://jeero.ooo/import-ticketmatic-into-theater-for-wordpress/)
+* [Veezi](https://jeero.ooo/import-veezi-into-theater-for-wordpress/)
 
 __Missing features?__
 
