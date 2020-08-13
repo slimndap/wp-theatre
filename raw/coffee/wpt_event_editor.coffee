@@ -12,7 +12,7 @@ class wpt_event_editor
 		@enddate = jQuery '#wpt_event_editor_enddate'
 	
 		@event_date.flatpickr
-			defaultDate: if ( @event_date.val() == '' ) then wpt_event_editor_defaults.event_date else @event_date.val()	
+			defaultHour: 20
 			enableTime: true
 			format : wpt_event_editor_defaults.datetime_format
 			minuteIncrement: 15
