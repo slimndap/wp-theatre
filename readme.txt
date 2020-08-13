@@ -138,6 +138,7 @@ Release Date: July 25, 2018
 	* Fixed a timezone [issue](https://github.com/slimndap/wp-theatre/issues/296) with groupby/paginateby inside listings (0.16.1).
 	* Fixed a problem with jQuery in WordPress 5.5 (0.16.2).
 	* Fixed a [problem](https://github.com/slimndap/wp-theatre/issues/291) with the tickets url inside an iframe on subfolder based multisite installs (0.16.2).
+	* Fixed another problem with jQuery in WordPress 5.5 (0.16.3). Now uses flatpickr for a datepicker.
 
 = 0.15 =
 
@@ -271,6 +272,9 @@ Release Date: May 30th, 2015
 
 
 == Upgrade Notice ==
+
+= 0.16.3 =
+Fixes some issues with WordPress 5.5.
 
 = 0.16 =
 New date and category filters on the events admin screen. New grouping by tag options for the front end.
