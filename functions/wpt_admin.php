@@ -31,20 +31,29 @@ class WPT_Admin {
 	 * 
 	 * @since	0.?
 	 * @since	0.15.16	Removed custom CSS section.
+	 * @since	0.16.3	Added flatpickr.
 	 * @return 	void
 	 */
 	function admin_init() {
         global $wp_theatre;
 
+		wp_register_style( 'flatpickr', 'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css', array(), NULL );
+		wp_register_script( 'flatpickr', 'https://cdn.jsdelivr.net/npm/flatpickr', array(), NULL );	
+
+		wp_register_script( 'flatpickr_l10n', sprintf( 'https://npmcdn.com/flatpickr/dist/l10n/%s.js', $wp_theatre->event_editor->get_language() ), array(), NULL );	
+
 		wp_enqueue_script(
 			'wp_theatre_admin',
 			plugins_url( '../js/admin.js', __FILE__ ),
 			array(
-				'jquery'
+				'jquery',
+				'flatpickr',
+				'flatpickr_l10n',
 			),
             $wp_theatre->wpt_version
 		);
-		wp_enqueue_style( 'wp_theatre_admin', plugins_url( '../css/admin.css', __FILE__ ), array(), $wp_theatre->wpt_version );
+
+		wp_enqueue_style( 'wp_theatre_admin', plugins_url( '../css/admin.css', __FILE__ ), array( 'flatpickr' ), $wp_theatre->wpt_version );
 		wp_enqueue_style( 'wp_theatre', plugins_url( '../css/style.css', __FILE__ ), array(), $wp_theatre->wpt_version );
 
 

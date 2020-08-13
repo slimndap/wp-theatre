@@ -1,4 +1,3 @@
-# @codekit-prepend '../js/jquery.datetimepicker.js'
 # @codekit-prepend 'wpt_bulk_editor.coffee'
 # @codekit-prepend 'wpt_event_editor.coffee'
 # @codekit-prepend 'wpt_production_permalink.coffee'

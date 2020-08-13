@@ -11,22 +11,28 @@ class wpt_event_editor
 		@event_date = jQuery '#wpt_event_editor_event_date'
 		@enddate = jQuery '#wpt_event_editor_enddate'
 	
-		@event_date.wpt_datetimepicker
+		@event_date.flatpickr
 			defaultDate: wpt_event_editor_defaults.event_date
+			enableTime: true
 			format : wpt_event_editor_defaults.datetime_format
-			step: 15
-			lang: wpt_event_editor_defaults.language
-			onChangeDateTime: (event_date, input) =>
-				if event_date?
-					enddate = new Date @enddate.val()	
-					if not @enddate.val() or (enddate < event_date)
-						enddate = new Date event_date.getTime() + wpt_event_editor_defaults.duration * 1000					
-						@enddate.val enddate.dateFormat wpt_event_editor_defaults.datetime_format
+			minuteIncrement: 15
+			locale: wpt_event_editor_defaults.language
+			onChange: ( selectedDates, dateStr, instance ) =>
 			
-		@enddate.wpt_datetimepicker	
+				jQuery.get ajaxurl,
+						'action': 'wpt_event_editor_get_new_enddate',
+						'event_date': dateStr,
+						'end_date': @enddate.val()
+					, (data) =>
+						@enddate.val data
+						alert data
+			
+		@enddate.flatpickr	
 			format : wpt_event_editor_defaults.datetime_format
-			step: 15
-		
+			locale: wpt_event_editor_defaults.language
+			enableTime: true
+			minuteIncrement: 15
+
 	init_delete_links : =>
 		jQuery('.wpt_event_editor_listing_action_delete').unbind('click').click (e) =>
 			if confirm wpt_event_editor_defaults.confirm_delete_message

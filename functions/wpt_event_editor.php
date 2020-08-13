@@ -26,6 +26,7 @@ class WPT_Event_Editor {
 		add_action( 'wp_ajax_wpt_event_editor_delete_event', array( $this, 'delete_event_over_ajax' ) );
 		add_action( 'wp_ajax_wpt_event_editor_create_event', array( $this, 'create_event_over_ajax' ) );
 		add_action( 'wp_ajax_wpt_event_editor_reset_create_form', array( $this, 'get_form_html_over_ajax' ) );
+		add_action( 'wp_ajax_wpt_event_editor_get_new_enddate', array( $this, 'get_new_enddate_over_ajax' ) );
 
 	}
 
@@ -124,6 +125,33 @@ class WPT_Event_Editor {
 
 		wp_die();
 	}
+	
+	/**
+	 * Gets a new end date for an event based on the start dtae..
+	 * 
+	 * @since	0.16.3
+	 * @return void
+	 */
+	function get_new_enddate_over_ajax() {
+		
+		$defaults = $this->get_defaults();
+		
+		$event_date = strtotime( $_GET[ 'event_date' ] );
+		
+		if ( !empty( $_GET[ 'end_date' ] ) ) {
+
+			$end_date = strtotime( $_GET[ 'end_date' ] );
+			
+			if ( $end_date > $event_date ) {
+				echo date_i18n( $defaults[ 'datetime_format' ], $end_date );
+				wp_die();
+			}
+		}
+		
+		echo date_i18n( $defaults[ 'datetime_format' ], $event_date + $defaults[ 'duration' ] );
+
+		wp_die();
+	}
 
 	/**
 	 * Gets the create event form for a production over AJAX.
@@ -145,11 +173,12 @@ class WPT_Event_Editor {
 	 * You can use the 'wpt/event_editor/defaults'-filter to alter the settings.
 	 *
 	 * @since	0.11
-	 * @since 	0.12	Added 'language' to defaults.
+	 * @since 	0.12		Added 'language' to defaults.
 	 *					Fixes #135.
 	 * @since	0.12.4	Added 'editor' to defaults so it can be used a a global instance for
 	 *					the event editor object. This way the event editor can be referenced
 	 *					from different javascript files (eg. in extensions).
+	 * @since	0.16.3	Use WPT_Event_Editor::get_language() to get the default language.
 	 * @access 	private
 	 * @return 	array {
 	 * 		int		$duration			Default duration of an event.
@@ -174,7 +203,7 @@ class WPT_Event_Editor {
 			'tickets_button' => __( 'Tickets', 'theatre' ),
 			'tickets_status' => WPT_Event::tickets_status_onsale,
 			'confirm_delete_message' => __( 'Are you sure that you want to delete this event?', 'theatre' ),
-			'language' => $language_parts[0],
+			'language' => $this->get_language(),
 			'editor' => false,
 		);
 
@@ -355,6 +384,19 @@ class WPT_Event_Editor {
 		echo $this->get_listing_html( $post->ID );
 		echo $this->get_create_html( $post->ID );
 
+	}
+
+	/**
+	 * Gets the language for the event editor.
+	 * 
+	 * @since	0.16.3
+	 * @return	string
+	 */
+	function get_language() {
+
+		$language_parts = explode( '-', get_bloginfo( 'language' ) );
+		return $language_parts[ 0 ];
+		
 	}
 
 	/**
