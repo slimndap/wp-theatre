@@ -276,7 +276,7 @@ Release Date: May 30th, 2015
 
 == Upgrade Notice ==
 
-= 0.16.4 =
+= 0.16.5 =
 Fixes some issues with WordPress 5.5.
 
 = 0.16 =
