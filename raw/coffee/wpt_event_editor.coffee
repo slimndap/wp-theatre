@@ -17,6 +17,7 @@ class wpt_event_editor
 			format : wpt_event_editor_defaults.datetime_format
 			minuteIncrement: 15
 			locale: wpt_event_editor_defaults.language
+			allowInput: true
 			onChange: ( selectedDates, dateStr, instance ) =>
 			
 				jQuery.get ajaxurl,
@@ -30,6 +31,7 @@ class wpt_event_editor
 			format : wpt_event_editor_defaults.datetime_format
 			locale: wpt_event_editor_defaults.language
 			enableTime: true
+			allowInput: true
 			minuteIncrement: 15
 
 	init_delete_links : =>
