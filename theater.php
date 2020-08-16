@@ -73,6 +73,9 @@ class WP_Theatre {
 			$this->frontend = new WPT_Frontend();
 		}
 		
+		// Jeero
+		$this->jeero_suggest = new Theater_Jeero_Suggest();
+		
 		// Deprecated properties
 		$this->order = new WPT_Order();
 		Theater_Custom_CSS::init();
@@ -159,6 +162,7 @@ class WP_Theatre {
 
 		require_once(dirname(__FILE__) . '/functions/wpt_importer.php');	
 
+		require_once(dirname(__FILE__) . '/functions/jeero/class-theater-jeero-suggest.php');	
 
 		if (is_admin()) {
 		} else {

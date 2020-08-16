@@ -1,6 +1,7 @@
 # @codekit-prepend 'wpt_bulk_editor.coffee'
 # @codekit-prepend 'wpt_event_editor.coffee'
 # @codekit-prepend 'wpt_production_permalink.coffee'
+# @codekit-prepend 'wpt_jeero.coffee'
 
 class wpt_admin_ticketspage
 	constructor: ->

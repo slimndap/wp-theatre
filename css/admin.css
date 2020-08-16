@@ -639,6 +639,15 @@ body.wp-admin.post-type-wp_theatre_event #wpt_event_publish .inside .submit {
   height: auto;
   vertical-align: middle;
 }
+.wpt_jeero_suggestion {
+  margin-top: 8px;
+  font-style: italic;
+}
+.wpt_jeero_suggestion img {
+  height: 16px;
+  margin-right: 4px;
+  vertical-align: top;
+}
 body.toplevel_page_theater-events .view-switch .view-compact:before {
   content: '\f164';
 }
