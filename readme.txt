@@ -127,6 +127,12 @@ The new feature may be added directly to the Theater plugin or as an extension s
 
 == Changelog ==
 
+= 0.17 =
+
+Release Date: August 17, 2020
+
+Introducing [Jeero](https://jeero.ooo/) as a new way to import events from popular ticketing solutions.
+
 = 0.16 =
 
 Release Date: July 25, 2018
