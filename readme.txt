@@ -39,6 +39,9 @@ __Integrate with your existing ticketing solution__
 * [Ticketlab](https://wp.theater/downloads/ticketlab-for-wordpress/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description)
 * [Ticketmaster](https://jeero.ooo/publish-ticketmaster-events-on-wordpress/)
 * [Ticketmatic](https://jeero.ooo/import-ticketmatic-into-theater-for-wordpress/)
+* [Ticketportal](https://jeero.ooo/import-ticketportal_cz-into-theater-for-wordpress/)
+* [Ticketsource](https://jeero.ooo/import-ticketsource-into-theater-for-wordpress/)
+* [Ticketweb](https://jeero.ooo/import-ticketweb-into-theater-for-wordpress/)
 * [Veezi](https://jeero.ooo/import-veezi-into-theater-for-wordpress/)
 
 __Missing features?__
