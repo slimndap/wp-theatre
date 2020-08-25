@@ -648,6 +648,31 @@ body.wp-admin.post-type-wp_theatre_event #wpt_event_publish .inside .submit {
   margin-right: 4px;
   vertical-align: top;
 }
+.wrap_wpt_jeero_suggestions .plugin-card .name,
+.wrap_wpt_jeero_suggestions .plugin-card .desc {
+  margin-right: 148px;
+}
+.wrap_wpt_jeero_suggestions .plugin-card .action-links {
+  width: auto;
+}
+@media screen and (max-width: 1100px) and (min-width: 782px), (max-width: 480px) {
+  .wrap_wpt_jeero_suggestions .plugin-card .name,
+  .wrap_wpt_jeero_suggestions .plugin-card .desc {
+    margin-right: 0;
+  }
+}
+.wrap_wpt_jeero_suggestions .plugin-icon {
+  line-height: 128px;
+  border-radius: 2px;
+  padding-right: 16px;
+  width: 112px;
+}
+.wrap_wpt_jeero_suggestions .plugin-icon img {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  vertical-align: middle;
+}
 body.toplevel_page_theater-events .view-switch .view-compact:before {
   content: '\f164';
 }
