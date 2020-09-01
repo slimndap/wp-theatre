@@ -73,6 +73,9 @@ class WP_Theatre {
 			$this->frontend = new WPT_Frontend();
 		}
 		
+		// Gutenberg
+		$this->gutenberg = new Theater_Gutenberg();
+		
 		// Jeero
 		$this->jeero_suggest = new Theater_Jeero_Suggest();
 		
@@ -116,6 +119,7 @@ class WP_Theatre {
 
 		require_once(dirname(__FILE__) . '/functions/wpt_listing.php');
 		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-archive.php');
+		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-gutenberg.php');
 		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-order.php');
 		require_once(dirname(__FILE__) . '/functions/event/class-theater-event-embed.php');
 

@@ -64,7 +64,7 @@ class wpt_event_editor
 		save = @create.find '.wpt_event_editor_create_save'
 		save.click =>
 		
-			form = jQuery '#post'
+			form = save.parents 'form'
 		
 			data =
 				'action': 'wpt_event_editor_create_event'
