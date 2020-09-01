@@ -133,6 +133,12 @@ The new feature may be added directly to the Theater plugin or as an extension s
 
 == Changelog ==
 
+= 0.18 =
+
+Release Date: September 1, 2020
+
+Adds Gutenberg/Block Editor support to events and a new 'Import Events' page.
+
 = 0.17 =
 
 Release Date: August 17, 2020
