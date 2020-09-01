@@ -100,10 +100,6 @@ class Theater_Jeero_Suggest {
 			?></div>
 		</div><?php
 
-
-
-		print_r($body);	
-
 	}
 	
 	function get( $endpoint ) {
