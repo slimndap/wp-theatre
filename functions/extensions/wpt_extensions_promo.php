@@ -137,12 +137,6 @@ class WPT_Extensions_Promo {
 			echo  $this->get_extensions_html($extensions_cinema);
 		}
 		
-		$extensions_ticketing = $this->get_extensions_for_category('ticketing');
-		if (!empty($extensions_ticketing)) {
-			?><br class="clear" /><h2><?php _e('Connect your existing ticketing solution', 'theatre'); ?></h2><?php
-			echo  $this->get_extensions_html($extensions_ticketing);
-		}
-		
 		?><br class="clear" /><h2><?php _e('All extensions', 'theatre'); ?></h2><?php
 		
 		$extensions = $this->get_extensions();
