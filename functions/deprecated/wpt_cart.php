@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @deprecated 0.18.1.
+ * @deprecated 0.18.2.
  */
 class WPT_Cart {
 	
