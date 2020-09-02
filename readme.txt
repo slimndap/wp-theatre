@@ -137,7 +137,12 @@ The new feature may be added directly to the Theater plugin or as an extension s
 
 Release Date: September 1, 2020
 
-Adds Gutenberg/Block Editor support to events and a new 'Import Events' page.
+* Enhancements
+    * Adds Gutenberg/Block Editor support to events and a new 'Import Events' page.
+* Bugfix
+    * Fixes a [PHP warning](https://github.com/slimndap/wp-theatre/issues/279) (0.18.2).
+* Deprecations
+	* Removed the Cart widget because nobody was using it (0.18.2).
 
 = 0.17 =
 
@@ -293,6 +298,9 @@ Release Date: May 30th, 2015
 
 
 == Upgrade Notice ==
+
+= 0.18.2 =
+Fixes a PHP warning.
 
 = 0.16.5 =
 Fixes some issues with WordPress 5.5.
