@@ -64,7 +64,6 @@ class WP_Theatre {
 		$this->productions = new WPT_Productions();
 		$this->productions_admin = new WPT_Productions_Admin();
 
-		$this->cart = new WPT_Cart();
 		$this->tags = new WPT_Tags();
 		$this->extensions_updater= new WPT_Extensions_Updater();
 		$this->extensions_promo= new WPT_Extensions_Promo();
@@ -82,7 +81,7 @@ class WP_Theatre {
 		// Deprecated properties
 		$this->order = new WPT_Order();
 		Theater_Custom_CSS::init();
-		
+		$this->cart = new WPT_Cart();		
 		
 		// Options
 		$this->wpt_language_options = get_option( 'wpt_language' );
@@ -158,7 +157,6 @@ class WP_Theatre {
 		require_once(dirname(__FILE__) . '/functions/wpt_calendar.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_context.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_filter.php');	
-		require_once(dirname(__FILE__) . '/functions/wpt_cart.php');	
 		require_once(dirname(__FILE__) . '/functions/wpt_tags.php');	
 
 		require_once(dirname(__FILE__) . '/functions/extensions/wpt_extensions_updater.php');	
@@ -175,6 +173,7 @@ class WP_Theatre {
 		require_once(dirname(__FILE__) . '/integrations/wordpress-seo.php');
 		require_once(dirname(__FILE__) . '/integrations/jetpack-featured-content.php');
 		
+		require_once(dirname(__FILE__) . '/functions/deprecated/wpt_cart.php');	
 		require_once(dirname(__FILE__) . '/functions/deprecated/class-wpt-order.php');
 		require_once(dirname(__FILE__) . '/functions/deprecated/class-theater-custom-css.php');
 		

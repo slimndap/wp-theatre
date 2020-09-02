@@ -420,7 +420,6 @@
 		     register_widget( 'WPT_Production_Widget' );
 		     register_widget( 'WPT_Production_Events_Widget' );
 		     register_widget( 'WPT_Productions_Widget' );
-		     register_widget( 'WPT_Cart_Widget' );			
 		}
 		
 		/**
