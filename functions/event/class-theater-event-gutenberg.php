@@ -63,7 +63,9 @@ class Theater_Gutenberg {
 		}
 		
 		$post_type_args[ 'show_in_rest' ] = true;
+		
 		return $post_type_args;
+		
 	}
 	
 	/**
@@ -74,7 +76,7 @@ class Theater_Gutenberg {
 	 */
 	function support_gutenberg() {
 		
-		$support = add_filter( 'theater/gutenberg/support', true );
+		$support = apply_filters( 'theater/gutenberg/support', true );
 		return $support;
 		
 	}
