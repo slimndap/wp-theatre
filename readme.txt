@@ -14,12 +14,11 @@ Manage and publish events for your theater, live venue, cinema, club or festival
 == Description ==
 A WordPress plugin to manage and publish events for your theater, live venue, cinema, club or festival.
 
-
 __Shortcodes__
 
 Theater comes with several shortcodes and widgets to show off your events. See the [documentation](https://github.com/slimndap/wp-theatre/wiki/Shortcodes) for an overview.
 
-__Import event from your existing ticketing solution__
+__Import events from your existing ticketing solution__
 
 * [ActiveTickets](https://wp.theater/downloads/activetickets-for-wordpress/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description)
 * [Seatgeek Entreprise/SRO4](https://wp.theater/downloads/sro4-for-wordpress/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description)
