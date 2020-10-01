@@ -70,7 +70,7 @@ class WPT_Bulk_Edit extends WPT_UnitTestCase {
 
 	/**
 	 * Tests if productions are saved as draft with bulk updates.
-	 *
+	 *for better understanding
 	 * @since 0.15.4
 	 */
 	function test_productions_are_draft() {
