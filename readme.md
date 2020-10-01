@@ -5,7 +5,7 @@
 
 Theater for WordPress uses _productions_ to group your _events_. Each production can have one or more events.
 
-So if you run a theatre then 'The Sound Of Music' is a _production_ and the show this weekend is an _event_.
+So if you run a theatre then 'The Sound Of Music' is a _production_ and "The show this weekend" is an _event_.
 
 ## Website owners
 
@@ -61,7 +61,7 @@ Theatre integrates nicely with existing Ticketing solutions. Available integrati
 
 * [Ticketmatic](http://slimndap.com/product/ticketmatic-voor-wordpress/)
 
-Need integration with another ticketing system? Drop me an [email](mailto:jeroen@slimndap.com) and I will look into it.
+If you need integration with another ticketing system? Drop me an [email](mailto:jeroen@slimndap.com) and I will look into it.
 
 ## Testing
 
