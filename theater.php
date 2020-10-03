@@ -1,5 +1,5 @@
 <?php
-/*
+/* //The php project
 	
 	Plugin Name: Theater
 	Plugin URI: https://wp.theater/
