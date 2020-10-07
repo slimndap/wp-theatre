@@ -23,7 +23,9 @@ __Import events from your existing ticketing solution__
 * [ActiveTickets](https://wp.theater/downloads/activetickets-for-wordpress/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description)
 * [Seatgeek Entreprise/SRO4](https://wp.theater/downloads/sro4-for-wordpress/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description)
 * [AudienceView Professional](https://jeero.ooo/import-audienceview-into-theater-for-wordpress/)
+* [Ovatic](https://wp.theater/downloads/trs-for-wordpress/)
 * [OvationTix](https://jeero.ooo/import-ovationtix-into-theater-for-wordpress/)
+* [Reservix](https://jeero.ooo/import-reservix-into-theater-for-wordpress/)
 * [RTS](https://jeero.ooo/import-rts-into-theater-for-wordpress/)
 * [Stager](https://jeero.ooo/import-stager-into-theater-for-wordpress/)
 * [TicketingCiné](https://jeero.ooo/publish-ticketingcine-movies-on-wordpress/)
@@ -34,6 +36,7 @@ __Import events from your existing ticketing solution__
 * [Ticketportal](https://jeero.ooo/import-ticketportal_cz-into-theater-for-wordpress/)
 * [Ticketsource](https://jeero.ooo/import-ticketsource-into-theater-for-wordpress/)
 * [Ticketweb](https://jeero.ooo/import-ticketweb-into-theater-for-wordpress/)
+* [Timepad.ru / Главная](https://jeero.ooo/import-timepad-ru-into-theater-for-wordpress/)
 * [Veezi](https://jeero.ooo/import-veezi-into-theater-for-wordpress/)
 
 __Extensions__
