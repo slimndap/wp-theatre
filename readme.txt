@@ -30,7 +30,7 @@ __Import events from your existing ticketing solution__
 * [Stager](https://jeero.ooo/import-stager-into-theater-for-wordpress/)
 * [TicketingCiné](https://jeero.ooo/publish-ticketingcine-movies-on-wordpress/)
 * [ThunderTix](https://jeero.ooo/publish-thundertix-movies-on-wordpress/)
-* [Ticketlab](https://wp.theater/downloads/ticketlab-for-wordpress/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description)
+* [Ticketlab](https://jeero.ooo/publish-ticketlab-events-on-wordpress/)
 * [Ticketmaster](https://jeero.ooo/publish-ticketmaster-events-on-wordpress/)
 * [Ticketmatic](https://jeero.ooo/import-ticketmatic-into-theater-for-wordpress/)
 * [Ticketportal](https://jeero.ooo/import-ticketportal_cz-into-theater-for-wordpress/)
