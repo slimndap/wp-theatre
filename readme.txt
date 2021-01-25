@@ -2,7 +2,7 @@
 Contributors: slimndap
 Tags: theatre, stage, venue, events, shows, concerts, tickets, ticketing, sports, performances, calendar, festival, workshops, theater, cinema
 Requires at least: 4.7
-Tested up to: 5.5
+Tested up to: 5.6
 Requires PHP: 5.4
 Stable tag: trunk
 License: GPLv2
@@ -23,8 +23,11 @@ __Import events from your existing ticketing solution__
 * [ActiveTickets](https://wp.theater/downloads/activetickets-for-wordpress/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description)
 * [Seatgeek Entreprise/SRO4](https://wp.theater/downloads/sro4-for-wordpress/?utm_source=wordpress.org&utm_medium=web&utm_campaign=readme.txt&utm_content=description)
 * [AudienceView Professional](https://jeero.ooo/import-audienceview-into-theater-for-wordpress/)
+* [Billeto](https://jeero.ooo/import-billeto-into-theater-for-wordpress/)
+* [Brown Paper Tickets](https://jeero.ooo/import-brown-paper-tickets-into-theater-for-wordpress/)
 * [Ovatic](https://wp.theater/downloads/trs-for-wordpress/)
 * [OvationTix](https://jeero.ooo/import-ovationtix-into-theater-for-wordpress/)
+* [Place2Book](https://jeero.ooo/import-place2book-into-theater-for-wordpress/)
 * [Reservix](https://jeero.ooo/import-reservix-into-theater-for-wordpress/)
 * [RTS](https://jeero.ooo/import-rts-into-theater-for-wordpress/)
 * [Stager](https://jeero.ooo/import-stager-into-theater-for-wordpress/)
