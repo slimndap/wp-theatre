@@ -32,6 +32,9 @@ class WPT_Admin {
 	 * @since	0.?
 	 * @since	0.15.16	Removed custom CSS section.
 	 * @since	0.16.3	Added flatpickr.
+	 * @since	0.18.4	Properly escape label of 'Tickets' field on 'Language' tab to prevent XSS exploits.
+	 *					The label is dynamically using the value of the same field.
+	 *					@see WPT_Setup::gettext().
 	 * @return 	void
 	 */
 	function admin_init() {
@@ -97,7 +100,7 @@ class WPT_Admin {
 
 	        add_settings_field(
 	            'language_tickets', // ID
-	            __('Tickets','theatre'), // Title
+	            esc_html( __('Tickets','theatre') ), // Title
 	            array( $this, 'settings_field_language_tickets' ), // Callback
 	            'wpt_language', // Page
 	            'language' // Section
@@ -435,7 +438,7 @@ class WPT_Admin {
             <h2 class="nav-tab-wrapper">
             <?php foreach ($this->tabs as $key=>$val) { ?>
             	<a class="nav-tab <?php echo $key==$this->tab?'nav-tab-active':'';?>" href="?page=wpt_admin&tab=<?php echo $key;?>">
-            		<?php echo $val;?>
+            		<?php echo esc_html( $val );?>
             	</a>
             <?php } ?>
             </h2>
@@ -463,24 +466,42 @@ class WPT_Admin {
 		echo '</label>';
     }
 
+	/**
+	 * Outputs the tickets translation settings field.
+	 *
+	 * @since 	0.?
+	 * @since	0.18.4	Properly escape the value attribute to prevent XSS exploits.
+	 */
 	function settings_field_language_tickets() {
 		global $wp_theatre;
-		echo '<input type="text" id="language_tickets" name="wpt_language[language_tickets]" value="'.$wp_theatre->wpt_language_options['language_tickets'].'" />';
+		echo '<input type="text" id="language_tickets" name="wpt_language[language_tickets]" value="'.esc_attr( $wp_theatre->wpt_language_options['language_tickets'] ).'" />';
 		echo '<p class="description">'.__('Displayed on ticket buttons.','theatre').'</p>';
 		echo '<p class="description">'.__('Can be overruled on a per-event basis.','theatre').'</p>';
 
 	}
 
+	/**
+	 * Outputs the events translation settings field.
+	 *
+	 * @since 	0.?
+	 * @since	0.18.4	Properly escape the value attribute to prevent XSS exploits.
+	 */
 	function settings_field_language_events() {
 		global $wp_theatre;
-		echo '<input type="text" id="language_events" name="wpt_language[language_events]" value="'.$wp_theatre->wpt_language_options['language_events'].'" />';
+		echo '<input type="text" id="language_events" name="wpt_language[language_events]" value="'.esc_attr( $wp_theatre->wpt_language_options['language_events'] ).'" />';
 		echo '<p class="description">'.__('Displayed above event listings.','theatre').'</p>';
 
 	}
 
+	/**
+	 * Outputs the categories translation settings field.
+	 *
+	 * @since 	0.?
+	 * @since	0.18.4	Properly escape the value attribute to prevent XSS exploits.
+	 */
 	function settings_field_language_categories() {
 		global $wp_theatre;
-		echo '<input type="text" id="language_categories" name="wpt_language[language_categories]" value="'.$wp_theatre->wpt_language_options['language_categories'].'" />';
+		echo '<input type="text" id="language_categories" name="wpt_language[language_categories]" value="'.esc_attr( $wp_theatre->wpt_language_options['language_categories'] ).'" />';
 		echo '<p class="description">'.__('Displayed in category listings.','theatre').'</p>';
 
 	}
@@ -529,11 +550,17 @@ class WPT_Admin {
 		echo '</p>';
 	}
 
+	/**
+	 * Outputs the currency symbol settings field.
+	 *
+	 * @since 0.?
+	 * @since	0.18.4	Properly escape the value attribute to prevent XSS exploits.
+	 */
 	function settings_field_currencysymbol() {
 		global $wp_theatre;
 		echo '<input type="text" id="currencysymbol" name="wpt_tickets[currencysymbol]"';
 		if (!empty($wp_theatre->wpt_tickets_options['currencysymbol'])) {
-			echo ' value="'.$wp_theatre->wpt_tickets_options['currencysymbol'].'"';
+			echo ' value="'.esc_attr( $wp_theatre->wpt_tickets_options['currencysymbol'] ).'"';
 
 		}
 		echo ' />';
