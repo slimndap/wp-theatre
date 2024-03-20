@@ -206,9 +206,7 @@ class Theater_Transient {
 
 		$result = delete_transient( $this->key );
 
-		if ( $result ) {
-			$this->unregister();
-		}
+		$this->unregister();
 
 		return $result;
 	}
