@@ -482,7 +482,9 @@
 		 * - a production is saved through the admin screen or
 		 * - an event is attached to a production.
 		 *
-		 * @since 0.7
+		 * @since	0.7
+		 * @since	0.18.5	Fixed a PHP error when manually insert an Event through wp_insert_post.
+		 *					@see: https://wpsupport.zendesk.com/agent/tickets/3481
 		 *
 		 */
 
@@ -513,23 +515,26 @@
 
 			// An event is attached to a production.
 			if ($meta_key==WPT_Production::post_type_name) {
-				$event = new WPT_Event($object_id);
 
+				$event = new WPT_Event( $object_id );
+				$production = new WPT_Production( $meta_value );
+				
 				// avoid loops
 				remove_action('updated_post_meta', array($this,'updated_post_meta'), 20 ,4);
 				remove_action('added_post_meta', array($this,'updated_post_meta'), 20 ,4);
 				
 				// inherit season from production
-				if ($season = $event->production()->season()) {
-					update_post_meta($event->ID, WPT_Season::post_type_name, $season->ID);				
+				if ( $season = $production->season() ) {
+					update_post_meta( $event->ID, WPT_Season::post_type_name, $season->ID );				
 				}
 				
 				// inherit categories from production
-				$categories = wp_get_post_categories($meta_value);
-				wp_set_post_categories($event->ID, $categories);
+				$categories = wp_get_post_categories( $meta_value );
+				wp_set_post_categories( $event->ID, $categories );
 
 				add_action('updated_post_meta', array($this,'updated_post_meta'), 20 ,4);
 				add_action('added_post_meta', array($this,'updated_post_meta'), 20 ,4);
+
 			}
 
 		}
