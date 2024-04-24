@@ -483,7 +483,7 @@
 		 * - an event is attached to a production.
 		 *
 		 * @since	0.7
-		 * @since	0.18.5	Fixed a PHP error when manually insert an Event through wp_insert_post.
+		 * @since	0.18.5	Fixed a PHP error when manually inserting an Event through wp_insert_post().
 		 *					@see: https://wpsupport.zendesk.com/agent/tickets/3481
 		 *
 		 */

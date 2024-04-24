@@ -2,7 +2,7 @@
 Contributors: slimndap
 Tags: theatre, stage, venue, events, shows, concerts, tickets, ticketing, sports, performances, calendar, festival, workshops, theater, cinema
 Requires at least: 4.7
-Tested up to: 6.4
+Tested up to: 6.5
 Requires PHP: 5.4
 Stable tag: trunk
 License: GPLv2
@@ -146,7 +146,8 @@ Release Date: September 1, 2020
     * Adds Gutenberg/Block Editor support to events and a new 'Import Events' page.
 * Bugfix
     * Fixes a [PHP warning](https://github.com/slimndap/wp-theatre/issues/279) (0.18.2).
-    * Fixes an XSS vulnerability (0.18.4).    
+    * Fixes an XSS vulnerability (0.18.4). 
+    * Fixes a PHP error when manually inserting an Event through wp_insert_post() (0.18.5).  
 * Deprecations
 	* Removed the Cart widget because nobody was using it (0.18.2).
 
@@ -305,8 +306,11 @@ Release Date: May 30th, 2015
 
 == Upgrade Notice ==
 
+= 0.18.5 =
+Fixes a PHP error when manually inserting an Event through wp_insert_post().
+
 = 0.18.4 =
-Fixes an XSS vulnerability (0.18.4).
+Fixes an XSS vulnerability.
 
 = 0.18.2 =
 Fixes a PHP warning.
