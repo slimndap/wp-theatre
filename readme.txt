@@ -147,7 +147,8 @@ Release Date: September 1, 2020
 * Bugfix
     * Fixes a [PHP warning](https://github.com/slimndap/wp-theatre/issues/279) (0.18.2).
     * Fixes an XSS vulnerability (0.18.4). 
-    * Fixes a PHP error when manually inserting an Event through wp_insert_post() (0.18.5).  
+    * Fixes a PHP error when manually inserting an Event through wp_insert_post() (0.18.5).
+    * Fixes a PHP warning that was introduced in PHP 8.2 (0.18.6).
 * Deprecations
 	* Removed the Cart widget because nobody was using it (0.18.2).
 
