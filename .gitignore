@@ -2,3 +2,4 @@ config.codekit
 *.iml
 .idea
 apidocs
+wordpress.org
