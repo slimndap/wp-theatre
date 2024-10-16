@@ -58,6 +58,7 @@ class WP_Theatre {
 	public $wpt_listing_page_options;
 	public $wpt_style_options;
 	public $wpt_tickets_options;	
+	public $frontend;	
 	
 	function __construct() {
 

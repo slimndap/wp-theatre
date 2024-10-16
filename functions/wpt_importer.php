@@ -442,6 +442,10 @@
 					$this->set_event_prices($post_id, $args['prices']);				
 				}
 
+				if ( !isset( $this->stats[ 'events_created' ] ) ) {
+					$this->stats[ 'events_created' ] = 0;
+				}
+
 				$this->stats['events_created']++;
 				
 				$event = new WPT_Event($post_id);
@@ -770,8 +774,16 @@
 				$this->set_event_prices($event->ID, $args['prices']);
 			}
 
-			$this->set('marked_events', array_diff( $this->get('marked_events'), array( $event->ID ) ) );
+			$marked_events = $this->get('marked_events');
+			if ( !is_array( $marked_events ) ) {
+				$marked_events = array();
+			}
 
+			$this->set('marked_events', array_diff( $marked_events, array( $event->ID ) ) );
+
+			if ( !isset( $this->stats[ 'events_updated' ] ) ) {
+				$this->stats[ 'events_updated' ] = 0;
+			}
 			$this->stats['events_updated']++;
 			
 			$event = new WPT_Event($event->ID);

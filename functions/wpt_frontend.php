@@ -1,5 +1,8 @@
 <?php
 class WPT_Frontend {
+	
+	public $options;
+	
 	function __construct() {
 		add_action( 'init', array( $this, 'enqueue_scripts' ) );
 		add_action( 'wp_head', array( $this, 'wp_head' ) );
