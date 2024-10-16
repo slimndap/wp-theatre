@@ -25,6 +25,11 @@ class WPT_Event {
 	const tickets_status_soldout = '_soldout';
 	const tickets_status_other = '_other';
 
+	public $ID;
+	public $PostClass;
+	public $post;
+	public $format;
+
 	function __construct( $ID = false, $PostClass = false ) {
 		$this->PostClass = $PostClass;
 

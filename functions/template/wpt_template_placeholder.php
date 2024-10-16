@@ -45,6 +45,8 @@ class WPT_Template_Placeholder {
 	 * @var		array
 	 */
 	public $filters = array();
+	
+	public $object;
 
 	/**
 	 * @param	string	$tag	The placeholder tag.

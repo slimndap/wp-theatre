@@ -2,6 +2,14 @@
 class WPT_Production {
 
 	const post_type_name = 'wp_theatre_prod';
+	
+	public $ID;
+	public $post;
+	public $title;
+	public $events;
+	public $upcoming;
+	public $cities;
+	public $categories;
 
 	// @codingStandardsIgnoreStart
 	function __construct( $ID = false ) {

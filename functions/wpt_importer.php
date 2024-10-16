@@ -40,6 +40,9 @@
 		 * @access 	private
 		 */
 		private $events_by_ref = array();
+
+		protected $data = array();
+		protected $stats = array();
 		
 		/**
 		 * Inits the importer.
@@ -76,7 +79,7 @@
 
 			add_filter('admin_init',array($this,'add_settings_fields'));
 			add_filter('wpt_admin_page_tabs',array($this,'add_settings_tab'));
-			add_action($this->slug.'_import', array($this, 'execute' ));
+			add_action($this->get( 'slug' ).'_import', array($this, 'execute' ));
 			
 			add_action( 'add_meta_boxes', array($this, 'add_production_metabox') );
 			add_action(
@@ -510,8 +513,8 @@
 
 			$value = '';
 
-			if ( isset($this->$key) ) {
-				$value = $this->$key;
+			if ( isset( $this->data[ $key ] ) ) {
+				$value = $this->data[ $key ];
 			}
 			
 			/**
@@ -527,6 +530,10 @@
 			
 			return $value;
 			
+		}
+
+		public function __get( $key ) {
+			return $this->get( $key );
 		}
 		
 		/**
@@ -663,7 +670,7 @@
 		 * @return 	void
 		 */
 		function set( $key, $value ) {
-			$this->$key = $value;
+			$this->data[ $key ] = $value;
 		}
 		
 		/**
