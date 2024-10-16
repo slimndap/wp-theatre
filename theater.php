@@ -31,10 +31,39 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 $wpt_version = '0.18.5';
 
 class WP_Theatre {
+	
+	public $wpt_version;
+	public $setup;
+	public $admin;
+	public $status;
+	public $feeds;
+	public $listing_page;
+	public $calendar;
+	public $context;
+	public $filter;
+	public $event_admin;
+	public $event_editor;
+	public $events;
+	public $production_permalink;
+	public $productions;
+	public $productions_admin;
+	public $tags;
+	public $extensions_updater;
+	public $extensions_promo;
+	public $gutenberg;
+	public $jeero_suggest;
+	public $order;
+	public $cart;
+	public $wpt_language_options;
+	public $wpt_listing_page_options;
+	public $wpt_style_options;
+	public $wpt_tickets_options;	
+	
 	function __construct() {
 
 		// Set version
 		global $wpt_version;
+
 		$this->wpt_version = $wpt_version;
 	
 		// Includes

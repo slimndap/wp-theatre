@@ -503,7 +503,7 @@
 		 * Gets a property value of the importer.
 		 * 
 		 * @since	0.15.20
-		 * @param 	string	$key	The property key.
+		 * @param 	string	$key		The property key.
 		 * @return	mixed			The property value.
 		 */
 		function get( $key ) {

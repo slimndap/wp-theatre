@@ -1,5 +1,8 @@
 <?php
 	class WPT_Setup {
+		
+		public $options;
+		
 		function __construct() {
 	
 			$this->options = get_option( 'wp_theatre' );

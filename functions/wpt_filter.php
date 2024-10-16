@@ -8,6 +8,8 @@
 
 	class WPT_Filter {
 		
+		public $allowed_functions;
+		
 		function __construct() {
 			$this->allowed_functions = array('permalink','date','wpautop','tickets_url');
 

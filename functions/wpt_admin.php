@@ -1,5 +1,10 @@
 <?php
 class WPT_Admin {
+	
+	public $options;
+	public $tabs;
+	public $tab;
+	
 	function __construct() {
 		// Hooks (only in admin screens)
 		add_action( 'admin_init', array($this,'admin_init'));

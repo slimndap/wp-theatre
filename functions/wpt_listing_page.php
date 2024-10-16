@@ -7,7 +7,9 @@
 
  	class WPT_Listing_Page {
 	 	
-	 	function __construct() {	
+		public $options;
+
+		function __construct() {	
 			if (is_admin()) {
 				add_action('admin_init', array($this,'admin_init'));
 				add_filter('wpt_admin_page_tabs', array($this,'wpt_admin_page_tabs'));

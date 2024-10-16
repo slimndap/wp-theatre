@@ -8,6 +8,8 @@
  * @since 0.12
  */
 class WPT_Production_Permalink {
+	
+	public $options;
 
 	function __construct() {
 		add_action( 'admin_init', array( $this, 'add_settings' ) );
