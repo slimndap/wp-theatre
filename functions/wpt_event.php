@@ -29,6 +29,12 @@ class WPT_Event {
 	public $PostClass;
 	public $post;
 	public $format;
+	public $city;
+	public $location;
+	public $production;
+	public $remark;
+	public $title;
+	public $venue;
 
 	function __construct( $ID = false, $PostClass = false ) {
 		$this->PostClass = $PostClass;

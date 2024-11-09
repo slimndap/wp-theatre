@@ -10,6 +10,9 @@ class WPT_Production {
 	public $upcoming;
 	public $cities;
 	public $categories;
+	public $map_iframe;
+	public $permalink;
+	public $season;
 
 	// @codingStandardsIgnoreStart
 	function __construct( $ID = false ) {
