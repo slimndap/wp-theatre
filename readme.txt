@@ -7,7 +7,6 @@ Requires PHP: 5.4
 Stable tag: trunk
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CZERCBG5SUGQW
 
 Manage and publish events for your theater, live venue, cinema, club or festival.
 
@@ -148,7 +147,7 @@ Release Date: September 1, 2020
     * Fixes a [PHP warning](https://github.com/slimndap/wp-theatre/issues/279) (0.18.2).
     * Fixes an XSS vulnerability (0.18.4). 
     * Fixes a PHP error when manually inserting an Event through wp_insert_post() (0.18.5).
-    * Fixes a PHP warning that was introduced in PHP 8.2 (0.18.6).
+    * Fixes PHP warnings that were introduced in PHP 8.2 (0.18.6).
 * Deprecations
 	* Removed the Cart widget because nobody was using it (0.18.2).
 
