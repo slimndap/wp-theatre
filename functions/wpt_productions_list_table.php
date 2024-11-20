@@ -318,6 +318,7 @@ class WPT_Productions_List_Table extends WP_List_Table {
 	 *
 	 * @since	0.15
 	 * @since	0.15.4	Removed the 'paged' query var when switching views.
+	 * @since	0.18.7	Fixed Cross-Site Scripting Vulnerability CVE-2024-11371.
 	 * @return	array	The views.
 	 */
 	function get_views() {
@@ -329,7 +330,7 @@ class WPT_Productions_List_Table extends WP_List_Table {
 		$view_url = remove_query_arg( 'paged', $view_url );
 
 		ob_start();
-		?><a href="<?php echo $view_url;?>" <?php if ( empty( $_REQUEST['post_status'] ) ) { ?> class="current"<?php } ?>><?php _e( 'All' ); ?></a><?php
+		?><a href="<?php echo esc_url( $view_url );?>" <?php if ( empty( $_REQUEST['post_status'] ) ) { ?> class="current"<?php } ?>><?php _e( 'All' ); ?></a><?php
 	    $views['all'] = ob_get_clean();
 
 		$views_available = array(
@@ -345,7 +346,7 @@ class WPT_Productions_List_Table extends WP_List_Table {
 				$view_url = remove_query_arg( 'paged', $view_url );
 
 				ob_start();
-				?><a href="<?php echo $view_url;?>" <?php if ( ! empty( $_REQUEST['post_status'] ) && $key == $_REQUEST['post_status'] ) { ?> class="current"<?php } ?>><?php	echo $val;
+				?><a href="<?php echo esc_url( $view_url );?>" <?php if ( ! empty( $_REQUEST['post_status'] ) && $key == $_REQUEST['post_status'] ) { ?> class="current"<?php } ?>><?php	echo $val;
 						?><span class="count"> (<?php echo $num_posts->{$key};?>)</span>
 				</a><?php
 			    $views[ $key ] = ob_get_clean();
