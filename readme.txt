@@ -306,6 +306,9 @@ Release Date: May 30th, 2015
 
 == Upgrade Notice ==
 
+= 0.18.7 =
+Security update.
+
 = 0.18.5 =
 Fixes a PHP error when manually inserting an Event through wp_insert_post().
 
