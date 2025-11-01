@@ -776,7 +776,8 @@ class WPT_Productions extends WPT_Listing {
 			$productions_before_start = array();
 			if ($start_after) {
 				foreach ( $events as $event ) {
-					$end_datetime = strtotime( $start_after, current_time( 'timestamp' ) ) - get_option( 'gmt_offset' ) * 3600;
+					// Translate the filter to UTC so we can compare with the stored event index.
+					$end_datetime = Theater_Helpers_Time::get_utc_timestamp_from_local_string( $start_after );
 					if ( $event->datetime() < $end_datetime) {	
 						$productions_before_start[] = $event->production()->ID;
 					}
@@ -787,7 +788,8 @@ class WPT_Productions extends WPT_Listing {
 			$productions_after_end = array();
 			if ($end_before) {
 				foreach ( $events as $event ) {
-					$end_datetime = strtotime( $end_before, current_time( 'timestamp' ) ) - get_option( 'gmt_offset' ) * 3600;
+					// Same story for the end boundary: convert once, compare everywhere.
+					$end_datetime = Theater_Helpers_Time::get_utc_timestamp_from_local_string( $end_before );
 					if ( $event->datetime() > $end_datetime) {	
 						$productions_after_end[] = $event->production()->ID;
 					}

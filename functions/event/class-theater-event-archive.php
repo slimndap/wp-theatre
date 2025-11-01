@@ -75,7 +75,8 @@ class Theater_Event_Archive {
 
 		$meta_query[] = array(
 			'key' => THEATER_ORDER_INDEX_KEY,
-			'value' => current_time( 'timestamp' ) - get_option( 'gmt_offset' ) * 3600,
+			// Use the helper so "now" is calculated in UTC with DST taken into account.
+			'value' => Theater_Helpers_Time::current_time_in_utc(),
 			'compare' => '>',
 		);
 

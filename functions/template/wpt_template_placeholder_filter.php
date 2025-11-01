@@ -114,24 +114,27 @@ class WPT_Template_Placeholder_Filter {
 		if ( ! empty($format) ) {
 			
 			if ( is_numeric( $content ) ) {
-				$timestamp = $content;
+				$timestamp = (int) $content;
 			} else {
 				$timestamp = strtotime( $content );
 			}
-			
+
+			// Translate the raw UTC timestamp into the site's local clock for consistent formatting.
+			$local_timestamp = Theater_Helpers_Time::get_local_timestamp_from_utc( $timestamp );
+
 			/**
 			 * Use next day start time offset to determine day.
 			 */
-			$day = date( 
-				'Y-m-d', 
-				$timestamp + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS - Theater_Helpers_Time::get_next_day_start_time_offset()
+			$day = date(
+				'Y-m-d',
+				$local_timestamp - Theater_Helpers_Time::get_next_day_start_time_offset()
 			);
-			
+
 			/**
 			 * Don't use next day start time offset to determine time.
 			 */
-			$time = date( 'H:i:s', $timestamp + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
-			
+			$time = date( 'H:i:s', $local_timestamp );
+
 			$content = date_i18n(
 				$format,
 				strtotime( $day.' '.$time )

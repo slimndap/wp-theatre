@@ -115,12 +115,12 @@ class WPT_Events extends WPT_Listing {
 		$events = $this->get( $filters );
 		$days = array();
 		foreach ( $events as $event ) {
-			
-			$day_datetime = $event->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
+			// Convert the UTC event timestamp to local time so day boundaries follow the venue clock.
+			$day_datetime = Theater_Helpers_Time::get_local_timestamp_from_utc( $event->datetime() );
 			$day_datetime -= Theater_Helpers_Time::get_next_day_start_time_offset();
-			
-			$days[ date( 'Y-m-d', $day_datetime) ] = date_i18n( 'D j M', $day_datetime );
-			
+
+			$days[ date( 'Y-m-d', $day_datetime ) ] = date_i18n( 'D j M', $day_datetime );
+
 		}
 
 		if ( ! empty( $filters['order'] ) && 'desc' == $filters['order'] ) {
@@ -644,10 +644,11 @@ class WPT_Events extends WPT_Listing {
 		$events = $this->get( $filters );
 		$months = array();
 		foreach ( $events as $event ) {
-			$month_datetime = $event->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
+			// Keep month buckets aligned with the site's timezone, including next-day offsets.
+			$month_datetime = Theater_Helpers_Time::get_local_timestamp_from_utc( $event->datetime() );
 			$month_datetime -= Theater_Helpers_Time::get_next_day_start_time_offset();
 
-			$months[ date( 'Y-m',$month_datetime ) ] = date_i18n( 'M Y',$month_datetime );
+			$months[ date( 'Y-m', $month_datetime ) ] = date_i18n( 'M Y', $month_datetime );
 		}
 
 		if ( ! empty( $filters['order'] ) && 'desc' == $filters['order'] ) {
@@ -678,12 +679,10 @@ class WPT_Events extends WPT_Listing {
 		$events = $this->get( $filters );
 		$years = array();
 		foreach ( $events as $event ) {
-
-			$year_datetime = $event->datetime() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
+			$year_datetime = Theater_Helpers_Time::get_local_timestamp_from_utc( $event->datetime() );
 			$year_datetime -= Theater_Helpers_Time::get_next_day_start_time_offset();
 
-
-			$years[ date( 'Y',$year_datetime) ] = date_i18n( 'Y',$year_datetime );
+			$years[ date( 'Y', $year_datetime ) ] = date_i18n( 'Y', $year_datetime );
 		}
 
 		if ( ! empty( $filters['order'] ) && 'desc' == $filters['order'] ) {
@@ -812,7 +811,8 @@ class WPT_Events extends WPT_Listing {
 		if ( $filters['start'] ) {
 			$args['meta_query'][] = array(
 				'key' => THEATER_ORDER_INDEX_KEY,
-				'value' => strtotime( $filters['start'], current_time( 'timestamp' ) ) - get_option( 'gmt_offset' ) * 3600,
+				// Convert the human-readable start filter to a UTC timestamp so comparisons stay reliable.
+				'value' => Theater_Helpers_Time::get_utc_timestamp_from_local_string( $filters['start'] ),
 				'compare' => '>=',
 				'type' => 'NUMERIC',
 			);
@@ -828,7 +828,7 @@ class WPT_Events extends WPT_Listing {
 		if ( $filters['end'] ) {
 			$args['meta_query'][] = array(
 				'key' => THEATER_ORDER_INDEX_KEY,
-				'value' => strtotime( $filters['end'], current_time( 'timestamp' ) ) - get_option( 'gmt_offset' ) * 3600,
+				'value' => Theater_Helpers_Time::get_utc_timestamp_from_local_string( $filters['end'] ),
 				'compare' => '<=',
 				'type' => 'NUMERIC',
 			);

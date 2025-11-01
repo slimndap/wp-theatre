@@ -231,7 +231,11 @@ class WPT_Event {
 			return false;
 		}
 
-		$datetime = date_i18n( 'U', strtotime( $date, current_time( 'timestamp' ) ) - get_option( 'gmt_offset' ) * 3600 );
+		/*
+		 * The stored date is in the site's local time. Convert it to UTC so the event meta
+		 * remains comparable regardless of DST transitions.
+		 */
+		$datetime = Theater_Helpers_Time::get_utc_timestamp_from_local_string( $date );
 
 		/**
 		 * Filter the event datetime.
@@ -336,9 +340,12 @@ class WPT_Event {
 	function enddate() {
 		$enddate = false;
 		if ( $datetime = $this->datetime( true ) ) {
+			// Convert the UTC datetime to the site's local timestamp so date_i18n() formats it correctly.
+			$local_timestamp = Theater_Helpers_Time::get_local_timestamp_from_utc( $datetime );
+
 			$enddate = date_i18n(
 				get_option( 'date_format' ),
-				$datetime + get_option( 'gmt_offset' ) * 3600
+				$local_timestamp
 			);
 		}
 		$enddate = apply_filters( 'wpt/event/enddate', $enddate, $this );
@@ -360,8 +367,11 @@ class WPT_Event {
 		if ( $enddate_html = $this->enddate() ) {
 			foreach ( $filters as $filter ) {
 				if ( 'date' == $filter->name ) {
+					// Filters expect a local timestamp, so convert before handing it off.
+					$local_timestamp = Theater_Helpers_Time::get_local_timestamp_from_utc( $this->datetime( true ) );
+
 					$enddate_html = $filter->apply_to(
-						$this->datetime( true ) + get_option( 'gmt_offset' ) * 3600,
+						$local_timestamp,
 						$this
 					);
 				} else {
@@ -391,9 +401,12 @@ class WPT_Event {
 	function endtime() {
 		$endtime = false;
 		if ( $datetime = $this->datetime( true ) ) {
+			// The helper adjusts for DST so the formatted time matches the venue's clock.
+			$local_timestamp = Theater_Helpers_Time::get_local_timestamp_from_utc( $datetime );
+
 			$endtime = date_i18n(
 				get_option( 'time_format' ),
-				$datetime + get_option( 'gmt_offset' ) * 3600
+				$local_timestamp
 			);
 		}
 		$endtime = apply_filters( 'wpt/event/endtime', $endtime, $this );
@@ -417,7 +430,10 @@ class WPT_Event {
 		if ( $endtime_html = $this->endtime() ) {
 			foreach ( $filters as $filter ) {
 				if ( 'date' == $filter->name ) {
-					$endtime_html = $filter->apply_to( $this->datetime( true ) + get_option( 'gmt_offset' ) * 3600, $this );
+					// Keep the pipeline working with local timestamps instead of raw UTC values.
+					$local_timestamp = Theater_Helpers_Time::get_local_timestamp_from_utc( $this->datetime( true ) );
+
+					$endtime_html = $filter->apply_to( $local_timestamp, $this );
 				} else {
 					$endtime_html = $filter->apply_to( $endtime_html, $this );
 				}
@@ -1322,11 +1338,11 @@ class WPT_Event {
 	 * @return	string The event startdate.
 	 */
 	function startdate() {
-		$startdate_datetime = $this->datetime();
-		$startdate_datetime += ( get_option( 'gmt_offset' ) * 3600 );
+		// Pull the event start time into the site's timezone to respect DST and late-night offsets.
+		$startdate_datetime = Theater_Helpers_Time::get_local_timestamp_from_utc( $this->datetime() );
 		$startdate_datetime -= Theater_Helpers_Time::get_next_day_start_time_offset();
 
-		$startdate = date_i18n(	get_option( 'date_format' ), $startdate_datetime);
+		$startdate = date_i18n( get_option( 'date_format' ), $startdate_datetime );
 
 		$startdate = apply_filters( 'wpt/event/startdate', $startdate, $this );
 
@@ -1372,9 +1388,12 @@ class WPT_Event {
 	 * @return	string The event starttime.
 	 */
 	function starttime() {
+		// Format the human-readable start time using the theatre's local clock.
+		$local_timestamp = Theater_Helpers_Time::get_local_timestamp_from_utc( $this->datetime() );
+
 		$starttime = date_i18n(
 			get_option( 'time_format' ),
-			$this->datetime() + get_option( 'gmt_offset' ) * 3600
+			$local_timestamp
 		);
 		$starttime = apply_filters( 'wpt/event/starttime', $starttime, $this );
 		return $starttime;

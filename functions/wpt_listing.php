@@ -434,11 +434,11 @@ class WPT_Listing {
 	protected function get_html_for_period( $start, $end, $args, $start_arg = 'start', $end_arg = 'end' ) {
 		
 		/*
-		 * Make sure the timestamps for start and end are in UTC before comparing it to 
-		 * the `start` and 'end' args.
+		 * Make sure the timestamps for start and end are in UTC before comparing them to
+		 * the `start` and `end` args. Using the helper keeps the conversion DST-safe.
 		 */
-		$start_in_utc = strtotime( $start ) - get_option( 'gmt_offset' ) * 3600;
-		$end_in_utc = strtotime( $end ) - get_option( 'gmt_offset' ) * 3600;
+		$start_in_utc = Theater_Helpers_Time::get_utc_timestamp_from_local_string( $start );
+		$end_in_utc = Theater_Helpers_Time::get_utc_timestamp_from_local_string( $end );
 
 		/*
 		 * Set the `start`-filter to the value of start.
@@ -446,7 +446,7 @@ class WPT_Listing {
 		 */
 		if (
 			empty( $args[ $start_arg ] ) ||
-			( strtotime( $args[ $start_arg ] ) < $start_in_utc )
+			( Theater_Helpers_Time::get_utc_timestamp_from_local_string( $args[ $start_arg ] ) < $start_in_utc )
 		) {
 			$args[ $start_arg ] = $start;
 		}		
@@ -457,7 +457,7 @@ class WPT_Listing {
 		 */
 		if (
 			empty( $args[ $end_arg ] ) ||
-			(strtotime( $args[ $end_arg ] ) > $end_in_utc )
+			( Theater_Helpers_Time::get_utc_timestamp_from_local_string( $args[ $end_arg ] ) > $end_in_utc )
 		) {
 			$args[ $end_arg ] = $end;
 		}
