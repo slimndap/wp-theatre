@@ -225,6 +225,56 @@ class WPT_Test_Importer extends WP_UnitTestCase {
 		$this->assertCount( 4, $this->wp_theatre->events->get() );
 	}
 
+	function test_import_schedule_disappears_when_custom_interval_missing() {
+		$importer = new WPT_Demo_Importer();
+
+		$custom_schedule      = 'wpt_test_custom_five';
+		$custom_schedule_hook = 'wpt_demoimporter_import';
+
+		$callback = function( $schedules ) use ( $custom_schedule ) {
+			$schedules[ $custom_schedule ] = array(
+				'interval' => 5 * MINUTE_IN_SECONDS,
+				'display'  => 'Test Every Five Minutes',
+			);
+
+			return $schedules;
+		};
+
+		add_filter( 'cron_schedules', $callback );
+
+		update_option(
+			'wpt_demoimporter',
+			array(
+				'schedule' => 'manual',
+			)
+		);
+
+		update_option(
+			'wpt_demoimporter',
+			array(
+				'schedule' => $custom_schedule,
+			)
+		);
+
+		$timestamp = wp_next_scheduled( $custom_schedule_hook );
+
+		$this->assertNotFalse(
+			$timestamp,
+			'Sanity check: importer should schedule the cron event.'
+		);
+
+		remove_filter( 'cron_schedules', $callback );
+
+		$result = wp_reschedule_event( $timestamp, $custom_schedule, $custom_schedule_hook );
+
+		$this->assertNotFalse(
+			$result,
+			'Importer cron should reschedule even if the selected recurrence is not registered on this request.'
+		);
+
+		wp_clear_scheduled_hook( $custom_schedule_hook );
+	}
+
 	function test_events_from_other_source_are_not_overwritten() {
 		// create a new event
 		$production_args = array(
