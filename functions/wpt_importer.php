@@ -77,6 +77,8 @@
 			add_action('update_option_'.$this->get('slug'), array($this,'update_options'), 10 ,2);
 			add_action('wp_loaded', array( $this, 'handle_import_linked' ));
 
+			add_filter( 'cron_schedules', array( $this, 'ensure_schedule_available' ) );
+
 			add_filter('admin_init',array($this,'add_settings_fields'));
 			add_filter('wpt_admin_page_tabs',array($this,'add_settings_tab'));
 			add_action($this->get( 'slug' ).'_import', array($this, 'execute' ));
@@ -1181,12 +1183,124 @@
 		}
 
 		/**
+		 * Ensures the selected importer schedule is available during cron runs.
+		 *
+		 * @since 0.20
+		 *
+		 * @param array $schedules Current registered schedules.
+		 * @return array
+		 */
+		public function ensure_schedule_available( $schedules ) {
+
+			// Use the persisted importer options as the source of truth. These are loaded
+			// on every request, including cron, so we can rebuild the recurrence definition
+			// even when the original provider (e.g. Crontrol) is not loaded.
+			$options = $this->get( 'options' );
+
+			if ( empty( $options ) || ! is_array( $options ) ) {
+				return $schedules;
+			}
+
+			// No need to intervene when the importer is set to manual imports.
+			if ( empty( $options['schedule'] ) || 'manual' === $options['schedule'] ) {
+				return $schedules;
+			}
+
+			$schedule = $options['schedule'];
+
+			// If the recurrence is already registered (either by us or another filter) we are done.
+			if ( isset( $schedules[ $schedule ] ) ) {
+				return $schedules;
+			}
+
+			// Start with any metadata we stored when the user selected the recurrence.
+			$meta = array();
+
+			if ( ! empty( $options['schedule_meta'] ) && is_array( $options['schedule_meta'] ) ) {
+				$meta = $options['schedule_meta'];
+			}
+
+			// Fallback: try to read the interval from the currently scheduled event.
+			// WordPress keeps the interval in the event payload even when the recurrence slug disappears.
+			if ( empty( $meta['interval'] ) ) {
+				$event = wp_get_scheduled_event( $this->get( 'slug' ) . '_import' );
+
+				if ( $event && ! empty( $event->interval ) ) {
+					$meta['interval'] = (int) $event->interval;
+				}
+			}
+
+			// Without an interval we can't recreate the recurrence; bail out silently.
+			if ( empty( $meta['interval'] ) ) {
+				return $schedules;
+			}
+
+			// Use the slug as a human-readable label when none is stored.
+			if ( empty( $meta['display'] ) ) {
+				$meta['display'] = $schedule;
+			}
+
+			// Cache the reconstructed metadata so subsequent cron runs do not need to repeat the work.
+			$options['schedule_meta'] = array(
+				'interval' => (int) $meta['interval'],
+				'display'  => $meta['display'],
+			);
+
+			$this->set( 'options', $options );
+
+			// Finally inject the missing recurrence so wp_get_schedules() returns it for the remainder of the request.
+			$schedules[ $schedule ] = array(
+				'interval' => (int) $meta['interval'],
+				'display'  => $meta['display'],
+			);
+
+			return $schedules;
+		}
+
+		/**
+		 * Derives schedule metadata for a recurrence slug.
+		 *
+		 * @since 0.20
+		 *
+		 * @param string $schedule Schedule slug.
+		 * @return array|false
+		 */
+		protected function get_schedule_meta( $schedule ) {
+			if ( empty( $schedule ) || 'manual' === $schedule ) {
+				return false;
+			}
+
+			// Ask WordPress for the currently registered recurrences. In the admin this
+			// includes third-party intervals such as those added by Crontrol.
+			$schedules = wp_get_schedules();
+
+			if ( ! isset( $schedules[ $schedule ] ) ) {
+				return false;
+			}
+
+			$interval = isset( $schedules[ $schedule ]['interval'] ) ? (int) $schedules[ $schedule ]['interval'] : 0;
+
+			// Intervals must be positive integers; invalid entries mean we cannot safely persist the schedule.
+			if ( $interval <= 0 ) {
+				return false;
+			}
+
+			$display = isset( $schedules[ $schedule ]['display'] ) ? $schedules[ $schedule ]['display'] : $schedule;
+
+			return array(
+				'interval' => $interval,
+				'display'  => $display,
+			);
+		}
+
+		/**
 		 * Runs after the settings are updated.
 		 *
 		 * Hooked into the `update_option_$option` action.
 		 * We use this to schedule the import after the import schedule is set on the settings page.
 		 * 
 		 * @since 0.10
+		 * @since 0.20 Stores schedule metadata alongside the selected recurrence.
 		 *
 		 * @see WPT_Importer::init()
 		 *
@@ -1194,8 +1308,34 @@
 		 * @param string $value
 		 */
 		function update_options($old_value,$value) {
-			if (isset($value['schedule'])) {
-				$this->schedule_import($value['schedule']);
+
+			$options = is_array( $value ) ? $value : array();
+
+			if ( isset( $options['schedule'] ) ) {
+				// Persist the interval/display so cron requests can rebuild the recurrence
+				// even when the third-party plugin that defined it is not loaded.
+				$meta = $this->get_schedule_meta( $options['schedule'] );
+
+				if ( false !== $meta ) {
+					$options['schedule_meta'] = $meta;
+				} else {
+					unset( $options['schedule_meta'] );
+				}
+			} else {
+				unset( $options['schedule_meta'] );
+			}
+
+			$this->set( 'options', $options );
+
+			if ( $options !== $value ) {
+				// Avoid infinite recursion: temporarily remove our own hook while writing the canonical options back.
+				remove_action( 'update_option_'.$this->get('slug'), array($this,'update_options'), 10 );
+				update_option( $this->get('slug'), $options );
+				add_action( 'update_option_'.$this->get('slug'), array($this,'update_options'), 10, 2 );
+			}
+
+			if ( isset( $options['schedule'] ) ) {
+				$this->schedule_import( $options['schedule'] );
 			}
 		}
 		
