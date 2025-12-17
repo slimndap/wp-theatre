@@ -402,6 +402,40 @@ class WPT_Test_Event_Editor_Ajax extends WP_Ajax_UnitTestCase {
 
 	}
 
+	/**
+	 * Regression coverage for missing capability check on event creation.
+	 * Verifies subscribers can (currently) create events via wpt_event_editor_create_event.
+	 * Documented vulnerability report (Patchstack) until capability check is added.
+	 */
+	function test_subscriber_cannot_create_event_over_ajax() {
+		$production_id = $this->create_production();
+
+		$this->_setRole( 'subscriber' );
+
+		$_POST['nonce'] = wp_create_nonce( 'wpt_event_editor_ajax_nonce' );
+
+		$event_date = date( 'Y-m-d H:i', time() + WEEK_IN_SECONDS );
+		$post_data = array(
+			'wpt_event_editor_nonce' => wp_create_nonce( 'wpt_event_editor' ),
+			'wpt_event_editor_event_date' => $event_date,
+			'post_ID' => $production_id,
+		);
+		$_POST['post_data'] = http_build_query( $post_data );
+
+			try {
+				$this->_handleAjax( 'wpt_event_editor_create_event' );
+			} catch ( WPAjaxDieStopException $e ) {
+				// Expected hard die for unauthorized user.
+			} catch ( WPAjaxDieContinueException $e ) {
+				// Expected die for AJAX handler.
+			}
+
+		$production = new WPT_Production( $production_id );
+		$events = $production->events();
+
+		$this->assertCount( 0, $events );
+	}
+
 	function test_event_value_can_be_emptied() {
 
 		// Create a production with an event.
