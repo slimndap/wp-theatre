@@ -336,7 +336,7 @@ class WPT_Event_Editor {
 				'id' => 'tickets_url',
 				'title' => __( 'Tickets URL', 'theatre' ),
 				'edit' => array(
-					'placeholder' => 'http://',
+					'placeholder' => 'https://',
 				),
 			),
 			array(
