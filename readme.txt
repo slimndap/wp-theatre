@@ -150,6 +150,7 @@ Release Date: November 4, 2025
     * Adds the missing `$event` context to the `wpt/event/template/field/value` filter so custom templates keep receiving the right data.
     * Restores the original publication status when productions or events are untrashed, keeping revived content visible without extra clicks.
     * Fixes PHP 8.2 warnings across Theater models.
+    * Fixes two security issues inside the event editor (0.19.1).
 * Deprecations
     * Removed the long-abandoned custom CSS manager, simplifying legacy code paths.
 
@@ -322,128 +323,5 @@ Release Date: May 30th, 2015
 
 == Upgrade Notice ==
 
-= 0.18.8 =
-Security update and CSS improvements.
-
-= 0.18.7 =
+= 0.19.1 =
 Security update.
-
-= 0.18.5 =
-Fixes a PHP error when manually inserting an Event through wp_insert_post().
-
-= 0.18.4 =
-Fixes an XSS vulnerability.
-
-= 0.18.2 =
-Fixes a PHP warning.
-
-= 0.16.5 =
-Fixes some issues with WordPress 5.5.
-
-= 0.16 =
-New date and category filters on the events admin screen. New grouping by tag options for the front end.
-
-= 0.15.33 =
-Maintenance release fixing several long-standing minor issues.
-
-= 0.15.32 =
-Fixed an issue with the keyword filter for events.
-
-= 0.15.31 =
-Fixed another issue where sometimes events are shown in the wrong order.
-
-= 0.15.30 =
-Fixed an issue where sometimes events are shown in the wrong order.
-
-= 0.15.29 =
-Made it easier for developers to customize the event editor.
-
-= 0.15.28 =
-Fixes a problem with the Categories widget that was introduced in a previous update.
-
-= 0.15.27 =
-Added a new `{{tags}}` placeholder for events.
-
-= 0.15.26 = 
-Fixes a problem with the Production events widget that was introduced in a previous update.
-
-= 0.15.25 = 
-Fixes a problem with the Calendar widget that was introduced in the previous update.
-
-= 0.15.24 = 
-Performance improvements, especially noticeable during imports.
-
-= 0.15.23 =
-The calendar widget now jumps to the active month if you show the widget on you events page.
-
-= 0.15.22 =
-Fixes performance issues with some websites that use full page caching plugins and services.
-
-= 0.15.21 =
-Tiny internal improvement to the events admin screen.
-
-= 0.15.20 =
-Added a filter to alter the default behaviour of an importer.
-
-= 0.15.17 =
-Added two WordPress filters to add extra filter controls to the events admin screen.
-
-= 0.15.15 =
-Fixes several compatibility issues with WordPress 4.7.
-
-= 0.15.14 =
-Fixes a problem with the changelog of extensions if you're running multiple extensions.
-
-= 0.15.13 =
-Fixes a problem with the sort order of events on the admin screen.
-
-= 0.15.12 =
-Fixes a problem that was introduced in 0.15.10 where past events were not visible in the admin.
-
-= 0.15.11 =
-Small bugfixes and CSS tweaks.
-
-= 0.15.10 =
-Fixes the ordering of events on archive pages. Fixes a problem with the 'end' filter for events.
-
-= 0.15.9 =
-Fixes a problem where search results got lost when navigating on the Theater Events page in the WordPress admin.
-
-= 0.15.8 =
-Fixes in the HTML output of the Calendar widget and improves the sanitization of ticket urls.
-
-= 0.15.7 =
-Fixes two issues with displaying event dates.
-
-= 0.15.6 =
-Fixes a problem with updates for Theater for WordPress extension plugins.
-
-= 0.15.5 =
-Adds support for a 'tag' filter in event lists. Fixes a problem when bulk publishing events.
-
-= 0.15.4 =
-Small bugfixes and improvements to the events admin screen.
-
-= 0.15.3 =
-Added a new `{{prices}}` placeholder for events.
-
-= 0.15.2 =
-Adds context information to fields in listings, useful for styling and context-aware hooks.
-
-= 0.15.1 =
-Fixes a problem with the 'date' filter in template placeholders.
-
-= 0.15 =
-This release focusses on a more streamlined experience when managing your events.
-
-= 0.14.7 = 
-Adds context information to listings, useful for styling and context-aware hooks.
-
-= 0.14.6 =
-Adds two new filters to manipulate the appearance of events in lists.
-
-= 0.14.5 =
-Internal improvements that can be used by importer extensions. No real need to update if you are not importing events from an external ticketing solution.
-
-= 0.14.4 =
-The [wpt_events] shortcode now accepts a 'production' parameter to limit the a events list to one or more productions.
