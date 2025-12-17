@@ -1185,7 +1185,7 @@
 		/**
 		 * Ensures the selected importer schedule is available during cron runs.
 		 *
-		 * @since 0.20
+		 * @since 0.19.1
 		 *
 		 * @param array $schedules Current registered schedules.
 		 * @return array

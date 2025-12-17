@@ -150,6 +150,7 @@ Release Date: November 4, 2025
     * Adds the missing `$event` context to the `wpt/event/template/field/value` filter so custom templates keep receiving the right data.
     * Restores the original publication status when productions or events are untrashed, keeping revived content visible without extra clicks.
     * Fixes PHP 8.2 warnings across Theater models.
+    * Fixes disappearing import cron schedules (0.19.1).
     * Fixes two security issues inside the event editor (0.19.1).
 * Deprecations
     * Removed the long-abandoned custom CSS manager, simplifying legacy code paths.
