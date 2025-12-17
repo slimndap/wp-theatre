@@ -47,6 +47,21 @@ class WPT_Test_Event_Editor extends WP_UnitTestCase {
 		return $this->factory->post->create( $production_args );
 	}
 
+	function test_event_ticket_price_label_is_sanitized() {
+		$event_id = $this->create_event();
+		$raw = '10|</textarea><script>alert(1)</script>';
+
+		update_post_meta( $event_id, '_wpt_event_tickets_price', $raw );
+
+		$sanitized = get_post_meta( $event_id, '_wpt_event_tickets_price', true );
+		$expected = $this->wp_theatre->setup->sanitize_event_tickets_price( $raw );
+
+		$this->assertSame( $expected, $sanitized );
+		$this->assertNotSame( $raw, $sanitized );
+		$this->assertStringNotContainsString( '<', $sanitized );
+		$this->assertStringNotContainsString( 'script', $sanitized );
+	}
+
 	function test_create_html_is_displayed_on_production_page() {
 		global $wp_theatre;
 
