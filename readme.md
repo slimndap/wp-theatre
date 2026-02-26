@@ -1,5 +1,5 @@
 #Theater for WordPress
-
+An amazing project
 
 ## Events vs. productions
 
