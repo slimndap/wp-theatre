@@ -146,7 +146,11 @@ class WPT_Productions_Admin {
 	}
 
 	/**
-	 * Processes bulk actions.
+	 * Processes bulk actions on selected productions.
+	 *
+	 * Requires a valid bulk-productions nonce. Checks edit rights per production
+	 * for status changes and delete rights for trashing, restoring, and deleting.
+	 * Publishing also requires the production post type's publishing capability.
 	 *
 	 * @since	0.15
 	 * @since	0.15.4	Added the $action param.
@@ -155,7 +159,7 @@ class WPT_Productions_Admin {
 	 *					Fixes #197.
 	 * @since	0.15.9	Removed the $action param again because this method is now
 	 *					triggered by the 'current_screen'-hook.
-	 *					
+	 * @since	0.19.2	Validates the production ID and checks permissions per production.
 	 */
 	function process_bulk_actions() {
 
@@ -164,8 +168,8 @@ class WPT_Productions_Admin {
 			return;
 		}
 
-		// Bail if nonce is missing.
-		if ( ! isset( $_REQUEST['_wpnonce'] ) || empty( $_REQUEST['_wpnonce'] ) ) {
+		// Bail if nonce is missing or malformed.
+		if ( empty( $_REQUEST['_wpnonce'] ) || ! is_string( $_REQUEST['_wpnonce'] ) ) {
 	        return;
 	    }
 
@@ -176,6 +180,16 @@ class WPT_Productions_Admin {
 
 		$list_table = new WPT_Productions_List_Table();
 		$action = $list_table->current_action();
+		$capabilities = array(
+			'publish' => 'edit_post',
+			'draft'   => 'edit_post',
+			'trash'   => 'delete_post',
+			'restore' => 'delete_post',
+			'delete'  => 'delete_post',
+		);
+		if ( ! is_string( $action ) || ! isset( $capabilities[ $action ] ) ) {
+			return;
+		}
 
 		// Get a clean URL to redirect to after actions are done.
 		$sendback_url = remove_query_arg( array('production', '_wpnonce', '_wp_http_referer'), wp_get_referer() );
@@ -186,7 +200,25 @@ class WPT_Productions_Admin {
 		 * @see		https://github.com/WordPress/WordPress/blob/703d5bdc8deb17781e9c6d8f0dd7e2c6b6353885/wp-admin/edit.php#L100
 		 */
 	
-		foreach ( $_REQUEST['production'] as $production_id ) {
+		foreach ( $_REQUEST['production'] as $requested_id ) {
+			if ( ! is_int( $requested_id ) && ! is_string( $requested_id ) ) {
+				continue;
+			}
+
+			$production_id = (int) $requested_id;
+			if ( $production_id <= 0 || (string) $production_id !== (string) $requested_id ) {
+				continue;
+			}
+
+			if ( WPT_Production::post_type_name !== get_post_type( $production_id )
+				|| ! current_user_can( $capabilities[ $action ], $production_id ) ) {
+				continue;
+			}
+
+			if ( 'publish' === $action && ! current_user_can( get_post_type_object( WPT_Production::post_type_name )->cap->publish_posts ) ) {
+				continue;
+			}
+
 			switch ( $action ) {
 				case 'publish':
 	            	$production_post = array(
@@ -215,9 +247,6 @@ class WPT_Productions_Admin {
 	            case 'delete':
 		            wp_delete_post( $production_id );
 	                break;
-	            default:
-	                return;
-	                break;
 			}
 		}
 		
@@ -233,9 +262,13 @@ class WPT_Productions_Admin {
 	}
 
 	/**
-	 * Empties the trash.
+	 * Permanently deletes trashed productions the current user can delete.
+	 *
+	 * Requires an Empty Trash request and a valid bulk-productions nonce.
+	 * Checks the delete capability separately for each production.
 	 *
 	 * @since	0.15.4
+	 * @since	0.19.2	Checks delete permissions per trashed production.
 	 */
 	function empty_trash() {
 		global $wp_theatre;
@@ -245,8 +278,8 @@ class WPT_Productions_Admin {
 			return;
 		}
 
-		// Bail if nonce is missing.
-		if ( ! isset( $_REQUEST['_wpnonce'] ) || empty( $_REQUEST['_wpnonce'] ) ) {
+		// Bail if nonce is missing or malformed.
+		if ( empty( $_REQUEST['_wpnonce'] ) || ! is_string( $_REQUEST['_wpnonce'] ) ) {
 	        return;
 	    }
 
@@ -260,7 +293,11 @@ class WPT_Productions_Admin {
 			'status' => 'trash',
 		);
 		foreach ( $wp_theatre->productions->get( $productions_args ) as $production ) {
-			wp_delete_post( $production->ID );
+			if ( WPT_Production::post_type_name === get_post_type( $production->ID )
+				&& 'trash' === get_post_status( $production->ID )
+				&& current_user_can( 'delete_post', $production->ID ) ) {
+				wp_delete_post( $production->ID );
+			}
 		}
 	}
 

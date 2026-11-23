@@ -1,10 +1,16 @@
 <?php
 /**
- * Test bulk editing in the (new) productions list table.
+ * Tests bulk editing, emptying the trash, and per-production authorization.
  * @since	0.15.3
+ * @since	0.19.2	Tests per-production authorization for bulk editing and emptying the trash.
  * @group	bulk_edit
  */
 class WPT_Bulk_Edit extends WPT_UnitTestCase {
+
+	protected function setUp(): void {
+		parent::setUp();
+		$this->assume_role( 'editor' );
+	}
 
 	/**
 	 * Tests if productions are published with bulk updates.
@@ -151,6 +157,62 @@ class WPT_Bulk_Edit extends WPT_UnitTestCase {
 		// Check if production is gone.
 		$actual = get_post( $this->production_with_upcoming_event );
 		$this->assertNull( $actual );
+	}
+
+	function test_bulk_draft_only_updates_editable_productions() {
+		global $wp_theatre;
+
+		$editor_id = get_current_user_id();
+		$author = $this->assume_role();
+		$own_production = $this->factory->post->create( array(
+			'post_type' => WPT_Production::post_type_name,
+			'post_author' => $author->ID,
+		) );
+		$other_production = $this->factory->post->create( array(
+			'post_type' => WPT_Production::post_type_name,
+			'post_author' => $editor_id,
+		) );
+		$own_post = $this->factory->post->create( array( 'post_author' => $author->ID ) );
+
+		$GLOBALS['hook_suffix'] = 'toplevel_page_theater-events';
+		$_REQUEST = array(
+			'action' => 'draft',
+			'production' => array( $other_production, $own_post, (string) $own_production ),
+			'_wpnonce' => wp_create_nonce( 'bulk-productions' ),
+		);
+
+		$wp_theatre->productions_admin->process_bulk_actions();
+
+		$this->assertSame( 'publish', get_post_status( $other_production ) );
+		$this->assertSame( 'publish', get_post_status( $own_post ) );
+		$this->assertSame( 'draft', get_post_status( $own_production ) );
+	}
+
+	function test_empty_trash_only_deletes_productions_the_user_can_delete() {
+		global $wp_theatre;
+
+		$editor_id = get_current_user_id();
+		$author = $this->assume_role();
+		$own_production = $this->factory->post->create( array(
+			'post_type' => WPT_Production::post_type_name,
+			'post_author' => $author->ID,
+		) );
+		$other_production = $this->factory->post->create( array(
+			'post_type' => WPT_Production::post_type_name,
+			'post_author' => $editor_id,
+		) );
+		wp_trash_post( $own_production );
+		wp_trash_post( $other_production );
+
+		$_REQUEST = array(
+			'delete_all' => 'Empty Trash',
+			'_wpnonce' => wp_create_nonce( 'bulk-productions' ),
+		);
+
+		$wp_theatre->productions_admin->empty_trash();
+
+		$this->assertNull( get_post( $own_production ) );
+		$this->assertSame( 'trash', get_post_status( $other_production ) );
 	}
 }
 
