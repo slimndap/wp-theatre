@@ -225,6 +225,72 @@ class WPT_Test_Importer extends WP_UnitTestCase {
 		$this->assertCount( 4, $this->wp_theatre->events->get() );
 	}
 
+	/**
+	 * Reproduces the scenario where a custom importer schedule vanishes outside wp-admin.
+	 *
+	 * Historically the importer trusted any recurrence returned by `wp_get_schedules()`. Admin-only
+	 * plugins (e.g. Crontrol, Leira) register their schedules via `cron_schedules`, which means the slug
+	 * disappears when `wp-cron.php` runs. WordPress then fails to reschedule the importer job and the feed
+	 * never executes. This test runs that exact flow so we have a red test before applying the fix.
+	 *
+	 * @since 0.20
+	 * @return void
+	 */
+	function test_import_schedule_disappears_when_custom_interval_missing() {
+		$importer = new WPT_Demo_Importer();
+
+		$custom_schedule      = 'wpt_test_custom_five';
+		$custom_schedule_hook = 'wpt_demoimporter_import';
+
+		// Register a temporary 5 minute recurrence, mirroring how Crontrol/Leira expose their intervals in wp-admin.
+		$callback = function( $schedules ) use ( $custom_schedule ) {
+			$schedules[ $custom_schedule ] = array(
+				'interval' => 5 * MINUTE_IN_SECONDS,
+				'display'  => 'Test Every Five Minutes',
+			);
+
+			return $schedules;
+		};
+
+		add_filter( 'cron_schedules', $callback );
+
+		update_option(
+			'wpt_demoimporter',
+			array(
+				'schedule' => 'manual',
+			)
+		);
+
+		update_option(
+			'wpt_demoimporter',
+			array(
+				'schedule' => $custom_schedule,
+			)
+		);
+
+		// Importer should now have a cron entry that uses the custom recurrence.
+		$timestamp = wp_next_scheduled( $custom_schedule_hook );
+
+		$this->assertNotFalse(
+			$timestamp,
+			'Sanity check: importer should schedule the cron event.'
+		);
+
+		// Simulate a cron request: remove the filter so WordPress no longer knows about the recurrence.
+		remove_filter( 'cron_schedules', $callback );
+
+		// On the next reschedule the recurrence is missing, so wp_reschedule_event() currently returns false and the job disappears.
+		// The assertion below documents the expected behaviour once the bug is fixed (test is red prior to the fix).
+		$result = wp_reschedule_event( $timestamp, $custom_schedule, $custom_schedule_hook );
+
+		$this->assertNotFalse(
+			$result,
+			'Importer cron should reschedule even if the selected recurrence is not registered on this request.'
+		);
+
+		wp_clear_scheduled_hook( $custom_schedule_hook );
+	}
+
 	function test_events_from_other_source_are_not_overwritten() {
 		// create a new event
 		$production_args = array(

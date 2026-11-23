@@ -47,6 +47,21 @@ class WPT_Test_Event_Editor extends WP_UnitTestCase {
 		return $this->factory->post->create( $production_args );
 	}
 
+	function test_event_ticket_price_label_is_sanitized() {
+		$event_id = $this->create_event();
+		$raw = '10|</textarea><script>alert(1)</script>';
+
+		update_post_meta( $event_id, '_wpt_event_tickets_price', $raw );
+
+		$sanitized = get_post_meta( $event_id, '_wpt_event_tickets_price', true );
+		$expected = $this->wp_theatre->setup->sanitize_event_tickets_price( $raw );
+
+		$this->assertSame( $expected, $sanitized );
+		$this->assertNotSame( $raw, $sanitized );
+		$this->assertStringNotContainsString( '<', $sanitized );
+		$this->assertStringNotContainsString( 'script', $sanitized );
+	}
+
 	function test_create_html_is_displayed_on_production_page() {
 		global $wp_theatre;
 
@@ -400,6 +415,40 @@ class WPT_Test_Event_Editor_Ajax extends WP_Ajax_UnitTestCase {
 		$this->assertEquals( $venue, $events['0']->venue() );
 		$this->assertEquals( $extra_value, $events[0]->custom( 'extra_field' ) );
 
+	}
+
+	/**
+	 * Regression coverage for missing capability check on event creation.
+	 * Verifies subscribers can (currently) create events via wpt_event_editor_create_event.
+	 * Documented vulnerability report (Patchstack) until capability check is added.
+	 */
+	function test_subscriber_cannot_create_event_over_ajax() {
+		$production_id = $this->create_production();
+
+		$this->_setRole( 'subscriber' );
+
+		$_POST['nonce'] = wp_create_nonce( 'wpt_event_editor_ajax_nonce' );
+
+		$event_date = date( 'Y-m-d H:i', time() + WEEK_IN_SECONDS );
+		$post_data = array(
+			'wpt_event_editor_nonce' => wp_create_nonce( 'wpt_event_editor' ),
+			'wpt_event_editor_event_date' => $event_date,
+			'post_ID' => $production_id,
+		);
+		$_POST['post_data'] = http_build_query( $post_data );
+
+			try {
+				$this->_handleAjax( 'wpt_event_editor_create_event' );
+			} catch ( WPAjaxDieStopException $e ) {
+				// Expected hard die for unauthorized user.
+			} catch ( WPAjaxDieContinueException $e ) {
+				// Expected die for AJAX handler.
+			}
+
+		$production = new WPT_Production( $production_id );
+		$events = $production->events();
+
+		$this->assertCount( 0, $events );
 	}
 
 	function test_event_value_can_be_emptied() {

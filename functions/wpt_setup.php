@@ -309,6 +309,7 @@
 		 * Sanitizes the event_tickets_price value.
 		 * 
 		 * @since 0.11
+		 * @since 0.19.1 Sanitizes price label to prevent HTML/JS injection.
 		 * @param 	string	$value	The event_tickets_price value.
 		 * @return 	string			The sanitized event_tickets_price.
 		 */
@@ -320,8 +321,8 @@
 			$price_parts[0] = (float) $price_parts[0];
 			
 			// Sanitize the name.
-			if (!empty($prices_parts[1])) {
-				$price_parts[1] = trim($price_parts[1]);
+			if ( ! empty( $price_parts[1] ) ) {
+				$price_parts[1] = sanitize_text_field( $price_parts[1] );
 			}
 			
 			return implode('|',$price_parts);
