@@ -113,31 +113,26 @@ class WPT_Event_Admin {
 	}
 	
 	/**
-	 * Gets the HTML for a production input control of an event.
+	 * Renders the hidden production ID and a link to edit the linked production.
 	 *
-	 * The input control consists of:
-	 * 1. A hidden input with the production_id and
-	 * 2. A link to the admin page of the production.	 
+	 * @since 0.11
+	 * @since 0.19.2 Validates the stored production ID and escapes the field, URL, and title.
 	 *
-	 * @since 	0.11
-	 * @param 	array 	$field		The field.
-	 * @param 	int     $event_id   The event that is being edited.
-	 * @return 	string				The HTML.
+	 * @param array $field    The field definition.
+	 * @param int   $event_id The ID of the event being edited.
+	 * @return string The control HTML, or an empty string if the event has no valid production.
 	 */
 	public function get_control_production_html($field, $event_id) {
-		$html = '';
-		
-		$production_id = get_post_meta($event_id, $field['id'], true);
-
-		if (!empty($production_id)) {
-			
-			$production = new WPT_Production( $production_id );
-			
-			$html.= '<input type="hidden" id="wpt_event_editor_'.$field['id'].'" name="wpt_event_editor_'.$field['id'].'" value="'.$production->ID.'" />';
-			$html.= '<a href="'.get_edit_post_link($production->ID).'">'.$production->title().'</a>';
+		$production_id = WPT_Production::validate_id( get_post_meta( $event_id, $field['id'], true ) );
+		if ( false === $production_id ) {
+			return '';
 		}
-		
-		return $html;		
+
+		$production = new WPT_Production( $production_id );
+		$field_name = esc_attr( 'wpt_event_editor_'.$field['id'] );
+		$html = '<input type="hidden" id="'.$field_name.'" name="'.$field_name.'" value="'.esc_attr( $production_id ).'" />';
+		$html .= '<a href="'.esc_url( get_edit_post_link( $production_id ) ).'">'.esc_html( $production->title() ).'</a>';
+		return $html;
 	}
 
 	/**

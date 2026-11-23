@@ -137,6 +137,11 @@ The new feature may be added directly to the Theater plugin or as an extension s
 
 == Changelog ==
 
+= 0.19.2 =
+
+* Security: Fixes an access control issue in production bulk actions.
+* Security: Fixes a cross-site scripting issue in the event editor.
+
 = 0.19 =
 
 Release Date: November 4, 2025
@@ -323,6 +328,9 @@ Release Date: May 30th, 2015
 
 
 == Upgrade Notice ==
+
+= 0.19.2 =
+Security update. Update as soon as possible.
 
 = 0.19.1 =
 Security update.

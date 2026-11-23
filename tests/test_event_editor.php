@@ -196,6 +196,53 @@ class WPT_Test_Event_Editor extends WP_UnitTestCase {
 		$this->assertStringContainsString( '<input type="hidden" id="wpt_event_editor_'.WPT_Production::post_type_name.'" name="wpt_event_editor_'.WPT_Production::post_type_name.'" value="'.$production_id.'" />', $form_html );
 	}
 
+	/**
+	 * Verifies that a contributor can save a valid production and invalid values preserve it.
+	 *
+	 * @since 0.19.2
+	 */
+	function test_event_save_rejects_invalid_production_ids() {
+		$production_id = $this->create_production();
+		$contributor = $this->assume_role( 'contributor' );
+		$event_id = $this->factory->post->create( array(
+			'post_type' => WPT_Event::post_type_name,
+			'post_status' => 'draft',
+			'post_author' => $contributor->ID,
+		) );
+		$meta_key = WPT_Production::post_type_name;
+		$field_name = 'wpt_event_editor_'.$meta_key;
+		$original_post = $_POST;
+
+		try {
+			$_POST = array(
+				WPT_Event::post_type_name.'_nonce' => wp_create_nonce( WPT_Event::post_type_name ),
+				$field_name => (string) $production_id,
+			);
+			$this->wp_theatre->event_admin->save_event( $event_id );
+			$this->assertSame( (string) $production_id, get_post_meta( $event_id, $meta_key, true ) );
+
+			foreach ( array( $production_id.'abc', array( $production_id ), (string) $event_id, (string) PHP_INT_MAX ) as $invalid_id ) {
+				$_POST[ $field_name ] = $invalid_id;
+				$this->wp_theatre->event_admin->save_event( $event_id );
+				$this->assertSame( (string) $production_id, get_post_meta( $event_id, $meta_key, true ) );
+			}
+		} finally {
+			$_POST = $original_post;
+		}
+	}
+
+	/**
+	 * Verifies that the event editor omits the production control for an invalid stored reference.
+	 *
+	 * @since 0.19.2
+	 */
+	function test_event_editor_ignores_invalid_stored_production_id() {
+		$event_id = $this->create_event_for_production( 'invalid-production' );
+		$form_html = $this->wp_theatre->event_editor->get_form_html( false, $event_id );
+
+		$this->assertStringNotContainsString( 'name="wpt_event_editor_'.WPT_Production::post_type_name.'"', $form_html );
+	}
+
 	function test_2nd_event_is_created_on_production_page() {
 
 		$this->assume_role( 'author' );

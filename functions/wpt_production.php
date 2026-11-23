@@ -34,6 +34,27 @@ class WPT_Production {
 	}
 	// @codingStandardsIgnoreEnd
 
+	/**
+	 * Validates a reference to an existing production.
+	 *
+	 * @since 0.19.2
+	 *
+	 * @param mixed $value A positive integer or its exact decimal string representation.
+	 * @return int|false The production post ID, or false if the value is invalid or the post is not a production.
+	 */
+	public static function validate_id( $value ) {
+		if ( ! is_int( $value ) && ! is_string( $value ) ) {
+			return false;
+		}
+
+		$id = filter_var( $value, FILTER_VALIDATE_INT, array( 'options' => array( 'min_range' => 1 ) ) );
+		if ( false === $id || (string) $id !== (string) $value || self::post_type_name !== get_post_type( $id ) ) {
+			return false;
+		}
+
+		return $id;
+	}
+
 	function post_type() {
 		return get_post_type_object( self::post_type_name );
 	}
