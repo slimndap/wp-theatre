@@ -1051,27 +1051,37 @@ class WPT_Event_Editor {
 	/**
 	 * Saves the value for a field to the database.
 	 *
-	 * @since 	0.11
-	 * @access 	protected
-	 * @param 	mixed	$value		The value.
-	 * @param 	array 	$field		The field.
-	 * @param 	int 	$event_id	The event.
-	 * @param 	bool 	$update 	Whether of not to update an existing value (default: true).
-	 * @return	int					The ID of the inserted/updated row
+	 * @since 0.11
+	 * @since 0.19.2 Rejects invalid production references after filtering and preserves the stored value.
+	 *
+	 * @param mixed $value    The value to save.
+	 * @param array $field    The field definition.
+	 * @param int   $event_id The event ID.
+	 * @param bool  $update   Whether to update the value or add another metadata entry. Default true.
+	 * @return int|bool The metadata ID on insert, true on successful update, or false if rejected,
+	 *                  unchanged, or the write failed.
 	 */
 	protected function save_value($value, $field, $event_id, $update = true) {
 
 		/**
-		 * Filter the value of an event field, before it is saved
-		 * to the database.
+		 * Filters the value of an event field before it is saved.
 		 *
 		 * @since 0.11
-		 * @param 	mixed 	$value		The value.
-		 * @param	array	$field		The field.
-		 * @param	int		$event_id	The event.
+		 * @since 0.19.2 The filtered production reference must point to an existing production.
+		 *
+		 * @param mixed $value    The field value.
+		 * @param array $field    The field definition.
+		 * @param int   $event_id The event ID.
 		 */
 		$value = apply_filters( 'wpt/event_editor/save/value/field='.$field['id'], $value, $field, $event_id );
 		$value = apply_filters( 'wpt/event_editor/save/value', $value, $field, $event_id );
+
+		if ( WPT_Production::post_type_name === $field['id'] ) {
+			$value = WPT_Production::validate_id( $value );
+			if ( false === $value ) {
+				return false;
+			}
+		}
 
 		if ( $update ) {
 			$field_id = update_post_meta( $event_id, $field['id'], $value );
