@@ -137,11 +137,6 @@ The new feature may be added directly to the Theater plugin or as an extension s
 
 == Changelog ==
 
-= 0.19.2 =
-
-* Security: Fixes an access control issue in production bulk actions.
-* Security: Fixes a cross-site scripting issue in the event editor.
-
 = 0.19 =
 
 Release Date: November 4, 2025
@@ -157,6 +152,7 @@ Release Date: November 4, 2025
     * Fixes PHP 8.2 warnings across Theater models.
     * Fixes disappearing import cron schedules (0.19.1).
     * Fixes two security issues inside the event editor (0.19.1).
+    * Fixes two security issues (0.19.2).
 * Deprecations
     * Removed the long-abandoned custom CSS manager, simplifying legacy code paths.
 
